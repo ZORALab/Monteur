@@ -1,0 +1,191 @@
+# This file contains all available configuration for golangci-lint
+run:
+  timeout: 1m
+  issues-exit-code: 1
+  tests: true
+  skip-dirs:
+    - vendor
+
+# output configuration options
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+
+# all available settings of specific linters
+linters-settings:
+  errcheck:
+    check-type-assertions: false
+    check-blank: false
+    ignore: fmt:.*,io/ioutil:^Read.*
+
+  funlen: # disabled by default
+    lines: 50000
+    statements: 50000
+
+  govet:
+    check-shadowing: true
+    settings:
+      printf: # analyzer name from `go tool vet help`
+        funcs: # `go tool vet help printf` to see available settings
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+    enable:
+      - atomicalign
+    enable-all: false
+    disable:
+      - shadow
+    disable-all: false
+  golint:
+    min-confidence: 0.8
+  gofmt:
+    simplify: true
+  goimports:
+    local-prefixes: github.com/org/project
+  gocyclo:
+    min-complexity: 15
+  gocognit:
+    min-complexity: 20
+  maligned:
+    suggest-new: true
+  dupl:
+    threshold: 150
+  goconst:
+    min-len: 3
+    min-occurrences: 3
+  depguard:
+    list-type: blacklist
+    include-go-root: false
+    packages:
+      - github.com/sirupsen/logrus
+    packages-with-error-messages:
+      github.com/sirupsen/logrus: "logging is allowed only by logutils.Log"
+  misspell:
+    locale: US
+  lll:
+    line-length: 80
+    tab-width: 2
+  unused:
+    check-exported: false
+  unparam:
+    check-exported: false
+  nakedret:
+    max-func-lines: 30
+  prealloc:
+    simple: true
+    range-loops: true
+    for-loops: false
+  gocritic:
+    enabled-checks: # https://go-critic.github.io/overview#checks-overview
+      - appendAssign
+      - appendCombine
+      - argOrder
+      - assignOp
+      - boolExprSimplify
+      - builtinShadow
+      - codegenComment
+      - commentedOutImport
+      - commentFormatting
+      - captLocal
+      - caseOrder
+      - deprecatedComment
+      - docStub
+      - dupArg
+      - dupBranchBody
+      - dupCase
+      - dupSubExpr
+      - emptyStringTest
+      - equalFold
+      - exitAfterDefer
+      - flagDeref
+      - flagName
+      - hexLiteral
+      - hugeParam
+      - ifElseChain
+      - importShadow
+      - indexAlloc
+      - methodExprCall
+      - nilValReturn
+      - rangeExprCopy
+      - rangeValCopy
+      - regexpMust
+      - singleCaseSwitch
+      - sloppyLen
+      - sloppyReassign
+      - stringXbytes
+      - switchTrue
+      - typeAssertChain
+      - typeSwitchVar
+      - typeUnparen
+      - unlabelStmt
+      - unlambda
+      - unnecessaryBlock
+      - unslice
+      - valSwap
+      - weakCond
+    settings:
+      captLocal:
+        paramsOnly: true
+      rangeValCopy:
+        sizeThreshold: 32
+  godox:
+    keywords:
+      - TODO
+      - BUG
+      - FIXME
+      - OPTIMIZE
+      - HACK
+  dogsled:
+    max-blank-identifiers: 3
+  whitespace:
+    multi-if: false
+    multi-func: false
+  wsl:
+    strict-append: true
+    allow-assign-and-call: true
+    allow-multiline-assign: true
+    allow-cuddle-declarations: true
+
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - godox
+    - gocognit
+    - goconst
+    - gochecknoinits
+    - gochecknoglobals
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goimports
+    - golint
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - maligned
+    - megacheck
+    - misspell
+    - nakedret
+    - interfacer
+    - prealloc
+    - scopelint
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+    - whitespace
+    - wsl

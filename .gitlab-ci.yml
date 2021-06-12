@@ -1,0 +1,49 @@
+image: debian:latest
+
+stages:
+    - test
+    - build
+    - publish
+
+variables:
+    TERM: "xterm"
+    GITLAB_CI: "true"
+
+before_script:
+    - apt-get update -y
+    - apt-get install bash curl git gcc graphviz -y
+    - ./.scripts/site-ci.sh --setup
+
+test:
+    stage: test
+    tags:
+        - linux
+    environment:
+        name: production
+    coverage: '/total:\s{1,}\(statements\)\s{1,}(\d+.\d+%)/'
+    script:
+        - ./.scripts/site-ci.sh --test
+
+build:
+    stage: build
+    tags:
+        - linux
+    environment:
+        name: production
+    script:
+        - ./.scripts/site-ci.sh --build
+
+pages:
+    stage: publish
+    tags:
+        - linux
+    artifacts:
+        paths:
+            - public
+    environment:
+        name: production
+    only:
+        refs:
+            - schedules
+    script:
+        - ./.scripts/site-ci.sh --publish "only-build"

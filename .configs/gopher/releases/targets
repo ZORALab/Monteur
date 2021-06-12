@@ -1,0 +1,5 @@
+#!/bin/bash
+
+BUILD_TARGETS=(
+	"pkg/cmd/maitre"
+)
