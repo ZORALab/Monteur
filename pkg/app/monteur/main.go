@@ -26,6 +26,7 @@ import (
 
 	"gitlab.com/zoralab/cerigo/os/args"
 	"gitlab.com/zoralab/monteur/pkg"
+	"gitlab.com/zoralab/monteur/pkg/monteur"
 )
 
 func main() {
@@ -113,22 +114,22 @@ Das Monteur - Getting the job done locally and remotely at scale!
 	})
 
 	_ = m.Add(&args.Flag{
-		Name:  "Build",
-		Label: []string{"build"},
-		Value: &action,
-		Help:  "execute the build job",
-		HelpExamples: []string{
-			"$ monteur build",
-		},
-	})
-
-	_ = m.Add(&args.Flag{
 		Name:  "Release",
 		Label: []string{"release"},
 		Value: &action,
 		Help:  "execute the release job",
 		HelpExamples: []string{
 			"$ monteur release",
+		},
+	})
+
+	_ = m.Add(&args.Flag{
+		Name:  "Build",
+		Label: []string{"build"},
+		Value: &action,
+		Help:  "execute the build job",
+		HelpExamples: []string{
+			"$ monteur build",
 		},
 	})
 
@@ -161,23 +162,23 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		fmt.Fprintf(os.Stderr, "%s", m.PrintHelp())
 		return
 	case "purge":
-		fmt.Printf("Placeholder: executed purge\n")
+		os.Exit(monteur.Purge())
 	case "setup":
-		fmt.Printf("Placeholder: executed setup\n")
+		os.Exit(monteur.Setup())
 	case "develop":
-		fmt.Printf("Placeholder: executed develop\n")
+		os.Exit(monteur.Develop())
 	case "test":
-		fmt.Printf("Placeholder: executed test\n")
+		os.Exit(monteur.Test())
 	case "clean":
-		fmt.Printf("Placeholder: executed clean\n")
-	case "build":
-		fmt.Printf("Placeholder: executed build\n")
+		os.Exit(monteur.Clean())
 	case "release":
-		fmt.Printf("Placeholder: executed release\n")
+		os.Exit(monteur.Release())
+	case "build":
+		os.Exit(monteur.Build())
 	case "package":
-		fmt.Printf("Placeholder: executed package\n")
+		os.Exit(monteur.Package())
 	case "publish":
-		fmt.Printf("Placeholder: executed publish\n")
+		os.Exit(monteur.Publish())
 	default:
 		fmt.Fprintf(os.Stderr, "[ ERROR ] unknown action: %s", action)
 		os.Exit(1)
