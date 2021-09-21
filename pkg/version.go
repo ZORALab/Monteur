@@ -13,14 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// pkg is the root directory of all Monteur Go packages.
-//
-// Unlike the conventional Go pathing and structure, Monteur project aims to
-// operate continuous integration not just remotely but also locally. This
-// removes the most critical vender locked-in dependency: the CI infrastructure.
-//
-// Also, Das Monteur should also allow anyone to easily customize and build
-// the software when he/she has access to the source codes without getting into
-// cracking their head to solve all the dependencies nightmare for both build
-// tools and the software dependencies as well.
 package pkg
+
+const (
+	VERSION = "v0.0.1"
+)
