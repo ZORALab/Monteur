@@ -12,7 +12,6 @@ variables:
 before_script:
     - apt-get update -y
     - apt-get install bash curl git gcc graphviz -y
-    - ./.scripts/site-ci.sh --setup
 
 test:
     stage: test
@@ -22,7 +21,7 @@ test:
         name: production
     coverage: '/total:\s{1,}\(statements\)\s{1,}(\d+.\d+%)/'
     script:
-        - ./.scripts/site-ci.sh --test
+        - echo "pending test"
 
 build:
     stage: build
@@ -31,7 +30,7 @@ build:
     environment:
         name: production
     script:
-        - ./.scripts/site-ci.sh --build
+        - echo "pending build"
 
 pages:
     stage: publish
@@ -46,4 +45,4 @@ pages:
         refs:
             - schedules
     script:
-        - ./.scripts/site-ci.sh --publish "only-build"
+        - echo "pending publish"
