@@ -82,8 +82,15 @@ func Clean() int {
 // numbers, build configurations as programmed for the next release. This
 // function should be done before building the next version release.
 func Release() int {
-	fmt.Println("Placeholder: Release function called")
-	return STATUS_ERROR
+	app := NewApp()
+
+	err := app.ParseWorkspace()
+	if err != nil {
+		fmt.Printf("[ERROR]: %s\n", err)
+		return STATUS_ERROR
+	}
+
+	return STATUS_OK
 }
 
 // Build is the function to build the software with current configurations.
