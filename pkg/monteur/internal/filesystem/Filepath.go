@@ -57,6 +57,7 @@ type Filepath struct {
 // This method was designed not to panic. If it does, it means Monteur's
 // developers did something funny on Monteur side and Monteur developers must
 // fix the problem immediately.
+//nolint:lll
 func (fp *Filepath) Init() error {
 	if err := fp.initCurrentDir(); err != nil {
 		return err
@@ -118,7 +119,7 @@ func (fp *Filepath) parseTOML() (err error) {
 
 	f, err := os.Open(configFile)
 	if err != nil {
-		return err
+		return fmt.Errorf("%s", ERROR_FAILED_CONFIG)
 	}
 
 	decoder := toml.NewDecoder(f)
@@ -126,7 +127,7 @@ func (fp *Filepath) parseTOML() (err error) {
 
 	err = decoder.Decode(&s)
 	if err != nil {
-		return err
+		return fmt.Errorf("%s", ERROR_FAILED_CONFIG_DECODE)
 	}
 
 	return nil
@@ -178,7 +179,7 @@ func (fp *Filepath) initCurrentDir() (err error) {
 	fp.CurrentDir, err = filepath.Abs(".")
 	if err != nil {
 		fp.CurrentDir = ""
-		return err
+		return fmt.Errorf(ERROR_CURRENT_DIRECTORY)
 	}
 
 	return nil
