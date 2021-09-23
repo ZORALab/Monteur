@@ -10,5 +10,5 @@ replace (
 require (
 	github.com/pelletier/go-toml/v2 v2.0.0-00010101000000-000000000000
 	gitlab.com/zoralab/cerigo v0.0.2
-	gitlab.com/zoralab/monteur/pkg v0.0.0-00010101000000-000000000000
+	gitlab.com/zoralab/monteur/pkg v0.0.0-20210612051427-0f3d280089a2
 )

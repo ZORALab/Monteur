@@ -83,12 +83,21 @@ func Clean() int {
 // function should be done before building the next version release.
 func Release() int {
 	app := NewApp()
+	workspace := &Workspace{}
 
 	err := app.ParseWorkspace()
 	if err != nil {
 		fmt.Printf("[ERROR]: %s\n", err)
 		return STATUS_ERROR
 	}
+
+	err = workspace.Init()
+	if err != nil {
+		fmt.Printf("[ERROR]: %s\n", err)
+		return STATUS_ERROR
+	}
+
+	fmt.Printf("Testing:\n%s\n", workspace)
 
 	return STATUS_OK
 }

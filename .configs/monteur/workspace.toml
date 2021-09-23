@@ -1,0 +1,7 @@
+[Filesystem]
+BaseDir = "pkg/"
+WorkingDir = "tmp/"
+BuildDir = "build/"
+ScriptDir = ".scripts/"
+BinDir = ".bin/"
+DocDir = "public/"
