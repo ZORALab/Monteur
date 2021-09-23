@@ -5,6 +5,7 @@ run:
   tests: true
   skip-dirs:
     - vendor
+    - .bin
 
 # output configuration options
 output:
@@ -14,15 +15,13 @@ output:
 
 # all available settings of specific linters
 linters-settings:
+  dogsled:
+    max-blank-identifiers: 3
+  dupl:
+    threshold: 150
   errcheck:
     check-type-assertions: false
     check-blank: false
-    ignore: fmt:.*,io/ioutil:^Read.*
-
-  funlen: # disabled by default
-    lines: 50000
-    statements: 50000
-
   govet:
     check-shadowing: true
     settings:
@@ -38,8 +37,6 @@ linters-settings:
     disable:
       - shadow
     disable-all: false
-  golint:
-    min-confidence: 0.8
   gofmt:
     simplify: true
   goimports:
@@ -50,33 +47,9 @@ linters-settings:
     min-complexity: 20
   maligned:
     suggest-new: true
-  dupl:
-    threshold: 150
   goconst:
     min-len: 3
     min-occurrences: 3
-  depguard:
-    list-type: blacklist
-    include-go-root: false
-    packages:
-      - github.com/sirupsen/logrus
-    packages-with-error-messages:
-      github.com/sirupsen/logrus: "logging is allowed only by logutils.Log"
-  misspell:
-    locale: US
-  lll:
-    line-length: 80
-    tab-width: 2
-  unused:
-    check-exported: false
-  unparam:
-    check-exported: false
-  nakedret:
-    max-func-lines: 30
-  prealloc:
-    simple: true
-    range-loops: true
-    for-loops: false
   gocritic:
     enabled-checks: # https://go-critic.github.io/overview#checks-overview
       - appendAssign
@@ -95,10 +68,13 @@ linters-settings:
       - dupArg
       - dupBranchBody
       - dupCase
+      - dupImport
       - dupSubExpr
+      - elseif
       - emptyStringTest
       - equalFold
       - exitAfterDefer
+      - filepathJoin
       - flagDeref
       - flagName
       - hexLiteral
@@ -106,11 +82,13 @@ linters-settings:
       - ifElseChain
       - importShadow
       - indexAlloc
+      - initClause
       - methodExprCall
       - nilValReturn
       - rangeExprCopy
       - rangeValCopy
       - regexpMust
+      - regexpSimplify
       - singleCaseSwitch
       - sloppyLen
       - sloppyReassign
@@ -121,10 +99,13 @@ linters-settings:
       - typeUnparen
       - unlabelStmt
       - unlambda
+      - unnamedResult
       - unnecessaryBlock
       - unslice
       - valSwap
       - weakCond
+      - wrapperFunc
+      - yodaStyleExpr
     settings:
       captLocal:
         paramsOnly: true
@@ -137,26 +118,53 @@ linters-settings:
       - FIXME
       - OPTIMIZE
       - HACK
-  dogsled:
-    max-blank-identifiers: 3
+  govet:
+    check-shadowing: true
+    enable-all: true
+  depguard:
+    list-type: blacklist
+    include-go-root: false
+    packages:
+      - github.com/sirupsen/logrus
+    packages-with-error-messages:
+      github.com/sirupsen/logrus: "logging is allowed only by logutils.Log"
+  misspell:
+    locale: US
+  lll:
+    line-length: 80
+    tab-width: 8
+  unused:
+    check-exported: false
+  unparam:
+    check-exported: false
+  nakedret:
+    max-func-lines: 30
+  prealloc:
+    simple: true
+    range-loops: true
+    for-loops: false
   whitespace:
     multi-if: false
     multi-func: false
   wsl:
-    strict-append: true
     allow-assign-and-call: true
-    allow-multiline-assign: true
     allow-cuddle-declarations: true
+    allow-multiline-assign: true
+    allow-separated-leading-comment: true
+    allow-trailing-comment: true
+    strict-append: true
 
 linters:
   disable-all: true
   enable:
     - bodyclose
     - deadcode
+    - errcheck
     - depguard
     - dogsled
     - dupl
-    - errcheck
+    - exhaustive
+    - exportloopref
     - godox
     - gocognit
     - goconst
@@ -166,19 +174,20 @@ linters:
     - gocyclo
     - gofmt
     - goimports
-    - golint
+    - gomodguard
     - gosec
     - gosimple
     - govet
     - ineffassign
     - lll
-    - maligned
     - megacheck
     - misspell
     - nakedret
-    - interfacer
+    - nolintlint
+    - paralleltest
     - prealloc
-    - scopelint
+    - revive
+    - sqlclosecheck
     - staticcheck
     - structcheck
     - stylecheck
@@ -187,5 +196,7 @@ linters:
     - unparam
     - unused
     - varcheck
+    - wastedassign
     - whitespace
+    - wrapcheck
     - wsl
