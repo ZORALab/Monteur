@@ -13,11 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package monteur
+package schema
 
-// Metadata is the data structure holding the repository software information
-//
-// This data structure is part of App{} data structure.
-type Metadata struct {
+// Software is the software information consolidated in a common data structure.
+type Software struct {
 	Name string
 }

@@ -17,113 +17,162 @@ package monteur
 
 import (
 	"fmt"
+	"path/filepath"
 
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/filesystem" //nolint:typecheck
-)
-
-//nolint:stylecheck,revive
-// Filesystem tags are common keys for setting various working directories
-// pathing.
-const (
-	// BASEDIR_TAG is the source codes based location.
-	//
-	// The common location would be at the root repository. Otherwise, for
-	// repository is operating as a workspace, the source codes base
-	// location can be elsewhere inside the repo. Example, Monteur uses
-	// pkg/ directory as its BASEDIR_TAG since it needs the root repository
-	// location to work.
-	BASEDIR_TAG = "BaseDir"
-
-	// WORKINGDIR_TAG is the location where Monteur will be working in.
-	//
-	// The common location would be a `tmp/` directory at the root
-	// repository. This is mainly a safe location for Monteur to operate
-	// its testing, building, packaging, and etc.
-	WORKINGDIR_TAG = "WorkingDir"
-
-	// BUILDDIR_TAG is the location where Monteur will park built outputs.
-	//
-	// The common location would be an `image/` directory at the root
-	// repository. This is mainly used for parking all the built outputs.
-	BUILDDIR_TAG = "BuildDir"
-
-	// SCRIPTSDIR_TAG is the location of all localized executable scripts.
-	//
-	// The common location would be `scripts/` or `.scripts/` directory at
-	// root repository. This is mainly for Monteur to search for executable
-	// commands using script. Beware that not all operating system uses
-	// the same script intepreter.
-	SCRIPTDIR_TAG = "ScriptDir"
-
-	// BINDIR_TAG is the location for housing build commands binaries.
-	//
-	// The common location would be `.bin/` directory at root repository.
-	// This is mainly for Monteur to search for build commands and also
-	// the location where Monteur setup all the build binaries.
-	BINDIR_TAG = "BinDir"
-
-	// DOCDIR_TAG is the location for housing repo's documentations.
-	//
-	// The common location would be `public/` directory at root repository.
-	// This is mainly for Monteur to park all compiled documentations
-	// outputs ready for publishing.
-	DOCDIR_TAG = "DocsDir"
+	//nolint:typecheck
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
+	//nolint:typecheck
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/schema"
+	//nolint:typecheck
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/styler"
 )
 
 // Workspace is the Monteur continuous integration main data sructure.
 //
 // This data structure is responsible for running through all Monteur operations
 type Workspace struct {
-	filesystem *filesystem.Filepath
+	version    string
+	language   *schema.Language
+	filesystem *pathing
+	app        *schema.Software
 }
 
 func (w *Workspace) Init() error {
-	w.filesystem = &filesystem.Filepath{}
-	if err := w.filesystem.Init(); err != nil {
+	if err := w.parseWorkspaceData(); err != nil {
+		return err
+	}
+
+	if err := w.parseAppData(); err != nil {
 		return err
 	}
 
 	return nil
 }
 
+func (w *Workspace) parseWorkspaceData() (err error) {
+	w.version = VERSION
+	w.filesystem = &pathing{}
+	w.language = &schema.Language{}
+
+	err = w.filesystem.Init()
+	if err != nil {
+		return err
+	}
+
+	p := filepath.Join(w.filesystem.ConfigDir, WORKSPACE_TOML_FILE)
+	s := struct {
+		Language   *schema.Language
+		Filesystem *pathing
+	}{
+		Language:   w.language,
+		Filesystem: w.filesystem,
+	}
+
+	err = toml.DecodeFile(p, &s, nil)
+	if err != nil {
+		return fmt.Errorf("%s", ERROR_FAILED_CONFIG_DECODE)
+	}
+
+	err = w.filesystem.Update()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (w *Workspace) parseAppData() (err error) {
+	if w.app == nil {
+		w.app = &schema.Software{}
+	}
+
+	p := filepath.Join(w.filesystem.ConfigDir,
+		APP_DATA_DIR,
+		w.language.AlternateName+".toml")
+
+	s := &struct {
+		Metadata *schema.Software
+	}{
+		Metadata: w.app,
+	}
+
+	err = toml.DecodeFile(p, s, nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// String is the standard string interface for printing out Workspace data.
+//
+// Since Workspace is a complicated data structure, its String() method has to
+// be uniquely constructed.
 func (w *Workspace) String() string {
-	return fmt.Sprintf(`DIRECTORY LIST
---------------
-CURRENT
+	return styler.BoxString("Das Monteur", styler.BORDER_DOUBLE) +
+		w.stringCIBasic() + "\n" +
+		w.stringCILocation() + "\n" +
+		w.stringApp()
+}
+
+func (w *Workspace) stringCIBasic() string {
+	return fmt.Sprintf(`VERSION
 %s
 
-ROOT REPO
+LANGUAGE
+%s (%s)
+`,
+		w.version,
+		w.language.Name, w.language.AlternateName,
+	)
+}
+
+func (w *Workspace) stringCILocation() string {
+	return styler.BoxString("CI Pathing", styler.BORDER_SINGLE) +
+		fmt.Sprintf(`CURRENT DIRECTORY LOCATION
 %s
 
-MONTEUR CONFIG
+ROOT REPOSITORY LOCATION
 %s
 
-SOURCE CODE BASE
+MONTEUR CONFIG LOCATION
 %s
 
-WORKING
+SOURCE CODE BASE LOCATION
 %s
 
-BUILD
+WORKING LOCATION
 %s
 
-SCRIPT
+BUILD LOCATION
 %s
 
-BIN
+SCRIPT LOCATION
 %s
 
-DOC
+BIN LOCATION
+%s
+
+DOC LOCATION
 %s
 `,
-		w.filesystem.CurrentDir,
-		w.filesystem.RootDir,
-		w.filesystem.ConfigDir,
-		w.filesystem.BaseDir,
-		w.filesystem.WorkingDir,
-		w.filesystem.BuildDir,
-		w.filesystem.ScriptDir,
-		w.filesystem.BinDir,
-		w.filesystem.DocDir,
-	)
+			w.filesystem.CurrentDir,
+			w.filesystem.RootDir,
+			w.filesystem.ConfigDir,
+			w.filesystem.BaseDir,
+			w.filesystem.WorkingDir,
+			w.filesystem.BuildDir,
+			w.filesystem.ScriptDir,
+			w.filesystem.BinDir,
+			w.filesystem.DocDir,
+		)
+}
+
+func (w *Workspace) stringApp() string {
+	return styler.BoxString("Product Metadata", styler.BORDER_SINGLE) +
+		fmt.Sprintf(`NAME
+%s
+`,
+			w.app.Name,
+		)
 }

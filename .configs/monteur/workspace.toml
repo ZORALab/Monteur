@@ -5,3 +5,7 @@ BuildDir = "build/"
 ScriptDir = ".scripts/"
 BinDir = ".bin/"
 DocDir = "public/"
+
+[Language]
+Name = "English"
+AlternateName = "en"

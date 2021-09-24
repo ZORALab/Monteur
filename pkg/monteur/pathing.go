@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package filesystem
+package monteur
 
 //nolint:typecheck
 import (
@@ -22,24 +22,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/filesystem"
 )
 
-//nolint:stylecheck,revive
-// Critical Object Names are the file or directory names critical for Monteur.
-//
-// These critical object names are mainly to locate root repository with Monteur
-// supports.
-const (
-	GIT_DIRECTORY_NAME  = ".git"
-	MONTEUR_CFG_NAME    = ".configs/monteur"
-	WORKSPACE_TOML_FILE = "workspace.toml"
-)
-
-// Filepath is the data structure holding the Monteur working filesystem.
-//
-// This data structure is part of App{} data structure.
-type Filepath struct {
+// pathing is the data structure holding the Monteur working filesystem.
+type pathing struct {
 	CurrentDir string
 	RootDir    string
 	ConfigDir  string
@@ -51,15 +38,12 @@ type Filepath struct {
 	DocDir     string
 }
 
-// Init is the method to initialize Filepath data structure via Monteur configs.
+// Init is the method to initialize critical pathing for Monteur operations.
 //
-// If any error is found, it needs to be prompted to the repository developers.
-//
-// This method was designed not to panic. If it does, it means Monteur's
-// developers did something funny on Monteur side and Monteur developers must
-// fix the problem immediately.
-//nolint:lll
-func (fp *Filepath) Init() error {
+// If any error is found, it needs to be prompted to the repository developers
+// as Monteur fails to detect any git repository with Monteur support throughout
+// the current directory pathing or failed to obtain current directory pathing.
+func (fp *pathing) Init() error {
 	if err := fp.initCurrentDir(); err != nil {
 		return err
 	}
@@ -72,10 +56,22 @@ func (fp *Filepath) Init() error {
 		return err
 	}
 
-	if err := fp.parseTOML(); err != nil {
-		return err
-	}
+	return nil
+}
 
+// `Update` is the method to update all dependent pathings to full path.
+//
+// If any error is found, it needs to be prompted to the repository developers
+// to resolve the pathing issues in the workspace.toml configuration file.
+//
+// If panic is found, it means Monteur developers did something funny and
+// screwed things up. Monteur developers shall not release Monteur that causes
+// panics.
+//
+// This function should only be called after all the relative paths are filled
+// into pathing data structure AND the pathing was initialized successfully via
+// `Init()` function.
+func (fp *pathing) Update() (err error) {
 	if err := fp.initDependentDir(&fp.BaseDir, "BaseDir"); err != nil {
 		return err
 	}
@@ -104,8 +100,8 @@ func (fp *Filepath) Init() error {
 }
 
 // `name` is mainly for specifying the variable name without needing to import
-// the heavy reflect package to do the job.
-func (fp *Filepath) initDependentDir(p *string, name string) (err error) {
+// the heavy-duty reflect package to do such a simple job for error reporting.
+func (fp *pathing) initDependentDir(p *string, name string) (err error) {
 	if *p == "" {
 		return fmt.Errorf("%s: %s", ERROR_MISSING_DIR, name)
 	}
@@ -115,28 +111,17 @@ func (fp *Filepath) initDependentDir(p *string, name string) (err error) {
 	return nil
 }
 
-func (fp *Filepath) parseTOML() (err error) {
-	configFile := filepath.Join(fp.ConfigDir, WORKSPACE_TOML_FILE)
-	s := struct{ Filesystem *Filepath }{Filesystem: fp}
-
-	err = toml.DecodeFile(configFile, &s, nil)
-	if err != nil {
-		return fmt.Errorf("%s", ERROR_FAILED_CONFIG_DECODE)
-	}
-
-	return nil
-}
-
-func (fp *Filepath) initConfigDir() (err error) {
+func (fp *pathing) initConfigDir() (err error) {
 	fp.ConfigDir = filepath.Join(fp.RootDir, MONTEUR_CFG_NAME)
 	return nil
 }
 
-func (fp *Filepath) initRootDir() (err error) {
+func (fp *pathing) initRootDir() (err error) {
 	gitDir := filepath.Join(fp.CurrentDir, GIT_DIRECTORY_NAME)
 	monteurConfig := filepath.Join(fp.CurrentDir, MONTEUR_CFG_NAME)
 
-	if IsDirExists(monteurConfig) && IsDirExists(gitDir) {
+	if filesystem.IsDirExists(monteurConfig) &&
+		filesystem.IsDirExists(gitDir) {
 		fp.RootDir = fp.CurrentDir
 	}
 
@@ -153,7 +138,8 @@ func (fp *Filepath) initRootDir() (err error) {
 		gitDir = filepath.Join(dir, GIT_DIRECTORY_NAME)
 		monteurConfig = filepath.Join(dir, MONTEUR_CFG_NAME)
 
-		if IsDirExists(monteurConfig) && IsDirExists(gitDir) {
+		if filesystem.IsDirExists(monteurConfig) &&
+			filesystem.IsDirExists(gitDir) {
 			fp.RootDir = dir
 		}
 
@@ -169,7 +155,7 @@ func (fp *Filepath) initRootDir() (err error) {
 	return nil
 }
 
-func (fp *Filepath) initCurrentDir() (err error) {
+func (fp *pathing) initCurrentDir() (err error) {
 	fp.CurrentDir, err = filepath.Abs(".")
 	if err != nil {
 		fp.CurrentDir = ""
