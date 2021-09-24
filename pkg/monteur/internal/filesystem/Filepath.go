@@ -15,13 +15,14 @@
 
 package filesystem
 
+//nolint:typecheck
 import (
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
-	toml "github.com/pelletier/go-toml/v2"
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
 )
 
 //nolint:stylecheck,revive
@@ -116,16 +117,9 @@ func (fp *Filepath) initDependentDir(p *string, name string) (err error) {
 
 func (fp *Filepath) parseTOML() (err error) {
 	configFile := filepath.Join(fp.ConfigDir, WORKSPACE_TOML_FILE)
-
-	f, err := os.Open(configFile)
-	if err != nil {
-		return fmt.Errorf("%s", ERROR_FAILED_CONFIG)
-	}
-
-	decoder := toml.NewDecoder(f)
 	s := struct{ Filesystem *Filepath }{Filesystem: fp}
 
-	err = decoder.Decode(&s)
+	err = toml.DecodeFile(configFile, &s, nil)
 	if err != nil {
 		return fmt.Errorf("%s", ERROR_FAILED_CONFIG_DECODE)
 	}

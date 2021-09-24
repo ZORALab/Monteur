@@ -3,7 +3,7 @@ module gitlab.com/zoralab/monteur
 go 1.17
 
 replace (
-	github.com/pelletier/go-toml/v2 => ./monteur/internal/endec/go-toml
+	github.com/pelletier/go-toml/v2 => ./monteur/internal/endec/toml/internal/go-toml
 	gitlab.com/zoralab/monteur/pkg => ./
 )
 

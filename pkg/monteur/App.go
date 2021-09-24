@@ -15,11 +15,11 @@
 
 package monteur
 
+//nolint:typecheck
 import (
 	"fmt"
-	"os"
 
-	toml "github.com/pelletier/go-toml/v2"
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
 )
 
 // App is the main software information consolidated in a data structure.
@@ -54,19 +54,12 @@ func (a *App) ParseWorkspace() error {
 	return nil
 }
 
-func (a *App) parseTOML(path string, update bool) error {
+func (a *App) parseTOML(path string, update bool) (err error) {
 	if path == "" {
 		return fmt.Errorf("missing app toml data file")
 	}
 
-	f, err := os.Open(path)
-	if err != nil {
-		return err
-	}
-
-	decoder := toml.NewDecoder(f)
-
-	err = decoder.Decode(&a)
+	err = toml.DecodeFile(path, &a, nil)
 	if err != nil {
 		return err
 	}
