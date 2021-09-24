@@ -22,4 +22,10 @@
 // Depending on the embedded third-party TOML endec, this package may use
 // Go-only interface marshall and unmarshall convention to keep its codes clean
 // and simple.
+//
+// Currently, the TOML endec is using:
+// https://github.com/pelletier/go-toml/
+//
+// Documentation is available at:
+// https://pkg.go.dev/github.com/pelletier/go-toml/v2
 package toml
