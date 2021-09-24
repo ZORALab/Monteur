@@ -25,7 +25,6 @@ import (
 	"os"
 
 	"gitlab.com/zoralab/cerigo/os/args"
-	"gitlab.com/zoralab/monteur/pkg"
 	"gitlab.com/zoralab/monteur/pkg/monteur"
 )
 
@@ -39,7 +38,7 @@ func main() {
 a software manufacturing automation and assembling tools in one app.
 Das Monteur - Getting the job done locally and remotely at scale!
 `
-	m.Version = pkg.VERSION
+	m.Version = monteur.VERSION
 	m.Examples = []string{
 		`$ monteur help`,
 		`$ monteur purge`,
