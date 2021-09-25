@@ -1,0 +1,132 @@
+# Information about the software to be downloaded
+[Metadata]
+Name = "Go"
+Description = """
+Go programming language for compiling Go source codes.
+"""
+Type = "https-download"
+
+
+
+
+# Customization
+[Variables]
+Version = "1.17.1"
+BaseURL = "https://golang.org/dl/"
+
+
+
+
+# Supported OS and CPU Architectures download from URL
+# The Key for supported OS and CPU complies to the format [URL.{GOOS}-{GOARCH}]
+# Only list out supported packages will do.
+[URL.darwin-amd64]
+Archive = "go{{- .Version -}}.darwin-amd64.tar.gz"
+Format = "tar.gz"
+URL = "{{- .BaseURL -}}{{- .Archive -}}"
+
+[URL.darwin-arm64]
+Archive = "go{{- .Version -}}.darwin-arm64.tar.gz"
+Format = "tar.gz"
+URL = "{{- .BaseURL -}}{{- .Archive -}}"
+
+[URL.linux-amd64]
+Archive = "go{{- .Version -}}.linux-amd64.tar.gz"
+Format = "tar.gz"
+URL = "{{- .BaseURL -}}{{- .Archive -}}"
+
+[URL.linux-386]
+Archive = "go{{- .Version -}}.linux-386.tar.gz"
+Format = "tar.gz"
+URL = "{{- .BaseURL -}}{{- .Archive -}}"
+
+[URL.linux-arm64]
+Archive = "go{{- .Version -}}.linux-arm64.tar.gz"
+Format = "tar.gz"
+URL = "{{- .BaseURL -}}{{- .Archive -}}"
+
+[URL.linux-armv6l]
+Archive = "go{{- .Version -}}.linux-armv6l.tar.gz"
+Format = "tar.gz"
+URL = "{{- .BaseURL -}}{{- .Archive -}}"
+
+[URL.windows-386]
+Archive = "go{{- .Version -}}.windows-386.zip"
+Format = "zip"
+URL = "{{- .BaseURL -}}{{- .Archive -}}"
+
+[URL.windows-amd64]
+Archive = "go{{- .Version -}}.windows-amd64.zip"
+Format = "zip"
+URL = "{{- .BaseURL -}}{{- .Archive -}}"
+
+[URL.freebsd-386]
+Archive = "go{{- .Version -}}.freebsd-386.tar.gz"
+Format = "tar.gz"
+URL = "{{- .BaseURL -}}{{- .Archive -}}"
+
+[URL.freebsd-amd64]
+Archive = "go{{- .Version -}}.freebsd-386.tar.gz"
+Format = "tar.gz"
+URL = "{{- .BaseURL -}}{{- .Archive -}}"
+
+[URL.linux-ppc64le]
+Archive = "go{{- .Version -}}.linux-ppc64le.tar.gz"
+Format = "tar.gz"
+URL = "{{- .BaseURL -}}{{- .Archive -}}"
+
+[URL.windows-arm64]
+Archive = "go{{- .Version -}}.windows-arm64.zip"
+Format = "zip"
+URL = "{{- .BaseURL -}}{{- .Archive -}}"
+
+
+
+
+# Setup the unpacked software directories/files into the local bin directory.
+#
+# NOTE: The key field is mainly for sorting purposes.
+[Setup.001]
+Source = "go"
+Target = "golang"
+Condition = "all-all"
+
+
+
+
+# Config file for localized filesystem initialization.
+[Config]
+linux = """
+#!/bin/bash
+export GOROOT="${LOCAL_BIN}/golang"
+export GOPATH="${LOCAL_BIN}/gopath"
+export GOBIN="${GOPATH}/bin"
+export GOCACHE=${LOCAL_BIN}/gocache"
+export GOENV="${LOCAL_BIN}/goenv"
+export PATH="${PATH}:${GOROOT}/bin:${GOPATH}:${GOBIN}"
+
+stop_go() {
+	PATH=:${PATH}:
+	GOROOT="${GOROOT}/bin"
+	PATH=${PATH//:$GOROOT:/:}
+	PATH=${PATH//:$GOBIN:/:}
+	PATH=${PATH//:$GOPATH:/:}
+	PATH=${PATH%:}
+	unset GOROOT GOPATH GOBIN GOCACHE GOENV
+}
+
+case $1 in
+--stop)
+	stop_go
+	;;
+*)
+	if [ ! -z "$(type -p go)" ] && [ ! -z "$(type -p gofmt)" ]; then
+		1>&2 printf "localized Go started.\n"
+	else
+		1>&2 printf "[ ERROR ] localized Go failed to initalized.\n"
+		stop_go
+		exit 1
+	fi
+	;;
+esac
+"""
