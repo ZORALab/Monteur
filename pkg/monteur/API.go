@@ -22,7 +22,11 @@
 package monteur
 
 import (
+	"crypto/sha256"
 	"fmt"
+
+	//nolint:typecheck
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/httpclient"
 )
 
 // Purge is the function to remove all setup and data from the repository.
@@ -39,9 +43,48 @@ func Purge() int {
 // The action shall download all the dependencies as stated by all the
 // configuration files inside a repository's ./.configs/monteur/setup/
 // directory.
-func Setup() int {
-	fmt.Println("Placeholder: Setup function called")
-	return STATUS_ERROR
+func Setup() (statusCode int) {
+	statusCode = STATUS_OK
+
+	// placeholde test codes to test out httpclient package
+	d := &httpclient.Downloader{
+		HandleError: func(err error) {
+			fmt.Printf("Error Found: %s\n", err)
+			statusCode = STATUS_ERROR
+		},
+		HandleProgress: func(downloaded int64, total int64) {
+			percent := float64(downloaded) / float64(total) * 100
+			format := "\rProgress: %d of %d bytes (%.0f%%)"
+
+			if downloaded == total {
+				format += "\n"
+			}
+
+			fmt.Printf(format, downloaded, total, percent)
+		},
+		HandleSuccess: func() {
+			fmt.Printf("Download Completed\n")
+		},
+		Destination:     "/home/u0/Desktop/Cory",
+		CreateDirectory: true,
+	}
+
+	c := &httpclient.Checksum{
+		Hash: sha256.New(),
+	}
+
+	err := c.ParseHex("dab7d9c34361dc21ec237d584590d72500652e7c909bf082758fb63064fca0ef")
+	if err != nil {
+		fmt.Printf("Checksum error: %s\n", err)
+		return STATUS_ERROR
+	}
+
+	d.Download(httpclient.Context(),
+		"GET",
+		"https://golang.org/dl/go1.17.1.linux-amd64.tar.gz",
+		c)
+
+	return statusCode
 }
 
 // Develop is the function to configure the terminal matching local tools.
