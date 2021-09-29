@@ -199,4 +199,3 @@ linters:
     - wastedassign
     - whitespace
     - wrapcheck
-    - wsl
