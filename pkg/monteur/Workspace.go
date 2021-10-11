@@ -17,7 +17,7 @@ package monteur
 
 import (
 	"fmt"
-	"path/filepath"
+	"runtime"
 
 	//nolint:typecheck
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
@@ -31,25 +31,33 @@ import (
 //
 // This data structure is responsible for running through all Monteur operations
 type Workspace struct {
-	version    string
+	version       string
+	os            string
+	arch          string
+	computeSystem string
+
 	language   *schema.Language
 	filesystem *pathing
 	app        *schema.Software
 }
 
 func (w *Workspace) Init() error {
-	if err := w.parseWorkspaceData(); err != nil {
+	if err := w._parseWorkspaceData(); err != nil {
 		return err
 	}
 
-	if err := w.parseAppData(); err != nil {
+	if err := w._parseAppData(); err != nil {
 		return err
 	}
+
+	w.os = runtime.GOOS
+	w.arch = runtime.GOARCH
+	w.computeSystem = w.os + COMPUTE_SYSTEM_SEPARATOR + w.arch
 
 	return nil
 }
 
-func (w *Workspace) parseWorkspaceData() (err error) {
+func (w *Workspace) _parseWorkspaceData() (err error) {
 	w.version = VERSION
 	w.filesystem = &pathing{}
 	w.language = &schema.Language{}
@@ -59,7 +67,6 @@ func (w *Workspace) parseWorkspaceData() (err error) {
 		return err
 	}
 
-	p := filepath.Join(w.filesystem.ConfigDir, WORKSPACE_TOML_FILE)
 	s := struct {
 		Language   *schema.Language
 		Filesystem *pathing
@@ -68,9 +75,9 @@ func (w *Workspace) parseWorkspaceData() (err error) {
 		Filesystem: w.filesystem,
 	}
 
-	err = toml.DecodeFile(p, &s, nil)
+	err = toml.DecodeFile(w.filesystem.WorkspaceTOMLFile, &s, nil)
 	if err != nil {
-		return fmt.Errorf("%s", ERROR_FAILED_CONFIG_DECODE)
+		return fmt.Errorf("%s: %s", ERROR_FAILED_CONFIG_DECODE, err)
 	}
 
 	err = w.filesystem.Update()
@@ -81,14 +88,13 @@ func (w *Workspace) parseWorkspaceData() (err error) {
 	return nil
 }
 
-func (w *Workspace) parseAppData() (err error) {
+func (w *Workspace) _parseAppData() (err error) {
 	if w.app == nil {
 		w.app = &schema.Software{}
 	}
 
-	p := filepath.Join(w.filesystem.ConfigDir,
-		APP_DATA_DIR,
-		w.language.AlternateName+".toml")
+	p := w.filesystem.Join(w.filesystem.AppConfigDir,
+		w.language.AlternateName+TOML_EXTENSION)
 
 	s := &struct {
 		Metadata *schema.Software
@@ -110,12 +116,12 @@ func (w *Workspace) parseAppData() (err error) {
 // be uniquely constructed.
 func (w *Workspace) String() string {
 	return styler.BoxString("Das Monteur", styler.BORDER_DOUBLE) +
-		w.stringCIBasic() + "\n" +
-		w.stringCILocation() + "\n" +
-		w.stringApp()
+		w._stringCIBasic() + "\n" +
+		w._stringCILocation() + "\n" +
+		w._stringApp()
 }
 
-func (w *Workspace) stringCIBasic() string {
+func (w *Workspace) _stringCIBasic() string {
 	return fmt.Sprintf(`VERSION
 %s
 
@@ -127,7 +133,7 @@ LANGUAGE
 	)
 }
 
-func (w *Workspace) stringCILocation() string {
+func (w *Workspace) _stringCILocation() string {
 	return styler.BoxString("CI Pathing", styler.BORDER_SINGLE) +
 		fmt.Sprintf(`CURRENT DIRECTORY LOCATION
 %s
@@ -168,7 +174,7 @@ DOC LOCATION
 		)
 }
 
-func (w *Workspace) stringApp() string {
+func (w *Workspace) _stringApp() string {
 	return styler.BoxString("Product Metadata", styler.BORDER_SINGLE) +
 		fmt.Sprintf(`NAME
 %s

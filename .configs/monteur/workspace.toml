@@ -4,6 +4,7 @@ WorkingDir = "tmp/"
 BuildDir = "build/"
 ScriptDir = ".scripts/"
 BinDir = ".bin/"
+BinCfgDir = "./.bin/config.d/"
 DocDir = "public/"
 
 [Language]

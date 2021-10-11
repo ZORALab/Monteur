@@ -13,17 +13,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint:stylecheck,revive
 package monteur
 
-//nolint:stylecheck,revive
 // Critical Object Names are the file or directory names critical for Monteur.
 //
 // These critical object names are mainly to locate root repository with Monteur
 // supports.
 const (
-	GIT_DIRECTORY_NAME  = ".git"
-	MONTEUR_CFG_NAME    = ".configs/monteur"
-	WORKSPACE_TOML_FILE = "workspace.toml"
+	TOML_EXTENSION           = ".toml"
+	GIT_DIRECTORY_NAME       = ".git"
+	MONTEUR_CFG_NAME         = ".configs/monteur"
+	WORKSPACE_TOML_FILE      = "workspace" + TOML_EXTENSION
+	COMPUTE_SYSTEM_SEPARATOR = "-"
+	BIN_CONFIG_FILENAME      = "config"
+)
+
+// Critical object names are the file or directory names critical for Setup Fx.
+const (
+	SETUP_CONFIG_TOML_FILE     = "setup/config" + TOML_EXTENSION
+	SETUP_PROGRAMS_DIRECTORY   = "setup/programs/"
+	SETUP_PROGRAMS_PERMISSION  = 0700
+	SETUP_CONFIG_PERMISSION    = 0600
+	SETUP_DIRECTORY_PERMISSION = 0755
 )
 
 // Standard config files pathing defined for Monteur to operate consistently.
@@ -31,7 +43,51 @@ const (
 	APP_DATA_DIR = "app"
 )
 
-//nolint:stylecheck,revive
+// Dependencies sourcing type enumerated value for setup function.
+//
+// It is used in every toml config file inside setup/programs/ config directory
+// for identifying how to source your dependency program.
+const (
+	BIN_PROGRAM_TYPE_HTTPS_DOWNLOAD = "https-download"
+	BIN_PROGRAM_TYPE_LOCAL_SYSTEM   = "local-system"
+)
+
+// Supported operating function types enumerated IDs.
+//
+// It is used in every toml config file inside setup/program/ config directory
+// for compatible function types across different stages.
+const (
+	BIN_PROGRAM_FORMAT_TAR_GZ = "tar.gz"
+	BIN_PROGRAM_FORMAT_ZIP    = "zip"
+
+	BIN_PROGRAM_SETUP_INSTRUCTION_MOVE   = "move"
+	BIN_PROGRAM_SETUP_INSTRUCTION_SCRIPT = "script"
+)
+
+// Supported variables keys in key:value variables placholders.
+//
+// It is used in every toml config file inside setup/program/ config directory
+// for placeholding variable elements in the fields' value.
+const (
+	BIN_PROGRAM_VAR_OS      = "OS"
+	BIN_PROGRAM_VAR_ARCH    = "Arch"
+	BIN_PROGRAM_VAR_COMPUTE = "ComputeSystem"
+	BIN_PROGRAM_VAR_TMP     = "WorkingDir"
+	BIN_PROGRAM_VAR_BIN     = "BinDir"
+	BIN_PROGRAM_VAR_CFG     = "ConfigDir"
+	BIN_PROGRAM_VAR_ARCHIVE = "Archive"
+	BIN_PROGRAM_VAR_FORMAT  = "Format"
+	BIN_PROGRAM_VAR_METHOD  = "Method"
+	BIN_PROGRAM_VAR_URL     = "URL"
+)
+
+// Channel messages key for key:value identifications in chmsg.Message object.
+const (
+	chmsg_ERROR  = "error"
+	chmsg_STATUS = "status"
+	chmsg_DONE   = "done"
+)
+
 // Filesystem tags are common keys for setting various working directories
 // pathing.
 const (
@@ -71,6 +127,13 @@ const (
 	// This is mainly for Monteur to search for build commands and also
 	// the location where Monteur setup all the build binaries.
 	BINDIR_TAG = "BinDir"
+
+	// BINCFG_TAG is the location of all local binary configurations.
+	//
+	// The common location would be `.bin/config.d/` directory inside
+	// BINDIR_TAG. This is mainly to store all binary configurations for
+	// sourcing.
+	BINCFG_TAG = "BinCfgDir"
 
 	// DOCDIR_TAG is the location for housing repo's documentations.
 	//

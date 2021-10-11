@@ -17,67 +17,68 @@ BaseURL = "https://golang.org/dl/"
 
 
 
-# Supported OS and CPU Architectures download from URL
-# The Key for supported OS and CPU complies to the format [URL.{GOOS}-{GOARCH}]
+# Supported OS and CPU Architectures program sources. The Key for supported OS
+# and CPU complies to the format:
+#	[Sources.{GOOS}-{GOARCH}]
 # Only list out supported packages will do.
-[URL.darwin-amd64]
-Archive = "go{{- .Version -}}.darwin-amd64.tar.gz"
+[Sources.darwin-amd64]
 Format = "tar.gz"
+Archive = "go{{- .Version -}}.darwin-amd64.{{- .Format -}}"
 URL = "{{- .BaseURL -}}{{- .Archive -}}"
 
-[URL.darwin-arm64]
-Archive = "go{{- .Version -}}.darwin-arm64.tar.gz"
+[Sources.darwin-arm64]
 Format = "tar.gz"
+Archive = "go{{- .Version -}}.darwin-arm64.{{- .Format -}}"
 URL = "{{- .BaseURL -}}{{- .Archive -}}"
 
-[URL.linux-amd64]
-Archive = "go{{- .Version -}}.linux-amd64.tar.gz"
+[Sources.linux-amd64]
 Format = "tar.gz"
+Archive = "go{{- .Version -}}.linux-amd64.{{- .Format -}}"
 URL = "{{- .BaseURL -}}{{- .Archive -}}"
 
-[URL.linux-386]
-Archive = "go{{- .Version -}}.linux-386.tar.gz"
+[Sources.linux-386]
 Format = "tar.gz"
+Archive = "go{{- .Version -}}.linux-386.{{- .Format -}}"
 URL = "{{- .BaseURL -}}{{- .Archive -}}"
 
-[URL.linux-arm64]
-Archive = "go{{- .Version -}}.linux-arm64.tar.gz"
+[Sources.linux-arm64]
 Format = "tar.gz"
+Archive = "go{{- .Version -}}.linux-arm64.{{- .Format -}}"
 URL = "{{- .BaseURL -}}{{- .Archive -}}"
 
-[URL.linux-armv6l]
-Archive = "go{{- .Version -}}.linux-armv6l.tar.gz"
+[Sources.linux-armv6l]
 Format = "tar.gz"
+Archive = "go{{- .Version -}}.linux-armv6l.{{- .Format -}}"
 URL = "{{- .BaseURL -}}{{- .Archive -}}"
 
-[URL.windows-386]
-Archive = "go{{- .Version -}}.windows-386.zip"
+[Sources.windows-386]
 Format = "zip"
+Archive = "go{{- .Version -}}.windows-386.{{- .Format -}}"
 URL = "{{- .BaseURL -}}{{- .Archive -}}"
 
-[URL.windows-amd64]
-Archive = "go{{- .Version -}}.windows-amd64.zip"
+[Sources.windows-amd64]
 Format = "zip"
+Archive = "go{{- .Version -}}.windows-amd64.{{- .Format -}}"
 URL = "{{- .BaseURL -}}{{- .Archive -}}"
 
-[URL.freebsd-386]
-Archive = "go{{- .Version -}}.freebsd-386.tar.gz"
+[Sources.freebsd-386]
 Format = "tar.gz"
+Archive = "go{{- .Version -}}.freebsd-386.{{- .Format -}}"
 URL = "{{- .BaseURL -}}{{- .Archive -}}"
 
-[URL.freebsd-amd64]
-Archive = "go{{- .Version -}}.freebsd-386.tar.gz"
+[Sources.freebsd-amd64]
 Format = "tar.gz"
+Archive = "go{{- .Version -}}.freebsd-386.{{- .Format -}}"
 URL = "{{- .BaseURL -}}{{- .Archive -}}"
 
-[URL.linux-ppc64le]
-Archive = "go{{- .Version -}}.linux-ppc64le.tar.gz"
+[Sources.linux-ppc64le]
 Format = "tar.gz"
+Archive = "go{{- .Version -}}.linux-ppc64le.{{- .Format -}}"
 URL = "{{- .BaseURL -}}{{- .Archive -}}"
 
-[URL.windows-arm64]
-Archive = "go{{- .Version -}}.windows-arm64.zip"
+[Sources.windows-arm64]
 Format = "zip"
+Archive = "go{{- .Version -}}.windows-arm64.{{- .Format -}}"
 URL = "{{- .BaseURL -}}{{- .Archive -}}"
 
 
@@ -86,10 +87,11 @@ URL = "{{- .BaseURL -}}{{- .Archive -}}"
 # Setup the unpacked software directories/files into the local bin directory.
 #
 # NOTE: The key field is mainly for sorting purposes.
-[Setup.001]
+[[Setup]]
+Type = "move"
+Condition = "all-all"
 Source = "go"
 Target = "golang"
-Condition = "all-all"
 
 
 
@@ -98,12 +100,12 @@ Condition = "all-all"
 [Config]
 linux = """
 #!/bin/bash
+export LOCAL_BIN="${LOCAL_BIN:-{{- .BinDir -}}}"
 export GOROOT="${LOCAL_BIN}/golang"
 export GOPATH="${LOCAL_BIN}/gopath"
 export GOBIN="${GOPATH}/bin"
-export GOCACHE=${LOCAL_BIN}/gocache"
+export GOCACHE="${LOCAL_BIN}/gocache"
 export GOENV="${LOCAL_BIN}/goenv"
-export PATH="${PATH}:${GOROOT}/bin:${GOPATH}:${GOBIN}"
 
 stop_go() {
 	PATH=:${PATH}:
@@ -120,12 +122,13 @@ case $1 in
 	stop_go
 	;;
 *)
+	export PATH="${PATH}:${GOROOT}/bin:${GOPATH}:${GOBIN}"
+
 	if [ ! -z "$(type -p go)" ] && [ ! -z "$(type -p gofmt)" ]; then
-		1>&2 printf "localized Go started.\n"
+		1>&2 printf "[ DONE  ] localized Go started.\\n"
 	else
-		1>&2 printf "[ ERROR ] localized Go failed to initalized.\n"
+		1>&2 printf "[ ERROR ] localized Go failed to initalized.\\n"
 		stop_go
-		exit 1
 	fi
 	;;
 esac
