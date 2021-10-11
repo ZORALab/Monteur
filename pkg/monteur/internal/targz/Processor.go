@@ -23,6 +23,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 type Processor struct {
@@ -337,41 +338,99 @@ func (tg *Processor) _extractFiles() (err error) {
 		switch {
 		case err == io.EOF:
 			return nil
-		case err != nil:
+		case err != nil: // unknown error
 			return fmt.Errorf("%s: %s",
 				ERROR_ARCHIVE_FILE_HEADER_FAILED,
 				err,
 			)
 		case header.Typeflag == tar.TypeDir:
-			err = os.Mkdir(path, DIR_PERMISSION)
+			err = tg._restoreDirectory(path, header)
 			if err != nil {
-				return fmt.Errorf("%s: %s",
-					ERROR_ARCHIVE_FILE_HEADER_FAILED,
-					err,
-				)
+				return err
 			}
 		case header.Typeflag == tar.TypeReg:
-			f, err := os.Create(path)
+			err = tg._restoreFile(path, header)
 			if err != nil {
-				return fmt.Errorf("%s: %s",
-					ERROR_ARCHIVE_FILE_HEADER_FAILED,
-					err,
-				)
-			}
-
-			_, err = io.Copy(f, tg.reader)
-			f.Close()
-
-			if err != nil {
-				return fmt.Errorf("%s: %s",
-					ERROR_ARCHIVE_FILE_HEADER_FAILED,
-					err,
-				)
+				return err
 			}
 		default:
 			return fmt.Errorf("%s", ERROR_ARCHIVE_EXTRACT_FAILED)
 		}
 	}
+}
+
+func (tg *Processor) _restoreDirectory(path string,
+	header *tar.Header) (err error) {
+	// create directory
+	err = os.Mkdir(path, DIR_PERMISSION)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			ERROR_ARCHIVE_FILE_HEADER_FAILED,
+			err,
+		)
+	}
+
+	return tg._restoreMetadata(path, header, DIR_PERMISSION)
+}
+
+func (tg *Processor) _restoreFile(path string,
+	header *tar.Header) (err error) {
+	f, err := os.Create(path)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			ERROR_ARCHIVE_FILE_HEADER_FAILED,
+			err,
+		)
+	}
+
+	_, err = io.Copy(f, tg.reader)
+	f.Close()
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			ERROR_ARCHIVE_FILE_HEADER_FAILED,
+			err,
+		)
+	}
+
+	return tg._restoreMetadata(path, header, FILE_PERMISSION)
+}
+
+func (tg *Processor) _restoreMetadata(path string,
+	header *tar.Header, defaultMode os.FileMode) (err error) {
+	mode := os.FileMode(header.Mode)
+	if mode < 0000 || mode > 0777 {
+		mode = defaultMode
+	}
+
+	err = os.Chmod(path, mode)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			ERROR_ARCHIVE_FILE_HEADER_FAILED,
+			err,
+		)
+	}
+
+	// restore file's timeline
+	ModTime := header.ModTime
+	AccessTime := header.AccessTime
+	Now := time.Now()
+
+	if ModTime.IsZero() {
+		ModTime = Now
+	}
+
+	if AccessTime.IsZero() {
+		AccessTime = Now
+	}
+
+	err = os.Chtimes(path, AccessTime, ModTime)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			ERROR_ARCHIVE_FILE_HEADER_FAILED,
+			err,
+		)
+	}
+	return nil
 }
 
 // sanitize archive file pathing from

@@ -18,5 +18,6 @@ package targz
 //nolint:stylecheck,revive
 const (
 	ARCHIVE_EXTENSION = ".tar.gz"
+	FILE_PERMISSION   = 0655
 	DIR_PERMISSION    = 0755
 )
