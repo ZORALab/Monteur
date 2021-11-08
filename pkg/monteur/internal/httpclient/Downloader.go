@@ -47,6 +47,10 @@ type Downloader struct {
 	// is completed.
 	HandleSuccess func()
 
+	// HandleRedirect is a function handler to execute upon receiving a
+	// redirect instruction from the server.
+	HandleRedirect func(req *http.Request, via []*http.Request) error
+
 	// Destination is the directory + (optionally) filename for file saving.
 	//
 	// If filename is not given. Downloader tries to determine the filename
@@ -237,6 +241,11 @@ func (d *Downloader) init(ctx context.Context,
 	// setup the http client
 	client = &http.Client{
 		Timeout: d.Timeout,
+	}
+
+	// insert redirect function if available
+	if d.HandleRedirect != nil {
+		client.CheckRedirect = d.HandleRedirect
 	}
 
 	return client, nil
