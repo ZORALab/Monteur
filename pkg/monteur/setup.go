@@ -222,6 +222,8 @@ func (fx *setup) _shopPrograms() (err error) {
 	var ctx context.Context
 	var cancel func()
 	var rx chan chmsg.Message
+	var isDone bool
+	var count uint
 
 	ctx, cancel = context.WithCancel(context.Background())
 	rx = make(chan chmsg.Message, len(fx.programs)*2)
@@ -229,6 +231,7 @@ func (fx *setup) _shopPrograms() (err error) {
 	// initiate all programs to get the program from its source
 	for _, v := range fx.programs {
 		go v.Get(ctx, rx)
+		count += 1
 	}
 
 	// process all statuses
@@ -242,8 +245,17 @@ func (fx *setup) _shopPrograms() (err error) {
 			}
 
 			rmsg, ok = msg.Get(chmsg_DONE)
-			if ok && rmsg.(bool) {
-				return nil
+			if ok {
+				isDone = rmsg.(bool)
+				if !isDone {
+					continue
+				}
+
+				count -= 1
+
+				if count == 0 {
+					return nil
+				}
 			}
 
 			rmsg, ok = msg.Get(chmsg_ERROR)
@@ -256,8 +268,8 @@ func (fx *setup) _shopPrograms() (err error) {
 			}
 
 			rmsg, ok = msg.Get(chmsg_STATUS)
-			status = rmsg.(string)
-			if ok && status != "" {
+			if ok {
+				status = rmsg.(string)
 				fmt.Printf("%s\n", status)
 			}
 		}
