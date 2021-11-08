@@ -375,6 +375,15 @@ func (tg *Processor) _restoreDirectory(path string,
 
 func (tg *Processor) _restoreFile(path string,
 	header *tar.Header) (err error) {
+	// ensure the directory path is always available
+	err = os.MkdirAll(filepath.Dir(path), DIR_PERMISSION)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			ERROR_ARCHIVE_FILE_HEADER_FAILED,
+			err,
+		)
+	}
+
 	f, err := os.Create(path)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
