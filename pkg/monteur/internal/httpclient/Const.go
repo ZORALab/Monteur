@@ -28,7 +28,4 @@ const (
 
 	// DIR_PERMISSION is the default access permission for directory.
 	DIR_PERMISSION = 0700
-
-	// ERROR_TAG is the package error message tag for easier error reading.
-	ERROR_TAG = "httpclient error | "
 )

@@ -27,12 +27,14 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
+
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/checksum" //nolint:typecheck
 )
 
 type Downloader struct {
 	request   *http.Request
 	indicator *indicator
-	checksum  *Checksum
+	checksum  *checksum.Hasher
 
 	// Headers are the additional headers to add into the request.
 	Headers map[string]string
@@ -81,6 +83,13 @@ type Downloader struct {
 	// By default (false), Downloader will not create the directory for the
 	// destination pathing and will throw an error.
 	CreateDirectory bool
+
+	// RetainOnError is the decision to retain download artifact post error.
+	//
+	// By default (false), Downloader will not retain the artifact and
+	// delete immediately after any error occured (e.g. mismatched
+	// checksum).
+	RetainOnError bool
 }
 
 // Download is to initiate a download with a given URL to destination location.
@@ -97,7 +106,7 @@ type Downloader struct {
 func (d *Downloader) Download(ctx context.Context,
 	method string,
 	urlstr string,
-	checksum *Checksum) {
+	checksum *checksum.Hasher) {
 	var response *http.Response
 	var client *http.Client
 	var inReader io.Reader
@@ -176,7 +185,7 @@ func (d *Downloader) Download(ctx context.Context,
 func (d *Downloader) init(ctx context.Context,
 	method string,
 	urlStr string,
-	checksum *Checksum) (client *http.Client, err error) {
+	checksum *checksum.Hasher) (client *http.Client, err error) {
 	// validate saving location
 	if d.Destination == "" {
 		d.Destination = "."
@@ -184,8 +193,7 @@ func (d *Downloader) init(ctx context.Context,
 
 	d.Destination, err = filepath.Abs(d.Destination)
 	if err != nil {
-		return nil, fmt.Errorf("%s%s: %s",
-			ERROR_TAG,
+		return nil, fmt.Errorf("%s: %s",
 			ERROR_PATH_INVALID,
 			d.Destination,
 		)
@@ -193,7 +201,7 @@ func (d *Downloader) init(ctx context.Context,
 
 	// validate request method
 	if method == "" {
-		return nil, fmt.Errorf("%s%s", ERROR_TAG, ERROR_METHOD_MISSING)
+		return nil, fmt.Errorf(ERROR_METHOD_MISSING)
 	}
 
 	// configure progress bar indicator
@@ -205,7 +213,7 @@ func (d *Downloader) init(ctx context.Context,
 
 	// inspect checksum is usable before acceptance
 	if checksum != nil {
-		err = checksum.init()
+		err = checksum.IsHealthy()
 		if err != nil {
 			return nil, err
 		}
@@ -216,11 +224,7 @@ func (d *Downloader) init(ctx context.Context,
 	// configure new http request for the downloader
 	d.request, err = http.NewRequest(method, urlStr, nil)
 	if err != nil {
-		return nil, fmt.Errorf("%s%s: %s",
-			ERROR_TAG,
-			ERROR_REQUEST_INIT_FAILED,
-			err,
-		)
+		return nil, fmt.Errorf("%s: %s", ERROR_REQUEST_INIT_FAILED, err)
 	}
 
 	// add headers if available
@@ -253,6 +257,7 @@ func (d *Downloader) init(ctx context.Context,
 
 func (d *Downloader) checksumArtifact() (err error) {
 	var f *os.File
+	var ok bool
 
 	if d.checksum == nil {
 		return nil
@@ -261,39 +266,38 @@ func (d *Downloader) checksumArtifact() (err error) {
 	// obtain the checksum value from the downloaded file
 	f, err = os.Open(d.Destination + DOWNLOAD_EXTENSION)
 	if err != nil {
-		return fmt.Errorf("%s%s: %s",
-			ERROR_TAG,
+		return fmt.Errorf("%s: %s",
 			ERROR_CHECKSUM_BAD_FILE,
 			d.Destination+DOWNLOAD_EXTENSION,
 		)
 	}
 
-	_, err = io.Copy(d.checksum.Hash, f)
+	// initiate checksum comparison
+	ok, err = d.checksum.Compare(f)
 	f.Close()
 
-	if err != nil {
-		return fmt.Errorf("%s%s: %s",
-			ERROR_TAG,
-			ERROR_CHECKSUM_BAD_READ,
-			d.Destination+DOWNLOAD_EXTENSION,
-		)
-	}
-
-	// initiate the checksum comparison
-	err = d.checksum.compare()
+	// no error
 	if err == nil {
-		return nil
+		if ok {
+			return nil // matching checksum
+		}
+
+		return fmt.Errorf(ERROR_CHECKSUM_MISMATCHED)
 	}
 
-	// mismatched checksum but requested to retain the artifact
-	if d.checksum.RetainOnError {
-		return err
+	err = fmt.Errorf("%s: [%s] %s",
+		ERROR_CHECKSUM,
+		d.Destination+DOWNLOAD_EXTENSION,
+		err,
+	)
+
+	if d.RetainOnError {
+		return err // requested to retain artifact
 	}
 
 	// otherwise attempting to deleting it
 	if os.Remove(d.Destination+DOWNLOAD_EXTENSION) != nil {
-		err = fmt.Errorf("%s%s: %s",
-			ERROR_TAG,
+		err = fmt.Errorf("%s%s and %s",
 			ERROR_CHECKSUM_DELETE_FAILED,
 			err,
 		)
@@ -305,11 +309,7 @@ func (d *Downloader) checksumArtifact() (err error) {
 func (d *Downloader) renameArtifact() (err error) {
 	err = os.Rename(d.Destination+DOWNLOAD_EXTENSION, d.Destination)
 	if err != nil {
-		err = fmt.Errorf("%s%s: %s",
-			ERROR_TAG,
-			ERROR_FILE_RENAMED_FAILED,
-			err,
-		)
+		err = fmt.Errorf("%s: %s", ERROR_FILE_RENAMED_FAILED, err)
 	}
 
 	return err
@@ -325,7 +325,7 @@ func (d *Downloader) tryResume() (err error) {
 	case os.IsNotExist(err):
 		return nil
 	case err != nil:
-		return fmt.Errorf("%s%s: %s", ERROR_TAG, ERROR_FILE_STAT, err)
+		return fmt.Errorf("%s: %s", ERROR_FILE_STAT, err)
 	case !fi.Mode().IsRegular():
 		return nil
 	}
@@ -334,8 +334,7 @@ func (d *Downloader) tryResume() (err error) {
 	if d.Overwrite {
 		err = os.Remove(d.Destination + DOWNLOAD_EXTENSION)
 		if err != nil {
-			return fmt.Errorf("%s%s: %s",
-				ERROR_TAG,
+			return fmt.Errorf("%s: %s",
 				ERROR_FILE_OVERWRITE_FAILED,
 				err,
 			)
@@ -368,10 +367,7 @@ func (d *Downloader) obtainMetadata(client *http.Client) (err error) {
 	// request header and extract all target metadata
 	response, err = client.Head(d.request.URL.String())
 	if err != nil {
-		return fmt.Errorf("%s%s: %s",
-			ERROR_TAG,
-			ERROR_REQUEST_FAILED,
-			err)
+		return fmt.Errorf("%s: %s", ERROR_REQUEST_FAILED, err)
 	}
 
 	length = response.Header.Get("content-length")
@@ -413,7 +409,7 @@ func (d *Downloader) processFilepath(disposition string) (err error) {
 		goto check_overwrite
 	default:
 		// non-proceeding errors
-		return fmt.Errorf("%s%s: %s", ERROR_TAG, ERROR_FILE_STAT, err)
+		return fmt.Errorf("%s: %s", ERROR_FILE_STAT, err)
 	}
 
 	// parsing filenames from header first then url as last resort
@@ -431,7 +427,7 @@ get_filename_from_url:
 	target, err = url.Parse(d.request.URL.String())
 
 	if err != nil {
-		return fmt.Errorf("%s%s", ERROR_TAG, ERROR_FILENAME_MISSING)
+		return fmt.Errorf(ERROR_FILENAME_MISSING)
 	}
 
 	d.Destination = filepath.Join(d.Destination, path.Base(target.Path))
@@ -450,29 +446,17 @@ create_directory:
 	case os.IsNotExist(err):
 		return nil
 	case err != nil:
-		return fmt.Errorf("%s%s: %s",
-			ERROR_TAG,
-			ERROR_PATH_INVALID,
-			err,
-		)
+		return fmt.Errorf("%s: %s", ERROR_PATH_INVALID, err)
 	case fi.Mode().IsRegular():
 		// permit to proceed for checking overwrite setting
 	default:
-		return fmt.Errorf("%s%s: %s",
-			ERROR_TAG,
-			ERROR_PATH_INVALID,
-			d.Destination,
-		)
+		return fmt.Errorf("%s: %s", ERROR_PATH_INVALID, d.Destination)
 	}
 
 check_overwrite:
 	// destination is now directory (exist) + filename (exist)
 	if !d.Overwrite {
-		return fmt.Errorf("%s%s: %s",
-			ERROR_TAG,
-			ERROR_FILE_EXISTS,
-			d.Destination,
-		)
+		return fmt.Errorf("%s: %s", ERROR_FILE_EXISTS, d.Destination)
 	}
 
 	return nil
@@ -481,20 +465,12 @@ check_overwrite:
 func (d *Downloader) createDirectory(pathing string) (err error) {
 	_, err = os.Stat(pathing)
 	if os.IsNotExist(err) && !d.CreateDirectory {
-		return fmt.Errorf("%s%s: %s",
-			ERROR_TAG,
-			ERROR_PATH_MISSING,
-			pathing,
-		)
+		return fmt.Errorf("%s: %s", ERROR_PATH_MISSING, pathing)
 	}
 
 	err = os.MkdirAll(pathing, DIR_PERMISSION)
 	if err != nil {
-		return fmt.Errorf("%s%s: %s",
-			ERROR_TAG,
-			ERROR_PATH_INVALID,
-			err,
-		)
+		return fmt.Errorf("%s: %s", ERROR_PATH_INVALID, err)
 	}
 
 	return nil
@@ -502,16 +478,12 @@ func (d *Downloader) createDirectory(pathing string) (err error) {
 
 func (d *Downloader) processSize(length string) (err error) {
 	if length == "" {
-		return fmt.Errorf("%s%s", ERROR_TAG, ERROR_FILESIZE_MISSING)
+		return fmt.Errorf(ERROR_FILESIZE_MISSING)
 	}
 
 	d.indicator.total, err = strconv.ParseInt(length, 10, 64)
 	if err != nil {
-		return fmt.Errorf("%s%s: %s",
-			ERROR_TAG,
-			ERROR_FILESIZE_MISSING,
-			err,
-		)
+		return fmt.Errorf("%s: %s", ERROR_FILESIZE_MISSING, err)
 	}
 
 	return nil

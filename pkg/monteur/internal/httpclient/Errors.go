@@ -18,21 +18,19 @@ package httpclient
 // Error messages are the package standardized messages
 //nolint:stylecheck,revive
 const (
-	ERROR_CHECKSUM_INVALID       = "given checksum hasher is invalid"
-	ERROR_CHECKSUM_BAD           = "given checksum value is not usable"
-	ERROR_CHECKSUM_MISMATCHED    = "checksum mismatched"
+	ERROR_CHECKSUM               = "error when checksum"
 	ERROR_CHECKSUM_BAD_FILE      = "failed to open file for checksum"
-	ERROR_CHECKSUM_BAD_READ      = "error on reading file for checksum"
+	ERROR_CHECKSUM_DELETE_FAILED = "failed to remove bad checksum file"
+	ERROR_CHECKSUM_MISMATCHED    = "checksum mismatched"
 	ERROR_FILE_EXISTS            = "destination file already exists"
 	ERROR_FILE_OVERWRITE_FAILED  = "failed to overwrite destination file"
 	ERROR_FILE_STAT              = "failed to obtain file stat locally"
 	ERROR_FILE_RENAMED_FAILED    = "failed to rename downloaded file"
 	ERROR_FILENAME_MISSING       = "failed to obtain filename remotely"
 	ERROR_FILESIZE_MISSING       = "failed to obtain filesize remotely"
+	ERROR_METHOD_MISSING         = "request method is missing"
 	ERROR_PATH_INVALID           = "given Destination pathing is invalid"
 	ERROR_PATH_MISSING           = "given Destination pathing is missing"
 	ERROR_REQUEST_FAILED         = "failed to perform request remotely"
 	ERROR_REQUEST_INIT_FAILED    = "failed to initialize request"
-	ERROR_METHOD_MISSING         = "request method is missing"
-	ERROR_CHECKSUM_DELETE_FAILED = "failed to remove bad checksum file"
 )
