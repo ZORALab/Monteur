@@ -15,7 +15,6 @@
 
 package targz
 
-//nolint:stylecheck,revive
 const (
 	ERROR_ARCHIVE_EXTRACT_FAILED      = "failed to extract archive file"
 	ERROR_ARCHIVE_FILE_HEADER_FAILED  = "failed to read header from archive"
