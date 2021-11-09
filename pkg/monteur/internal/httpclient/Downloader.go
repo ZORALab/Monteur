@@ -28,7 +28,7 @@ import (
 	"strconv"
 	"time"
 
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/checksum" //nolint:typecheck
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/checksum"
 )
 
 type Downloader struct {

@@ -15,7 +15,6 @@
 
 package httpclient
 
-//nolint:stylecheck,revive
 const (
 	// DOWNLOAD_EXTENSION is the common extension indicating download status
 	DOWNLOAD_EXTENSION = ".download"

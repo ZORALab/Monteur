@@ -16,7 +16,6 @@
 package httpclient
 
 // Error messages are the package standardized messages
-//nolint:stylecheck,revive
 const (
 	ERROR_CHECKSUM               = "error when checksum"
 	ERROR_CHECKSUM_BAD_FILE      = "failed to open file for checksum"
