@@ -43,6 +43,19 @@ const (
 	APP_DATA_DIR = "app"
 )
 
+// Checksum constants for setting the checksum hasher and parser types.
+//
+// These are the supported checksum formats and algo types.
+const (
+	CHECKSUM_FORMAT_BASE64     = "base64"
+	CHECKSUM_FORMAT_HEX        = "hex"
+	CHECKSUM_FORMAT_BASE64_URL = "base64-url"
+
+	CHECKSUM_ALGO_SHA512 = "sha512"
+	CHECKSUM_ALGO_SHA256 = "sha256"
+	CHECKSUM_ALGO_MD5    = "md5"
+)
+
 // Dependencies sourcing type enumerated value for setup function.
 //
 // It is used in every toml config file inside setup/programs/ config directory

@@ -24,10 +24,17 @@ import (
 	"strings"
 	"text/template"
 
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/checksum"   //nolint:typecheck
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/chmsg"      //nolint:typecheck
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/httpclient" //nolint:typecheck
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/targz"      //nolint:typecheck
 )
+
+type chksum struct {
+	Type   string
+	Format string
+	Value  string
+}
 
 type binProgram struct {
 	Metadata *struct {
@@ -39,11 +46,12 @@ type binProgram struct {
 	Variables map[string]interface{}
 
 	Sources map[string]*struct {
-		Archive string
-		Format  string
-		URL     string
-		Method  string
-		Headers []string
+		Archive  string
+		Format   string
+		URL      string
+		Method   string
+		Headers  []string
+		Checksum *chksum
 	}
 
 	Setup []*struct {
@@ -136,113 +144,195 @@ func (app *binProgram) _sanitizeMetadata() (err error) {
 }
 
 func (app *binProgram) _sanitizeSources() (err error) {
-	var headers []string
+	defer delete(app.Variables, BIN_PROGRAM_VAR_FORMAT)
+	defer delete(app.Variables, BIN_PROGRAM_VAR_ARCHIVE)
+	defer delete(app.Variables, BIN_PROGRAM_VAR_METHOD)
+	defer delete(app.Variables, BIN_PROGRAM_VAR_URL)
 
 	for k, v := range app.Sources {
-		// process Format
-		v.Format, err = app.__processVar(v.Format)
+		v.Format, err = app.__sanitizeSourceFormat(k, v.Format)
 		if err != nil {
-			return fmt.Errorf("%s%s: [%s] %s for %s",
-				ERROR_SETUP_TAG,
-				ERROR_SETUP_SOURCE_ARCHIVE_FORMAT_BAD,
-				k,
-				v.Format,
-				app.Metadata.Name,
-			)
+			return err
 		}
-
-		switch v.Format {
-		case BIN_PROGRAM_FORMAT_TAR_GZ:
-			app._unarchiveFx = app.__unarchiveTarGz
-		case BIN_PROGRAM_FORMAT_ZIP:
-			app._unarchiveFx = app.__unarchiveZip
-		default:
-			return fmt.Errorf("%s%s: [%s] %s for %s",
-				ERROR_SETUP_TAG,
-				ERROR_SETUP_SOURCE_ARCHIVE_FORMAT_UNKNOWN,
-				k,
-				v.Format,
-				app.Metadata.Name,
-			)
-		}
-
-		v.Format = strings.ToLower(v.Format)
 		app.Variables[BIN_PROGRAM_VAR_FORMAT] = v.Format
-		defer delete(app.Variables, BIN_PROGRAM_VAR_FORMAT)
 
-		// process Archive
-		v.Archive, err = app.__processVar(v.Archive)
+		v.Archive, err = app.__sanitizeSourceArchive(k, v.Archive)
 		if err != nil {
-			delete(app.Variables, BIN_PROGRAM_VAR_FORMAT)
-
-			return fmt.Errorf("%s%s: [%s] %s for %s",
-				ERROR_SETUP_TAG,
-				ERROR_SETUP_SOURCE_ARCHIVE_BAD,
-				k,
-				v.Archive,
-				app.Metadata.Name,
-			)
+			return err
 		}
-
 		app.Variables[BIN_PROGRAM_VAR_ARCHIVE] = v.Archive
-		defer delete(app.Variables, BIN_PROGRAM_VAR_ARCHIVE)
 
-		// process Method
-		v.Method, err = app.__processVar(v.Method)
+		v.Method, err = app.__sanitizeSourceMethod(k, v.Method)
 		if err != nil {
-			return fmt.Errorf("%s%s: [%s] %s for %s",
-				ERROR_SETUP_TAG,
-				ERROR_SETUP_SOURCE_METHOD_BAD,
-				k,
-				v.Method,
-				app.Metadata.Name,
-			)
+			return err
 		}
-
 		app.Variables[BIN_PROGRAM_VAR_METHOD] = v.Method
-		defer delete(app.Variables, BIN_PROGRAM_VAR_METHOD)
 
-		// process URL
-		v.URL, err = app.__processVar(v.URL)
+		v.URL, err = app.__sanitizeSourceURL(k, v.URL)
 		if err != nil {
-			return fmt.Errorf("%s%s: [%s] %s for %s",
-				ERROR_SETUP_TAG,
-				ERROR_SETUP_SOURCE_BAD,
-				k,
-				v.URL,
-				app.Metadata.Name,
-			)
+			return err
 		}
-
 		app.Variables[BIN_PROGRAM_VAR_URL] = v.URL
-		defer delete(app.Variables, BIN_PROGRAM_VAR_URL)
 
-		// process Headers
-		headers = []string{}
-		for _, h := range v.Headers {
-			h, err = app.__processVar(h)
-			if err != nil {
-				return fmt.Errorf("%s%s: [%s] %s for %s",
-					ERROR_SETUP_TAG,
-					ERROR_SETUP_SOURCE_HEADER_BAD,
-					h,
-					app.Metadata.Name,
-				)
-			}
-
-			headers = append(headers, h)
+		v.Headers, err = app.__sanitizeSourceHeaders(k, v.Headers)
+		if err != nil {
+			return err
 		}
-		v.Headers = headers
+
+		v.Checksum, err = app.__sanitizeSourceChecksum(k, v.Checksum)
+		if err != nil {
+			return err
+		}
 
 		// update structure to the latest
 		app.Sources[k] = v
 	}
 
-	// delete localized variables
-	delete(app.Variables, BIN_PROGRAM_VAR_FORMAT)
-	delete(app.Variables, BIN_PROGRAM_VAR_ARCHIVE)
-
 	return nil
+}
+
+func (app *binProgram) __sanitizeSourceChecksum(key string,
+	value *chksum) (cs *chksum, err error) {
+	if value == nil {
+		return nil, nil
+	}
+
+	if value.Value == "" {
+		return nil, fmt.Errorf("%s%s: [%s] %s for %s",
+			ERROR_SETUP_TAG,
+			ERROR_SETUP_CHECKSUM_BAD,
+			app.Metadata.Name,
+			value.Value,
+			key,
+		)
+	}
+
+	if value.Type == "" {
+		return nil, fmt.Errorf("%s%s: [%s] %s for %s",
+			ERROR_SETUP_TAG,
+			ERROR_SETUP_CHECKSUM_BAD_ALGO,
+			app.Metadata.Name,
+			value.Type,
+			key,
+		)
+	}
+
+	if value.Format == "" {
+		return nil, fmt.Errorf("%s%s: [%s] %s for %s",
+			ERROR_SETUP_TAG,
+			ERROR_SETUP_CHECKSUM_BAD,
+			app.Metadata.Name,
+			value.Value,
+			key,
+		)
+	}
+
+	value.Type = strings.ToLower(value.Type)
+	value.Format = strings.ToLower(value.Format)
+
+	return value, nil
+}
+
+func (app *binProgram) __sanitizeSourceHeaders(key string,
+	value []string) (headers []string, err error) {
+	headers = []string{}
+
+	for _, h := range value {
+		h, err = app.__processVar(h)
+		if err != nil {
+			return []string{}, fmt.Errorf("%s%s: [%s] %s for %s",
+				ERROR_SETUP_TAG,
+				ERROR_SETUP_SOURCE_HEADER_BAD,
+				key,
+				h,
+				app.Metadata.Name,
+			)
+		}
+
+		headers = append(headers, h)
+	}
+
+	return headers, nil
+}
+
+func (app *binProgram) __sanitizeSourceURL(key string,
+	value string) (url string, err error) {
+
+	url, err = app.__processVar(value)
+	if err != nil {
+		return "", fmt.Errorf("%s%s: [%s] %s for %s",
+			ERROR_SETUP_TAG,
+			ERROR_SETUP_SOURCE_BAD,
+			key,
+			value,
+			app.Metadata.Name,
+		)
+	}
+
+	return url, nil
+}
+
+func (app *binProgram) __sanitizeSourceMethod(key string,
+	value string) (method string, err error) {
+	method, err = app.__processVar(method)
+	if err != nil {
+		return "", fmt.Errorf("%s%s: [%s] %s for %s",
+			ERROR_SETUP_TAG,
+			ERROR_SETUP_SOURCE_METHOD_BAD,
+			key,
+			value,
+			app.Metadata.Name,
+		)
+	}
+
+	return method, nil
+}
+
+func (app *binProgram) __sanitizeSourceArchive(key string,
+	value string) (archive string, err error) {
+	archive, err = app.__processVar(value)
+	if err != nil {
+		return "", fmt.Errorf("%s%s: [%s] %s for %s",
+			ERROR_SETUP_TAG,
+			ERROR_SETUP_SOURCE_ARCHIVE_BAD,
+			key,
+			value,
+			app.Metadata.Name,
+		)
+	}
+
+	return strings.ToLower(archive), nil
+}
+
+func (app *binProgram) __sanitizeSourceFormat(key string,
+	value string) (format string, err error) {
+	format, err = app.__processVar(value)
+	if err != nil {
+		return "", fmt.Errorf("%s%s: [%s] %s for %s",
+			ERROR_SETUP_TAG,
+			ERROR_SETUP_SOURCE_ARCHIVE_FORMAT_BAD,
+			key,
+			format,
+			app.Metadata.Name,
+		)
+	}
+
+	switch format {
+	case BIN_PROGRAM_FORMAT_TAR_GZ:
+		app._unarchiveFx = app.__unarchiveTarGz
+	case BIN_PROGRAM_FORMAT_ZIP:
+		app._unarchiveFx = app.__unarchiveZip
+	default:
+		return "", fmt.Errorf("%s%s: [%s] %s for %s",
+			ERROR_SETUP_TAG,
+			ERROR_SETUP_SOURCE_ARCHIVE_FORMAT_UNKNOWN,
+			key,
+			format,
+			app.Metadata.Name,
+		)
+	}
+
+	return strings.ToLower(format), nil
 }
 
 func (app *binProgram) _sanitizeSetupInstruction() (err error) {
@@ -379,6 +469,7 @@ func (app *binProgram) Get(ctx context.Context, tx chan chmsg.Message) {
 	var rx chan chmsg.Message
 	var msg chmsg.Message
 
+	// reject job if app was not sanitized before
 	if !app.hadSanitized {
 		msg = chmsg.New()
 		msg.Add(chmsg_ERROR, fmt.Errorf("%s%s: %s\n",
@@ -563,6 +654,8 @@ func (app *binProgram) __sourceHTTPS(ctx context.Context,
 	var d *httpclient.Downloader
 	var msg chmsg.Message
 	var percent float64
+	var hasher *checksum.Hasher
+	var err error
 
 	// get sources
 	source := app.Sources[app.Variables[BIN_PROGRAM_VAR_COMPUTE].(string)]
@@ -603,7 +696,70 @@ func (app *binProgram) __sourceHTTPS(ctx context.Context,
 		source.Method = "GET"
 	}
 
-	d.Download(ctx, source.Method, source.URL, nil)
+	// setup checksum
+	if source.Checksum != nil {
+		hasher = &checksum.Hasher{}
+
+		// parse value based on checksum format
+		switch source.Checksum.Format {
+		case CHECKSUM_FORMAT_BASE64:
+			err = hasher.ParseBase64(source.Checksum.Value)
+		case CHECKSUM_FORMAT_HEX:
+			err = hasher.ParseHex(source.Checksum.Value)
+		case CHECKSUM_FORMAT_BASE64_URL:
+			err = hasher.ParseBase64URL(source.Checksum.Value)
+		default:
+			msg = chmsg.New()
+			msg.Add(chmsg_ERROR,
+				fmt.Errorf("%s%s: [%s] '%s' for %s",
+					ERROR_SETUP_TAG,
+					ERROR_SETUP_CHECKSUM_UNSUPPORTED_FORMAT,
+					app.Metadata.Name,
+					source.Checksum.Value,
+					source.URL,
+				))
+			tx <- msg
+			return
+		}
+
+		if err != nil {
+			msg = chmsg.New()
+			msg.Add(chmsg_ERROR, fmt.Errorf("%s%s: [%s] %s: %s",
+				ERROR_SETUP_TAG,
+				ERROR_SETUP_HTTPS_DOWNLOAD_FAILED,
+				source.URL,
+				ERROR_SETUP_CHECKSUM_BAD,
+				err,
+			))
+
+			tx <- msg
+			return
+		}
+
+		// set checksum algorithm
+		switch source.Checksum.Type {
+		case CHECKSUM_ALGO_SHA512:
+			_ = hasher.SetAlgo(checksum.HASHER_SHA512)
+		case CHECKSUM_ALGO_SHA256:
+			_ = hasher.SetAlgo(checksum.HASHER_SHA256)
+		case CHECKSUM_ALGO_MD5:
+			_ = hasher.SetAlgo(checksum.HASHER_MD5)
+		default:
+			msg = chmsg.New()
+			msg.Add(chmsg_ERROR,
+				fmt.Errorf("%s%s: [%s] '%s' for %s",
+					ERROR_SETUP_TAG,
+					ERROR_SETUP_CHECKSUM_UNSUPPORTED_ALGO,
+					app.Metadata.Name,
+					source.Checksum.Type,
+					source.URL,
+				))
+			tx <- msg
+			return
+		}
+	}
+
+	d.Download(ctx, source.Method, source.URL, hasher)
 }
 
 func (app *binProgram) __sourceLocal(ctx context.Context,

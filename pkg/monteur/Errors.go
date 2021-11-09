@@ -17,11 +17,18 @@ package monteur
 
 //nolint:stylecheck,revive,lll
 const (
-	ERROR_BAD_REPO             = "current directory is not a git repo with monteur"
-	ERROR_CURRENT_DIRECTORY    = "failed to obtain current directory path"
+	ERROR_BAD_REPO             = "current path is not a git-repo + monteur"
+	ERROR_CURRENT_DIRECTORY    = "failed to get current directory pathing"
 	ERROR_MISSING_DIR          = "missing directory"
 	ERROR_FAILED_CONFIG_DECODE = "failed to decode file"
-	ERROR_SETUP_TAG            = "setup(): "
+
+	ERROR_SETUP_TAG = "setup(): "
+
+	ERROR_SETUP_CHECKSUM_UNSUPPORTED_ALGO   = "unsupported checksum algo"
+	ERROR_SETUP_CHECKSUM_UNSUPPORTED_FORMAT = "unsupported checksum format"
+	ERROR_SETUP_CHECKSUM_BAD                = "bad/empty checksum value"
+	ERROR_SETUP_CHECKSUM_BAD_ALGO           = "bad/empty checksum algo"
+	ERROR_SETUP_CHECKSUM_BAD_FORMAT         = "bad/empty checksum format"
 
 	ERROR_SETUP_CONFIG_MISSING                = "missing config data"
 	ERROR_SETUP_CONFIG_FAILED                 = "failed to create config"
@@ -39,8 +46,8 @@ const (
 	ERROR_SETUP_POSTCONFIG_BAD                = "bad post config"
 	ERROR_SETUP_PROGRAM_NOT_SANITIZED         = "program not sanitized"
 	ERROR_SETUP_PROGRAM_NOT_SUPPORTED         = "program not supported"
-	ERROR_SETUP_SOURCE_ARCHIVE_FORMAT_BAD     = "bad archive format"
 	ERROR_SETUP_SOURCE_ARCHIVE_BAD            = "bad archive name"
+	ERROR_SETUP_SOURCE_ARCHIVE_FORMAT_BAD     = "bad archive format"
 	ERROR_SETUP_SOURCE_ARCHIVE_FORMAT_UNKNOWN = "unsupported archive format"
 	ERROR_SETUP_SOURCE_HEADER_BAD             = "bad header value"
 	ERROR_SETUP_SOURCE_METHOD_BAD             = "bad method for url"
