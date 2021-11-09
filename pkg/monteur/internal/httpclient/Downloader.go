@@ -87,7 +87,7 @@ type Downloader struct {
 	// RetainOnError is the decision to retain download artifact post error.
 	//
 	// By default (false), Downloader will not retain the artifact and
-	// delete immediately after any error occured (e.g. mismatched
+	// delete immediately after any error occurred (e.g. mismatched
 	// checksum).
 	RetainOnError bool
 }
@@ -106,13 +106,13 @@ type Downloader struct {
 func (d *Downloader) Download(ctx context.Context,
 	method string,
 	urlstr string,
-	checksum *checksum.Hasher) {
+	hasher *checksum.Hasher) {
 	var response *http.Response
 	var client *http.Client
 	var inReader io.Reader
 	var err error
 
-	client, err = d.init(ctx, method, urlstr, checksum)
+	client, err = d.init(ctx, method, urlstr, hasher)
 	if err != nil {
 		d.handleError(err)
 		return
@@ -185,7 +185,7 @@ func (d *Downloader) Download(ctx context.Context,
 func (d *Downloader) init(ctx context.Context,
 	method string,
 	urlStr string,
-	checksum *checksum.Hasher) (client *http.Client, err error) {
+	hasher *checksum.Hasher) (client *http.Client, err error) {
 	// validate saving location
 	if d.Destination == "" {
 		d.Destination = "."
@@ -212,13 +212,16 @@ func (d *Downloader) init(ctx context.Context,
 	}
 
 	// inspect checksum is usable before acceptance
-	if checksum != nil {
-		err = checksum.IsHealthy()
+	if hasher != nil {
+		err = hasher.IsHealthy()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%s: %s",
+				ERROR_HASHER_UNHEALTHY,
+				err,
+			)
 		}
 
-		d.checksum = checksum
+		d.checksum = hasher
 	}
 
 	// configure new http request for the downloader
@@ -297,10 +300,7 @@ func (d *Downloader) checksumArtifact() (err error) {
 
 	// otherwise attempting to deleting it
 	if os.Remove(d.Destination+DOWNLOAD_EXTENSION) != nil {
-		err = fmt.Errorf("%s%s and %s",
-			ERROR_CHECKSUM_DELETE_FAILED,
-			err,
-		)
+		err = fmt.Errorf("%s: %s", ERROR_CHECKSUM_DELETE_FAILED, err)
 	}
 
 	return err

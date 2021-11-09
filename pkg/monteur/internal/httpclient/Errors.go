@@ -27,6 +27,7 @@ const (
 	ERROR_FILE_RENAMED_FAILED    = "failed to rename downloaded file"
 	ERROR_FILENAME_MISSING       = "failed to obtain filename remotely"
 	ERROR_FILESIZE_MISSING       = "failed to obtain filesize remotely"
+	ERROR_HASHER_UNHEALTHY       = "given checksum hasher is not healthy"
 	ERROR_METHOD_MISSING         = "request method is missing"
 	ERROR_PATH_INVALID           = "given Destination pathing is invalid"
 	ERROR_PATH_MISSING           = "given Destination pathing is missing"
