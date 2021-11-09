@@ -15,7 +15,6 @@
 
 package toml
 
-//nolint:stylecheck,revive
 const (
 	ERROR_FAILED_CONFIG = "failed to open TOML file"
 	ERROR_FAILED_DECODE = "failed to decode TOML file"
