@@ -1,6 +1,6 @@
 # This file contains all available configuration for golangci-lint
 run:
-  timeout: 1m
+  timeout: 5m
   issues-exit-code: 1
   tests: true
   skip-dirs:
@@ -199,3 +199,17 @@ linters:
     - wastedassign
     - whitespace
     - wrapcheck
+
+issues:
+  exclude-rules:
+    - linters:
+        - typecheck
+      text: "use of internal package"
+    - linters:
+        - revive
+        - stylecheck
+      text: "use ALL_CAPS in Go names; use CamelCase"
+    - linters:
+        - revive
+        - stylecheck
+      text: "use underscores in Go names"
