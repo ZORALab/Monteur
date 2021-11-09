@@ -22,7 +22,6 @@ package checksum
 type HashType uint
 
 // Supported Hashing Algorithm is the list of constants ID for selecting algo.
-//nolint:stylecheck,revive
 const (
 	HASHER_UNSET  HashType = 0
 	HASHER_MD5    HashType = 1

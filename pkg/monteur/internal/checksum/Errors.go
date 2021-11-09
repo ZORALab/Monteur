@@ -16,7 +16,6 @@
 package checksum
 
 // Error messages are the package standardized messages
-//nolint:stylecheck,revive
 const (
 	ERROR_ALGO_BAD      = "bad hashing algorithm"
 	ERROR_INIT_FAILED   = "failed to initialize checksum"
