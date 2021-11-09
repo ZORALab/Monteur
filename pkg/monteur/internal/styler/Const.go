@@ -16,7 +16,6 @@
 package styler
 
 // Unicode Border Types Enumerated ID
-//nolint:stylecheck,revive
 const (
 	BORDER_SINGLE = iota
 	BORDER_BOLD
