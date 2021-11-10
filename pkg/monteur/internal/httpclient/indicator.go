@@ -24,10 +24,6 @@ type indicator struct {
 func (p *indicator) Write(data []byte) (n int, err error) {
 	n = len(data)
 	p.downloaded += int64(n)
-
-	if p.handleProgress != nil {
-		p.handleProgress(p.downloaded, p.total)
-	}
-
+	p.handleProgress(p.downloaded, p.total)
 	return n, nil
 }

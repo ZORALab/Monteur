@@ -159,7 +159,7 @@ func (d *Downloader) Download(ctx context.Context,
 			return
 		}
 
-		d.HandleSuccess()
+		d.handleSuccess()
 	}()
 
 	// make the download request
@@ -208,7 +208,7 @@ func (d *Downloader) init(ctx context.Context,
 	d.indicator = &indicator{
 		total:          0,
 		downloaded:     0,
-		handleProgress: d.HandleProgress,
+		handleProgress: d.handleProgress,
 	}
 
 	// inspect checksum is usable before acceptance
@@ -492,6 +492,18 @@ func (d *Downloader) processSize(length string) (err error) {
 func (d *Downloader) handleError(err error) {
 	if d.HandleError != nil {
 		d.HandleError(err)
+	}
+}
+
+func (d *Downloader) handleSuccess() {
+	if d.HandleSuccess != nil {
+		d.HandleSuccess()
+	}
+}
+
+func (d *Downloader) handleProgress(downloaded int64, total int64) {
+	if d.HandleProgress != nil {
+		d.HandleProgress(downloaded, total)
 	}
 }
 
