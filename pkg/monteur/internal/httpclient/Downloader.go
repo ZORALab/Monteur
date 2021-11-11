@@ -26,6 +26,7 @@ import (
 	"path"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/checksum"
@@ -111,6 +112,8 @@ func (d *Downloader) Download(ctx context.Context,
 	var client *http.Client
 	var inReader io.Reader
 	var err error
+	var destination, ext, contentType, errorFile string
+	var extList []string
 
 	client, err = d.init(ctx, method, urlstr, hasher)
 	if err != nil {
@@ -131,7 +134,8 @@ func (d *Downloader) Download(ctx context.Context,
 	}
 
 	// open the destination file for download
-	f, err := os.OpenFile(d.Destination+DOWNLOAD_EXTENSION,
+	destination = d.Destination + EXTENSION_DOWNLOAD
+	f, err := os.OpenFile(destination,
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
 		FILE_PERMISSION,
 	)
@@ -142,6 +146,33 @@ func (d *Downloader) Download(ctx context.Context,
 
 	defer func() {
 		f.Close()
+
+		if response.StatusCode >= 400 {
+			// get or make error extension from response
+			contentType = response.Header.Get("Content-Type")
+			extList, _ = mime.ExtensionsByType(contentType)
+			ext = EXTENSION_HTML
+			if len(extList) > 0 {
+				ext = extList[len(extList)-1]
+			}
+			ext = EXTENSION_ERROR + ext
+
+			// rename the downloaded content into error response
+			// file
+			errorFile = strings.TrimSuffix(destination,
+				EXTENSION_DOWNLOAD,
+			)
+			errorFile += ext
+
+			err = os.Rename(destination, errorFile)
+
+			// handle error and exit
+			d.handleError(fmt.Errorf("%s: status code %d",
+				ERROR_RESPONSE_BAD,
+				response.StatusCode,
+			))
+			return
+		}
 
 		if err != nil {
 			return
@@ -172,15 +203,6 @@ func (d *Downloader) Download(ctx context.Context,
 	defer func() {
 		response.Body.Close()
 	}()
-
-	// check response code
-	if response.StatusCode >= 400 {
-		d.handleError(fmt.Errorf("%s: status code %d",
-			ERROR_RESPONSE_BAD,
-			response.StatusCode,
-		))
-		return
-	}
 
 	// read the content
 	inReader = io.TeeReader(response.Body, d.indicator)
@@ -276,11 +298,11 @@ func (d *Downloader) checksumArtifact() (err error) {
 	}
 
 	// obtain the checksum value from the downloaded file
-	f, err = os.Open(d.Destination + DOWNLOAD_EXTENSION)
+	f, err = os.Open(d.Destination + EXTENSION_DOWNLOAD)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
 			ERROR_CHECKSUM_BAD_FILE,
-			d.Destination+DOWNLOAD_EXTENSION,
+			d.Destination+EXTENSION_DOWNLOAD,
 		)
 	}
 
@@ -299,7 +321,7 @@ func (d *Downloader) checksumArtifact() (err error) {
 
 	err = fmt.Errorf("%s: [%s] %s",
 		ERROR_CHECKSUM,
-		d.Destination+DOWNLOAD_EXTENSION,
+		d.Destination+EXTENSION_DOWNLOAD,
 		err,
 	)
 
@@ -308,7 +330,7 @@ func (d *Downloader) checksumArtifact() (err error) {
 	}
 
 	// otherwise attempting to deleting it
-	if os.Remove(d.Destination+DOWNLOAD_EXTENSION) != nil {
+	if os.Remove(d.Destination+EXTENSION_DOWNLOAD) != nil {
 		err = fmt.Errorf("%s: %s", ERROR_CHECKSUM_DELETE_FAILED, err)
 	}
 
@@ -316,7 +338,7 @@ func (d *Downloader) checksumArtifact() (err error) {
 }
 
 func (d *Downloader) renameArtifact() (err error) {
-	err = os.Rename(d.Destination+DOWNLOAD_EXTENSION, d.Destination)
+	err = os.Rename(d.Destination+EXTENSION_DOWNLOAD, d.Destination)
 	if err != nil {
 		err = fmt.Errorf("%s: %s", ERROR_FILE_RENAMED_FAILED, err)
 	}
@@ -328,7 +350,7 @@ func (d *Downloader) tryResume() (err error) {
 	var fi os.FileInfo
 
 	// check for any existing download artifacts
-	fi, err = os.Stat(d.Destination + DOWNLOAD_EXTENSION)
+	fi, err = os.Stat(d.Destination + EXTENSION_DOWNLOAD)
 
 	switch {
 	case os.IsNotExist(err):
@@ -341,7 +363,7 @@ func (d *Downloader) tryResume() (err error) {
 
 	// if overwrite, execute overwrite and let go
 	if d.Overwrite {
-		err = os.Remove(d.Destination + DOWNLOAD_EXTENSION)
+		err = os.Remove(d.Destination + EXTENSION_DOWNLOAD)
 		if err != nil {
 			return fmt.Errorf("%s: %s",
 				ERROR_FILE_OVERWRITE_FAILED,

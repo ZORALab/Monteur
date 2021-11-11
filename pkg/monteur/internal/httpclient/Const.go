@@ -16,9 +16,6 @@
 package httpclient
 
 const (
-	// DOWNLOAD_EXTENSION is the common extension indicating download status
-	DOWNLOAD_EXTENSION = ".download"
-
 	// TIMEOUT is the default timing for timeout a download in seconds.
 	TIMEOUT = 60
 
@@ -27,4 +24,15 @@ const (
 
 	// DIR_PERMISSION is the default access permission for directory.
 	DIR_PERMISSION = 0700
+)
+
+const (
+	// EXTENSION_DOWNLOAD is the common downloding status extension
+	EXTENSION_DOWNLOAD = ".download"
+
+	// EXTENSION_ERROR is the error tag prefix to an extension
+	EXTENSION_ERROR = "-error"
+
+	// EXTENSION_HTML is the html file extension
+	EXTENSION_HTML = ".html"
 )
