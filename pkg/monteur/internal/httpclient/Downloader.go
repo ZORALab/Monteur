@@ -173,6 +173,15 @@ func (d *Downloader) Download(ctx context.Context,
 		response.Body.Close()
 	}()
 
+	// check response code
+	if response.StatusCode >= 400 {
+		d.handleError(fmt.Errorf("%s: status code %d",
+			ERROR_RESPONSE_BAD,
+			response.StatusCode,
+		))
+		return
+	}
+
 	// read the content
 	inReader = io.TeeReader(response.Body, d.indicator)
 

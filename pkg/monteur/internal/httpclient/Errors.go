@@ -33,4 +33,5 @@ const (
 	ERROR_PATH_MISSING           = "given Destination pathing is missing"
 	ERROR_REQUEST_FAILED         = "failed to perform request remotely"
 	ERROR_REQUEST_INIT_FAILED    = "failed to initialize request"
+	ERROR_RESPONSE_BAD           = "bad response"
 )
