@@ -65,7 +65,7 @@ func (app *Program) SourceHTTPS(ctx context.Context) {
 	d.HandleProgress = func(downloaded, total int64) {
 		percent := float64(downloaded) / float64(total) * 100
 
-		app.ReportStatus(fmt.Sprintf("%-10s: %d / %d B (%.0f%%)",
+		app.ReportStatus(fmt.Sprintf("%-10s: %d / %d Bytes (%.0f%%)",
 			app.Metadata.Name,
 			downloaded,
 			total,
@@ -81,22 +81,13 @@ func (app *Program) SourceLocal(ctx context.Context) {
 }
 
 func (app *Program) Install(ctx context.Context) {
-	for i, step := range app.Setup {
+	for _, step := range app.Setup {
 		switch step.Type {
-		case INST_MOVE:
+		case iNST_MOVE:
 			app.move(step.Source, step.Target)
-		case INST_SCRIPT:
+		case iNST_SCRIPT:
 			app.script(step.Source, step.Target)
-		case INST_UNKNOWN:
-			fallthrough
-		default:
-			app.ReportError(fmt.Errorf("%s: [Step %d] type %d",
-				"unsupported setup instruction",
-				i,
-				step.Type,
-			))
-
-			return
+		case iNST_UNKNOWN:
 		}
 	}
 }
@@ -114,10 +105,11 @@ func (app *Program) PostConfigure(ctx context.Context) {
 	pathing = filepath.Join(app.ConfigPath, pathing)
 
 	// write into config directory
-	err = os.WriteFile(pathing, []byte(app.Config), CONFIG_PERMISSION)
+	err = os.WriteFile(pathing, []byte(app.Config),
+		libmonteur.PERMISSION_CONFIG)
 	if err != nil {
 		app.ReportError(fmt.Errorf("%s: %s",
-			"unable to write config file",
+			libmonteur.ERROR_PROGRAM_CONFIG_FAILED,
 			err,
 		))
 	}
@@ -132,7 +124,7 @@ func (app *Program) move(source string, target string) {
 	// check source is available to move
 	if _, err = os.Stat(source); os.IsNotExist(err) {
 		app.ReportError(fmt.Errorf("%s: %s",
-			"source file is missing for move",
+			libmonteur.ERROR_PROGRAM_INST_SOURCE_MISSING,
 			source,
 		))
 		return
@@ -145,7 +137,7 @@ func (app *Program) move(source string, target string) {
 	err = os.Rename(source, target)
 	if err != nil {
 		app.ReportError(fmt.Errorf("%s: %s",
-			"setup move failed",
+			libmonteur.ERROR_PROGRAM_INST_FAILED,
 			err,
 		))
 	}
@@ -160,10 +152,11 @@ func (app *Program) script(source string, target string) {
 	_ = os.RemoveAll(target)
 
 	// create script from source
-	err = os.WriteFile(target, []byte(source), EXECUTABLE_PERMISSION)
+	err = os.WriteFile(target, []byte(source),
+		libmonteur.PERMISSION_EXECUTABLE)
 	if err != nil {
 		app.ReportError(fmt.Errorf("%s: %s",
-			"setup script failed",
+			libmonteur.ERROR_PROGRAM_INST_FAILED,
 			err,
 		))
 	}
@@ -193,8 +186,9 @@ func (app *Program) ReportError(err error) {
 		return
 	}
 
-	msg := chmsg.New()
-	msg.Add(libmonteur.CHMSG_OWNER, app.Metadata.Name)
+	err = fmt.Errorf("%s Program ➤ %s", app.Metadata.Name, err)
+
+	msg := app.createMsg()
 	msg.Add(libmonteur.CHMSG_ERROR, err)
 	app.ReportUp <- msg
 }
@@ -204,8 +198,7 @@ func (app *Program) ReportStatus(message string) {
 		return
 	}
 
-	msg := chmsg.New()
-	msg.Add(libmonteur.CHMSG_OWNER, app.Metadata.Name)
+	msg := app.createMsg()
 	msg.Add(libmonteur.CHMSG_STATUS, message)
 	app.ReportUp <- msg
 }
@@ -215,8 +208,13 @@ func (app *Program) ReportDone() {
 		return
 	}
 
-	msg := chmsg.New()
-	msg.Add(libmonteur.CHMSG_OWNER, app.Metadata.Name)
+	msg := app.createMsg()
 	msg.Add(libmonteur.CHMSG_DONE, true)
 	app.ReportUp <- msg
+}
+
+func (app *Program) createMsg() (msg chmsg.Message) {
+	msg = chmsg.New()
+	msg.Add(libmonteur.CHMSG_OWNER, app.Metadata.Name)
+	return msg
 }

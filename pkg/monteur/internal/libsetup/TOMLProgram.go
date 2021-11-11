@@ -377,9 +377,9 @@ func (data *TOMLProgram) _processSetupType(step int,
 	value.Type = strings.ToLower(value.Type)
 	switch value.Type {
 	case libmonteur.PROGRAM_SETUP_INST_MOVE:
-		x.Type = INST_MOVE
+		x.Type = iNST_MOVE
 	case libmonteur.PROGRAM_SETUP_INST_SCRIPT:
-		x.Type = INST_SCRIPT
+		x.Type = iNST_SCRIPT
 	default:
 		return data._errorStep(step,
 			libmonteur.ERROR_PROGRAM_INST_TYPE_UNKNOWN,

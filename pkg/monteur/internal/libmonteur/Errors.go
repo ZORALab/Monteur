@@ -50,11 +50,13 @@ const (
 	ERROR_PROGRAM_HTTPS_HEADER_BAD = "bad program's HTTPS source header"
 	ERROR_PROGRAM_HTTPS_METHOD_BAD = "bad program's HTTPS method"
 
-	ERROR_PROGRAM_INST_CONDITION_BAD = "bad program's setup inst. condition"
-	ERROR_PROGRAM_INST_SOURCE_BAD    = "bad program's inst. source"
-	ERROR_PROGRAM_INST_TARGET_BAD    = "bad program's inst. target"
-	ERROR_PROGRAM_INST_TYPE_BAD      = "bad program's setup instruction"
-	ERROR_PROGRAM_INST_TYPE_UNKNOWN  = "unknown program's setup instruction"
+	ERROR_PROGRAM_INST_CONDITION_BAD  = "bad program's setup inst. condition"
+	ERROR_PROGRAM_INST_FAILED         = "failed to setup program"
+	ERROR_PROGRAM_INST_SOURCE_BAD     = "bad program's inst. source"
+	ERROR_PROGRAM_INST_SOURCE_MISSING = "missing source file"
+	ERROR_PROGRAM_INST_TARGET_BAD     = "bad program's inst. target"
+	ERROR_PROGRAM_INST_TYPE_BAD       = "bad program's setup instruction"
+	ERROR_PROGRAM_INST_TYPE_UNKNOWN   = "unknown program's setup instruction"
 
 	ERROR_PROGRAM_META_NAME_BAD = "bad program name"
 	ERROR_PROGRAM_META_DESC_BAD = "bad program description"

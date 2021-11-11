@@ -15,8 +15,16 @@
 
 package libsetup
 
+type iNST uint
+
+const (
+	iNST_UNKNOWN iNST = 0
+	iNST_MOVE    iNST = 1
+	iNST_SCRIPT  iNST = 2
+)
+
 type Setup struct {
 	Source string
 	Target string
-	Type   Inst
+	Type   iNST
 }
