@@ -13,4 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package monteur
+package libmonteur
+
+// Channel messages key for key:value identifications in chmsg.Message object.
+const (
+	CHMSG_ERROR  = "error"
+	CHMSG_STATUS = "status"
+	CHMSG_DONE   = "done"
+	CHMSG_OWNER  = "name"
+)

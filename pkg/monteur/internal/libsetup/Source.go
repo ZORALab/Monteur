@@ -13,4 +13,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package monteur
+package libsetup
+
+import (
+	"context"
+	"net/http"
+
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/checksum"
+)
+
+type Source struct {
+	Archive  string
+	URL      string
+	Method   string
+	Checksum *checksum.Hasher
+
+	Get    func(ctx context.Context)
+	Unpack func(ctx context.Context)
+
+	HandleError    func(err error)
+	HandleProgress func(progress, total int64)
+	HandleSuccess  func()
+	HandleRedirect func(req *http.Request, via []*http.Request) error
+
+	Headers []string
+}

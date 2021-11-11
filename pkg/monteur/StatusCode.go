@@ -15,7 +15,6 @@
 
 package monteur
 
-//nolint:stylecheck,golint
 const (
 	// STATUS_OK is the program exit code for everything running smoothly
 	STATUS_OK = 0

@@ -13,4 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package monteur
+package libmonteur
+
+// Checksum constants for setting the checksum hasher and parser types.
+//
+// These are the supported checksum formats and algo types.
+const (
+	CHECKSUM_FORMAT_BASE64     = "base64"
+	CHECKSUM_FORMAT_HEX        = "hex"
+	CHECKSUM_FORMAT_BASE64_URL = "base64-url"
+
+	CHECKSUM_ALGO_SHA512 = "sha512"
+	CHECKSUM_ALGO_SHA256 = "sha256"
+	CHECKSUM_ALGO_MD5    = "md5"
+)

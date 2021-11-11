@@ -13,4 +13,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package monteur
+package libmonteur
+
+// Filesystem tags are common keys for setting various working directories
+// pathing.
+const (
+	BASEDIR_TAG    = "BaseDir"
+	WORKINGDIR_TAG = "WorkingDir"
+	BUILDDIR_TAG   = "BuildDir"
+	SCRIPTDIR_TAG  = "ScriptDir"
+	BINDIR_TAG     = "BinDir"
+	BINCFG_TAG     = "BinCfgDir"
+	DOCDIR_TAG     = "DocsDir"
+)

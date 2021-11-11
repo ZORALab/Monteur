@@ -15,7 +15,6 @@
 
 package monteur
 
-//nolint:typecheck
 import (
 	"fmt"
 	"os"
@@ -23,6 +22,7 @@ import (
 	"strings"
 
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/filesystem"
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
 )
 
 // pathing is the data structure holding the Monteur working filesystem.
@@ -74,7 +74,7 @@ func (fp *pathing) Init() (err error) {
 		return err
 	}
 
-	fp.WorkspaceTOMLFile = WORKSPACE_TOML_FILE
+	fp.WorkspaceTOMLFile = libmonteur.FILE_WORKSPACE_TOML
 	err = fp._initConfigSubPath(&fp.WorkspaceTOMLFile, "WorkspaceTOMLFile")
 	if err != nil {
 		return err
@@ -84,13 +84,17 @@ func (fp *pathing) Init() (err error) {
 }
 
 func (fp *pathing) _initConfigDir() (err error) {
-	fp.ConfigDir = filepath.Join(fp.RootDir, MONTEUR_CFG_NAME)
+	fp.ConfigDir = filepath.Join(fp.RootDir,
+		libmonteur.DIRECTORY_MONTEUR_CONFIG,
+	)
 	return nil
 }
 
 func (fp *pathing) _initRootDir() (err error) {
-	gitDir := filepath.Join(fp.CurrentDir, GIT_DIRECTORY_NAME)
-	monteurConfig := filepath.Join(fp.CurrentDir, MONTEUR_CFG_NAME)
+	gitDir := filepath.Join(fp.CurrentDir, libmonteur.DIRECTORY_GIT)
+	monteurConfig := filepath.Join(fp.CurrentDir,
+		libmonteur.DIRECTORY_MONTEUR_CONFIG,
+	)
 
 	if filesystem.IsDirExists(monteurConfig) &&
 		filesystem.IsDirExists(gitDir) {
@@ -107,8 +111,10 @@ func (fp *pathing) _initRootDir() (err error) {
 
 	for {
 		dir = filepath.Dir(dir)
-		gitDir = filepath.Join(dir, GIT_DIRECTORY_NAME)
-		monteurConfig = filepath.Join(dir, MONTEUR_CFG_NAME)
+		gitDir = filepath.Join(dir, libmonteur.DIRECTORY_GIT)
+		monteurConfig = filepath.Join(dir,
+			libmonteur.DIRECTORY_MONTEUR_CONFIG,
+		)
 
 		if filesystem.IsDirExists(monteurConfig) &&
 			filesystem.IsDirExists(gitDir) {
@@ -121,7 +127,7 @@ func (fp *pathing) _initRootDir() (err error) {
 	}
 
 	if fp.RootDir == "" {
-		return fmt.Errorf(ERROR_BAD_REPO)
+		return fmt.Errorf(libmonteur.ERROR_BAD_REPO)
 	}
 
 	return nil
@@ -131,7 +137,10 @@ func (fp *pathing) _initCurrentDir(g func(string) (string, error)) (err error) {
 	fp.CurrentDir, err = g(".")
 	if err != nil {
 		fp.CurrentDir = ""
-		return fmt.Errorf(ERROR_CURRENT_DIRECTORY)
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_DIR_BAD,
+			"./",
+		)
 	}
 
 	return nil
@@ -143,11 +152,17 @@ func (fp *pathing) _initConfigSubPath(p *string, name string) (err error) {
 	//    to import the heavy-duty reflect package to do such a simple job
 	//    for error reporting.
 	if *p == "" {
-		return fmt.Errorf("%s: %s", ERROR_MISSING_DIR, name)
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_DIR_MISSING,
+			name,
+		)
 	}
 
 	if fp.ConfigDir == "" {
-		return fmt.Errorf("%s: %s", ERROR_MISSING_DIR, "ConfigDir")
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_DIR_MISSING,
+			"ConfigDir",
+		)
 	}
 
 	*p = filepath.Join(fp.ConfigDir, *p)
@@ -203,32 +218,32 @@ func (fp *pathing) Update() (err error) {
 		return err
 	}
 
-	fp.BinConfigFile = BIN_CONFIG_FILENAME
+	fp.BinConfigFile = libmonteur.FILENAME_BIN_CONFIG
 	err = fp._initBinSubPath(&fp.BinConfigFile, "BinConfigFile")
 	if err != nil {
 		return err
 	}
 
-	fp.AppConfigDir = APP_DATA_DIR
+	fp.AppConfigDir = libmonteur.DIRECTORY_APP
 	err = fp._initConfigSubPath(&fp.AppConfigDir, "WorkspaceAppDir")
 	if err != nil {
 		return err
 	}
 
-	fp.SetupTMPDir = SETUP_PROGRAMS_DIRECTORY
+	fp.SetupTMPDir = libmonteur.DIRECTORY_SETUP_PROGRAMS
 	err = fp._initWorkingSubPath(&fp.SetupTMPDir, "SetupTMPDir")
 	if err != nil {
 		return err
 	}
 
-	fp.SetupProgramConfigDir = SETUP_PROGRAMS_DIRECTORY
+	fp.SetupProgramConfigDir = libmonteur.DIRECTORY_SETUP_PROGRAMS
 	err = fp._initConfigSubPath(&fp.SetupProgramConfigDir,
 		"SetupProgramConfigDir")
 	if err != nil {
 		return err
 	}
 
-	fp.SetupTOMLFile = SETUP_CONFIG_TOML_FILE
+	fp.SetupTOMLFile = libmonteur.FILE_SETUP_TOML
 	err = fp._initConfigSubPath(&fp.SetupTOMLFile,
 		"SetupTOMLConfigFile")
 	if err != nil {
@@ -244,11 +259,17 @@ func (fp *pathing) _initBinSubPath(p *string, name string) (err error) {
 	//    to import the heavy-duty reflect package to do such a simple job
 	//    for error reporting.
 	if *p == "" {
-		return fmt.Errorf("%s: %s", ERROR_MISSING_DIR, name)
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_DIR_MISSING,
+			name,
+		)
 	}
 
 	if fp.BinDir == "" {
-		return fmt.Errorf("%s: %s", ERROR_MISSING_DIR, "BinDir")
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_DIR_MISSING,
+			"BinDir",
+		)
 	}
 
 	*p = filepath.Join(fp.BinDir, *p)
@@ -262,11 +283,17 @@ func (fp *pathing) _initWorkingSubPath(p *string, name string) (err error) {
 	//    to import the heavy-duty reflect package to do such a simple job
 	//    for error reporting.
 	if *p == "" {
-		return fmt.Errorf("%s: %s", ERROR_MISSING_DIR, name)
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_DIR_MISSING,
+			name,
+		)
 	}
 
 	if fp.WorkingDir == "" {
-		return fmt.Errorf("%s: %s", ERROR_MISSING_DIR, "WorkingDir")
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_DIR_MISSING,
+			"WorkingDir",
+		)
 	}
 
 	*p = filepath.Join(fp.WorkingDir, *p)
@@ -280,11 +307,11 @@ func (fp *pathing) _initDependentDir(p *string, name string) (err error) {
 	//    to import the heavy-duty reflect package to do such a simple job
 	//    for error reporting.
 	if *p == "" {
-		return fmt.Errorf("%s: %s", ERROR_MISSING_DIR, name)
+		return fmt.Errorf("%s: %s", libmonteur.ERROR_DIR_MISSING, name)
 	}
 
 	if fp.RootDir == "" {
-		return fmt.Errorf(ERROR_BAD_REPO)
+		return fmt.Errorf(libmonteur.ERROR_BAD_REPO)
 	}
 
 	*p = filepath.Join(fp.RootDir, *p)
@@ -296,5 +323,5 @@ func (fp *pathing) _initDependentDir(p *string, name string) (err error) {
 //
 // It returns a fully compatible filepath.Join(...) string value.
 func (fp *pathing) Join(paths ...string) string {
-	return filepath.Join(paths[:]...)
+	return filepath.Join(paths...)
 }

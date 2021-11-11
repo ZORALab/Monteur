@@ -13,4 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package monteur
+package libmonteur
+
+// Critical Object Names are the file or directory names critical for Monteur.
+//
+// These critical object names are mainly to locate root repository with Monteur
+// supports.
+const (
+	COMPUTE_SYSTEM_SEPARATOR = "-"
+	ALL_OS                   = "all"
+	ALL_ARCH                 = "all"
+)

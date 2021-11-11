@@ -13,4 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package monteur
+package libsetup
+
+type Metadata struct {
+	Name        string
+	Description string
+}

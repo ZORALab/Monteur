@@ -13,4 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package monteur
+package libsetup
+
+type Inst uint
+
+const (
+	INST_UNKNOWN Inst = 0
+	INST_MOVE    Inst = 1
+	INST_SCRIPT  Inst = 2
+)
+
+const (
+	EXECUTABLE_PERMISSION = 0700
+	CONFIG_PERMISSION     = 0600
+	DIR_PERMISSION        = 0755
+)

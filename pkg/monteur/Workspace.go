@@ -19,11 +19,9 @@ import (
 	"fmt"
 	"runtime"
 
-	//nolint:typecheck
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
-	//nolint:typecheck
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/schema"
-	//nolint:typecheck
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/styler"
 )
 
@@ -31,14 +29,14 @@ import (
 //
 // This data structure is responsible for running through all Monteur operations
 type Workspace struct {
+	filesystem *pathing
+	language   *schema.Language
+	app        *schema.Software
+
 	version       string
 	os            string
 	arch          string
 	computeSystem string
-
-	language   *schema.Language
-	filesystem *pathing
-	app        *schema.Software
 }
 
 func (w *Workspace) Init() error {
@@ -52,7 +50,7 @@ func (w *Workspace) Init() error {
 
 	w.os = runtime.GOOS
 	w.arch = runtime.GOARCH
-	w.computeSystem = w.os + COMPUTE_SYSTEM_SEPARATOR + w.arch
+	w.computeSystem = w.os + libmonteur.COMPUTE_SYSTEM_SEPARATOR + w.arch
 
 	return nil
 }
@@ -77,7 +75,10 @@ func (w *Workspace) _parseWorkspaceData() (err error) {
 
 	err = toml.DecodeFile(w.filesystem.WorkspaceTOMLFile, &s, nil)
 	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_FAILED_CONFIG_DECODE, err)
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_TOML_PARSE_FAILED,
+			err,
+		)
 	}
 
 	err = w.filesystem.Update()
@@ -94,7 +95,7 @@ func (w *Workspace) _parseAppData() (err error) {
 	}
 
 	p := w.filesystem.Join(w.filesystem.AppConfigDir,
-		w.language.AlternateName+TOML_EXTENSION)
+		w.language.AlternateName+libmonteur.EXTENSION_TOML)
 
 	s := &struct {
 		Metadata *schema.Software
@@ -104,7 +105,10 @@ func (w *Workspace) _parseAppData() (err error) {
 
 	err = toml.DecodeFile(p, s, nil)
 	if err != nil {
-		return err
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_TOML_PARSE_FAILED,
+			err,
+		)
 	}
 
 	return nil

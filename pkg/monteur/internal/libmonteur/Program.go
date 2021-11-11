@@ -13,8 +13,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package monteur
+package libmonteur
 
-type downloadSettings struct {
-	Limit uint64
-}
+// Supported operating function types enumerated IDs.
+//
+// It is used in every toml config file inside setup/program/ config directory
+// for compatible function types across different stages.
+const (
+	PROGRAM_TYPE_HTTPS_DOWNLOAD = "https-download"
+	PROGRAM_TYPE_LOCAL_SYSTEM   = "local-system"
+
+	PROGRAM_FORMAT_TAR_GZ = "tar.gz"
+	PROGRAM_FORMAT_ZIP    = "zip"
+
+	PROGRAM_SETUP_INST_MOVE   = "move"
+	PROGRAM_SETUP_INST_SCRIPT = "script"
+)

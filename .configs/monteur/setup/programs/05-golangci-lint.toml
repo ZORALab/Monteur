@@ -25,101 +25,121 @@ BaseURL = "https://github.com/golangci/golangci-lint/releases/download"
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.darwin-arm64]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.freebsd-386]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.freebsd-amd64]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.freebsd-armv6]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.freebsd-armv7]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.linux-386]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.linux-amd64]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.linux-arm64]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.linux-armv6]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.linux-armv7]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.linux-misps64]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.linux-misps64le]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.linux-ppc64le]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.linux-riscv64]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.linux-s390x]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.windows-amd64]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.windows-arm64]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.windows-armv6]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 [Sources.windows-armv7]
 Format = "tar.gz"
 Archive = "golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}"
 URL = "{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}"
+Method = "Get"
 
 
 

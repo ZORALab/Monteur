@@ -13,4 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package monteur
+// Package libmonteur is the common library used across all Monteur packages.
+//
+// These constants are used across various packages, both external API accesible
+// and internal packages. These are controlled constant namespace and values
+// for consistancy purposes.
+//
+// This package shall always stay inside monteur/internal/ directory as it is
+// Monteur internal control facilities.
+package libmonteur
