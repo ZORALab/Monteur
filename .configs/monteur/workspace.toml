@@ -6,6 +6,10 @@ ScriptDir = ".scripts/"
 BinDir = ".bin/"
 BinCfgDir = "./.bin/config.d/"
 DocDir = "public/"
+SecretsDir = [
+	"{{ .HomeDir }}/.secrets",
+	"{{ .WorkingDir }}/.configs/monteur/secrets",
+]
 
 [Language]
 Name = "English"

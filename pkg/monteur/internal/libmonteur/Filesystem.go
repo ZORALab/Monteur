@@ -18,11 +18,13 @@ package libmonteur
 // Filesystem tags are common keys for setting various working directories
 // pathing.
 const (
-	BASEDIR_TAG    = "BaseDir"
-	WORKINGDIR_TAG = "WorkingDir"
-	BUILDDIR_TAG   = "BuildDir"
-	SCRIPTDIR_TAG  = "ScriptDir"
-	BINDIR_TAG     = "BinDir"
-	BINCFG_TAG     = "BinCfgDir"
-	DOCDIR_TAG     = "DocsDir"
+	BASEDIR_TAG     = "BaseDir"
+	WORKINGDIR_TAG  = "WorkingDir"
+	BUILDDIR_TAG    = "BuildDir"
+	SCRIPTDIR_TAG   = "ScriptDir"
+	BINDIR_TAG      = "BinDir"
+	BINCFG_TAG      = "BinCfgDir"
+	DOCDIR_TAG      = "DocsDir"
+	USERHOMEDIR_TAG = "HomeDir"
+	ROOTDIR_TAG     = "RootDir"
 )

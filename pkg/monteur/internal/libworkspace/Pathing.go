@@ -16,20 +16,28 @@
 package libworkspace
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/filesystem"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
 )
+
+type UserPath struct {
+	Home string
+}
 
 // Pathing is the data structure holding the Monteur working filesystem.
 type Pathing struct {
 	CurrentDir string
 	RootDir    string
 	ConfigDir  string
+
+	// user input paths
 	BaseDir    string
 	WorkingDir string
 	BuildDir   string
@@ -51,6 +59,12 @@ type Pathing struct {
 	SetupTMPDir           string
 	SetupProgramConfigDir string
 	SetupTOMLFile         string
+
+	// user
+	User *UserPath
+
+	// secrets - user input paths
+	SecretsDir []string
 }
 
 // Init is the method to initialize critical Pathing for Monteur operations.
@@ -70,6 +84,11 @@ func (fp *Pathing) Init() (err error) {
 	}
 
 	err = fp._initConfigDir()
+	if err != nil {
+		return err
+	}
+
+	err = fp._initUserDir()
 	if err != nil {
 		return err
 	}
@@ -170,6 +189,21 @@ func (fp *Pathing) _initConfigSubPath(p *string, name string) (err error) {
 	return nil
 }
 
+func (fp *Pathing) _initUserDir() (err error) {
+	fp.User = &UserPath{}
+
+	fp.User.Home, err = os.UserHomeDir()
+	if err != nil {
+		fp.User.Home = ""
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_DIR_BAD,
+			"HOME",
+		)
+	}
+
+	return nil
+}
+
 // `Update` is the method to update all dependent Pathings to full path.
 //
 // If any error is found, it needs to be prompted to the repository developers
@@ -250,6 +284,11 @@ func (fp *Pathing) Update() (err error) {
 		return err
 	}
 
+	err = fp._initSecretsDir()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -315,6 +354,54 @@ func (fp *Pathing) _initDependentDir(p *string, name string) (err error) {
 	}
 
 	*p = filepath.Join(fp.RootDir, *p)
+
+	return nil
+}
+
+func (fp *Pathing) _initSecretsDir() (err error) {
+	if fp.SecretsDir == nil {
+		fp.SecretsDir = []string{}
+		return nil
+	}
+
+	if len(fp.SecretsDir) == 0 {
+		return nil
+	}
+
+	data := map[string]string{
+		libmonteur.BASEDIR_TAG:     fp.BaseDir,
+		libmonteur.WORKINGDIR_TAG:  fp.WorkingDir,
+		libmonteur.BUILDDIR_TAG:    fp.BuildDir,
+		libmonteur.BINDIR_TAG:      fp.BinDir,
+		libmonteur.BINCFG_TAG:      fp.BinCfgDir,
+		libmonteur.USERHOMEDIR_TAG: fp.User.Home,
+		libmonteur.ROOTDIR_TAG:     fp.RootDir,
+	}
+	list := []string{}
+
+	for _, path := range fp.SecretsDir {
+		t, err := template.New("Value").Parse(path)
+		if err != nil {
+			return fmt.Errorf("%s: %s for %s",
+				libmonteur.ERROR_DIR_BAD,
+				err,
+				path,
+			)
+		}
+
+		var b bytes.Buffer
+		if err := t.Execute(&b, data); err != nil {
+			return fmt.Errorf("%s: %s for %s",
+				libmonteur.ERROR_DIR_BAD,
+				err,
+				path,
+			)
+		}
+
+		list = append(list, b.String())
+	}
+
+	fp.SecretsDir = list
 
 	return nil
 }
