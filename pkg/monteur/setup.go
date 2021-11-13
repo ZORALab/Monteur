@@ -22,10 +22,11 @@ import (
 
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libsetup"
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libworkspace"
 )
 
 type setup struct {
-	workspace *Workspace
+	workspace *libworkspace.Workspace
 	settings  *libsetup.Run
 	programs  map[string]*libsetup.Program
 }
@@ -65,15 +66,15 @@ func (fx *setup) Run() int {
 func (fx *setup) _init() (err error) {
 	fx.settings = &libsetup.Run{}
 	fx.programs = map[string]*libsetup.Program{}
-	fx.workspace = &Workspace{}
+	fx.workspace = &libworkspace.Workspace{}
 
 	// initialize workspace
 	err = fx.workspace.Init()
 	if err != nil {
-		return err
+		return err //nolint:wrapcheck
 	}
 
-	err = fx.settings.Parse(fx.workspace.filesystem.SetupTOMLFile)
+	err = fx.settings.Parse(fx.workspace.Filesystem.SetupTOMLFile)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
@@ -82,7 +83,7 @@ func (fx *setup) _init() (err error) {
 }
 
 func (fx *setup) _parseProgramsMetadata() (err error) {
-	err = filepath.Walk(fx.workspace.filesystem.SetupProgramConfigDir,
+	err = filepath.Walk(fx.workspace.Filesystem.SetupProgramConfigDir,
 		fx.__filterProgramMetadata)
 	if err != nil {
 		return err //nolint:wrapcheck
@@ -119,12 +120,12 @@ func (fx *setup) __filterProgramMetadata(pathing string,
 	}
 
 	// set compulsory variables into the data structure
-	s.Variables[libmonteur.VAR_OS] = fx.workspace.os
-	s.Variables[libmonteur.VAR_ARCH] = fx.workspace.arch
-	s.Variables[libmonteur.VAR_COMPUTE] = fx.workspace.computeSystem
-	s.Variables[libmonteur.VAR_TMP] = fx.workspace.filesystem.SetupTMPDir
-	s.Variables[libmonteur.VAR_BIN] = fx.workspace.filesystem.BinDir
-	s.Variables[libmonteur.VAR_CFG] = fx.workspace.filesystem.BinCfgDir
+	s.Variables[libmonteur.VAR_OS] = fx.workspace.OS
+	s.Variables[libmonteur.VAR_ARCH] = fx.workspace.ARCH
+	s.Variables[libmonteur.VAR_COMPUTE] = fx.workspace.ComputeSystem
+	s.Variables[libmonteur.VAR_TMP] = fx.workspace.Filesystem.SetupTMPDir
+	s.Variables[libmonteur.VAR_BIN] = fx.workspace.Filesystem.BinDir
+	s.Variables[libmonteur.VAR_CFG] = fx.workspace.Filesystem.BinCfgDir
 
 	// process the data and generate the program object for operation
 	app, err = s.Process()
@@ -141,12 +142,12 @@ func (fx *setup) _cleanUp() (err error) {
 	var data []byte
 
 	// remove all
-	_ = os.RemoveAll(fx.workspace.filesystem.SetupTMPDir)
-	_ = os.RemoveAll(fx.workspace.filesystem.BinCfgDir)
-	_ = os.RemoveAll(fx.workspace.filesystem.BinDir)
+	_ = os.RemoveAll(fx.workspace.Filesystem.SetupTMPDir)
+	_ = os.RemoveAll(fx.workspace.Filesystem.BinCfgDir)
+	_ = os.RemoveAll(fx.workspace.Filesystem.BinDir)
 
 	// create all
-	err = os.MkdirAll(fx.workspace.filesystem.SetupTMPDir,
+	err = os.MkdirAll(fx.workspace.Filesystem.SetupTMPDir,
 		libmonteur.PERMISSION_DIRECTORY)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
@@ -155,7 +156,7 @@ func (fx *setup) _cleanUp() (err error) {
 		)
 	}
 
-	err = os.MkdirAll(fx.workspace.filesystem.BinDir,
+	err = os.MkdirAll(fx.workspace.Filesystem.BinDir,
 		libmonteur.PERMISSION_DIRECTORY)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
@@ -164,7 +165,7 @@ func (fx *setup) _cleanUp() (err error) {
 		)
 	}
 
-	err = os.MkdirAll(fx.workspace.filesystem.BinCfgDir,
+	err = os.MkdirAll(fx.workspace.Filesystem.BinCfgDir,
 		libmonteur.PERMISSION_DIRECTORY)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
@@ -175,12 +176,12 @@ func (fx *setup) _cleanUp() (err error) {
 
 	// create config
 	switch {
-	case fx.workspace.os == "windows":
+	case fx.workspace.OS == "windows":
 		data = []byte(``)
 	default:
 		data = []byte(`#!/bin/sh
-export LOCAL_BIN="` + fx.workspace.filesystem.BinDir + `"
-config_dir="` + fx.workspace.filesystem.BinCfgDir + `"
+export LOCAL_BIN="` + fx.workspace.Filesystem.BinDir + `"
+config_dir="` + fx.workspace.Filesystem.BinCfgDir + `"
 
 stop() {
 	PATH=:${PATH}:
@@ -203,7 +204,7 @@ case $1 in
 esac`)
 	}
 
-	err = os.WriteFile(fx.workspace.filesystem.BinConfigFile,
+	err = os.WriteFile(fx.workspace.Filesystem.BinConfigFile,
 		data,
 		libmonteur.PERMISSION_CONFIG)
 	if err != nil {

@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package monteur
+package libworkspace
 
 import (
 	"fmt"
@@ -25,8 +25,8 @@ import (
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
 )
 
-// pathing is the data structure holding the Monteur working filesystem.
-type pathing struct {
+// Pathing is the data structure holding the Monteur working filesystem.
+type Pathing struct {
 	CurrentDir string
 	RootDir    string
 	ConfigDir  string
@@ -38,7 +38,7 @@ type pathing struct {
 	BinCfgDir  string
 	DocDir     string
 
-	// workspace pathing
+	// workspace Pathing
 	WorkspaceTOMLFile string
 
 	// app
@@ -53,12 +53,12 @@ type pathing struct {
 	SetupTOMLFile         string
 }
 
-// Init is the method to initialize critical pathing for Monteur operations.
+// Init is the method to initialize critical Pathing for Monteur operations.
 //
 // If any error is found, it needs to be prompted to the repository developers
 // as Monteur fails to detect any git repository with Monteur support throughout
-// the current directory pathing or failed to obtain current directory pathing.
-func (fp *pathing) Init() (err error) {
+// the current directory Pathing or failed to obtain current directory Pathing.
+func (fp *Pathing) Init() (err error) {
 	err = fp._initCurrentDir(filepath.Abs)
 	if err != nil {
 		return err
@@ -83,14 +83,14 @@ func (fp *pathing) Init() (err error) {
 	return nil
 }
 
-func (fp *pathing) _initConfigDir() (err error) {
+func (fp *Pathing) _initConfigDir() (err error) {
 	fp.ConfigDir = filepath.Join(fp.RootDir,
 		libmonteur.DIRECTORY_MONTEUR_CONFIG,
 	)
 	return nil
 }
 
-func (fp *pathing) _initRootDir() (err error) {
+func (fp *Pathing) _initRootDir() (err error) {
 	gitDir := filepath.Join(fp.CurrentDir, libmonteur.DIRECTORY_GIT)
 	monteurConfig := filepath.Join(fp.CurrentDir,
 		libmonteur.DIRECTORY_MONTEUR_CONFIG,
@@ -133,7 +133,7 @@ func (fp *pathing) _initRootDir() (err error) {
 	return nil
 }
 
-func (fp *pathing) _initCurrentDir(g func(string) (string, error)) (err error) {
+func (fp *Pathing) _initCurrentDir(g func(string) (string, error)) (err error) {
 	fp.CurrentDir, err = g(".")
 	if err != nil {
 		fp.CurrentDir = ""
@@ -146,7 +146,7 @@ func (fp *pathing) _initCurrentDir(g func(string) (string, error)) (err error) {
 	return nil
 }
 
-func (fp *pathing) _initConfigSubPath(p *string, name string) (err error) {
+func (fp *Pathing) _initConfigSubPath(p *string, name string) (err error) {
 	// NOTE:
 	// 1) `name` is mainly for specifying the variable name without needing
 	//    to import the heavy-duty reflect package to do such a simple job
@@ -170,19 +170,19 @@ func (fp *pathing) _initConfigSubPath(p *string, name string) (err error) {
 	return nil
 }
 
-// `Update` is the method to update all dependent pathings to full path.
+// `Update` is the method to update all dependent Pathings to full path.
 //
 // If any error is found, it needs to be prompted to the repository developers
-// to resolve the pathing issues in the workspace.toml configuration file.
+// to resolve the Pathing issues in the workspace.toml configuration file.
 //
 // If panic is found, it means Monteur developers did something funny and
 // screwed things up. Monteur developers shall not release Monteur that causes
 // panics.
 //
 // This function should only be called after all the relative paths are filled
-// into pathing data structure AND the pathing was initialized successfully via
+// into Pathing data structure AND the Pathing was initialized successfully via
 // `Init()` function.
-func (fp *pathing) Update() (err error) {
+func (fp *Pathing) Update() (err error) {
 	err = fp._initDependentDir(&fp.BaseDir, "BaseDir")
 	if err != nil {
 		return err
@@ -253,7 +253,7 @@ func (fp *pathing) Update() (err error) {
 	return nil
 }
 
-func (fp *pathing) _initBinSubPath(p *string, name string) (err error) {
+func (fp *Pathing) _initBinSubPath(p *string, name string) (err error) {
 	// NOTE:
 	// 1) `name` is mainly for specifying the variable name without needing
 	//    to import the heavy-duty reflect package to do such a simple job
@@ -277,7 +277,7 @@ func (fp *pathing) _initBinSubPath(p *string, name string) (err error) {
 	return nil
 }
 
-func (fp *pathing) _initWorkingSubPath(p *string, name string) (err error) {
+func (fp *Pathing) _initWorkingSubPath(p *string, name string) (err error) {
 	// NOTE:
 	// 1) `name` is mainly for specifying the variable name without needing
 	//    to import the heavy-duty reflect package to do such a simple job
@@ -301,7 +301,7 @@ func (fp *pathing) _initWorkingSubPath(p *string, name string) (err error) {
 	return nil
 }
 
-func (fp *pathing) _initDependentDir(p *string, name string) (err error) {
+func (fp *Pathing) _initDependentDir(p *string, name string) (err error) {
 	// NOTE:
 	// 1) `name` is mainly for specifying the variable name without needing
 	//    to import the heavy-duty reflect package to do such a simple job
@@ -319,9 +319,9 @@ func (fp *pathing) _initDependentDir(p *string, name string) (err error) {
 	return nil
 }
 
-// Join is a public API for joining multiple pathing into one.
+// Join is a public API for joining multiple Pathing into one.
 //
 // It returns a fully compatible filepath.Join(...) string value.
-func (fp *pathing) Join(paths ...string) string {
+func (fp *Pathing) Join(paths ...string) string {
 	return filepath.Join(paths...)
 }

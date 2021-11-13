@@ -15,6 +15,11 @@
 
 package monteur
 
+import (
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
+)
+
 const (
-	VERSION = "v0.0.1"
+	// VERSION is the monteur version number
+	VERSION = libmonteur.VERSION
 )

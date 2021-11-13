@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package monteur
+package libworkspace
 
 import (
 	"fmt"
@@ -29,16 +29,17 @@ import (
 //
 // This data structure is responsible for running through all Monteur operations
 type Workspace struct {
-	filesystem *pathing
-	language   *schema.Language
-	app        *schema.Software
+	Filesystem *Pathing
+	Language   *schema.Language
+	App        *schema.Software
 
-	version       string
-	os            string
-	arch          string
-	computeSystem string
+	Version       string
+	OS            string
+	ARCH          string
+	ComputeSystem string
 }
 
+// Init is to initialize the workspace for usage
 func (w *Workspace) Init() error {
 	if err := w._parseWorkspaceData(); err != nil {
 		return err
@@ -48,32 +49,32 @@ func (w *Workspace) Init() error {
 		return err
 	}
 
-	w.os = runtime.GOOS
-	w.arch = runtime.GOARCH
-	w.computeSystem = w.os + libmonteur.COMPUTE_SYSTEM_SEPARATOR + w.arch
+	w.OS = runtime.GOOS
+	w.ARCH = runtime.GOARCH
+	w.Version = libmonteur.VERSION
+	w.ComputeSystem = w.OS + libmonteur.COMPUTE_SYSTEM_SEPARATOR + w.ARCH
 
 	return nil
 }
 
 func (w *Workspace) _parseWorkspaceData() (err error) {
-	w.version = VERSION
-	w.filesystem = &pathing{}
-	w.language = &schema.Language{}
+	w.Filesystem = &Pathing{}
+	w.Language = &schema.Language{}
 
-	err = w.filesystem.Init()
+	err = w.Filesystem.Init()
 	if err != nil {
 		return err
 	}
 
 	s := struct {
 		Language   *schema.Language
-		Filesystem *pathing
+		Filesystem *Pathing
 	}{
-		Language:   w.language,
-		Filesystem: w.filesystem,
+		Language:   w.Language,
+		Filesystem: w.Filesystem,
 	}
 
-	err = toml.DecodeFile(w.filesystem.WorkspaceTOMLFile, &s, nil)
+	err = toml.DecodeFile(w.Filesystem.WorkspaceTOMLFile, &s, nil)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
 			libmonteur.ERROR_TOML_PARSE_FAILED,
@@ -81,7 +82,7 @@ func (w *Workspace) _parseWorkspaceData() (err error) {
 		)
 	}
 
-	err = w.filesystem.Update()
+	err = w.Filesystem.Update()
 	if err != nil {
 		return err
 	}
@@ -90,17 +91,17 @@ func (w *Workspace) _parseWorkspaceData() (err error) {
 }
 
 func (w *Workspace) _parseAppData() (err error) {
-	if w.app == nil {
-		w.app = &schema.Software{}
+	if w.App == nil {
+		w.App = &schema.Software{}
 	}
 
-	p := w.filesystem.Join(w.filesystem.AppConfigDir,
-		w.language.AlternateName+libmonteur.EXTENSION_TOML)
+	p := w.Filesystem.Join(w.Filesystem.AppConfigDir,
+		w.Language.AlternateName+libmonteur.EXTENSION_TOML)
 
 	s := &struct {
 		Metadata *schema.Software
 	}{
-		Metadata: w.app,
+		Metadata: w.App,
 	}
 
 	err = toml.DecodeFile(p, s, nil)
@@ -132,8 +133,8 @@ func (w *Workspace) _stringCIBasic() string {
 LANGUAGE
 %s (%s)
 `,
-		w.version,
-		w.language.Name, w.language.AlternateName,
+		w.Version,
+		w.Language.Name, w.Language.AlternateName,
 	)
 }
 
@@ -166,15 +167,15 @@ BIN LOCATION
 DOC LOCATION
 %s
 `,
-			w.filesystem.CurrentDir,
-			w.filesystem.RootDir,
-			w.filesystem.ConfigDir,
-			w.filesystem.BaseDir,
-			w.filesystem.WorkingDir,
-			w.filesystem.BuildDir,
-			w.filesystem.ScriptDir,
-			w.filesystem.BinDir,
-			w.filesystem.DocDir,
+			w.Filesystem.CurrentDir,
+			w.Filesystem.RootDir,
+			w.Filesystem.ConfigDir,
+			w.Filesystem.BaseDir,
+			w.Filesystem.WorkingDir,
+			w.Filesystem.BuildDir,
+			w.Filesystem.ScriptDir,
+			w.Filesystem.BinDir,
+			w.Filesystem.DocDir,
 		)
 }
 
@@ -183,6 +184,6 @@ func (w *Workspace) _stringApp() string {
 		fmt.Sprintf(`NAME
 %s
 `,
-			w.app.Name,
+			w.App.Name,
 		)
 }
