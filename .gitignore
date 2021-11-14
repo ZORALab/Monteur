@@ -20,6 +20,12 @@ release
 
 
 #####################
+# Monteur
+#####################
+.configs/monteur/secrets/
+
+
+#####################
 # LetsEncrypt
 #####################
 certbot.log
