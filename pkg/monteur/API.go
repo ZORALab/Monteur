@@ -30,8 +30,8 @@ import (
 // The result is a clean slate git repository with all the programs, caches,
 // build artifacts, test results, etc removed.
 func Purge() int {
-	fmt.Println("Placeholder: Purge function called")
-	return STATUS_ERROR
+	c := &cleaner{CleanAll: true}
+	return c.Run()
 }
 
 // Setup is the function to download all dependencies as per configurations.
@@ -72,8 +72,8 @@ func Test() int {
 // fresh run on the next round. Unlike Purge() function, does not remove all the
 // downloaded dependencies done by Setup() function.
 func Clean() int {
-	fmt.Println("Placeholder: Clean function called")
-	return STATUS_ERROR
+	c := &cleaner{CleanAll: false}
+	return c.Run()
 }
 
 // Release is the function to update repository for releasing a next version.
