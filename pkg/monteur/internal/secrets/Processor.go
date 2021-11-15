@@ -47,7 +47,7 @@ type Processor struct {
 //   1. `nil`, `err` - any error is found
 //   2. `out`, `nil` - decoded data without any error
 //
-// The format of the query is using period (`.`) to join multiple depth key.
+// The format of the query is using QUERY_CONNECTOR to join multiple depth key.
 // This also applies to array values. Example:
 //     v, err := unit.Decode(...)
 //     if err != nil {
@@ -90,7 +90,7 @@ func (unit *Processor) Decode(data map[string]interface{}, input string,
 func (unit *Processor) postProcessing(pre string, key string,
 	value interface{}, d map[string]interface{}) {
 	if pre != "" {
-		key = pre + "." + key
+		key = pre + QUERY_CONNECTOR + key
 	}
 
 	switch value.(type) {

@@ -33,7 +33,7 @@ func QueryArray(data map[string]interface{}, key string) (out []interface{}) {
 	if key == "" {
 		return out
 	}
-	key += "."
+	key += QUERY_CONNECTOR
 
 	// process the query
 	for k, val := range data {
@@ -66,7 +66,7 @@ func QueryMap(data map[string]interface{},
 	if key == "" {
 		return out
 	}
-	key += "."
+	key += QUERY_CONNECTOR
 
 	// process the query
 	for k, val := range data {
@@ -80,5 +80,4 @@ func QueryMap(data map[string]interface{},
 	}
 
 	return out
-
 }
