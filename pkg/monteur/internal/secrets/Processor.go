@@ -93,16 +93,16 @@ func (unit *Processor) postProcessing(pre string, key string,
 		key = pre + QUERY_CONNECTOR + key
 	}
 
-	switch value.(type) {
+	switch ivalue := value.(type) {
 	case []interface{}:
-		for i, val := range value.([]interface{}) {
+		for i, val := range ivalue {
 			unit.postProcessing(key, strconv.Itoa(i), val, d)
 		}
 	case map[string]interface{}:
-		for k, val := range value.(map[string]interface{}) {
+		for k, val := range ivalue {
 			unit.postProcessing(key, k, val, d)
 		}
 	default:
-		d[key] = value
+		d[key] = ivalue
 	}
 }
