@@ -21,10 +21,6 @@
 // specific CI needs.
 package monteur
 
-import (
-	"fmt"
-)
-
 // Purge is the function to remove all setup and data from the repository.
 //
 // The result is a clean slate git repository with all the programs, caches,
@@ -51,8 +47,8 @@ func Setup() (statusCode int) {
 // is to ensure everyone speaks the common language when it comes to
 // development.
 func Develop() int {
-	fmt.Println("Placeholder: Develop function called")
-	return STATUS_ERROR
+	d := &developer{}
+	return d.Run()
 }
 
 // Test is the function to execute the autonomous test job for the repository.
@@ -62,8 +58,8 @@ func Develop() int {
 // including the CI infrastructure can run testing for the repository both
 // manually and autonomously at any given time.
 func Test() int {
-	fmt.Println("Placeholder: Test function called")
-	return STATUS_ERROR
+	t := &tester{}
+	return t.Run()
 }
 
 // Clean is the function to clear up the repository for the next run.
@@ -82,8 +78,8 @@ func Clean() int {
 // numbers, build configurations as programmed for the next release. This
 // function should be done before building the next version release.
 func Release() int {
-	fmt.Println("Placeholder: Release function called")
-	return STATUS_OK
+	r := &releaser{}
+	return r.Run()
 }
 
 // Build is the function to build the software with current configurations.
@@ -92,8 +88,8 @@ func Release() int {
 // variants such as but not limited to operating system, CPU types, packaging
 // types (e.g. plugins).
 func Build() int {
-	fmt.Println("Placeholder: Build function called")
-	return STATUS_ERROR
+	b := &builder{}
+	return b.Run()
 }
 
 // Package is the function to package the built software into distributions.
@@ -102,8 +98,8 @@ func Build() int {
 // formats like .msi for Microsoft Windows OS, .deb for Debian-based Linux OS,
 // .rpm for RPM-based Linux OS, .dmg for MacOS, .appImage for AppImage.
 func Package() int {
-	fmt.Println("Placeholder: Package function called")
-	return STATUS_ERROR
+	p := &packager{}
+	return p.Run()
 }
 
 // Publish is the function to update and publish the documentations.
@@ -111,6 +107,6 @@ func Package() int {
 // this action generates the documentations artifact and publish it to its
 // reading channels such as web, file server for PDF files, and etc.
 func Publish() int {
-	fmt.Println("Placeholder: Publish function called")
-	return STATUS_ERROR
+	p := &publisher{}
+	return p.Run()
 }
