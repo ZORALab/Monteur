@@ -29,31 +29,57 @@ import (
 //
 // This function is to simplify and to warp a third-party TOML endec for simple
 // utilization.
-func DecodeFile(path string, data interface{}, config *Config) (err error) {
+func DecodeFile(path string,
+	data interface{}, config interface{}) (err error) {
+	var c *Config
+	var ok bool
+
 	f, err := os.Open(path)
 	if err != nil {
 		return fmt.Errorf("%s: %s", ERROR_FAILED_CONFIG, path)
 	}
 
-	return decode(f, data, config)
+	if c, ok = config.(*Config); ok {
+		c = config.(*Config)
+	}
+
+	return decode(f, data, c)
 }
 
 // DecodeString is to decode an in-memory TOML string data to a data structure.
 //
 // This function is to simplify and to warp a third-party TOML endec for simple
 // utilization.
-func DecodeString(input string, data interface{}, config *Config) (err error) {
+func DecodeString(input string,
+	data interface{}, config interface{}) (err error) {
+	var c *Config
+	var ok bool
+
 	f := strings.NewReader(input)
-	return decode(f, data, config)
+
+	if c, ok = config.(*Config); ok {
+		c = config.(*Config)
+	}
+
+	return decode(f, data, c)
 }
 
 // DecodeBytes is to decode an in-memory TOML bytes data to a data structure.
 //
 // This funcion is to simplify and to warp a third-party TOML endec for simple
 // utilization.
-func DecodeBytes(input []byte, data interface{}, config *Config) (err error) {
+func DecodeBytes(input []byte,
+	data interface{}, config interface{}) (err error) {
+	var c *Config
+	var ok bool
+
 	f := bytes.NewReader(input)
-	return decode(f, data, config)
+
+	if c, ok = config.(*Config); ok {
+		c = config.(*Config)
+	}
+
+	return decode(f, data, c)
 }
 
 func decode(input io.Reader, data interface{}, config *Config) (err error) {
