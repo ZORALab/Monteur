@@ -77,6 +77,10 @@ func (me *Conductor) Coordinate() (err error) {
 	var msg chmsg.Message
 	var ok bool
 
+	if len(me.Runners) == 0 {
+		return nil
+	}
+
 	for {
 		select {
 		case <-me.ctx.Done():
