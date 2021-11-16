@@ -21,6 +21,7 @@ import (
 	"path/filepath"
 
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libsecrets"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libsetup"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libworkspace"
 )
@@ -81,7 +82,7 @@ func (fx *setup) _init() (err error) {
 	}
 
 	// initialize secrets and parse every one of them
-	fx.secrets = libsetup.GetSecrets(fx.workspace.Filesystem.SecretsDir)
+	fx.secrets = libsecrets.GetSecrets(fx.workspace.Filesystem.SecretsDir)
 
 	return nil
 }

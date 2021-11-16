@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package libsetup
+package libsecrets
 
 import (
 	"os"
@@ -38,7 +38,7 @@ func _parseSecrets(data map[string]interface{},
 	pathing string) (sec map[string]interface{}) {
 	if i, err := os.Stat(pathing); !os.IsNotExist(err) && !i.IsDir() {
 		if filepath.Ext(pathing) != libmonteur.EXTENSION_TOML {
-			return data
+			return data // not a toml data file
 		}
 
 		sec = __parseSecretsFile(data, pathing)
