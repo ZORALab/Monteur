@@ -29,6 +29,7 @@ type setup struct {
 	workspace *libworkspace.Workspace
 	settings  *libsetup.Run
 	programs  map[string]*libsetup.Program
+	secrets   map[string]interface{}
 }
 
 func (fx *setup) _reportError(err error) int {
@@ -78,6 +79,9 @@ func (fx *setup) _init() (err error) {
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
+
+	// initialize secrets and parse every one of them
+	fx.secrets = libsetup.GetSecrets(fx.workspace.Filesystem.SecretsDir)
 
 	return nil
 }

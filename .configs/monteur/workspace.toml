@@ -8,7 +8,7 @@ BinCfgDir = "./.bin/config.d/"
 DocDir = "public/"
 SecretsDir = [
 	"{{ .HomeDir }}/.secrets",
-	"{{ .WorkingDir }}/.configs/monteur/secrets",
+	"{{ .RootDir }}/.configs/monteur/secrets",
 ]
 
 [Language]

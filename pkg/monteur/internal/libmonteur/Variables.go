@@ -30,4 +30,5 @@ const (
 	VAR_FORMAT  = "Format"
 	VAR_METHOD  = "Method"
 	VAR_URL     = "URL"
+	VAR_SECRETS = "Secrets"
 )
