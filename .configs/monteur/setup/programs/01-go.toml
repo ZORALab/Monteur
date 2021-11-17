@@ -24,7 +24,7 @@ BaseURL = 'https://golang.org/dl/'
 [Sources.all-all]
 Format = 'tar.gz'
 URL = '{{- .BaseURL -}}{{- .Archive -}}'
-Method = 'Get'
+Method = 'GET'
 [Sources.all-all.Checksum]
 Type = 'sha256'
 Format = 'hex'
