@@ -131,6 +131,7 @@ func (fx *setup) __filterProgramMetadata(pathing string,
 	s.Variables[libmonteur.VAR_TMP] = fx.workspace.Filesystem.SetupTMPDir
 	s.Variables[libmonteur.VAR_BIN] = fx.workspace.Filesystem.BinDir
 	s.Variables[libmonteur.VAR_CFG] = fx.workspace.Filesystem.BinCfgDir
+	s.Variables[libmonteur.VAR_SECRETS] = fx.secrets
 
 	// process the data and generate the program object for operation
 	app, err = s.Process()
