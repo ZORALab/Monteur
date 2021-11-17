@@ -23,9 +23,6 @@ import (
 )
 
 type Source struct {
-	Archive  string
-	URL      string
-	Method   string
 	Checksum *checksum.Hasher
 
 	Get    func(ctx context.Context)
@@ -36,5 +33,9 @@ type Source struct {
 	HandleSuccess  func()
 	HandleRedirect func(req *http.Request, via []*http.Request) error
 
-	Headers []string
+	Headers map[string]string
+
+	Archive string
+	URL     string
+	Method  string
 }

@@ -39,12 +39,12 @@ type _programChecksum struct {
 }
 
 type _programSource struct {
+	Checksum *_programChecksum
+	Headers  map[string]string
 	Archive  string
 	Format   string
 	URL      string
 	Method   string
-	Checksum *_programChecksum
-	Headers  []string
 }
 
 type _programSetup struct {
@@ -84,7 +84,7 @@ func (data *TOMLProgram) Process() (app *Program, err error) {
 	app = &Program{
 		Metadata: &Metadata{},
 		Source: &Source{
-			Headers: []string{},
+			Headers: map[string]string{},
 		},
 		Setup:         []*Setup{},
 		WorkspacePath: data.Variables[libmonteur.VAR_TMP].(string),
@@ -147,11 +147,18 @@ func (data *TOMLProgram) processMetadata(app *Program) (err error) {
 }
 
 func (data *TOMLProgram) processSource(app *Program) (err error) {
-	system := data.Variables[libmonteur.VAR_COMPUTE].(string)
+	// get all-all source and merge accordingly
+	system := libmonteur.ALL_OS + libmonteur.COMPUTE_SYSTEM_SEPARATOR +
+		libmonteur.ALL_ARCH
+	actual := data.Sources[system]
 
 	// get supported source
-	actual, ok := data.Sources[system]
-	if !ok {
+	system = data.Variables[libmonteur.VAR_COMPUTE].(string)
+	ret := data.Sources[system]
+
+	// check we actually have a working actual data
+	actual = data._mergeProgramSource(actual, ret)
+	if actual == nil {
 		return data._error(libmonteur.ERROR_PROGRAM_UNSUPPORTED,
 			system,
 		)
@@ -209,16 +216,17 @@ func (data *TOMLProgram) processSource(app *Program) (err error) {
 	defer delete(data.Variables, libmonteur.VAR_URL)
 
 	// process headers
-	for _, h := range actual.Headers {
-		h, err = data.__processVar(h)
+	app.Source.Headers = map[string]string{}
+	for k, v := range actual.Headers {
+		v, err = data.__processVar(v)
 		if err != nil {
 			//nolint: lll
 			return data._error(libmonteur.ERROR_PROGRAM_HTTPS_HEADER_BAD,
-				h,
+				v,
 			)
 		}
 
-		app.Source.Headers = append(app.Source.Headers, h)
+		app.Source.Headers[k] = v
 	}
 
 	// process Checksum
@@ -228,6 +236,62 @@ func (data *TOMLProgram) processSource(app *Program) (err error) {
 	}
 
 	return nil
+}
+
+func (data *TOMLProgram) _mergeProgramSource(base *_programSource,
+	actual *_programSource) (out *_programSource) {
+	switch {
+	case base == nil && actual == nil:
+		return nil
+	case base == nil:
+		return actual
+	case actual == nil:
+		return base
+	}
+
+	// both base and actual are valid. Perform merging
+	if actual.Archive != "" {
+		base.Archive = actual.Archive
+	}
+
+	if actual.Format != "" {
+		base.Format = actual.Format
+	}
+
+	if actual.URL != "" {
+		base.URL = actual.URL
+	}
+
+	if actual.Method != "" {
+		base.Method = actual.Method
+	}
+
+	if actual.Checksum != nil {
+		if base.Checksum == nil {
+			base.Checksum = actual.Checksum
+		}
+
+		if actual.Checksum.Type != "" || base.Checksum.Type == "" {
+			base.Checksum.Type = actual.Checksum.Type
+		}
+
+		if actual.Checksum.Format != "" || base.Checksum.Format == "" {
+			base.Checksum.Format = actual.Checksum.Format
+		}
+
+		if actual.Checksum.Value != "" || base.Checksum.Value == "" {
+			base.Checksum.Value = actual.Checksum.Value
+		}
+	}
+
+	if len(actual.Headers) > 0 {
+		base.Headers = map[string]string{}
+		for k, v := range actual.Headers {
+			base.Headers[k] = v
+		}
+	}
+
+	return base
 }
 
 func (data *TOMLProgram) _getChecksum(x *_programChecksum) (h *checksum.Hasher,

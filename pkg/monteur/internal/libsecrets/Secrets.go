@@ -25,7 +25,7 @@ func GetSecrets(pathings []string) (sec map[string]interface{}) {
 
 	sec = map[string]interface{}{}
 
-	s := &secrets.Processor{ DecodeFx: toml.SilentDecodeFile }
+	s := &secrets.Processor{DecodeFx: toml.SilentDecodeFile}
 
 	sec, err = s.DecodeMultiPath(sec, pathings, nil)
 	if err != nil {

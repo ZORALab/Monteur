@@ -60,6 +60,7 @@ func (app *Program) SourceHTTPS(ctx context.Context) {
 		HandleError:   app.ReportError,
 		HandleSuccess: app.Source.HandleSuccess,
 		Destination:   app.WorkspacePath,
+		Headers:       app.Source.Headers,
 	}
 
 	d.HandleProgress = func(downloaded, total int64) {
