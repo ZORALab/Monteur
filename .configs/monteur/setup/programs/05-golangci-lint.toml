@@ -25,7 +25,7 @@ BaseURL = 'https://github.com/golangci/golangci-lint/releases/download'
 Format = 'tar.gz'
 Archive = 'golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}'
 URL = '{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}'
-Method = 'Get'
+Method = 'GET'
 [Sources.all-all.headers]
 'Authorization' = '{{- index .Secrets "Github.API_KEY" -}}'
 
