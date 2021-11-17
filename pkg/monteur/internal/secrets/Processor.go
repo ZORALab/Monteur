@@ -17,6 +17,8 @@ package secrets
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -107,4 +109,73 @@ func (unit *Processor) postProcessing(pre string, key string,
 	default:
 		d[key] = ivalue
 	}
+}
+
+// DecodeDir takes the directory input path and parse its contents recursively.
+//
+// If the `Processor`'s `DecodeFx` is not assigned (`nil`), the `Decode` method
+// shall return ERROR_MISSING_DECODE_FX without executing any decoding
+// sequences.
+//
+// Should the given `input` is a file, this method will execute `Decode`
+// automatically and return its values accordingly. Otherwise, the data
+// structure will merge all its data files and sub-directories.
+func (unit *Processor) DecodeDir(data map[string]interface{}, input string,
+	config interface{}) (out map[string]interface{}, err error) {
+	var i os.FileInfo
+
+	// check DecodeFx is assigned for operations
+	if unit.DecodeFx == nil {
+		return nil, fmt.Errorf(ERROR_MISSING_DECODE_FX)
+	}
+
+	// if the input is a file, `Decode` it and gets out
+	if i, err = os.Stat(input); !os.IsNotExist(err) && !i.IsDir() {
+		return unit.Decode(data, input, config)
+	}
+
+	// input is directory. Prepare data for recursive dive
+	out = map[string]interface{}{}
+	if data != nil {
+		out = data
+	}
+
+	// recursively dive into the input directory
+	err = filepath.Walk(input,
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+
+			if path == input {
+				return nil
+			}
+
+			out, err = unit.DecodeDir(out, path, config)
+			return err
+		})
+
+	return out, err //nolint:wrapcheck
+}
+
+func (unit *Processor) DecodeMultiPath(data map[string]interface{},
+	input []string, config interface{}) (out map[string]interface{},
+	err error) {
+	// check DecodeFx is assigned for operations
+	if unit.DecodeFx == nil {
+		return nil, fmt.Errorf(ERROR_MISSING_DECODE_FX)
+	}
+
+	// initialize out variable
+	out = map[string]interface{}{}
+	if data != nil {
+		out = data
+	}
+
+	// parse every given path
+	for _, path := range input {
+		out, err = unit.DecodeDir(out, path, config)
+	}
+
+	return out, err
 }

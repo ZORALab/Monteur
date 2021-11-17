@@ -16,64 +16,20 @@
 package libsecrets
 
 import (
-	"os"
-	"path/filepath"
-
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/secrets"
 )
 
 func GetSecrets(pathings []string) (sec map[string]interface{}) {
-	sec = map[string]interface{}{}
-
-	for _, path := range pathings {
-		sec = _parseSecrets(sec, path)
-	}
-
-	return sec
-}
-
-func _parseSecrets(data map[string]interface{},
-	pathing string) (sec map[string]interface{}) {
-	if i, err := os.Stat(pathing); !os.IsNotExist(err) && !i.IsDir() {
-		if filepath.Ext(pathing) != libmonteur.EXTENSION_TOML {
-			return data // not a toml data file
-		}
-
-		sec = __parseSecretsFile(data, pathing)
-		return sec
-	}
-
-	sec = data
-	_ = filepath.Walk(pathing, func(path string, info os.FileInfo,
-		err error) error {
-		if path == pathing {
-			return nil
-		}
-
-		sec = _parseSecrets(sec, path)
-		return nil
-	})
-
-	return sec
-}
-
-func __parseSecretsFile(data map[string]interface{},
-	path string) (sec map[string]interface{}) {
 	var err error
 
-	if filepath.Ext(path) != libmonteur.EXTENSION_TOML {
-		return data // not a correct file
-	}
+	sec = map[string]interface{}{}
 
-	s := &secrets.Processor{
-		DecodeFx: toml.DecodeFile,
-	}
+	s := &secrets.Processor{ DecodeFx: toml.SilentDecodeFile }
 
-	sec, err = s.Decode(data, path, nil)
+	sec, err = s.DecodeMultiPath(sec, pathings, nil)
 	if err != nil {
-		return data
+		return sec
 	}
 
 	return sec
