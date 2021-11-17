@@ -27,7 +27,7 @@ Archive = 'golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}'
 URL = '{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}'
 Method = 'GET'
 [Sources.all-all.headers]
-'Authorization' = '{{- index .Secrets "Github.API_KEY" -}}'
+'Authorization' = '{{- string (index .Secrets "Github.API_KEY") -}}'
 
 [Sources.windows-amd64]
 Format = 'zip'

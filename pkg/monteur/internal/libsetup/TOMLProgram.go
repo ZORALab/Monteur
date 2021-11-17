@@ -502,18 +502,31 @@ func (data *TOMLProgram) processConfig(app *Program) (err error) {
 	return nil
 }
 
-func (data *TOMLProgram) __processVar(text string) (string, error) {
-	t, err := template.New("value").Parse(text)
+func (data *TOMLProgram) __processVar(text string) (out string, err error) {
+	// initialize variables
+	out = text
+
+	// initalize text template
+	t := template.New("value")
+	t = t.Funcs(template.FuncMap{
+		"string": func(input interface{}) string {
+			return fmt.Sprintf("%#s", input)
+		},
+	})
+	t, err = t.Parse(text)
+
 	if err != nil {
-		return text, err //nolint:wrapcheck
+		return out, err //nolint:wrapcheck
 	}
 
 	var b bytes.Buffer
 	if err := t.Execute(&b, data.Variables); err != nil {
-		return text, err //nolint:wrapcheck
+		return out, err //nolint:wrapcheck
 	}
 
-	return b.String(), nil
+	out = b.String()
+
+	return out, nil
 }
 
 func (data *TOMLProgram) _error(tag string, message interface{}) (err error) {
