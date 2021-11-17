@@ -25,10 +25,14 @@ import (
 	toml "github.com/pelletier/go-toml/v2"
 )
 
-// DecodeFile is to decode a TOML file from a given path to a data structure.
+// DecodeFile is to decode TOML data from a file.
 //
 // This function is to simplify and to warp a third-party TOML endec for simple
 // utilization.
+//
+// This function will always return `nil` for silent parsing. This is designed
+// for parsing multiple files in a directory regardless about their
+// compatibility.
 func DecodeFile(path string,
 	data interface{}, config interface{}) (err error) {
 	var c *Config
@@ -46,7 +50,20 @@ func DecodeFile(path string,
 	return decode(f, data, c)
 }
 
-// DecodeString is to decode an in-memory TOML string data to a data structure.
+// SilentDecodeFile is to decode TOML data from a file quietly.
+//
+// This function will always return `nil` for silent parsing. This is designed
+// for parsing multiple files in a directory regardless about their
+// compatibility.
+//
+// It calls `DecodeFile` inheritly and discards its error output regardlessly.
+func SilentDecodeFile(path string,
+	data interface{}, config interface{}) (err error) {
+	_ = DecodeFile(path, data, config)
+	return nil
+}
+
+// DecodeString is to decode TOML data from an in-memory string.
 //
 // This function is to simplify and to warp a third-party TOML endec for simple
 // utilization.
@@ -64,7 +81,7 @@ func DecodeString(input string,
 	return decode(f, data, c)
 }
 
-// DecodeBytes is to decode an in-memory TOML bytes data to a data structure.
+// DecodeBytes is to decode TOML data from an in-memory `[]byte`.
 //
 // This funcion is to simplify and to warp a third-party TOML endec for simple
 // utilization.
