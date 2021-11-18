@@ -18,6 +18,7 @@ package monteur
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libpublish"
@@ -26,15 +27,28 @@ import (
 )
 
 type publisher struct {
-	workspace *libworkspace.Workspace
-	secrets   map[string]interface{}
-	settings  *libpublish.Run
+	workspace  *libworkspace.Workspace
+	secrets    map[string]interface{}
+	settings   *libpublish.Run
+	publishers map[string]*libpublish.Publisher
 }
 
 func (fx *publisher) Build() (statusCode int) {
 	err := fx._init()
 	if err != nil {
 		return fx._reportError(err)
+	}
+
+	err = fx._parseCommands()
+	if err != nil {
+		return fx._reportError(err)
+	}
+
+	for _, p := range fx.publishers {
+		err = p.Build()
+		if err != nil {
+			return fx._reportError(err)
+		}
 	}
 
 	return STATUS_OK
@@ -46,12 +60,83 @@ func (fx *publisher) Publish() (statusCode int) {
 		return fx._reportError(err)
 	}
 
+	err = fx._parseCommands()
+	if err != nil {
+		return fx._reportError(err)
+	}
+
+	for _, p := range fx.publishers {
+		err = p.Publish()
+		if err != nil {
+			return fx._reportError(err)
+		}
+	}
+
 	return STATUS_OK
+}
+
+func (fx *publisher) _parseCommands() (err error) {
+	err = filepath.Walk(fx.workspace.Filesystem.PublishConfigDir,
+		fx.__filterPublisher)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	return nil
+}
+
+func (fx *publisher) __filterPublisher(path string,
+	info os.FileInfo, err error) error {
+	var s *libpublish.TOMLParser
+	var data *libpublish.Publisher
+
+	// return if err occurred
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_TOML_PARSE_FAILED,
+			err,
+		)
+	}
+
+	// ensures we only accept the correct regular file with .toml extension
+	if filepath.Ext(path) != libmonteur.EXTENSION_TOML || info.IsDir() {
+		return nil
+	}
+
+	// initialize TOML Parser object
+	s = &libpublish.TOMLParser{}
+
+	// decode the publisher toml file
+	err = s.Parse(path)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// set compulsory variables into the data structure
+	s.Variables[libmonteur.VAR_OS] = fx.workspace.OS
+	s.Variables[libmonteur.VAR_ARCH] = fx.workspace.ARCH
+	s.Variables[libmonteur.VAR_COMPUTE] = fx.workspace.ComputeSystem
+	s.Variables[libmonteur.VAR_TMP] = fx.workspace.Filesystem.PublishTMPDir
+	s.Variables[libmonteur.VAR_BIN] = fx.workspace.Filesystem.BinDir
+	s.Variables[libmonteur.VAR_CFG] = fx.workspace.Filesystem.BinCfgDir
+	s.Variables[libmonteur.VAR_SECRETS] = fx.secrets
+
+	// process the data from TOMLParser
+	data, err = s.Process()
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// save successful publisher data into list for further processing
+	fx.publishers[data.Name] = data
+
+	return nil
 }
 
 func (fx *publisher) _init() (err error) {
 	fx.settings = &libpublish.Run{}
 	fx.workspace = &libworkspace.Workspace{}
+	fx.publishers = map[string]*libpublish.Publisher{}
 
 	// initialize workspace
 	err = fx.workspace.Init()

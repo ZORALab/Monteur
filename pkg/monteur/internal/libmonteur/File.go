@@ -26,10 +26,11 @@ const (
 )
 
 const (
-	DIRECTORY_GIT            = ".git"
-	DIRECTORY_MONTEUR_CONFIG = ".configs/monteur"
-	DIRECTORY_SETUP_PROGRAMS = "setup/programs"
-	DIRECTORY_APP            = "app"
+	DIRECTORY_APP               = "app"
+	DIRECTORY_GIT               = ".git"
+	DIRECTORY_MONTEUR_CONFIG    = ".configs/monteur"
+	DIRECTORY_PUBLISH_PUBLISHER = "publish/publishers"
+	DIRECTORY_SETUP_PROGRAMS    = "setup/programs"
 )
 
 const (
