@@ -108,7 +108,7 @@ func Package() int {
 // reading channels such as web, file server for PDF files, and etc.
 func Publish() int {
 	p := &publisher{}
-	return p.Run()
+	return p.Publish()
 }
 
 // PublishBuild is the function to build the documentation artifacts.
@@ -116,8 +116,6 @@ func Publish() int {
 // This action is to build the publication artifacts prior to `Publish`. It is
 // for local review and editing without publishing to the main web.
 func PublishBuild() int {
-	b := &publisher{
-		OnlyBuild: true,
-	}
-	return b.Run()
+	b := &publisher{}
+	return b.Build()
 }
