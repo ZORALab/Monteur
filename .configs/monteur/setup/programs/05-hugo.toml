@@ -1,0 +1,152 @@
+# Information about the software to be downloaded
+[Metadata]
+Name = 'Hugo'
+Description = """
+Hugo static website generator for web publications
+"""
+Type = 'https-download'
+
+
+
+
+# Customization
+[Variables]
+Version = '0.89.4'
+BaseURL = 'https://github.com/gohugoio/hugo/releases/download'
+
+
+
+
+# Supported OS and CPU Architectures program sources. The Key for supported
+# OS and CPU complies to the format:
+#	[Sources.{GOOS}-{GOARCH}]
+# Only list out supported packages will do.
+[Sources.all-all]
+Format = 'tar.gz'
+URL = '{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}'
+Method = 'GET'
+[Sources.all-all.Checksum]
+Type = 'sha256'
+Format = 'hex'
+[Sources.all-all.headers]
+'Authorization' = '{{- string (index .Secrets "Github.API_KEY") -}}'
+
+[Sources.dragonfly-amd64]
+Archive = 'hugo_{{- .Version -}}_DragonFlyBSD-64bit.{{- .Format -}}'
+[Sources.dragonfly-amd64.Checksum]
+Value = '400e2e170e8493816fc8cad95ddf33d0cd0817b3a8720478bc8c841a344960ec'
+
+[Sources.freebsd-amd64]
+Archive = 'hugo_{{- .Version -}}_FreeBSD-64bit.{{- .Format -}}'
+[Sources.freebsd-amd64.Checksum]
+Value = '38c841c9923ca2a949535c431affadbcb6e5c00d4c95496b04392db0a3e82bca'
+
+[Sources.linux-386]
+Archive = 'hugo_{{- .Version -}}_Linux-32bit.{{- .Format -}}'
+[Sources.linux-386.Checksum]
+Value = '1731fe5e9e7375d7c2d4f275d763957952734c4b52ed886d989b1112c3ff3a45'
+
+[Sources.linux-amd64]
+Archive = 'hugo_{{- .Version -}}_Linux-64bit.{{- .Format -}}'
+[Sources.linux-amd64.Checksum]
+Value = '88bcff016b16974909615bafc6e89a95f44999576034893e32ef1f1a2124af46'
+
+[Sources.linux-arm]
+Archive = 'hugo_{{- .Version -}}_Linux-ARM.{{- .Format -}}'
+[Sources.linux-arm.Checksum]
+Value = 'a8781ab0e61aa71c9084a23b908644296bb3390eda9cf5be78d2d225b5f0cc56'
+
+[Sources.linux-armv7]
+Archive = 'hugo_{{- .Version -}}_Linux-ARM.{{- .Format -}}'
+[Sources.linux-armv7.Checksum]
+Value = 'a8781ab0e61aa71c9084a23b908644296bb3390eda9cf5be78d2d225b5f0cc56'
+
+[Sources.linux-arm64]
+Archive = 'hugo_{{- .Version -}}_Linux-ARM64.{{- .Format -}}'
+[Sources.linux-arm64.Checksum]
+Value = '3b4ae8e90db3d802b3acf979e702dee86f767df8af6df648747dee7f20e4e9c3'
+
+[Sources.darwin-amd64]
+Archive = 'hugo_{{- .Version -}}_macOS-64bit.{{- .Format -}}'
+[Sources.darwin-amd64.Checksum]
+Value = 'ed9025b6c606242446c6724e92d177275d48c0a6212793c7f316e84fa5a889ba'
+
+[Sources.darwin-arm64]
+Archive = 'hugo_{{- .Version -}}_macOS-ARM64.{{- .Format -}}'
+[Sources.darwin-arm64.Checksum]
+Value = 'b36c5b368b4ef5ceda120b61c7e1767dbc7ae874dc497153f6e17df143fa1915'
+
+[Sources.netbsd-amd64]
+Archive = 'hugo_{{- .Version -}}_NetBSD-64bit.{{- .Format -}}'
+[Sources.netbsd-amd64.Checksum]
+Value = '64e9914093e6d884c61787a0e12f85f8f5cc036a0fa35361c25830f7ee6a24e6'
+
+[Sources.openbsd-amd64]
+Archive = 'hugo_{{- .Version -}}_OpenBSD-64bit.{{- .Format -}}'
+[Sources.openbsd-amd64.Checksum]
+Value = '8120f5f4d17e12dc6be234e92a04f3e79daba65604077cb8b028e1c96d7357ee'
+
+[Sources.windows-386]
+Format = 'zip'
+Archive = 'hugo_{{- .Version -}}_Windows-32bit.{{- .Format -}}'
+[Sources.windows-386.Checksum]
+Value = '57067a96741f11e5346f1a3e44ac4ada9f6e2d364122db58f0e215ca888beb1e'
+
+[Sources.windows-amd64]
+Format = 'zip'
+Archive = 'hugo_{{- .Version -}}_Windows-64bit.{{- .Format -}}'
+[Sources.windows-amd64.Checksum]
+Value = 'aed50fc354f1d30ddf845812ca34136e4c168edc03be5e9a7d6ec98d79680d31'
+
+[Sources.windows-arm]
+Format = 'zip'
+Archive = 'hugo_{{- .Version -}}_Windows-ARM.{{- .Format -}}'
+[Sources.windows-arm.Checksum]
+Value = '0cba7deb9373d7689ff5a4505e3e3ccea7dbd28754b9a51b8afdb5c086d27dc1'
+
+[Sources.windows-armv7]
+Format = 'zip'
+Archive = 'hugo_{{- .Version -}}_Windows-ARM.{{- .Format -}}'
+[Sources.windows-armv7.Checksum]
+Value = '0cba7deb9373d7689ff5a4505e3e3ccea7dbd28754b9a51b8afdb5c086d27dc1'
+
+[Sources.windows-arm64]
+Format = 'zip'
+Archive = 'hugo_{{- .Version -}}_Windows-ARM64.{{- .Format -}}'
+[Sources.windows-arm64.Checksum]
+Value = '58e7b0b09119bff974264f2ca506755bffa5fc79823a4c491834278effaa8aa3'
+
+
+
+
+# Setup the unpacked software directories/files into the local bin directory.
+#
+# NOTE: The key field is mainly for sorting purposes.
+[[Setup]]
+Type = 'move'
+Condition = 'all-all'
+Source = 'hugo'
+Target = 'hugo'
+
+
+
+
+# Config file for localized filesystem initialization.
+[Config]
+linux = """
+#!/bin/bash
+
+_name="hugo"
+
+case $1 in
+--stop)
+	;;
+*)
+	if [ ! -z "$(type -p "$_name")" ]; then
+		1>&2 printf "[ DONE  ] '$_name' is available.\\n"
+	else
+		1>&2 printf "[ ERROR ] '$_name' is missing.\\n"
+	fi
+	;;
+esac
+"""
