@@ -49,6 +49,7 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		`$ monteur build`,
 		`$ monteur release`,
 		`$ monteur package`,
+		`$ monteur publish-build`,
 		`$ monteur publish`,
 	}
 
@@ -146,9 +147,19 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		Name:  "Publish",
 		Label: []string{"publish"},
 		Value: &action,
-		Help:  "execute the publish job",
+		Help:  "execute the publish job including publish-build",
 		HelpExamples: []string{
 			"$ monteur publish",
+		},
+	})
+
+	_ = m.Add(&args.Flag{
+		Name:  "Publish - Build",
+		Label: []string{"publish-build"},
+		Value: &action,
+		Help:  "execute the publication build job without publish",
+		HelpExamples: []string{
+			"$ monteur build-publications",
 		},
 	})
 
@@ -178,6 +189,8 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		os.Exit(monteur.Package())
 	case "publish":
 		os.Exit(monteur.Publish())
+	case "publish-build":
+		os.Exit(monteur.PublishBuild())
 	default:
 		fmt.Fprintf(os.Stderr, "[ ERROR ] unknown action: %s", action)
 		os.Exit(1)

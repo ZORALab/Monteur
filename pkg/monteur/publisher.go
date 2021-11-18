@@ -19,9 +19,17 @@ import (
 	"fmt"
 )
 
-type publisher struct{}
+type publisher struct {
+	OnlyBuild bool
+}
 
 func (unit *publisher) Run() (statusCode int) {
+	fmt.Println("Placeholder: build publications called")
+
+	if unit.OnlyBuild {
+		return STATUS_OK
+	}
+
 	fmt.Println("Placeholder: publish function called")
 	return STATUS_OK
 }

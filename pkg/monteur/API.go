@@ -110,3 +110,14 @@ func Publish() int {
 	p := &publisher{}
 	return p.Run()
 }
+
+// PublishBuild is the function to build the documentation artifacts.
+//
+// This action is to build the publication artifacts prior to `Publish`. It is
+// for local review and editing without publishing to the main web.
+func PublishBuild() int {
+	b := &publisher{
+		OnlyBuild: true,
+	}
+	return b.Run()
+}
