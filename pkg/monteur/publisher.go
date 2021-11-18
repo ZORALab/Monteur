@@ -20,6 +20,7 @@ import (
 	"os"
 
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libpublish"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libsecrets"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libworkspace"
 )
@@ -27,12 +28,13 @@ import (
 type publisher struct {
 	workspace *libworkspace.Workspace
 	secrets   map[string]interface{}
+	settings  *libpublish.Run
 }
 
 func (fx *publisher) Build() (statusCode int) {
 	err := fx._init()
 	if err != nil {
-		fx._reportError(err)
+		return fx._reportError(err)
 	}
 
 	return STATUS_OK
@@ -41,18 +43,14 @@ func (fx *publisher) Build() (statusCode int) {
 func (fx *publisher) Publish() (statusCode int) {
 	err := fx._init()
 	if err != nil {
-		fx._reportError(err)
+		return fx._reportError(err)
 	}
 
 	return STATUS_OK
 }
 
-func (fx *publisher) _reportError(err error) int {
-	fmt.Fprintf(os.Stdout, "%s %s\n", libmonteur.ERROR_PUBLISH, err)
-	return STATUS_ERROR
-}
-
 func (fx *publisher) _init() (err error) {
+	fx.settings = &libpublish.Run{}
 	fx.workspace = &libworkspace.Workspace{}
 
 	// initialize workspace
@@ -64,5 +62,16 @@ func (fx *publisher) _init() (err error) {
 	// initialize secrets and parse every one of them
 	fx.secrets = libsecrets.GetSecrets(fx.workspace.Filesystem.SecretsDir)
 
+	// initialize settings
+	err = fx.settings.Parse(fx.workspace.Filesystem.PublishTOMLFile)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
 	return nil
+}
+
+func (fx *publisher) _reportError(err error) int {
+	fmt.Fprintf(os.Stdout, "%s %s\n", libmonteur.ERROR_PUBLISH, err)
+	return STATUS_ERROR
 }

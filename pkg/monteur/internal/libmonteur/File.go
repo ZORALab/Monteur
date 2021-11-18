@@ -33,8 +33,9 @@ const (
 )
 
 const (
-	FILE_WORKSPACE_TOML = "workspace" + EXTENSION_TOML
-	FILE_SETUP_TOML     = "setup/config" + EXTENSION_TOML
+	FILE_TOML_PUBLISH   = "publish/config" + EXTENSION_TOML
+	FILE_TOML_SETUP     = "setup/config" + EXTENSION_TOML
+	FILE_TOML_WORKSPACE = "workspace" + EXTENSION_TOML
 )
 
 const (

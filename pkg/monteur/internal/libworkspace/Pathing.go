@@ -60,6 +60,9 @@ type Pathing struct {
 	SetupProgramConfigDir string
 	SetupTOMLFile         string
 
+	// sub-directories for publish fx
+	PublishTOMLFile string
+
 	// user
 	User *UserPath
 
@@ -93,7 +96,7 @@ func (fp *Pathing) Init() (err error) {
 		return err
 	}
 
-	fp.WorkspaceTOMLFile = libmonteur.FILE_WORKSPACE_TOML
+	fp.WorkspaceTOMLFile = libmonteur.FILE_TOML_WORKSPACE
 	err = fp._initConfigSubPath(&fp.WorkspaceTOMLFile, "WorkspaceTOMLFile")
 	if err != nil {
 		return err
@@ -277,8 +280,15 @@ func (fp *Pathing) Update() (err error) {
 		return err
 	}
 
-	fp.SetupTOMLFile = libmonteur.FILE_SETUP_TOML
+	fp.SetupTOMLFile = libmonteur.FILE_TOML_SETUP
 	err = fp._initConfigSubPath(&fp.SetupTOMLFile,
+		"SetupTOMLConfigFile")
+	if err != nil {
+		return err
+	}
+
+	fp.PublishTOMLFile = libmonteur.FILE_TOML_PUBLISH
+	err = fp._initConfigSubPath(&fp.PublishTOMLFile,
 		"SetupTOMLConfigFile")
 	if err != nil {
 		return err
