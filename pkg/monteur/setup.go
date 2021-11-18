@@ -203,10 +203,10 @@ case $1 in
 	stop
 	;;
 *)
+	export PATH="${PATH}:$LOCAL_BIN"
 	for cfg in "$config_dir"/*; do
 		source $cfg
 	done
-	export PATH="${PATH}:$LOCAL_BIN"
 esac`)
 	}
 
