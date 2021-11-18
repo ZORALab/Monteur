@@ -59,8 +59,9 @@ func (app *Program) SourceHTTPS(ctx context.Context) {
 	d := &httpclient.Downloader{
 		HandleError:   app.ReportError,
 		HandleSuccess: app.Source.HandleSuccess,
-		Destination:   filepath.Join(app.WorkspacePath, app.Source.Archive),
-		Headers:       app.Source.Headers,
+		Destination: filepath.Join(app.WorkspacePath,
+			app.Source.Archive),
+		Headers: app.Source.Headers,
 	}
 
 	d.HandleProgress = func(downloaded, total int64) {

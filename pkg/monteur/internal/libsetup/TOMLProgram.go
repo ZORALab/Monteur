@@ -167,22 +167,9 @@ func (data *TOMLProgram) processSource(app *Program) (err error) {
 	}
 
 	// process format
-	actual.Format, err = templater.String(actual.Format, data.Variables)
-	actual.Format = strings.ToLower(actual.Format)
-	switch {
-	case err != nil:
-		return data._error(libmonteur.ERROR_PROGRAM_ARCHIVE_FORMAT_BAD,
-			actual.Format,
-		)
-	case actual.Format == libmonteur.PROGRAM_FORMAT_TAR_GZ:
-		app.Source.Unpack = app.UnarchiveTarGz
-	case actual.Format == libmonteur.PROGRAM_FORMAT_ZIP:
-		app.Source.Unpack = app.UnarchiveZip
-	default:
-		return data._error(
-			libmonteur.ERROR_PROGRAM_ARCHIVE_FORMAT_UNKNOWN,
-			actual.Format,
-		)
+	err = data._processSourceFormat(app, actual)
+	if err != nil {
+		return err
 	}
 	data.Variables[libmonteur.VAR_FORMAT] = actual.Format
 	defer delete(data.Variables, libmonteur.VAR_FORMAT)
@@ -219,23 +206,56 @@ func (data *TOMLProgram) processSource(app *Program) (err error) {
 	defer delete(data.Variables, libmonteur.VAR_URL)
 
 	// process headers
-	app.Source.Headers = map[string]string{}
-	for k, v := range actual.Headers {
-		v, err = templater.String(v, data.Variables)
-		if err != nil {
-			//nolint: lll
-			return data._error(libmonteur.ERROR_PROGRAM_HTTPS_HEADER_BAD,
-				v,
-			)
-		}
-
-		app.Source.Headers[k] = v
+	err = data._processSourceHeaders(app, actual)
+	if err != nil {
+		return err
 	}
 
 	// process Checksum
 	app.Source.Checksum, err = data._getChecksum(actual.Checksum)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (data *TOMLProgram) _processSourceFormat(app *Program,
+	actual *_programSource) (err error) {
+	actual.Format, err = templater.String(actual.Format, data.Variables)
+	actual.Format = strings.ToLower(actual.Format)
+	switch {
+	case err != nil:
+		return data._error(libmonteur.ERROR_PROGRAM_ARCHIVE_FORMAT_BAD,
+			actual.Format,
+		)
+	case actual.Format == libmonteur.PROGRAM_FORMAT_TAR_GZ:
+		app.Source.Unpack = app.UnarchiveTarGz
+	case actual.Format == libmonteur.PROGRAM_FORMAT_ZIP:
+		app.Source.Unpack = app.UnarchiveZip
+	default:
+		return data._error(
+			libmonteur.ERROR_PROGRAM_ARCHIVE_FORMAT_UNKNOWN,
+			actual.Format,
+		)
+	}
+
+	return nil
+}
+
+func (data *TOMLProgram) _processSourceHeaders(app *Program,
+	actual *_programSource) (err error) {
+	app.Source.Headers = map[string]string{}
+	for k, v := range actual.Headers {
+		v, err = templater.String(v, data.Variables)
+		if err != nil {
+			return data._error(
+				libmonteur.ERROR_PROGRAM_HTTPS_HEADER_BAD,
+				err,
+			)
+		}
+
+		app.Source.Headers[k] = v
 	}
 
 	return nil
@@ -269,23 +289,7 @@ func (data *TOMLProgram) _mergeProgramSource(base *_programSource,
 		base.Method = actual.Method
 	}
 
-	if actual.Checksum != nil {
-		if base.Checksum == nil {
-			base.Checksum = actual.Checksum
-		}
-
-		if actual.Checksum.Type != "" || base.Checksum.Type == "" {
-			base.Checksum.Type = actual.Checksum.Type
-		}
-
-		if actual.Checksum.Format != "" || base.Checksum.Format == "" {
-			base.Checksum.Format = actual.Checksum.Format
-		}
-
-		if actual.Checksum.Value != "" || base.Checksum.Value == "" {
-			base.Checksum.Value = actual.Checksum.Value
-		}
-	}
+	data.__mergeProgramSourceChecksum(base, actual)
 
 	if len(actual.Headers) > 0 {
 		base.Headers = map[string]string{}
@@ -295,6 +299,29 @@ func (data *TOMLProgram) _mergeProgramSource(base *_programSource,
 	}
 
 	return base
+}
+
+func (data *TOMLProgram) __mergeProgramSourceChecksum(base *_programSource,
+	actual *_programSource) {
+	if actual.Checksum == nil {
+		return
+	}
+
+	if base.Checksum == nil {
+		base.Checksum = actual.Checksum
+	}
+
+	if actual.Checksum.Type != "" || base.Checksum.Type == "" {
+		base.Checksum.Type = actual.Checksum.Type
+	}
+
+	if actual.Checksum.Format != "" || base.Checksum.Format == "" {
+		base.Checksum.Format = actual.Checksum.Format
+	}
+
+	if actual.Checksum.Value != "" || base.Checksum.Value == "" {
+		base.Checksum.Value = actual.Checksum.Value
+	}
 }
 
 func (data *TOMLProgram) _getChecksum(x *_programChecksum) (h *checksum.Hasher,
