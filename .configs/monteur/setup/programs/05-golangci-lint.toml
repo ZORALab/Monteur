@@ -124,15 +124,17 @@ Target = 'golangci-lint'
 [Config]
 linux = """
 #!/bin/bash
+
+_name="golangci-lint"
+
 case $1 in
 --stop)
 	;;
 *)
-	if [ ! -z "$(type -p golangci-lint)" ]; then
-		1>&2 printf "[ DONE  ] golangci-lint is available.\\n"
+	if [ ! -z "$(type -p "$_name")" ]; then
+		1>&2 printf "[ DONE  ] '$_name' is available.\\n"
 	else
-		1>&2 printf "[ ERROR ] golangci-lint is missing.\\n"
-		stop_go
+		1>&2 printf "[ ERROR ] '$_name' is missing.\\n"
 	fi
 	;;
 esac
