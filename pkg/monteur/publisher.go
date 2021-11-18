@@ -17,16 +17,52 @@ package monteur
 
 import (
 	"fmt"
+	"os"
+
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libsecrets"
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libworkspace"
 )
 
-type publisher struct{}
+type publisher struct {
+	workspace *libworkspace.Workspace
+	secrets   map[string]interface{}
+}
 
-func (unit *publisher) Build() (statusCode int) {
-	fmt.Println("Placeholder: build publications called")
+func (fx *publisher) Build() (statusCode int) {
+	err := fx._init()
+	if err != nil {
+		fx._reportError(err)
+	}
+
 	return STATUS_OK
 }
 
-func (unit *publisher) Publish() (statusCode int) {
-	fmt.Println("Placeholder: publish function called")
+func (fx *publisher) Publish() (statusCode int) {
+	err := fx._init()
+	if err != nil {
+		fx._reportError(err)
+	}
+
 	return STATUS_OK
+}
+
+func (fx *publisher) _reportError(err error) int {
+	fmt.Fprintf(os.Stdout, "%s %s\n", libmonteur.ERROR_PUBLISH, err)
+	return STATUS_ERROR
+}
+
+func (fx *publisher) _init() (err error) {
+	fx.workspace = &libworkspace.Workspace{}
+
+	// initialize workspace
+	err = fx.workspace.Init()
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// initialize secrets and parse every one of them
+	fx.secrets = libsecrets.GetSecrets(fx.workspace.Filesystem.SecretsDir)
+
+	return nil
 }
