@@ -16,14 +16,13 @@
 package libsetup
 
 import (
-	"bytes"
 	"fmt"
 	"strings"
-	"text/template"
 
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/checksum"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/templater"
 )
 
 type _programMetadata struct {
@@ -116,7 +115,8 @@ func (data *TOMLProgram) Process() (app *Program, err error) {
 }
 
 func (data *TOMLProgram) processMetadata(app *Program) (err error) {
-	data.Metadata.Type, err = data.__processVar(data.Metadata.Type)
+	data.Metadata.Type, err = templater.String(data.Metadata.Type,
+		data.Variables)
 	if err != nil {
 		return data._error(libmonteur.ERROR_PROGRAM_TYPE_BAD, err)
 	}
@@ -131,14 +131,16 @@ func (data *TOMLProgram) processMetadata(app *Program) (err error) {
 			data.Metadata.Type)
 	}
 
-	data.Metadata.Name, err = data.__processVar(data.Metadata.Name)
+	data.Metadata.Name, err = templater.String(data.Metadata.Name,
+		data.Variables)
 	if err != nil {
 		return data._error(libmonteur.ERROR_PROGRAM_META_NAME_BAD, err)
 	}
 	app.Metadata.Name = data.Metadata.Name
 
 	//nolint:lll
-	app.Metadata.Description, err = data.__processVar(data.Metadata.Description)
+	app.Metadata.Description, err = templater.String(data.Metadata.Description,
+		data.Variables)
 	if err != nil {
 		return data._error(libmonteur.ERROR_PROGRAM_META_DESC_BAD, err)
 	}
@@ -165,7 +167,7 @@ func (data *TOMLProgram) processSource(app *Program) (err error) {
 	}
 
 	// process format
-	actual.Format, err = data.__processVar(actual.Format)
+	actual.Format, err = templater.String(actual.Format, data.Variables)
 	actual.Format = strings.ToLower(actual.Format)
 	switch {
 	case err != nil:
@@ -186,7 +188,8 @@ func (data *TOMLProgram) processSource(app *Program) (err error) {
 	defer delete(data.Variables, libmonteur.VAR_FORMAT)
 
 	// process archive
-	app.Source.Archive, err = data.__processVar(actual.Archive)
+	app.Source.Archive, err = templater.String(actual.Archive,
+		data.Variables)
 	if err != nil || app.Source.Archive == "" {
 		return data._error(libmonteur.ERROR_PROGRAM_ARCHIVE_BAD,
 			actual.Archive,
@@ -196,7 +199,7 @@ func (data *TOMLProgram) processSource(app *Program) (err error) {
 	defer delete(data.Variables, libmonteur.VAR_ARCHIVE)
 
 	// process method
-	app.Source.Method, err = data.__processVar(actual.Method)
+	app.Source.Method, err = templater.String(actual.Method, data.Variables)
 	if err != nil || app.Source.Method == "" {
 		return data._error(libmonteur.ERROR_PROGRAM_HTTPS_METHOD_BAD,
 			actual.Method,
@@ -206,7 +209,7 @@ func (data *TOMLProgram) processSource(app *Program) (err error) {
 	defer delete(data.Variables, libmonteur.VAR_METHOD)
 
 	// process url
-	app.Source.URL, err = data.__processVar(actual.URL)
+	app.Source.URL, err = templater.String(actual.URL, data.Variables)
 	if err != nil || app.Source.URL == "" {
 		return data._error(libmonteur.ERROR_PROGRAM_URL_BAD,
 			actual.URL,
@@ -218,7 +221,7 @@ func (data *TOMLProgram) processSource(app *Program) (err error) {
 	// process headers
 	app.Source.Headers = map[string]string{}
 	for k, v := range actual.Headers {
-		v, err = data.__processVar(v)
+		v, err = templater.String(v, data.Variables)
 		if err != nil {
 			//nolint: lll
 			return data._error(libmonteur.ERROR_PROGRAM_HTTPS_HEADER_BAD,
@@ -399,7 +402,7 @@ func (data *TOMLProgram) processSetup(app *Program) (err error) {
 
 func (data *TOMLProgram) _processSetupCondition(step int,
 	value *_programSetup, os string, arch string) (skip bool, err error) {
-	value.Condition, err = data.__processVar(value.Condition)
+	value.Condition, err = templater.String(value.Condition, data.Variables)
 	if err != nil {
 		return false, data._errorStep(step,
 			libmonteur.ERROR_PROGRAM_INST_CONDITION_BAD,
@@ -430,7 +433,7 @@ func (data *TOMLProgram) _processSetupCondition(step int,
 
 func (data *TOMLProgram) _processSetupType(step int,
 	x *Setup, value *_programSetup) (err error) {
-	value.Type, err = data.__processVar(value.Type)
+	value.Type, err = templater.String(value.Type, data.Variables)
 	if err != nil {
 		return data._errorStep(step,
 			libmonteur.ERROR_PROGRAM_INST_TYPE_BAD,
@@ -456,7 +459,7 @@ func (data *TOMLProgram) _processSetupType(step int,
 
 func (data *TOMLProgram) _processSetupSource(step int,
 	x *Setup, value *_programSetup) (err error) {
-	x.Source, err = data.__processVar(value.Source)
+	x.Source, err = templater.String(value.Source, data.Variables)
 	if err != nil {
 		return data._errorStep(step,
 			libmonteur.ERROR_PROGRAM_INST_SOURCE_BAD,
@@ -469,7 +472,7 @@ func (data *TOMLProgram) _processSetupSource(step int,
 
 func (data *TOMLProgram) _processSetupTarget(step int,
 	x *Setup, value *_programSetup) (err error) {
-	x.Target, err = data.__processVar(value.Target)
+	x.Target, err = templater.String(value.Target, data.Variables)
 	if err != nil {
 		return data._errorStep(step,
 			libmonteur.ERROR_PROGRAM_INST_TARGET_BAD,
@@ -494,39 +497,12 @@ func (data *TOMLProgram) processConfig(app *Program) (err error) {
 	}
 
 	// process variables
-	app.Config, err = data.__processVar(config)
+	app.Config, err = templater.String(config, data.Variables)
 	if err != nil {
 		return data._error(libmonteur.ERROR_PROGRAM_CONFIG_BAD, err)
 	}
 
 	return nil
-}
-
-func (data *TOMLProgram) __processVar(text string) (out string, err error) {
-	// initialize variables
-	out = text
-
-	// initalize text template
-	t := template.New("value")
-	t = t.Funcs(template.FuncMap{
-		"string": func(input interface{}) string {
-			return fmt.Sprintf("%#s", input)
-		},
-	})
-	t, err = t.Parse(text)
-
-	if err != nil {
-		return out, err //nolint:wrapcheck
-	}
-
-	var b bytes.Buffer
-	if err := t.Execute(&b, data.Variables); err != nil {
-		return out, err //nolint:wrapcheck
-	}
-
-	out = b.String()
-
-	return out, nil
 }
 
 func (data *TOMLProgram) _error(tag string, message interface{}) (err error) {
