@@ -22,6 +22,8 @@ linters-settings:
   errcheck:
     check-type-assertions: false
     check-blank: false
+  exhaustive:
+    default-signifies-exhaustive: true
   govet:
     check-shadowing: true
     settings:
