@@ -69,3 +69,7 @@ const (
 
 	ERROR_PROGRAM_URL_BAD = "bad program's source URL"
 )
+
+const (
+	ERROR_PUBLISH_METADATA_MISSING = "missing metadata"
+)

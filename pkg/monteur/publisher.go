@@ -127,8 +127,7 @@ func (fx *publisher) __filterBuilder(path string,
 
 func (fx *publisher) __filterPublisher(path string,
 	info os.FileInfo, err error) error {
-	var s *libpublish.TOMLPublisher
-	var data *libpublish.Publisher
+	var s *libpublish.Publisher
 
 	// return if err occurred
 	if err != nil {
@@ -144,7 +143,7 @@ func (fx *publisher) __filterPublisher(path string,
 	}
 
 	// initialize TOML Parser object
-	s = &libpublish.TOMLPublisher{}
+	s = &libpublish.Publisher{}
 
 	// decode the publisher toml file
 	err = s.Parse(path)
@@ -161,14 +160,8 @@ func (fx *publisher) __filterPublisher(path string,
 	s.Variables[libmonteur.VAR_CFG] = fx.workspace.Filesystem.BinCfgDir
 	s.Variables[libmonteur.VAR_SECRETS] = fx.secrets
 
-	// process the data from TOMLParser
-	data, err = s.Process()
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
-
 	// save successful publisher data into list for further processing
-	fx.workers[data.Name] = data
+	fx.workers[s.Metadata.Name] = s
 
 	return nil
 }

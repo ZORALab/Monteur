@@ -15,6 +15,10 @@
 
 package commander
 
+import (
+	"fmt"
+)
+
 type Action struct {
 	// Name is for the action naming used in logging and identification
 	Name string
@@ -37,6 +41,98 @@ type Action struct {
 	// The value shall be the name (or 'key') of the variable.
 	Save string
 
+	// SaveFx is the function to operate value storing for `Save` key.
+	//
+	// This function **MUST** be set if `Save` is set.
+	SaveFx func(key string, output interface{}) error
+
+	actionFx func() error
+
 	// Type is the action type ID.
 	Type ActionID
+}
+
+// Init is a method to ensure Action is sanitized and ready for execution.
+//
+// It validates all known configurations before executing the commands.
+func (action *Action) Init() (err error) {
+	if action.Name == "" {
+		return fmt.Errorf("action's Name is empty")
+	}
+
+	err = action._initMeta()
+	if err != nil {
+		return err
+	}
+
+	err = action._initType()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (action *Action) _initMeta() (err error) {
+	if action.Location == "" {
+		return action.__reportError("Location is empty")
+	}
+
+	if action.Type == "" {
+		return action.__reportError("Type is empty")
+	}
+
+	if action.Source == "" {
+		return action.__reportError("Source is empty")
+	}
+
+	if action.Save != "" && action.SaveFx == nil {
+		return action.__reportError("%s: '%s'",
+			"SaveFx is missing for save",
+			action.Save,
+		)
+	}
+
+	return nil
+}
+
+func (action *Action) _initType() (err error) {
+	switch action.Type {
+	case ACTION_PLACEHOLDER:
+		action.actionFx = action.cmdPlaceholder
+	case ACTION_COMMAND:
+	case ACTION_COMMAND_QUIET:
+	case ACTION_COPY:
+	case ACTION_COPY_RECURSIVE:
+	case ACTION_COPY_RECURSIVE_QUIET:
+	case ACTION_COPY_QUIET:
+	case ACTION_CREATE_DIR:
+	case ACTION_CREATE_PATH:
+	case ACTION_DELETE:
+	case ACTION_DELETE_RECURSIVE:
+	case ACTION_DELETE_RECURSIVE_QUIET:
+	case ACTION_DELETE_QUIET:
+	case ACTION_IS_EXISTS:
+	default:
+		return action.__reportError("%s: %s",
+			"unknown 'Type'",
+			action.Type,
+		)
+	}
+
+	return nil
+}
+
+func (action *Action) cmdPlaceholder() (err error) {
+	return nil
+}
+
+func (action *Action) __reportError(format string, args ...interface{}) error {
+	if action.Name == "" {
+		return fmt.Errorf("action '' - "+format, args...)
+	}
+
+	args = append([]interface{}{action.Name}, args...)
+
+	return fmt.Errorf("action '%s' - "+format, args...)
 }

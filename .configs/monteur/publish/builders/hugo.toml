@@ -1,4 +1,4 @@
-[Builder]
+[Metadata]
 Type = 'static-site-generator'
 Name = 'GoHugo'
 
