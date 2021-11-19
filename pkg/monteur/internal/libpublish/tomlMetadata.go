@@ -13,9 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package commander
+package libpublish
 
-type Dependency struct {
+type _tomlMetadata struct {
+	Type string
 	Name string
-	Type ActionID
 }

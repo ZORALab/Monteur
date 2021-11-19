@@ -1,0 +1,41 @@
+[Builder]
+Type = 'static-site-generator'
+Name = 'GoHugo'
+
+[Variables]
+MainLang = 'en'
+PublishBranch = 'gh-pages'
+PublishCommitID='Will be overwritten by publish command sequences'
+SourceDir = '{{- .RootDir -}}/.sites'
+DestinationDir = '{{- .RootDir -}}/public'
+BaseDir = '{{- .RootDir -}}/.sites'
+PublishDir = '{{- .RootDir -}}/{{- .PublishBranch -}}'
+
+
+
+
+[[Dependencies]]
+Type = 'command'
+Name = 'hugo'
+
+[[Dependencies]]
+Type = 'command'
+Name = 'git'
+
+[[Dependencies]]
+Type = 'command'
+Name = 'bissetii'
+
+[[CMD]]
+Name = "Hugo Build with Minimifaction"
+Type = 'command'
+Condition = 'all-all'
+Location = '{{- .SourceDir -}}'
+Source = 'hugo --minify'
+
+[[CMD]]
+Name = "Hugo Workaround with 404"
+Type = 'copy'
+Condition = 'all-all'
+Source = '{{- .DestinationDir -}}/{{- .MainLang -}}/404.html'
+Target = '{{- .DestinationDir -}}/404.html'

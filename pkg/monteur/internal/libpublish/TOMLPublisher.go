@@ -18,21 +18,22 @@ package libpublish
 import (
 	"fmt"
 
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/commander"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
 )
 
-type TOMLParser struct {
-	Variables map[string]interface{}
+type TOMLPublisher struct {
+	Metadata     *_tomlMetadata
+	Variables    map[string]interface{}
+	Dependencies []*commander.Dependency
+	CMD          []*commander.Action
 }
 
-func (fx *TOMLParser) Parse(path string) (err error) {
-	s := struct {
-	}{}
-
+func (fx *TOMLPublisher) Parse(path string) (err error) {
 	fx.Variables = map[string]interface{}{}
 
-	err = toml.DecodeFile(path, &s, nil)
+	err = toml.DecodeFile(path, &fx, nil)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
 			libmonteur.ERROR_TOML_PARSE_FAILED,
@@ -43,7 +44,7 @@ func (fx *TOMLParser) Parse(path string) (err error) {
 	return nil
 }
 
-func (fx *TOMLParser) Process() (p *Publisher, err error) {
+func (fx *TOMLPublisher) Process() (p *Publisher, err error) {
 	p = &Publisher{}
 
 	return p, nil

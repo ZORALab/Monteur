@@ -14,83 +14,57 @@ PublishDir = '{{- .RootDir -}}/{{- .PublishBranch -}}'
 
 
 
-[[Publisher.Build.Dependencies]]
+[[Dependencies]]
 Type = 'command'
 Name = 'hugo'
 
-[[Publisher.Build.Dependencies]]
+[[Dependencies]]
 Type = 'command'
 Name = 'git'
 
-[[Publisher.Build.Dependencies]]
+[[Dependencies]]
 Type = 'command'
 Name = 'bissetii'
 
 
 
 
-[[Publisher.Prepare.CMD]]
-Type = 'placeholder'
-Condition = 'all-all'
-Location = ''
-Source = ''
-
-
-
-
-[[Publisher.Build.CMD]]
-Name = "Hugo Build with Minimifaction"
-Type = 'command'
-Condition = 'all-all'
-Location = '{{- .SourceDir -}}'
-Source = 'hugo --minify'
-
-[[Publisher.Build.CMD]]
-Name = "Hugo Workaround with 404"
-Type = 'copy'
-Condition = 'all-all'
-Source = '{{- .DestinationDir -}}/{{- .MainLang -}}/404.html'
-Target = '{{- .DestinationDir -}}/404.html'
-
-
-
-
-[[Publisher.Publish.CMD]]
+[[CMD]]
 Name = 'Check Artifact Directory Exists and Ready'
 Condition = 'all-all'
 Type = 'is-exists'
 Location = '{{- .RootDir -}}'
 Source = '{{- .DestinationDir -}}/_index.html'
 
-[[Publisher.Publish.CMD]]
+[[CMD]]
 Name = 'Remove Git Workspace for Publishing Branch'
 Condition = 'all-all'
 Type = 'command-quiet'
 Location = '{{- .RootDir -}}'
 Source = 'git worktree remove "{{- .PublishDir -}}"'
 
-[[Publisher.Publish.CMD]]
+[[CMD]]
 Name = 'Delete Publishing Directory Regardlessly'
 Condition = 'all-all'
 Type = 'delete-recursive-quiet'
 Location = '{{- .RootDir -}}'
 Source = '{{- .PublishDir -}}'
 
-[[Publisher.Publish.CMD]]
+[[CMD]]
 Name = 'Create New Publishing Directory'
 Condition = 'all-all'
 Type = 'create-path'
 Location = '{{- .RootDir -}}'
 Source = '{{- .PublishDir -}}'
 
-[[Publisher.Publish.CMD]]
+[[CMD]]
 Name = 'Add Git Worktree to Publishing Directory'
 Condition = 'all-all'
 Type = 'command'
 Location = '{{- .RootDir -}}'
 Source = 'git worktree add "{{- .PublishDir -}}" "{{- .PublishBranch -}}"'
 
-[[Publisher.Publish.CMD]]
+[[CMD]]
 Name = 'Get Publish Branch First Commit for Cleaning'
 Condition = 'all-all'
 Type = 'command'
@@ -98,21 +72,21 @@ Location = '{{- .PublishDir -}}'
 Source = 'git rev-list --max-parents=0 --abbrev-commit HEAD'
 Save = 'PublishCommitID'
 
-[[Publisher.Publish.CMD]]
+[[CMD]]
 Name = 'Clean Up Publishing Directory for Publish Branch'
 Condition = 'all-all'
 Type = 'command'
 Location = '{{- .PublishDir -}}'
 Source = 'git reset --hard "{{- .FirstGitCommitID -}}"'
 
-[[Publisher.Publish.CMD]]
+[[CMD]]
 Name = 'Remove All Existing Artifacts'
 Condition = 'all-all'
 Type = 'command'
 Location = '{{- .PublishDir -}}'
 Source = 'git clean -fd'
 
-[[Publisher.Publish.CMD]]
+[[CMD]]
 Name = 'Copy All Publications to Publishing Directory'
 Condition = 'all-all'
 Type = 'copy-recursive'
@@ -120,35 +94,35 @@ Location = '{{- .RootDir -}}'
 Source = '{{- .SourceDir -}}'
 Target = '{{- .DestinationDir -}}'
 
-[[Publisher.Publish.CMD]]
+[[CMD]]
 Name = 'Git Stage All Artifacts into Publishing Directory'
 Condition = 'all-all'
 Type = 'command'
 Location = '{{- .PublishDir -}}'
 Source = 'git add .'
 
-[[Publisher.Publish.CMD]]
+[[CMD]]
 Name = 'Git Commit All Artifacts into Publishing Directory'
 Condition = 'all-all'
 Type = 'command'
 Location = '{{- .PublishDir -}}'
 Source = 'git commit -m "Published as of $(git log "--format=format:%H" -1)"'
 
-[[Publisher.Publish.CMD]]
+[[CMD]]
 Name = 'Git Push By Force to Publish Branch'
 Condition = 'all-all'
 Type = 'command'
 Location = '{{- .PublishDir -}}'
 Source = 'git push -f origin "{{- .PublishBranch -}}"'
 
-[[Publisher.Publish.CMD]]
+[[CMD]]
 Name = 'Remove Git Workspace for Publishing Branch'
 Condition = 'all-all'
 Type = 'command'
 Location = '{{- .RootDir -}}'
 Source = 'git worktree remove "{{- .PublishDir -}}"'
 
-[[Publisher.Publish.CMD]]
+[[CMD]]
 Name = 'Delete Publishing Directory Regardlessly'
 Condition = 'all-all'
 Type = 'delete-recursive-quiet'

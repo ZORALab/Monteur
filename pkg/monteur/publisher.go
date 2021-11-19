@@ -87,7 +87,7 @@ func (fx *publisher) _parseCommands() (err error) {
 
 func (fx *publisher) __filterPublisher(path string,
 	info os.FileInfo, err error) error {
-	var s *libpublish.TOMLParser
+	var s *libpublish.TOMLPublisher
 	var data *libpublish.Publisher
 
 	// return if err occurred
@@ -104,7 +104,7 @@ func (fx *publisher) __filterPublisher(path string,
 	}
 
 	// initialize TOML Parser object
-	s = &libpublish.TOMLParser{}
+	s = &libpublish.TOMLPublisher{}
 
 	// decode the publisher toml file
 	err = s.Parse(path)
