@@ -19,11 +19,11 @@ import (
 	"fmt"
 )
 
-type Publisher struct {
+type Builder struct {
 	Name string
 }
 
-func (fx *Publisher) Run() (err error) {
-	fmt.Printf("Placeholder PUBLISH called\n")
+func (fx *Builder) Run() (err error) {
+	fmt.Printf("Placeholder Builder called\n")
 	return nil
 }

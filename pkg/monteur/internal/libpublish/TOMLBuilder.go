@@ -17,13 +17,35 @@ package libpublish
 
 import (
 	"fmt"
+
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/commander"
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
 )
 
-type Publisher struct {
-	Name string
+type TOMLBuilder struct {
+	Metadata     *_tomlMetadata
+	Variables    map[string]interface{}
+	Dependencies []*commander.Dependency
+	CMD          []*commander.Action
 }
 
-func (fx *Publisher) Run() (err error) {
-	fmt.Printf("Placeholder PUBLISH called\n")
+func (fx *TOMLBuilder) Parse(path string) (err error) {
+	fx.Variables = map[string]interface{}{}
+
+	err = toml.DecodeFile(path, &fx, nil)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_TOML_PARSE_FAILED,
+			err,
+		)
+	}
+
 	return nil
+}
+
+func (fx *TOMLBuilder) Process() (b *Builder, err error) {
+	b = &Builder{}
+
+	return b, nil
 }

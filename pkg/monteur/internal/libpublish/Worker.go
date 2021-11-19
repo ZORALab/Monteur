@@ -15,15 +15,6 @@
 
 package libpublish
 
-import (
-	"fmt"
-)
-
-type Publisher struct {
-	Name string
-}
-
-func (fx *Publisher) Run() (err error) {
-	fmt.Printf("Placeholder PUBLISH called\n")
-	return nil
+type Worker interface {
+	Run() error
 }

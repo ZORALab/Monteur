@@ -30,6 +30,7 @@ const (
 	DIRECTORY_GIT               = ".git"
 	DIRECTORY_MONTEUR_CONFIG    = ".configs/monteur"
 	DIRECTORY_PUBLISH_PUBLISHER = "publish/publishers"
+	DIRECTORY_PUBLISH_BUILDER   = "publish/builders"
 	DIRECTORY_SETUP_PROGRAMS    = "setup/programs"
 )
 

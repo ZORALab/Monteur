@@ -61,9 +61,11 @@ type Pathing struct {
 	SetupTOMLFile         string
 
 	// sub-directories for publish fx
-	PublishTMPDir    string
-	PublishConfigDir string
-	PublishTOMLFile  string
+	PublishTMPDir           string
+	PublishConfigDir        string
+	PublishTOMLFile         string
+	PublishBuilderConfigDir string
+	PublishBuilderTMPDir    string
 
 	// user
 	User *UserPath
@@ -322,8 +324,7 @@ func (fp *Pathing) updateSetupPaths() (err error) {
 
 func (fp *Pathing) updatePublishPaths() (err error) {
 	fp.PublishConfigDir = libmonteur.DIRECTORY_PUBLISH_PUBLISHER
-	err = fp._initConfigSubPath(&fp.PublishConfigDir,
-		"PublishConfigDir")
+	err = fp._initConfigSubPath(&fp.PublishConfigDir, "PublishConfigDir")
 	if err != nil {
 		return err
 	}
@@ -334,9 +335,22 @@ func (fp *Pathing) updatePublishPaths() (err error) {
 		return err
 	}
 
+	fp.PublishBuilderConfigDir = libmonteur.DIRECTORY_PUBLISH_BUILDER
+	err = fp._initConfigSubPath(&fp.PublishBuilderConfigDir,
+		"PublishBuilderConfigDir")
+	if err != nil {
+		return err
+	}
+
+	fp.PublishBuilderTMPDir = libmonteur.DIRECTORY_PUBLISH_BUILDER
+	err = fp._initWorkingSubPath(&fp.PublishBuilderTMPDir,
+		"PublishBuilderTMPDir")
+	if err != nil {
+		return err
+	}
+
 	fp.PublishTOMLFile = libmonteur.FILE_TOML_PUBLISH
-	err = fp._initConfigSubPath(&fp.PublishTOMLFile,
-		"SetupTOMLConfigFile")
+	err = fp._initConfigSubPath(&fp.PublishTOMLFile, "SetupTOMLConfigFile")
 	if err != nil {
 		return err
 	}
