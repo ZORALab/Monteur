@@ -214,8 +214,25 @@ func (fx *Publisher) _supportedSystem(condition string) bool {
 	}
 }
 
-// Run is to execute the publisher's publishing sequences.
-func (fx *Publisher) Run() (err error) {
+// Publish is to execute the publisher's publishing sequences.
+func (fx *Publisher) Publish() (err error) {
+	return fx.run(true)
+}
+
+// Build is to execute the publisher's publication material building sequences.
+func (fx *Publisher) Build() (err error) {
+	return fx.run(false)
+}
+
+func (fx *Publisher) run(isPublishing bool) (err error) {
+	message := "Placeholder: Publish-Build Executed."
+
+	if isPublishing {
+		message = "Placeholder: Publish Executed."
+	}
+
+	fmt.Println(message)
+
 	return nil
 }
 
