@@ -15,7 +15,51 @@
 
 package commander
 
+import (
+	"fmt"
+	"os/exec"
+)
+
 type Dependency struct {
 	Name string
 	Type ActionID
+}
+
+// Init is a method to ensure Dependency is sanitized and ready for execution.
+//
+// It validates all known configurations before executing the commands.
+func (dep *Dependency) Init() (err error) {
+	if dep.Name == "" {
+		return dep.__reportError("Name is empty")
+	}
+
+	switch dep.Type {
+	case ACTION_COMMAND, ACTION_COMMAND_QUIET:
+		return dep.checkCommandDependency()
+	default:
+	}
+
+	return nil
+}
+
+func (dep *Dependency) checkCommandDependency() (err error) {
+	path, err := exec.LookPath(dep.Name)
+
+	if err != nil {
+		return dep.__reportError("missing")
+	}
+
+	dep.Name = path
+
+	return nil
+}
+
+func (dep *Dependency) __reportError(format string, args ...interface{}) error {
+	if dep.Name == "" {
+		return fmt.Errorf("dependency '' - "+format, args...)
+	}
+
+	args = append([]interface{}{dep.Name}, args...)
+
+	return fmt.Errorf("dependency '%s' - "+format, args...)
 }

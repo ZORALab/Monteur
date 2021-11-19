@@ -55,9 +55,26 @@ func (fx *Publisher) sanitize(path string) (err error) {
 		return err
 	}
 
+	err = fx._sanitizeDependencies()
+	if err != nil {
+		return err
+	}
+
 	err = fx._sanitizeCMD()
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (fx *Publisher) _sanitizeDependencies() (err error) {
+	for _, dep := range fx.Dependencies {
+		// begin initialization
+		err = dep.Init()
+		if err != nil {
+			return fx.__reportError("%s", err)
+		}
 	}
 
 	return nil
