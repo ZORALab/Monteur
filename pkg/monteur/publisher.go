@@ -144,6 +144,15 @@ func (fx *publisher) __filterPublisher(path string,
 
 	// initialize TOML Parser object
 	s = &libpublish.Publisher{}
+	s.Variables = map[string]interface{}{
+		libmonteur.VAR_OS:      fx.workspace.OS,
+		libmonteur.VAR_ARCH:    fx.workspace.ARCH,
+		libmonteur.VAR_COMPUTE: fx.workspace.ComputeSystem,
+		libmonteur.VAR_TMP:     fx.workspace.Filesystem.PublishTMPDir,
+		libmonteur.VAR_BIN:     fx.workspace.Filesystem.BinDir,
+		libmonteur.VAR_CFG:     fx.workspace.Filesystem.BinCfgDir,
+		libmonteur.VAR_SECRETS: fx.secrets,
+	}
 
 	// decode the publisher toml file
 	err = s.Parse(path)
@@ -152,13 +161,6 @@ func (fx *publisher) __filterPublisher(path string,
 	}
 
 	// set compulsory variables into the data structure
-	s.Variables[libmonteur.VAR_OS] = fx.workspace.OS
-	s.Variables[libmonteur.VAR_ARCH] = fx.workspace.ARCH
-	s.Variables[libmonteur.VAR_COMPUTE] = fx.workspace.ComputeSystem
-	s.Variables[libmonteur.VAR_TMP] = fx.workspace.Filesystem.PublishTMPDir
-	s.Variables[libmonteur.VAR_BIN] = fx.workspace.Filesystem.BinDir
-	s.Variables[libmonteur.VAR_CFG] = fx.workspace.Filesystem.BinCfgDir
-	s.Variables[libmonteur.VAR_SECRETS] = fx.secrets
 
 	// save successful publisher data into list for further processing
 	fx.workers[s.Metadata.Name] = s

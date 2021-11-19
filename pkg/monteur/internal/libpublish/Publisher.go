@@ -23,17 +23,65 @@ import (
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
 )
 
+type _tomlDependency struct {
+	Name      string
+	Condition string
+	Command   string
+	Type      commander.ActionID
+}
+
+type _tomlAction struct {
+	Name      string
+	Location  string
+	Source    string
+	Target    string
+	Save      string
+	Condition string
+	Type      commander.ActionID
+}
+
 type Publisher struct {
 	Metadata     *_tomlMetadata
+	thisSystem   string
+	omniSystem   string
 	Variables    map[string]interface{}
 	Dependencies []*commander.Dependency
 	CMD          []*commander.Action
 }
 
 func (fx *Publisher) Parse(path string) (err error) {
-	fx.Variables = map[string]interface{}{}
+	var dep []*_tomlDependency
+	var cmd []*_tomlAction
+	var ok bool
 
-	err = toml.DecodeFile(path, &fx, nil)
+	// initialize all important variables
+	fx.thisSystem, ok = fx.Variables[libmonteur.VAR_COMPUTE].(string)
+	if !ok {
+		panic("MONTEUR DEV: please assign variables before Parse()!")
+	}
+
+	fx.omniSystem = libmonteur.ALL_OS +
+		libmonteur.COMPUTE_SYSTEM_SEPARATOR +
+		libmonteur.ALL_ARCH
+
+	fx.Metadata = &_tomlMetadata{}
+	dep = []*_tomlDependency{}
+
+	// construct TOML file data structure
+	s := struct {
+		Metadata     *_tomlMetadata
+		Variables    map[string]interface{}
+		Dependencies *[]*_tomlDependency
+		CMD          *[]*_tomlAction
+	}{
+		Metadata:     fx.Metadata,
+		Variables:    fx.Variables,
+		Dependencies: &dep,
+		CMD:          &cmd,
+	}
+
+	// decode
+	err = toml.DecodeFile(path, &s, nil)
 	if err != nil {
 		return fx.__reportError("%s: %s",
 			libmonteur.ERROR_TOML_PARSE_FAILED,
@@ -41,7 +89,17 @@ func (fx *Publisher) Parse(path string) (err error) {
 		)
 	}
 
-	err = fx.sanitize(path)
+	err = fx.sanitizeMetadata(path)
+	if err != nil {
+		return err
+	}
+
+	err = fx.sanitizeDependencies(dep)
+	if err != nil {
+		return err
+	}
+
+	err = fx.sanitizeCMD(cmd)
 	if err != nil {
 		return err
 	}
@@ -49,28 +107,27 @@ func (fx *Publisher) Parse(path string) (err error) {
 	return nil
 }
 
-func (fx *Publisher) sanitize(path string) (err error) {
-	err = fx._sanitizeMetadata(path)
-	if err != nil {
-		return err
+func (fx *Publisher) sanitizeDependencies(in []*_tomlDependency) (err error) {
+	// initialize all variables
+	fx.Dependencies = []*commander.Dependency{}
+
+	// scan conditions for building commands list
+	for _, dep := range in {
+		if !fx._supportedSystem(dep.Condition) {
+			continue
+		}
+
+		s := &commander.Dependency{
+			Name:    dep.Name,
+			Type:    dep.Type,
+			Command: dep.Command,
+		}
+
+		fx.Dependencies = append(fx.Dependencies, s)
 	}
 
-	err = fx._sanitizeDependencies()
-	if err != nil {
-		return err
-	}
-
-	err = fx._sanitizeCMD()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (fx *Publisher) _sanitizeDependencies() (err error) {
+	// sanitize each commands for validity
 	for _, dep := range fx.Dependencies {
-		// begin initialization
 		err = dep.Init()
 		if err != nil {
 			return fx.__reportError("%s", err)
@@ -80,12 +137,31 @@ func (fx *Publisher) _sanitizeDependencies() (err error) {
 	return nil
 }
 
-func (fx *Publisher) _sanitizeCMD() (err error) {
-	for i, cmd := range fx.CMD {
-		// set all settings
-		cmd.SaveFx = fx._saveFx
+func (fx *Publisher) sanitizeCMD(in []*_tomlAction) (err error) {
+	// initialize all variables
+	fx.CMD = []*commander.Action{}
 
-		// begin initialization
+	// scan conditions for building commands list
+	for _, cmd := range in {
+		if !fx._supportedSystem(cmd.Condition) {
+			continue
+		}
+
+		a := &commander.Action{
+			Name:     cmd.Name,
+			Type:     cmd.Type,
+			Location: cmd.Location,
+			Source:   cmd.Source,
+			Target:   cmd.Target,
+			Save:     cmd.Save,
+			SaveFx:   fx._saveFx,
+		}
+
+		fx.CMD = append(fx.CMD, a)
+	}
+
+	// sanitize each commands for validity
+	for i, cmd := range fx.CMD {
 		err = cmd.Init()
 		if err != nil {
 			return fx.__reportError("(CMD %d) %s", i, err)
@@ -95,7 +171,7 @@ func (fx *Publisher) _sanitizeCMD() (err error) {
 	return nil
 }
 
-func (fx *Publisher) _sanitizeMetadata(path string) (err error) {
+func (fx *Publisher) sanitizeMetadata(path string) (err error) {
 	if fx.Metadata == nil {
 		return fx.__reportError("%s: %s",
 			libmonteur.ERROR_PUBLISH_METADATA_MISSING,
@@ -125,6 +201,17 @@ func (fx *Publisher) _saveFx(key string, output interface{}) (err error) {
 	fx.Variables[key] = output
 
 	return nil
+}
+
+func (fx *Publisher) _supportedSystem(condition string) bool {
+	switch condition {
+	case fx.thisSystem:
+		return true
+	case fx.omniSystem:
+		return true
+	default:
+		return false
+	}
 }
 
 // Run is to execute the publisher's publishing sequences.

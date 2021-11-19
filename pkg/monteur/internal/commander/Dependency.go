@@ -21,8 +21,9 @@ import (
 )
 
 type Dependency struct {
-	Name string
-	Type ActionID
+	Name    string
+	Type    ActionID
+	Command string
 }
 
 // Init is a method to ensure Dependency is sanitized and ready for execution.
@@ -31,6 +32,10 @@ type Dependency struct {
 func (dep *Dependency) Init() (err error) {
 	if dep.Name == "" {
 		return dep.__reportError("Name is empty")
+	}
+
+	if dep.Command == "" {
+		return dep.__reportError("Command is empty")
 	}
 
 	switch dep.Type {
@@ -43,7 +48,7 @@ func (dep *Dependency) Init() (err error) {
 }
 
 func (dep *Dependency) checkCommandDependency() (err error) {
-	path, err := exec.LookPath(dep.Name)
+	path, err := exec.LookPath(dep.Command)
 
 	if err != nil {
 		return dep.__reportError("missing")

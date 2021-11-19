@@ -15,16 +15,22 @@ PublishDir = '{{- .RootDir -}}/{{- .PublishBranch -}}'
 
 
 [[Dependencies]]
+Name = 'Hugo'
+Condition = 'all-all'
 Type = 'command'
-Name = 'hugo'
+Command = 'hugo'
 
 [[Dependencies]]
+Name = 'Git'
+Condition = 'all-all'
 Type = 'command'
-Name = 'git'
+Command = 'git'
 
 [[Dependencies]]
+Name = 'Bissetii'
+Condition = 'all-all'
 Type = 'command'
-Name = 'bissetii'
+Command = 'bissetii'
 
 
 
