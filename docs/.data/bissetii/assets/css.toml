@@ -1,0 +1,52 @@
+# List of CSS Assets
+#
+# This list is for you to add any external CSS styling files into your website.
+# A full entry comply to the following pattern:
+#    [index identification (not position)]
+#    Algorithm = "'compress' or 'include'"
+#    URL = "full/relative URL path for CSS in static/ or assets/ respectively"
+#    CrossOrigin = "cross origin ID"
+#    Integrity = "integrity checksum value"
+#    Disabled = "boolean flag to disable this link"
+#    Media = "media= attribute value for apply selection"
+#    OnLoad = 'Javascript onload to set the download sequence asynchonously'
+#
+# Here is an example for asset to be compressed:
+#    [0]
+#    Algorithm = "compress"
+#    URL = "/css/myCSS.min.css"            # file in 'assets/css/myCSS.min.css'
+#    CrossOrigin = "anonymous"
+#    Integrity = "sha512-awraerrhe....reagaeg"
+#    Disabled = "false"
+#    Media = "all"
+#    OnLoad = 'this.media="all"'           # be careful with the quote
+#
+# Here is an example for asset to be included (deidicated <link> tag):
+#    [1]
+#    Algorithm = "include"
+#    URL = "/css/myCSS.min.css"            # file in 'static/css/myCSS.min.css'
+#    CrossOrigin = "anonymous"
+#    Integrity = "sha512-awraerrhe....reagaeg"
+#    Disabled = "false"
+#    Media = "print"
+#    OnLoad = 'this.media="all"'           # be careful with the quote
+
+
+#[0]
+#Algorithm = "include"
+#URL = ""
+#CrossOrigin = "anonymous"
+#Integrity = ""
+#Disabled = false
+#Media = "all"
+#OnLoad = 'this.media="all"'
+
+
+#[0]
+#Algorithm = "compress"
+#URL = ""
+#CrossOrigin = "anonymous"
+#Integrity = ""
+#Disabled = ""
+#Media = "all"
+#OnLoad = 'this.media="all"'

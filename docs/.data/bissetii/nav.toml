@@ -1,0 +1,80 @@
+[Title]
+HTML = ""
+AMPHTML = ""
+
+
+
+
+[Menu]
+HTML = "<span class='nav-sidebar-icon nav-sidebar-menu'>☰</span>"
+AMPHTML = "☰"  # content inside <button>
+
+
+
+
+[Close]
+HTML = "<span class='nav-sidebar-icon nav-sidebar-close'>𝖷</span>"
+AMPHTML = "𝖷" # content inside <button>
+
+
+
+
+[Submenu]
+HTML = "<span class='nav-sidebar-submenu-icon'>➣</span>"
+AMPHTML = "<span class='nav-sidebar-submenu-icon'>➣</span>"
+
+
+
+
+[Logo]
+HTML = ""
+AMPHTML = ""
+URL = "/img/thumbnails/default-1200x1200.png"
+Width = "160" # px unit
+Height = "160" # px unit
+AltText = ""
+Class = "nav-sidebar-logo"
+
+
+
+
+[Sidebar]
+RightSide = false
+DrawerModeOnly = false
+
+
+
+
+[Catalog]
+Class = ""
+ID = ""
+Style = """
+"""
+
+[Catalog.Card]
+Header = 3
+Type = "vertical"
+Class = ""
+Style = ""
+Width = "300px"
+Height = "750px"
+
+[Catalog.Card.CTA]
+Class = "button clean"
+
+[Catalog.Card.CTA.Content]
+en = "Explore"
+zh-hans = "探索"
+
+[Catalog.Card.Thumbnail]
+Detection = "auto"
+Height = "300px"
+
+
+
+
+[List]
+Type = "nav-catalog"
+
+[List.Choices]
+"nav-catalog" = true

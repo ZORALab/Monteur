@@ -1,15 +1,14 @@
 #####################
 # User defined
 #####################
-.tests
-*.log
-os/files/tests
-public/
+_gen
+themes/*
+!themes/.themes
 .bin/
 gh-pages/
-vendor/cerigo
-test/
-themes/
+bissetii-*-.min.css
+tests/go
+pkg/internal/*/*.min.css
 
 #####################
 # Standard FHS
@@ -17,21 +16,12 @@ themes/
 bin
 tmp
 release
+public
 
 #####################
 # Hugo
 #####################
-.hugo_build.lock
-
-#####################
-# Monteur
-#####################
-.configs/monteur/secrets/
-
-#####################
-# LetsEncrypt
-#####################
-certbot.log
+_gen
 
 #####################
 # Android Studio
@@ -55,7 +45,7 @@ certbot.log
 *.bin
 
 #####################
-# MacOS specifics
+# Mac specifics
 #####################
 .DS_Store
 
@@ -107,7 +97,6 @@ id_ecdsa
 #####################
 *.pem
 *.key
-*.crt
 
 #####################
 # Any file ending with _history or .history extension

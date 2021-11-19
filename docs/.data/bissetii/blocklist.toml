@@ -1,0 +1,7 @@
+# List all the parent's value to be blocked from being organized into structure
+#
+# Example:
+# 1. "redirect" = true   ==> blocks all nav.Name = "redirect"
+# 2. "disabled" = true   ==> blocks all nav.Name = "disabled"
+"redirect" = true
+"disabled" = true

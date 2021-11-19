@@ -1,0 +1,5 @@
+# All Twitter Configurations
+
+[Cards]
+Card = "summary_large_image"
+Username = "ZORALab_Team" # Twitter handle without '@'

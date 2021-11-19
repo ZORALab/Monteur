@@ -1,0 +1,25 @@
+# Robot Crawler User Agent Data File.
+#
+# The User-agent's value is defined in the filename. Here are some of the
+# example for defining the value for this particular user-agent:
+#
+#     Sitemap = "{{ .BaseURL }}/sitemap.xml"
+#
+#     Allow = [
+#		"/",
+#		"/en/",
+#     ]
+#
+#     Disallow = [
+#		"/en-us/",
+#		"/zh-cn/",
+#     ]
+#
+#     Crawl-delay = 5
+#
+# NOTE: If you need to canonicalize your relative URL with the baseURL, you
+#       can use the placeholder "{{ .BaseURL }}". Example:
+#       "{{ .BaseURL }}/sitemap.xml" --> "https://www.example.com/sitemap.xml"
+
+# User-agent = *
+Sitemap = "{{ .BaseURL }}/sitemap.xml"

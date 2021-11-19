@@ -1,0 +1,11 @@
+[Menu]
+URL = "/img/icons/menu-icon.svg"
+Width = "500"
+Height = "500"
+AltText = "Menu"
+
+[Close]
+URL = "/img/icons/close-icon.svg"
+Width = "500"
+Height = "500"
+AltText = "Close"

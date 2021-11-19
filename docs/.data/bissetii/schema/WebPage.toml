@@ -1,0 +1,15 @@
+# schema.org fields
+
+"@type" = "WebPage"
+"schemaVersion" = "https://schema.org/version/8.0/"
+"name" = ".Page.Name"
+"author" = ".Page.Creators"
+"image" = ".Page.Thumbnails.0.URL"
+"description" = ".Page.Description"
+"datePublished" = ".Page.Date.Published"
+"dateCreated" = ".Page.Date.Created"
+"dateModified" = ".Page.Date.Modified"
+"inLanguage" = ".Page.Language.Code"
+"keywords" = ".Page.Keywords"
+"thumbnailUrl" = ".Page.Thumbnails.0.URL"
+"url" = ".Page.Link.URL"

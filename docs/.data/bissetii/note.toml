@@ -1,0 +1,23 @@
+[info]
+#URL = "/img/icons/info.svg"	# image source URL (relative will be converted)
+#Width="25"			# px without unit
+#Height="25"			# px without unit
+#Class=""			# additional CSS class tag
+
+[warning]
+#URL = "/img/icons/warning.svg"	# image source URL (relative will be converted)
+#Width="25"			# px without unit
+#Height="25"			# px without unit
+#Class=""			# additional CSS class tag
+
+[success]
+#URL = "/img/icons/success.svg"	# image source URL (relative will be converted)
+#Width="25"			# px without unit
+#Height="25"			# px without unit
+#Class=""			# additional CSS class tag
+
+[error]
+#URL = "/img/icons/error.svg"	# image source URL (relative will be converted)
+#Width="25"			# px without unit
+#Height="25"			# px without unit
+#Class=""			# additional CSS class tag

@@ -1,0 +1,11 @@
+[en]
+languageCode = "en"
+languageName = "English"
+contentDir = "../docs/en"
+title = "Monteur"
+
+[zh-hans]
+languageCode = "zh-hans"
+languageName = "Chinese (Simplified)"
+contentDir = "../docs/zh-hans"
+title = "Monteur"

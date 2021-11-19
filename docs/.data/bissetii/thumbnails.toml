@@ -1,0 +1,22 @@
+# All Social Media Thumbnail Image Configurations
+
+[0]
+url = "/img/thumbnails/default-1200x628.png"
+type = "image/png"
+width = "1200"
+height = "628"
+alternateText = "Monteur"
+
+[1]
+url = "/img/thumbnails/default-1200x1200.png"
+type = "image/png"
+width = "1200"
+height = "1200"
+alternateText = "Monteur"
+
+[2]
+url = "/img/thumbnails/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "Monteur"

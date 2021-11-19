@@ -1,0 +1,59 @@
+# Layout Configurations
+#
+# USING PRE-DEFINED LAYOUTS (Name)
+# Depending on screen size, the body's CSS grid layout is different for each
+# of them. Bissetii supplied the following types for 'Name' field:
+#  1. vertical  - all contents layout vertically
+#        content
+#        topbar
+#        sidebar
+#        rsidebar
+#  2. left-and-top - left sidebar only and top sidebar just above the main content
+#        sidebar topbar
+#        sidebar content
+#  3. right-and-top - right sidebar only and top sidebar just above the main content
+#        topbar rsidebar
+#        content rsidebar
+#  4. both-and-top - left and right sidebar and top sidebar just above the main content
+#        sidebar topbar rsidebar
+#        sidebar content rsidebar
+#  5. top-and-both - top sidebar above, left and right sidebar alongside main content
+#        topbar topbar topbar
+#        sidebar content rsidebar
+#
+#
+# USING CUSTOM GRID (Grid)
+# If you want to design the Grid layouts on your own using the 'Grid' field,
+# here is a full example:
+#    Grid = '''
+#    "sidebar		topbar			rsidebar" minmax(0, max-content)
+#    "sidebar		content			rsidebar" auto
+#    / minmax(0, 20%)	minmax(auto, 60%)	minmax(0, 20%)
+#    '''
+# The idea is to provide the full value for grid: field. The last column indicates
+# the spacing of the row and the last row with a '/' indicates the spacing of
+# the column. The entire value must be compliant with CSS Grid value in order
+# to work properly.
+#
+# Currently, the available layout names are:
+#   1. topbar   = slot designed for filling topbar
+#   2. sidebar  = slot for filling left sidebar
+#   3. rsidebar = slot for filling right sidebar
+#   4. content  = slot for main content
+#
+# If 'Grid' field is not empty, the 'Name' field will be ignored.
+[Mobile]
+Grid = ''
+Name = "vertical"
+
+[Tablet]
+Grid = ''
+Name = "left-and-top"
+
+[Desktop]
+Grid = ''
+Name = "left-and-top"
+
+[Widescreen]
+Grid = ''
+Name = "left-and-top"

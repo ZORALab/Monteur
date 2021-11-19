@@ -1,0 +1,9 @@
+# All styling, javascripts and assets inclusions for AMP HTML
+
+modules = [                               #--> include AMP Javascript Module
+        "sidebar"
+]
+
+css = [                                   #--> compile into inline CSS
+        #"css/myCSS.css"                  #--> $assetDir/css/myCSS.css
+]

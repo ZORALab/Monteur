@@ -1,0 +1,14 @@
+# All Default Configurations for Bissetii
+
+
+# default schema.org definition
+schema = "WebPage"
+
+# default list of extensions
+extensions = [
+	"sidebar"
+]
+
+[nav.catalog.card]
+Width = "320px"
+Height = "500px"

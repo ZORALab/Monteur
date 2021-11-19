@@ -1,0 +1,11 @@
+# WARNING: Auto-generated file. DO NOT EDIT!
+
+[HTML]
+Name = "html"
+Suffix = "html"
+Prefix = ""
+
+[AMP]
+Name = "amp"
+Suffix = "amp.html"
+Prefix = "amp-"

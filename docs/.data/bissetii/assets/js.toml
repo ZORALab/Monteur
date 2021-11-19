@@ -1,0 +1,62 @@
+# List of Javascript (JS) Assets
+#
+# This list is for you to add any external JS styling files into your website.
+# A full entry comply to the following pattern:
+#    [index identification (not position)]
+#    Algorithm = 'compress' or 'include'
+#    URL = "full/relative URL path for CSS in static/ or assets/ respectively"
+#    ID = script HTML ID attribute
+#    Type = Javascript MIME type for custom javascript types
+#    LoadMode = script download mode that can be either 'async' or 'defer'
+#               For 'compress' algo, after compression, it is set to 'defer'.
+#    CrossOrigin = "cross origin ID"
+#    Integrity = "integrity checksum value"
+#    Content = inline script contents. If this is used, URL should not be used.
+#
+# Here is an example for asset to be compressed:
+#    [0]
+#    Algorithm = "compress"
+#    URL = "/js/myJS.min.js"            # file in 'assets/js/myJS.min.js'
+#    ID = "my-js-1"
+#    Type = "application/javascript"
+#    LoadMode = "async"
+#    CrossOrigin = "anonymous"
+#    Integrity = "sha512-awraerrhe....reagaeg"
+#    Content = """
+#         ...
+#    """
+#
+# Here is an example for asset to be included (deidicated <link> tag):
+#    [1]
+#    Algorithm = "include"
+#    URL = "/js/myJS.min.js"            # file in 'static/js/myJS.min.js'
+#    ID = "my-js-1"
+#    Type = "application/x-javascript"
+#    LoadMode = "defer"
+#    CrossOrigin = "anonymous"
+#    Integrity = "sha512-awraerrhe....reagaeg"
+#    Content = """
+#         ...
+#    """
+
+
+#[0]
+#Algorithm = "include"
+#ID = ""
+#URL = ""
+#Type = ""
+#LoadMode = "defer"
+#CrossOrigin = "anonymous"
+#Integrity = ""
+#Content = """ """
+
+
+#[0]
+#Algorithm = "compress"
+#ID = ""
+#URL = ""
+#Type = ""
+#LoadMode = "defer"
+#CrossOrigin = "anonymous"
+#Integrity = ""
+#Content = """ """

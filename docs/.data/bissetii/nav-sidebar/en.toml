@@ -1,0 +1,28 @@
+[Title]
+HTML = "<p>Monteur</p>"
+AMPHTML = "<p>Monteur</p>"
+
+
+[Menu]
+HTML = ""
+AMPHTML = ""
+
+
+[Close]
+HTML = ""
+AMPHTML = ""
+
+
+[Submenu]
+HTML = ""
+AMPHTML = ""
+
+
+[Logo]
+HTML = ""
+AMPHTML = ""
+URL = ""
+Width = ""
+Height = ""
+AltText = ""
+Class = ""
