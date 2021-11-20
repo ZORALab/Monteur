@@ -6,6 +6,8 @@ Name = 'Gitlab Pages'
 MainLang = 'en'
 PublishBranch = 'gh-pages'
 PublishCommitID='Will be overwritten by publish command sequences'
+
+[FMTVariables]
 SourceDir = '{{- .RootDir -}}/.sites'
 DestinationDir = '{{- .RootDir -}}/public'
 BaseDir = '{{- .RootDir -}}/.sites'

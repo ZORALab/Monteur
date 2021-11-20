@@ -41,6 +41,16 @@ const (
 )
 
 const (
+	ERROR_COMMAND_DEPENDENCY_FMT_BAD = "bad command's dependency formatting"
+	ERROR_COMMAND_FAILED             = "failed to execute command"
+	ERROR_COMMAND_FMT_BAD            = "bad command formatting"
+)
+
+const (
+	ERROR_VARIABLES_FMT_BAD = "bad variable formatting"
+)
+
+const (
 	ERROR_PROGRAM_ARCHIVE_BAD            = "bad archived program's name"
 	ERROR_PROGRAM_ARCHIVE_FORMAT_BAD     = "bad archived program's format"
 	ERROR_PROGRAM_ARCHIVE_FORMAT_UNKNOWN = "unsupported archived program's format"

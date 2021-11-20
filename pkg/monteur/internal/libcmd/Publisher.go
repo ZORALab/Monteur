@@ -21,6 +21,7 @@ import (
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/commander"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/templater"
 )
 
 type _tomlMetadata struct {
@@ -55,6 +56,7 @@ type Manager struct {
 }
 
 func (fx *Manager) Parse(path string) (err error) {
+	var fmtVar map[string]interface{}
 	var dep []*_tomlDependency
 	var cmd []*_tomlAction
 	var ok bool
@@ -71,6 +73,7 @@ func (fx *Manager) Parse(path string) (err error) {
 
 	fx.Metadata = &_tomlMetadata{}
 	dep = []*_tomlDependency{}
+	fmtVar = map[string]interface{}{}
 
 	// construct TOML file data structure
 	s := struct {
@@ -78,9 +81,11 @@ func (fx *Manager) Parse(path string) (err error) {
 		Variables    map[string]interface{}
 		Dependencies *[]*_tomlDependency
 		CMD          *[]*_tomlAction
+		FMTVariables *map[string]interface{}
 	}{
 		Metadata:     fx.Metadata,
 		Variables:    fx.Variables,
+		FMTVariables: &fmtVar,
 		Dependencies: &dep,
 		CMD:          &cmd,
 	}
@@ -94,7 +99,13 @@ func (fx *Manager) Parse(path string) (err error) {
 		)
 	}
 
+	// sanitize
 	err = fx.sanitizeMetadata(path)
+	if err != nil {
+		return err
+	}
+
+	err = fx.sanitizeFMTVariables(fmtVar)
 	if err != nil {
 		return err
 	}
@@ -113,6 +124,8 @@ func (fx *Manager) Parse(path string) (err error) {
 }
 
 func (fx *Manager) sanitizeDependencies(in []*_tomlDependency) (err error) {
+	var val string
+
 	// initialize all variables
 	fx.Dependencies = []*commander.Dependency{}
 
@@ -122,10 +135,18 @@ func (fx *Manager) sanitizeDependencies(in []*_tomlDependency) (err error) {
 			continue
 		}
 
+		val, err = templater.String(dep.Command, fx.Variables)
+		if err != nil {
+			return fx.__reportError("%s: %s",
+				libmonteur.ERROR_COMMAND_DEPENDENCY_FMT_BAD,
+				err,
+			)
+		}
+
 		s := &commander.Dependency{
 			Name:    dep.Name,
 			Type:    dep.Type,
-			Command: dep.Command,
+			Command: val,
 		}
 
 		fx.Dependencies = append(fx.Dependencies, s)
@@ -142,7 +163,33 @@ func (fx *Manager) sanitizeDependencies(in []*_tomlDependency) (err error) {
 	return nil
 }
 
+func (fx *Manager) sanitizeFMTVariables(in map[string]interface{}) (err error) {
+	var val interface{}
+
+	for key, value := range in {
+		switch v := value.(type) {
+		case string:
+			val, err = templater.String(v, fx.Variables)
+		default:
+			val = v
+		}
+
+		if err != nil {
+			return fx.__reportError("%s: %s",
+				libmonteur.ERROR_VARIABLES_FMT_BAD,
+				err,
+			)
+		}
+
+		fx.Variables[key] = val
+	}
+
+	return nil
+}
+
 func (fx *Manager) sanitizeCMD(in []*_tomlAction) (err error) {
+	var location, source, target string
+
 	// initialize all variables
 	fx.CMD = []*commander.Action{}
 
@@ -152,12 +199,36 @@ func (fx *Manager) sanitizeCMD(in []*_tomlAction) (err error) {
 			continue
 		}
 
+		location, err = templater.String(cmd.Location, fx.Variables)
+		if err != nil {
+			return fx.__reportError("%s: %s",
+				libmonteur.ERROR_COMMAND_FMT_BAD,
+				err,
+			)
+		}
+
+		source, err = templater.String(cmd.Source, fx.Variables)
+		if err != nil {
+			return fx.__reportError("%s: %s",
+				libmonteur.ERROR_COMMAND_FMT_BAD,
+				err,
+			)
+		}
+
+		target, err = templater.String(cmd.Target, fx.Variables)
+		if err != nil {
+			return fx.__reportError("%s: %s",
+				libmonteur.ERROR_COMMAND_FMT_BAD,
+				err,
+			)
+		}
+
 		a := &commander.Action{
 			Name:     cmd.Name,
 			Type:     cmd.Type,
-			Location: cmd.Location,
-			Source:   cmd.Source,
-			Target:   cmd.Target,
+			Location: location,
+			Source:   source,
+			Target:   target,
 			Save:     cmd.Save,
 			SaveFx:   fx._saveFx,
 		}
@@ -233,7 +304,8 @@ func (fx *Manager) run(isPublishing bool) (err error) {
 	for i, cmd := range fx.CMD {
 		err = cmd.Run()
 		if err != nil {
-			fx.__reportError("failed to execute CMD: (%d) %s",
+			return fx.__reportError("%s: (%d) %s",
+				libmonteur.ERROR_COMMAND_FAILED,
 				i,
 				err,
 			)

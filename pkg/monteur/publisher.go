@@ -103,6 +103,8 @@ func (fx *publisher) _filterPublisher(path string,
 		libmonteur.VAR_TMP:     fx.workspace.Filesystem.PublishTMPDir,
 		libmonteur.VAR_BIN:     fx.workspace.Filesystem.BinDir,
 		libmonteur.VAR_CFG:     fx.workspace.Filesystem.BinCfgDir,
+		libmonteur.VAR_ROOT:    fx.workspace.Filesystem.RootDir,
+		libmonteur.VAR_HOME:    fx.workspace.Filesystem.CurrentDir,
 		libmonteur.VAR_SECRETS: fx.secrets,
 	}
 

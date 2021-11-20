@@ -20,15 +20,17 @@ package libmonteur
 // It is used in every toml config file inside setup/program/ config directory
 // for placeholding variable elements in the fields' value.
 const (
-	VAR_OS      = "OS"
 	VAR_ARCH    = "Arch"
-	VAR_COMPUTE = "ComputeSystem"
-	VAR_TMP     = "WorkingDir"
+	VAR_ARCHIVE = "Archive"
 	VAR_BIN     = "BinDir"
 	VAR_CFG     = "ConfigDir"
-	VAR_ARCHIVE = "Archive"
+	VAR_COMPUTE = "ComputeSystem"
 	VAR_FORMAT  = "Format"
+	VAR_HOME    = "HomeDir"
 	VAR_METHOD  = "Method"
-	VAR_URL     = "URL"
+	VAR_OS      = "OS"
+	VAR_ROOT    = "RootDir"
 	VAR_SECRETS = "Secrets"
+	VAR_TMP     = "WorkingDir"
+	VAR_URL     = "URL"
 )
