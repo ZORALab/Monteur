@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package libpublish
+package libcmd
 
 import (
 	"fmt"
@@ -22,6 +22,11 @@ import (
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
 )
+
+type _tomlMetadata struct {
+	Type string
+	Name string
+}
 
 type _tomlDependency struct {
 	Name      string
@@ -40,7 +45,7 @@ type _tomlAction struct {
 	Type      commander.ActionID
 }
 
-type Publisher struct {
+type Manager struct {
 	Metadata     *_tomlMetadata
 	thisSystem   string
 	omniSystem   string
@@ -49,7 +54,7 @@ type Publisher struct {
 	CMD          []*commander.Action
 }
 
-func (fx *Publisher) Parse(path string) (err error) {
+func (fx *Manager) Parse(path string) (err error) {
 	var dep []*_tomlDependency
 	var cmd []*_tomlAction
 	var ok bool
@@ -107,7 +112,7 @@ func (fx *Publisher) Parse(path string) (err error) {
 	return nil
 }
 
-func (fx *Publisher) sanitizeDependencies(in []*_tomlDependency) (err error) {
+func (fx *Manager) sanitizeDependencies(in []*_tomlDependency) (err error) {
 	// initialize all variables
 	fx.Dependencies = []*commander.Dependency{}
 
@@ -137,7 +142,7 @@ func (fx *Publisher) sanitizeDependencies(in []*_tomlDependency) (err error) {
 	return nil
 }
 
-func (fx *Publisher) sanitizeCMD(in []*_tomlAction) (err error) {
+func (fx *Manager) sanitizeCMD(in []*_tomlAction) (err error) {
 	// initialize all variables
 	fx.CMD = []*commander.Action{}
 
@@ -171,7 +176,7 @@ func (fx *Publisher) sanitizeCMD(in []*_tomlAction) (err error) {
 	return nil
 }
 
-func (fx *Publisher) sanitizeMetadata(path string) (err error) {
+func (fx *Manager) sanitizeMetadata(path string) (err error) {
 	if fx.Metadata == nil {
 		return fx.__reportError("%s: %s",
 			libmonteur.ERROR_PUBLISH_METADATA_MISSING,
@@ -197,13 +202,13 @@ func (fx *Publisher) sanitizeMetadata(path string) (err error) {
 	return nil
 }
 
-func (fx *Publisher) _saveFx(key string, output interface{}) (err error) {
+func (fx *Manager) _saveFx(key string, output interface{}) (err error) {
 	fx.Variables[key] = output
 
 	return nil
 }
 
-func (fx *Publisher) _supportedSystem(condition string) bool {
+func (fx *Manager) _supportedSystem(condition string) bool {
 	switch condition {
 	case fx.thisSystem:
 		return true
@@ -215,16 +220,16 @@ func (fx *Publisher) _supportedSystem(condition string) bool {
 }
 
 // Publish is to execute the publisher's publishing sequences.
-func (fx *Publisher) Publish() (err error) {
+func (fx *Manager) Publish() (err error) {
 	return fx.run(true)
 }
 
 // Build is to execute the publisher's publication material building sequences.
-func (fx *Publisher) Build() (err error) {
+func (fx *Manager) Build() (err error) {
 	return fx.run(false)
 }
 
-func (fx *Publisher) run(isPublishing bool) (err error) {
+func (fx *Manager) run(isPublishing bool) (err error) {
 	for i, cmd := range fx.CMD {
 		err = cmd.Run()
 		if err != nil {
@@ -238,7 +243,7 @@ func (fx *Publisher) run(isPublishing bool) (err error) {
 	return nil
 }
 
-func (fx *Publisher) __reportError(format string, args ...interface{}) error {
+func (fx *Manager) __reportError(format string, args ...interface{}) error {
 	if fx.Metadata == nil || fx.Metadata.Name == "" {
 		return fmt.Errorf("publisher '' ➤ "+format, args...)
 	}

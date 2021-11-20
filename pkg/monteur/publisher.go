@@ -20,8 +20,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libcmd"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libpublish"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libsecrets"
 	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libworkspace"
 )
@@ -29,8 +29,8 @@ import (
 type publisher struct {
 	workspace *libworkspace.Workspace
 	secrets   map[string]interface{}
-	settings  *libpublish.Run
-	workers   map[string]*libpublish.Publisher
+	settings  *libcmd.Run
+	workers   map[string]*libcmd.Manager
 }
 
 func (fx *publisher) Build() (statusCode int) {
@@ -79,7 +79,7 @@ func (fx *publisher) Publish() (statusCode int) {
 
 func (fx *publisher) _filterPublisher(path string,
 	info os.FileInfo, err error) error {
-	var s *libpublish.Publisher
+	var s *libcmd.Manager
 
 	// return if err occurred
 	if err != nil {
@@ -95,7 +95,7 @@ func (fx *publisher) _filterPublisher(path string,
 	}
 
 	// initialize TOML Parser object
-	s = &libpublish.Publisher{}
+	s = &libcmd.Manager{}
 	s.Variables = map[string]interface{}{
 		libmonteur.VAR_OS:      fx.workspace.OS,
 		libmonteur.VAR_ARCH:    fx.workspace.ARCH,
@@ -121,9 +121,9 @@ func (fx *publisher) _filterPublisher(path string,
 }
 
 func (fx *publisher) _init() (err error) {
-	fx.settings = &libpublish.Run{}
+	fx.settings = &libcmd.Run{}
 	fx.workspace = &libworkspace.Workspace{}
-	fx.workers = map[string]*libpublish.Publisher{}
+	fx.workers = map[string]*libcmd.Manager{}
 
 	// initialize workspace
 	err = fx.workspace.Init()
