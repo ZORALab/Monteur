@@ -44,9 +44,9 @@ type Action struct {
 	// SaveFx is the function to operate value storing for `Save` key.
 	//
 	// This function **MUST** be set if `Save` is set.
-	SaveFx func(key string, output interface{}) error
+	SaveFx func(key string, output interface{}) (err error)
 
-	actionFx func() error
+	actionFx func() (output interface{}, err error)
 
 	// Type is the action type ID.
 	Type ActionID
@@ -101,18 +101,31 @@ func (action *Action) _initType() (err error) {
 	case ACTION_PLACEHOLDER:
 		action.actionFx = action.cmdPlaceholder
 	case ACTION_COMMAND:
+		action.actionFx = action.cmdPlaceholder
 	case ACTION_COMMAND_QUIET:
+		action.actionFx = action.cmdPlaceholder
 	case ACTION_COPY:
+		action.actionFx = action.cmdPlaceholder
 	case ACTION_COPY_RECURSIVE:
+		action.actionFx = action.cmdPlaceholder
 	case ACTION_COPY_RECURSIVE_QUIET:
+		action.actionFx = action.cmdPlaceholder
 	case ACTION_COPY_QUIET:
+		action.actionFx = action.cmdPlaceholder
 	case ACTION_CREATE_DIR:
+		action.actionFx = action.cmdPlaceholder
 	case ACTION_CREATE_PATH:
+		action.actionFx = action.cmdPlaceholder
 	case ACTION_DELETE:
+		action.actionFx = action.cmdPlaceholder
 	case ACTION_DELETE_RECURSIVE:
+		action.actionFx = action.cmdPlaceholder
 	case ACTION_DELETE_RECURSIVE_QUIET:
+		action.actionFx = action.cmdPlaceholder
 	case ACTION_DELETE_QUIET:
+		action.actionFx = action.cmdPlaceholder
 	case ACTION_IS_EXISTS:
+		action.actionFx = action.cmdPlaceholder
 	default:
 		return action.__reportError("%s: %s",
 			"unknown 'Type'",
@@ -123,8 +136,27 @@ func (action *Action) _initType() (err error) {
 	return nil
 }
 
-func (action *Action) cmdPlaceholder() (err error) {
-	return nil
+func (action *Action) cmdPlaceholder() (out interface{}, err error) {
+	fmt.Printf("Executed for %s: Source '%s' to Target '%s' at '%s'\n",
+		action.Name,
+		action.Source,
+		action.Target,
+		action.Location,
+	)
+	return nil, nil
+}
+
+func (action *Action) Run() (err error) {
+	output, err := action.actionFx()
+	if err != nil {
+		return err
+	}
+
+	if action.Save == "" {
+		return nil
+	}
+
+	return action.SaveFx(action.Save, output)
 }
 
 func (action *Action) __reportError(format string, args ...interface{}) error {

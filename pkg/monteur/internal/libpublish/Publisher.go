@@ -225,13 +225,15 @@ func (fx *Publisher) Build() (err error) {
 }
 
 func (fx *Publisher) run(isPublishing bool) (err error) {
-	message := "Placeholder: Publish-Build Executed."
-
-	if isPublishing {
-		message = "Placeholder: Publish Executed."
+	for i, cmd := range fx.CMD {
+		err = cmd.Run()
+		if err != nil {
+			fx.__reportError("failed to execute CMD: (%d) %s",
+				i,
+				err,
+			)
+		}
 	}
-
-	fmt.Println(message)
 
 	return nil
 }
