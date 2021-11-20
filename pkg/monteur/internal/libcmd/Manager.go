@@ -290,17 +290,8 @@ func (fx *Manager) _supportedSystem(condition string) bool {
 	}
 }
 
-// Publish is to execute the publisher's publishing sequences.
-func (fx *Manager) Publish() (err error) {
-	return fx.run(true)
-}
-
-// Build is to execute the publisher's publication material building sequences.
-func (fx *Manager) Build() (err error) {
-	return fx.run(false)
-}
-
-func (fx *Manager) run(isPublishing bool) (err error) {
+// Run is to execute the publisher's commands sequence.
+func (fx *Manager) Run() (err error) {
 	for i, cmd := range fx.CMD {
 		err = cmd.Run()
 		if err != nil {

@@ -46,7 +46,7 @@ func (fx *publisher) Build() (statusCode int) {
 	}
 
 	for _, p := range fx.workers {
-		err = p.Build()
+		err = p.Run()
 		if err != nil {
 			return fx._reportError(err)
 		}
@@ -68,7 +68,7 @@ func (fx *publisher) Publish() (statusCode int) {
 	}
 
 	for _, p := range fx.workers {
-		err = p.Publish()
+		err = p.Run()
 		if err != nil {
 			return fx._reportError(err)
 		}
@@ -95,17 +95,19 @@ func (fx *publisher) _filterPublisher(path string,
 	}
 
 	// initialize TOML Parser object
-	s = &libcmd.Manager{}
-	s.Variables = map[string]interface{}{
-		libmonteur.VAR_OS:      fx.workspace.OS,
-		libmonteur.VAR_ARCH:    fx.workspace.ARCH,
-		libmonteur.VAR_COMPUTE: fx.workspace.ComputeSystem,
-		libmonteur.VAR_TMP:     fx.workspace.Filesystem.PublishTMPDir,
-		libmonteur.VAR_BIN:     fx.workspace.Filesystem.BinDir,
-		libmonteur.VAR_CFG:     fx.workspace.Filesystem.BinCfgDir,
-		libmonteur.VAR_ROOT:    fx.workspace.Filesystem.RootDir,
-		libmonteur.VAR_HOME:    fx.workspace.Filesystem.CurrentDir,
-		libmonteur.VAR_SECRETS: fx.secrets,
+	//nolint:lll
+	s = &libcmd.Manager{
+		Variables: map[string]interface{}{
+			libmonteur.VAR_OS:      fx.workspace.OS,
+			libmonteur.VAR_ARCH:    fx.workspace.ARCH,
+			libmonteur.VAR_COMPUTE: fx.workspace.ComputeSystem,
+			libmonteur.VAR_TMP:     fx.workspace.Filesystem.PublishTMPDir,
+			libmonteur.VAR_BIN:     fx.workspace.Filesystem.BinDir,
+			libmonteur.VAR_CFG:     fx.workspace.Filesystem.BinCfgDir,
+			libmonteur.VAR_ROOT:    fx.workspace.Filesystem.RootDir,
+			libmonteur.VAR_HOME:    fx.workspace.Filesystem.CurrentDir,
+			libmonteur.VAR_SECRETS: fx.secrets,
+		},
 	}
 
 	// decode the publisher toml file
@@ -114,9 +116,7 @@ func (fx *publisher) _filterPublisher(path string,
 		return err //nolint:wrapcheck
 	}
 
-	// set compulsory variables into the data structure
-
-	// save successful publisher data into list for further processing
+	// save successful publisher data into list for further processig
 	fx.workers[s.Metadata.Name] = s
 
 	return nil

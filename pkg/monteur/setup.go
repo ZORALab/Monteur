@@ -116,22 +116,26 @@ func (fx *setup) __filterProgramMetadata(pathing string,
 	}
 
 	// initialize the TOML Program object
-	s = &libsetup.TOMLProgram{}
+	//nolint:lll
+	s = &libsetup.TOMLProgram{
+		Variables: map[string]interface{}{
+			libmonteur.VAR_OS:      fx.workspace.OS,
+			libmonteur.VAR_ARCH:    fx.workspace.ARCH,
+			libmonteur.VAR_COMPUTE: fx.workspace.ComputeSystem,
+			libmonteur.VAR_TMP:     fx.workspace.Filesystem.SetupTMPDir,
+			libmonteur.VAR_BIN:     fx.workspace.Filesystem.BinDir,
+			libmonteur.VAR_CFG:     fx.workspace.Filesystem.BinCfgDir,
+			libmonteur.VAR_ROOT:    fx.workspace.Filesystem.RootDir,
+			libmonteur.VAR_HOME:    fx.workspace.Filesystem.CurrentDir,
+			libmonteur.VAR_SECRETS: fx.secrets,
+		},
+	}
 
 	// decode the program's toml file
 	err = s.Parse(pathing)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
-
-	// set compulsory variables into the data structure
-	s.Variables[libmonteur.VAR_OS] = fx.workspace.OS
-	s.Variables[libmonteur.VAR_ARCH] = fx.workspace.ARCH
-	s.Variables[libmonteur.VAR_COMPUTE] = fx.workspace.ComputeSystem
-	s.Variables[libmonteur.VAR_TMP] = fx.workspace.Filesystem.SetupTMPDir
-	s.Variables[libmonteur.VAR_BIN] = fx.workspace.Filesystem.BinDir
-	s.Variables[libmonteur.VAR_CFG] = fx.workspace.Filesystem.BinCfgDir
-	s.Variables[libmonteur.VAR_SECRETS] = fx.secrets
 
 	// process the data and generate the program object for operation
 	app, err = s.Process()
