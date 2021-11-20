@@ -46,7 +46,7 @@ type Action struct {
 	// This function **MUST** be set if `Save` is set.
 	SaveFx func(key string, output interface{}) (err error)
 
-	actionFx func() (output interface{}, err error)
+	actionFx func(action *Action) (output interface{}, err error)
 
 	// Type is the action type ID.
 	Type ActionID
@@ -99,33 +99,33 @@ func (action *Action) _initMeta() (err error) {
 func (action *Action) _initType() (err error) {
 	switch action.Type {
 	case ACTION_PLACEHOLDER:
-		action.actionFx = action.cmdPlaceholder
+		action.actionFx = cmdPlaceholder
 	case ACTION_COMMAND:
-		action.actionFx = action.cmdPlaceholder
+		action.actionFx = cmdPlaceholder
 	case ACTION_COMMAND_QUIET:
-		action.actionFx = action.cmdPlaceholder
+		action.actionFx = cmdPlaceholder
 	case ACTION_COPY:
-		action.actionFx = action.cmdPlaceholder
+		action.actionFx = cmdPlaceholder
 	case ACTION_COPY_RECURSIVE:
-		action.actionFx = action.cmdPlaceholder
+		action.actionFx = cmdPlaceholder
 	case ACTION_COPY_RECURSIVE_QUIET:
-		action.actionFx = action.cmdPlaceholder
+		action.actionFx = cmdPlaceholder
 	case ACTION_COPY_QUIET:
-		action.actionFx = action.cmdPlaceholder
+		action.actionFx = cmdPlaceholder
 	case ACTION_CREATE_DIR:
-		action.actionFx = action.cmdPlaceholder
+		action.actionFx = cmdPlaceholder
 	case ACTION_CREATE_PATH:
-		action.actionFx = action.cmdPlaceholder
+		action.actionFx = cmdPlaceholder
 	case ACTION_DELETE:
-		action.actionFx = action.cmdPlaceholder
+		action.actionFx = cmdPlaceholder
 	case ACTION_DELETE_RECURSIVE:
-		action.actionFx = action.cmdPlaceholder
+		action.actionFx = cmdPlaceholder
 	case ACTION_DELETE_RECURSIVE_QUIET:
-		action.actionFx = action.cmdPlaceholder
+		action.actionFx = cmdPlaceholder
 	case ACTION_DELETE_QUIET:
-		action.actionFx = action.cmdPlaceholder
+		action.actionFx = cmdPlaceholder
 	case ACTION_IS_EXISTS:
-		action.actionFx = action.cmdPlaceholder
+		action.actionFx = cmdPlaceholder
 	default:
 		return action.__reportError("%s: %s",
 			"unknown 'Type'",
@@ -136,18 +136,16 @@ func (action *Action) _initType() (err error) {
 	return nil
 }
 
-func (action *Action) cmdPlaceholder() (out interface{}, err error) {
-	fmt.Printf("Executed for %s: Source '%s' to Target '%s' at '%s'\n",
-		action.Name,
-		action.Source,
-		action.Target,
-		action.Location,
-	)
-	return nil, nil
-}
-
+// Run is to instruct the Action to execute its commands.
+//
+// This function only return `error` value when the instructed action has an
+// error.
+//
+// If `Action.Save` and `Action.SaveFx` are properly set, this method shall
+// pass the output of the command and `Save` as Key-Value parameters into
+// `Action.SaveFx` and execute it accordingly.
 func (action *Action) Run() (err error) {
-	output, err := action.actionFx()
+	output, err := action.actionFx(action)
 	if err != nil {
 		return err
 	}
