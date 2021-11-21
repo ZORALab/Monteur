@@ -140,9 +140,9 @@ func (action *Action) _initType() (err error) {
 	case ACTION_COPY_QUIET:
 		action.actionFx = cmdCopyQuiet
 	case ACTION_CREATE_DIR:
-		action.actionFx = cmdPlaceholder
+		action.actionFx = cmdMkdir
 	case ACTION_CREATE_PATH:
-		action.actionFx = cmdPlaceholder
+		action.actionFx = cmdMkdirAll
 	case ACTION_DELETE:
 		action.actionFx = cmdPlaceholder
 	case ACTION_DELETE_RECURSIVE:
