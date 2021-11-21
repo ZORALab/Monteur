@@ -37,6 +37,13 @@ Command = 'bissetii'
 
 
 [[CMD]]
+Name = "Bissetii get latest theme modules"
+Type = 'command'
+Condition = 'all-all'
+Location = '{{- .RootDir -}}'
+Source = 'bissetii --get'
+
+[[CMD]]
 Name = "Hugo Build with Minimifaction"
 Type = 'command'
 Condition = 'all-all'

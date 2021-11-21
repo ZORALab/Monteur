@@ -101,16 +101,8 @@ func (action *Action) _initPWD() (err error) {
 }
 
 func (action *Action) _initMeta() (err error) {
-	if action.Location == "" {
-		return action.__reportError("Location is empty")
-	}
-
 	if action.Type == "" {
 		return action.__reportError("Type is empty")
-	}
-
-	if action.Source == "" {
-		return action.__reportError("Source is empty")
 	}
 
 	if action.Save != "" && action.SaveFx == nil {

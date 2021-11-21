@@ -21,6 +21,10 @@ import (
 )
 
 func cmdIsExists(action *Action) (out interface{}, err error) {
+	if action.Source == "" {
+		return false, fmt.Errorf("source is empty")
+	}
+
 	_, err = os.Stat(action.Source)
 	if err == nil {
 		return true, nil

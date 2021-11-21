@@ -21,7 +21,7 @@ import (
 )
 
 func cmdMkdir(action *Action) (out interface{}, err error) {
-	err = os.Mkdir(action.Target, os.ModePerm)
+	err = os.Mkdir(action.Source, os.ModePerm)
 	if err != nil {
 		err = fmt.Errorf("%s: %s",
 			"failed to make directory",
@@ -33,7 +33,7 @@ func cmdMkdir(action *Action) (out interface{}, err error) {
 }
 
 func cmdMkdirAll(action *Action) (out interface{}, err error) {
-	err = os.MkdirAll(action.Target, os.ModePerm)
+	err = os.MkdirAll(action.Source, os.ModePerm)
 	if err != nil {
 		err = fmt.Errorf("%s: %s",
 			"failed to make directory",

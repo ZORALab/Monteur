@@ -100,6 +100,12 @@ func _copyDir(src string, dest string) (err error) {
 			return fmt.Errorf("error with source file: %s", err)
 		}
 
+		// filepath.Walk does return its own path. Ignore it as we only
+		// want the contents
+		if path == src {
+			return nil
+		}
+
 		// generate relative path
 		destPath, _ := filepath.Rel(src, path)
 		destPath = filepath.Join(dest, destPath)
@@ -114,18 +120,6 @@ func _copyDir(src string, dest string) (err error) {
 			if err != nil {
 				return fmt.Errorf("%s: %s",
 					"failed to create directory",
-					err,
-				)
-			}
-
-			// restore file ownership
-			stat := info.Sys().(*syscall.Stat_t)
-			uid := int(stat.Uid)
-			gid := int(stat.Gid)
-			err = os.Lchown(destPath, uid, gid)
-			if err != nil {
-				return fmt.Errorf("%s: %s",
-					"error changing directory permission",
 					err,
 				)
 			}

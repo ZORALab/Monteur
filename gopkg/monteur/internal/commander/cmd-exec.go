@@ -25,6 +25,10 @@ type ExecOutput struct {
 }
 
 func cmdExec(action *Action) (out interface{}, err error) {
+	if action.Source == "" {
+		return nil, fmt.Errorf("source is empty")
+	}
+
 	t := _createTerminal()
 	x := &ExecOutput{}
 

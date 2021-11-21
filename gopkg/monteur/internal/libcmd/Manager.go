@@ -17,6 +17,7 @@ package libcmd
 
 import (
 	"fmt"
+	"strings"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
@@ -188,8 +189,6 @@ func (fx *Manager) sanitizeFMTVariables(in map[string]interface{}) (err error) {
 }
 
 func (fx *Manager) sanitizeCMD(in []*_tomlAction) (err error) {
-	var location, source, target string
-
 	// initialize all variables
 	fx.CMD = []*commander.Action{}
 
@@ -199,36 +198,12 @@ func (fx *Manager) sanitizeCMD(in []*_tomlAction) (err error) {
 			continue
 		}
 
-		location, err = templater.String(cmd.Location, fx.Variables)
-		if err != nil {
-			return fx.__reportError("%s: %s",
-				libmonteur.ERROR_COMMAND_FMT_BAD,
-				err,
-			)
-		}
-
-		source, err = templater.String(cmd.Source, fx.Variables)
-		if err != nil {
-			return fx.__reportError("%s: %s",
-				libmonteur.ERROR_COMMAND_FMT_BAD,
-				err,
-			)
-		}
-
-		target, err = templater.String(cmd.Target, fx.Variables)
-		if err != nil {
-			return fx.__reportError("%s: %s",
-				libmonteur.ERROR_COMMAND_FMT_BAD,
-				err,
-			)
-		}
-
 		a := &commander.Action{
 			Name:     cmd.Name,
 			Type:     cmd.Type,
-			Location: location,
-			Source:   source,
-			Target:   target,
+			Location: cmd.Location,
+			Source:   cmd.Source,
+			Target:   cmd.Target,
 			Save:     cmd.Save,
 			SaveFx:   fx._saveFx,
 		}
@@ -274,7 +249,17 @@ func (fx *Manager) sanitizeMetadata(path string) (err error) {
 }
 
 func (fx *Manager) _saveFx(key string, output interface{}) (err error) {
-	fx.Variables[key] = output
+
+	switch v := output.(type) {
+	case *commander.ExecOutput:
+		val := strings.TrimRight(string(v.Stdout), "\r\n")
+		fx.Variables[key] = val
+	case commander.ExecOutput:
+		val := strings.TrimRight(string(v.Stdout), "\r\n")
+		fx.Variables[key] = val
+	default:
+		fx.Variables[key] = output
+	}
 
 	return nil
 }
@@ -293,6 +278,30 @@ func (fx *Manager) _supportedSystem(condition string) bool {
 // Run is to execute the publisher's commands sequence.
 func (fx *Manager) Run() (err error) {
 	for i, cmd := range fx.CMD {
+		cmd.Location, err = templater.String(cmd.Location, fx.Variables)
+		if err != nil {
+			return fx.__reportError("%s: %s",
+				libmonteur.ERROR_COMMAND_FMT_BAD,
+				err,
+			)
+		}
+
+		cmd.Source, err = templater.String(cmd.Source, fx.Variables)
+		if err != nil {
+			return fx.__reportError("%s: %s",
+				libmonteur.ERROR_COMMAND_FMT_BAD,
+				err,
+			)
+		}
+
+		cmd.Target, err = templater.String(cmd.Target, fx.Variables)
+		if err != nil {
+			return fx.__reportError("%s: %s",
+				libmonteur.ERROR_COMMAND_FMT_BAD,
+				err,
+			)
+		}
+
 		err = cmd.Run()
 		if err != nil {
 			return fx.__reportError("%s: (Step %d) %s",
