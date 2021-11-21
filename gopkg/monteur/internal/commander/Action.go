@@ -144,13 +144,13 @@ func (action *Action) _initType() (err error) {
 	case ACTION_CREATE_PATH:
 		action.actionFx = cmdMkdirAll
 	case ACTION_DELETE:
-		action.actionFx = cmdPlaceholder
+		action.actionFx = cmdDelete
 	case ACTION_DELETE_RECURSIVE:
-		action.actionFx = cmdPlaceholder
+		action.actionFx = cmdDeleteRecursive
 	case ACTION_DELETE_RECURSIVE_QUIET:
-		action.actionFx = cmdPlaceholder
+		action.actionFx = cmdDeleteRecursiveQuiet
 	case ACTION_DELETE_QUIET:
-		action.actionFx = cmdPlaceholder
+		action.actionFx = cmdDeleteQuiet
 	case ACTION_IS_EXISTS:
 		action.actionFx = cmdPlaceholder
 	default:
