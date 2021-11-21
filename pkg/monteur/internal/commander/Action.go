@@ -17,6 +17,7 @@ package commander
 
 import (
 	"fmt"
+	"os"
 )
 
 type Action struct {
@@ -40,6 +41,11 @@ type Action struct {
 	//
 	// The value shall be the name (or 'key') of the variable.
 	Save string
+
+	// PWD is the current directory.
+	//
+	// The value shall be set automatically during Init()
+	PWD string
 
 	// SaveFx is the function to operate value storing for `Save` key.
 	//
@@ -65,9 +71,30 @@ func (action *Action) Init() (err error) {
 		return err
 	}
 
+	err = action._initPWD()
+	if err != nil {
+		return err
+	}
+
 	err = action._initType()
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (action *Action) _initPWD() (err error) {
+	if action.PWD != "" {
+		return nil
+	}
+
+	action.PWD, err = os.Getwd()
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			"failed to get current directory",
+			err,
+		)
 	}
 
 	return nil
@@ -101,9 +128,9 @@ func (action *Action) _initType() (err error) {
 	case ACTION_PLACEHOLDER:
 		action.actionFx = cmdPlaceholder
 	case ACTION_COMMAND:
-		action.actionFx = cmdPlaceholder
+		action.actionFx = cmdExec
 	case ACTION_COMMAND_QUIET:
-		action.actionFx = cmdPlaceholder
+		action.actionFx = cmdExecQuiet
 	case ACTION_COPY:
 		action.actionFx = cmdCopy
 	case ACTION_COPY_RECURSIVE:
@@ -145,7 +172,38 @@ func (action *Action) _initType() (err error) {
 // pass the output of the command and `Save` as Key-Value parameters into
 // `Action.SaveFx` and execute it accordingly.
 func (action *Action) Run() (err error) {
+	var errPWD error
+
+	if action.Location != "" {
+		err = os.Chdir(action.Location)
+		if err != nil {
+			return fmt.Errorf("%s: %s",
+				"failed to change into .Location",
+				err,
+			)
+		}
+	}
+
 	output, err := action.actionFx(action)
+	if action.Location != "" {
+		errPWD = os.Chdir(action.PWD)
+	}
+
+	switch {
+	case errPWD != nil && err != nil:
+		err = fmt.Errorf("%s **AND** %s: %s",
+			err,
+			"failed to change back to PWD directory",
+			errPWD,
+		)
+	case errPWD != nil:
+		err = fmt.Errorf("%s: %s",
+			"failed to change back to PWD directory",
+			errPWD,
+		)
+	default:
+	}
+
 	if err != nil {
 		return err
 	}
