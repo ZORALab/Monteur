@@ -18,10 +18,10 @@ package libcmd
 import (
 	"fmt"
 
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/commander"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/templater"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/templater"
 )
 
 type _tomlMetadata struct {

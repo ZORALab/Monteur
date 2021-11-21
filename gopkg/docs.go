@@ -13,24 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package libsecrets
-
-import (
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/secrets"
-)
-
-func GetSecrets(pathings []string) (sec map[string]interface{}) {
-	var err error
-
-	sec = map[string]interface{}{}
-
-	s := &secrets.Processor{DecodeFx: toml.SilentDecodeFile}
-
-	sec, err = s.DecodeMultiPath(sec, pathings, nil)
-	if err != nil {
-		return sec
-	}
-
-	return sec
-}
+// gopkg is the root directory of all Monteur Go packages.
+//
+// Unlike the conventional Go pathing and structure, Monteur project aims to
+// operate continuous integration not just remotely but also locally. This
+// removes the most critical vender locked-in dependency: the CI infrastructure.
+//
+// Also, Das Monteur should also allow anyone to easily customize and build
+// the software when he/she has access to the source codes without getting into
+// cracking their head to solve all the dependencies nightmare for both build
+// tools and the software dependencies as well.
+package gopkg

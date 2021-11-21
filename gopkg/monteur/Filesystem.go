@@ -16,7 +16,7 @@
 package monteur
 
 import (
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 )
 
 // Filesystem tags are common keys for setting various working directories

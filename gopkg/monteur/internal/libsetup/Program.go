@@ -22,10 +22,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/chmsg"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/httpclient"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/targz"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/chmsg"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/httpclient"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/targz"
 )
 
 // Program is the supported setup program to source

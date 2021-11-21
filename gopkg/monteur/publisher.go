@@ -20,10 +20,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libcmd"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libsecrets"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libworkspace"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libcmd"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsecrets"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libworkspace"
 )
 
 type publisher struct {

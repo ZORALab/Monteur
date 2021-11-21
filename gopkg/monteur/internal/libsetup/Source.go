@@ -13,29 +13,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package libcmd
+package libsetup
 
 import (
-	"fmt"
+	"context"
+	"net/http"
 
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/checksum"
 )
 
-type Run struct {
-}
+type Source struct {
+	Checksum *checksum.Hasher
 
-func (fx *Run) Parse(path string) (err error) {
-	s := struct {
-	}{}
+	Get    func(ctx context.Context)
+	Unpack func(ctx context.Context)
 
-	err = toml.DecodeFile(path, &s, nil)
-	if err != nil {
-		return fmt.Errorf("%s: %s",
-			libmonteur.ERROR_TOML_PARSE_FAILED,
-			err,
-		)
-	}
+	HandleError    func(err error)
+	HandleProgress func(progress, total int64)
+	HandleSuccess  func()
+	HandleRedirect func(req *http.Request, via []*http.Request) error
 
-	return nil
+	Headers map[string]string
+
+	Archive string
+	URL     string
+	Method  string
 }

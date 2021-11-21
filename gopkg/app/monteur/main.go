@@ -25,7 +25,7 @@ import (
 	"os"
 
 	"gitlab.com/zoralab/cerigo/os/args"
-	"gitlab.com/zoralab/monteur/pkg/monteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur"
 )
 
 func main() {

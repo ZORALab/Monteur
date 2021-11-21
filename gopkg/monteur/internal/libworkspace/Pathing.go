@@ -23,8 +23,8 @@ import (
 	"strings"
 	"text/template"
 
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/filesystem"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/filesystem"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 )
 
 type UserPath struct {

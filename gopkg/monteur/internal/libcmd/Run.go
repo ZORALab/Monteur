@@ -13,13 +13,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package monteur
+package libcmd
 
 import (
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
+	"fmt"
+
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 )
 
-const (
-	// VERSION is the monteur version number
-	VERSION = libmonteur.VERSION
-)
+type Run struct {
+}
+
+func (fx *Run) Parse(path string) (err error) {
+	s := struct {
+	}{}
+
+	err = toml.DecodeFile(path, &s, nil)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_TOML_PARSE_FAILED,
+			err,
+		)
+	}
+
+	return nil
+}

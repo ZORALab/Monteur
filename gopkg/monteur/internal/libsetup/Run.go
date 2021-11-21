@@ -16,26 +16,30 @@
 package libsetup
 
 import (
-	"context"
-	"net/http"
+	"fmt"
 
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/checksum"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 )
 
-type Source struct {
-	Checksum *checksum.Hasher
+type Run struct {
+	Limit uint64
+}
 
-	Get    func(ctx context.Context)
-	Unpack func(ctx context.Context)
+func (data *Run) Parse(path string) (err error) {
+	s := struct {
+		Downloads *Run
+	}{
+		Downloads: data,
+	}
 
-	HandleError    func(err error)
-	HandleProgress func(progress, total int64)
-	HandleSuccess  func()
-	HandleRedirect func(req *http.Request, via []*http.Request) error
+	err = toml.DecodeFile(path, &s, nil)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_TOML_PARSE_FAILED,
+			err,
+		)
+	}
 
-	Headers map[string]string
-
-	Archive string
-	URL     string
-	Method  string
+	return nil
 }

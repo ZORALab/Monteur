@@ -29,7 +29,7 @@ import (
 	"strings"
 	"time"
 
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/checksum"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/checksum"
 )
 
 type Downloader struct {

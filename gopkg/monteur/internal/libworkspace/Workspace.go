@@ -19,10 +19,10 @@ import (
 	"fmt"
 	"runtime"
 
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/endec/toml"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/schema"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/styler"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/schema"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/styler"
 )
 
 // Workspace is the Monteur continuous integration main data sructure.

@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"os"
 
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/chmsg"
-	"gitlab.com/zoralab/monteur/pkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/chmsg"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 )
 
 const (
