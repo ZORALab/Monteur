@@ -152,7 +152,7 @@ func (action *Action) _initType() (err error) {
 	case ACTION_DELETE_QUIET:
 		action.actionFx = cmdDeleteQuiet
 	case ACTION_IS_EXISTS:
-		action.actionFx = cmdPlaceholder
+		action.actionFx = cmdIsExists
 	default:
 		return action.__reportError("%s: %s",
 			"unknown 'Type'",
