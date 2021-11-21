@@ -9,9 +9,8 @@ PublishCommitID='Will be overwritten by publish command sequences'
 
 [FMTVariables]
 SourceDir = '{{- .RootDir -}}/.sites'
-DestinationDir = '{{- .RootDir -}}/public'
-BaseDir = '{{- .RootDir -}}/.sites'
-PublishDir = '{{- .RootDir -}}/{{- .PublishBranch -}}'
+DestinationDir = '{{- .WorkingDir -}}/public'
+PublishDir = '{{- .WorkingDir -}}/{{- .PublishBranch -}}'
 
 
 
@@ -42,7 +41,7 @@ Name = "Hugo Build with Minimifaction"
 Type = 'command'
 Condition = 'all-all'
 Location = '{{- .SourceDir -}}'
-Source = 'hugo --minify'
+Source = 'hugo --minify --destination "{{- .DestinationDir -}}"'
 
 [[CMD]]
 Name = "Hugo Workaround with 404"

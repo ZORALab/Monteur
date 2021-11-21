@@ -12,3 +12,5 @@ require (
 	gitlab.com/zoralab/cerigo v0.0.2
 	gitlab.com/zoralab/monteur/pkg v0.0.0-20210612051427-0f3d280089a2
 )
+
+require golang.org/x/sys v0.0.0-20211117180635-dee7805ff2e1 // indirect

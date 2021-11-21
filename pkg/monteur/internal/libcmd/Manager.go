@@ -295,9 +295,9 @@ func (fx *Manager) Run() (err error) {
 	for i, cmd := range fx.CMD {
 		err = cmd.Run()
 		if err != nil {
-			return fx.__reportError("%s: (%d) %s",
+			return fx.__reportError("%s: (Step %d) %s",
 				libmonteur.ERROR_COMMAND_FAILED,
-				i,
+				i+1,
 				err,
 			)
 		}

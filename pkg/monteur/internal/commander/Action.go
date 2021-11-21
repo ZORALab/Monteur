@@ -105,13 +105,13 @@ func (action *Action) _initType() (err error) {
 	case ACTION_COMMAND_QUIET:
 		action.actionFx = cmdPlaceholder
 	case ACTION_COPY:
-		action.actionFx = cmdPlaceholder
+		action.actionFx = cmdCopy
 	case ACTION_COPY_RECURSIVE:
-		action.actionFx = cmdPlaceholder
+		action.actionFx = cmdCopyRecursive
 	case ACTION_COPY_RECURSIVE_QUIET:
-		action.actionFx = cmdPlaceholder
+		action.actionFx = cmdCopyRecursiveQuiet
 	case ACTION_COPY_QUIET:
-		action.actionFx = cmdPlaceholder
+		action.actionFx = cmdCopyQuiet
 	case ACTION_CREATE_DIR:
 		action.actionFx = cmdPlaceholder
 	case ACTION_CREATE_PATH:

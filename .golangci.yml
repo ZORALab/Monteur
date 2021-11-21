@@ -215,3 +215,6 @@ issues:
         - revive
         - stylecheck
       text: "use underscores in Go names"
+    - linters:
+        - misspell
+      text: "misspelling of `Sebastian`"
