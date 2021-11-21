@@ -3,7 +3,7 @@ image: debian:latest
 stages:
     - test
     - build
-    - publish
+    - docs
 
 variables:
     TERM: "xterm"
@@ -31,18 +31,49 @@ build:
         name: production
     script:
         - echo "pending build"
-
-pages:
-    stage: publish
+scheduled_docs:
+    stage: docs
     tags:
         - linux
-    artifacts:
-        paths:
-            - public
     environment:
         name: production
     only:
         refs:
             - schedules
     script:
-        - echo "pending publish"
+        - >-
+          if [ -z "$GITLAB_USER_NAME" ]
+            1>&2 printf "[ ERROR ] Missing GITLAB_USER_NAME\n"
+          fi
+        - >-
+          if [ -z "$GITLAB_USER_EMAIL" ]
+            1>&2 printf "[ ERROR ] Missing GITLAB_USER_EMAIL\n"
+          fi
+        - >-
+          if [ -z "$GITLAB_USER_TOKEN" ]
+            1>&2 printf "[ ERROR ] Missing GITLAB_USER_TOKEN\n"
+          fi
+        - git config --global user.name "$GITLAB_USER_NAME"
+        - git config --global user.email "$GITLAB_USER_EMAIL"
+        - URI_PATH="${GITLAB_USER_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}"
+        - git remote set-url origin "https://gitlab-ci-token:${URI_PATH}.git"
+        - echo "pending publish-build"
+
+pages:
+    stage: docs
+    tags:
+        - linux
+    environment:
+        name: production
+    only:
+        refs:
+            - gh-pages
+    artifacts:
+        paths:
+            - public
+    before_script:
+        - echo "publishing to GitLab Pages"
+    script:
+        - mkdir -p public
+        - shopt -s extglob
+        - mv !(public|.*) public
