@@ -283,8 +283,7 @@ func (fp *Pathing) updateBasePaths() (err error) {
 		return err
 	}
 
-	fp.BinConfigFile = libmonteur.FILENAME_BIN_CONFIG
-	err = fp._initBinSubPath(&fp.BinConfigFile, "BinConfigFile")
+	err = fp._initBinCfgDir()
 	if err != nil {
 		return err
 	}
@@ -358,26 +357,19 @@ func (fp *Pathing) updatePublishPaths() (err error) {
 	return nil
 }
 
-func (fp *Pathing) _initBinSubPath(p *string, name string) (err error) {
-	// NOTE:
-	// 1) `name` is mainly for specifying the variable name without needing
-	//    to import the heavy-duty reflect package to do such a simple job
-	//    for error reporting.
-	if *p == "" {
+func (fp *Pathing) _initBinCfgDir() (err error) {
+	if fp.BinCfgDir == "" {
 		return fmt.Errorf("%s: %s",
 			libmonteur.ERROR_DIR_MISSING,
-			name,
+			"BinCfgDir",
 		)
 	}
 
-	if fp.BinDir == "" {
-		return fmt.Errorf("%s: %s",
-			libmonteur.ERROR_DIR_MISSING,
-			"BinDir",
-		)
-	}
+	fp.BinConfigFile = filepath.Join(fp.BinCfgDir,
+		libmonteur.FILENAME_BIN_CONFIG)
 
-	*p = filepath.Join(fp.BinDir, *p)
+	fp.BinCfgDir = filepath.Join(fp.BinCfgDir,
+		libmonteur.DIRECTORY_MONTEUR_CONFIG_D)
 
 	return nil
 }

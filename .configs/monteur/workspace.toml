@@ -1,11 +1,11 @@
 [Filesystem]
 BaseDir = "pkg/"
-WorkingDir = "tmp/"
-BuildDir = "build/"
+WorkingDir = ".monteurFS/tmp/"
+BuildDir = ".monteurFS/build/"
 ScriptDir = ".scripts/"
-BinDir = ".bin/"
-BinCfgDir = "./.bin/config.d/"
-DocDir = "public/"
+BinDir = ".monteurFS/bin/"
+BinCfgDir = ".monteurFS/config"
+DocDir = "docs/"
 SecretsDir = [
 	"{{ .HomeDir }}/.secrets",
 	"{{ .RootDir }}/.configs/monteur/secrets",

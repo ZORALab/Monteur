@@ -28,6 +28,7 @@ const (
 const (
 	DIRECTORY_APP               = "app"
 	DIRECTORY_GIT               = ".git"
+	DIRECTORY_MONTEUR_CONFIG_D  = "config.d"
 	DIRECTORY_MONTEUR_CONFIG    = ".configs/monteur"
 	DIRECTORY_PUBLISH_PUBLISHER = "publish/publishers"
 	DIRECTORY_PUBLISH_BUILDER   = "publish/builders"
