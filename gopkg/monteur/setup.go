@@ -124,7 +124,7 @@ func (fx *setup) __filterProgramMetadata(pathing string,
 			libmonteur.VAR_COMPUTE: fx.workspace.ComputeSystem,
 			libmonteur.VAR_TMP:     fx.workspace.Filesystem.SetupTMPDir,
 			libmonteur.VAR_BIN:     fx.workspace.Filesystem.BinDir,
-			libmonteur.VAR_CFG:     fx.workspace.Filesystem.BinCfgDir,
+			libmonteur.VAR_CFG:     fx.workspace.Filesystem.BinConfigdDir,
 			libmonteur.VAR_ROOT:    fx.workspace.Filesystem.RootDir,
 			libmonteur.VAR_HOME:    fx.workspace.Filesystem.CurrentDir,
 			libmonteur.VAR_SECRETS: fx.secrets,
@@ -154,6 +154,7 @@ func (fx *setup) _cleanUp() (err error) {
 	// remove all
 	_ = os.RemoveAll(fx.workspace.Filesystem.SetupTMPDir)
 	_ = os.RemoveAll(fx.workspace.Filesystem.BinCfgDir)
+	_ = os.RemoveAll(fx.workspace.Filesystem.BinConfigdDir)
 	_ = os.RemoveAll(fx.workspace.Filesystem.BinDir)
 
 	// create all
@@ -184,6 +185,15 @@ func (fx *setup) _cleanUp() (err error) {
 		)
 	}
 
+	err = os.MkdirAll(fx.workspace.Filesystem.BinConfigdDir,
+		libmonteur.PERMISSION_DIRECTORY)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_DIR_CREATE_FAILED,
+			err,
+		)
+	}
+
 	// create config
 	switch {
 	case fx.workspace.OS == "windows":
@@ -191,7 +201,7 @@ func (fx *setup) _cleanUp() (err error) {
 	default:
 		data = []byte(`#!/bin/sh
 export LOCAL_BIN="` + fx.workspace.Filesystem.BinDir + `"
-config_dir="` + fx.workspace.Filesystem.BinCfgDir + `"
+config_dir="` + fx.workspace.Filesystem.BinConfigdDir + `"
 
 stop() {
 	PATH=:${PATH}:

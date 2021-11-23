@@ -53,6 +53,7 @@ type Pathing struct {
 	AppConfigDir string
 
 	// bin
+	BinConfigdDir string
 	BinConfigFile string
 
 	// sub-directories for setup fx
@@ -366,9 +367,9 @@ func (fp *Pathing) _initBinCfgDir() (err error) {
 	}
 
 	fp.BinConfigFile = filepath.Join(fp.BinCfgDir,
-		libmonteur.FILENAME_BIN_CONFIG)
+		libmonteur.FILENAME_BIN_CONFIG_BASH)
 
-	fp.BinCfgDir = filepath.Join(fp.BinCfgDir,
+	fp.BinConfigdDir = filepath.Join(fp.BinCfgDir,
 		libmonteur.DIRECTORY_MONTEUR_CONFIG_D)
 
 	return nil

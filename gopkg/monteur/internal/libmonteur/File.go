@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	FILENAME_BIN_CONFIG = "config"
+	FILENAME_BIN_CONFIG_BASH = "BASH"
 )
 
 // File permissions are the designed permission flags used in Monteur
