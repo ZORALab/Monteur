@@ -1,0 +1,35 @@
+Type = "vertical"
+Class = "additional-css-class"
+Style = ""
+ID = ""
+Width = "187px"
+Height = "max-content"
+
+[Content]
+HTML = """
+**Kean Ho, Chew**
+"""
+AMPHTML = """
+**Kean Ho, Chew**
+"""
+
+[Thumbnail]
+HTML = """
+"""
+AMPHTML = """
+"""
+Picture = ""
+
+[Thumbnail.Image]
+AltText = "Kean Ho, Chew"
+URL = "/img/monteur/contributors/team-kean-ho-chew-560x628.webp"
+Width = "187"
+Height = "209"
+IsMap = ""
+LoadingMode = ""
+SrcList = """
+"""
+Layout = ""
+Class = ""
+Sizes = """
+"""

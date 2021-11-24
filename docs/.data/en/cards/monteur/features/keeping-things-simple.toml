@@ -1,0 +1,39 @@
+Type = "vertical"
+Class = "additional-css-class"
+Style = ""
+ID = ""
+Width = "310px"
+Height = "max-content"
+
+[Content]
+HTML = """
+### Keeping It Simple
+Monteur **strives to keep automation, commands, way of use documented and
+simple**. Let's keep it simple.
+"""
+AMPHTML = """
+### Keeping It Simple
+Monteur **strives to keep automation, commands, way of use documented and
+simple**. Let's keep it simple.
+"""
+
+[Thumbnail]
+HTML = """
+"""
+AMPHTML = """
+"""
+Picture = ""
+
+[Thumbnail.Image]
+AltText = "Keeping It Simple"
+URL = "/en/keeping-things-simple-310x162.webp"
+Width = "310"
+Height = "162"
+IsMap = ""
+LoadingMode = ""
+SrcList = """
+"""
+Layout = ""
+Class = ""
+Sizes = """
+"""

@@ -1,0 +1,39 @@
+Type = "vertical"
+Class = "additional-css-class"
+Style = ""
+ID = ""
+Width = "310px"
+Height = "max-content"
+
+[Content]
+HTML = """
+### Cross-Platform = OK
+Montuer **integrates key actions natively**, allowing highest portability
+possible across various OS and CPU.
+"""
+AMPHTML = """
+### Cross-Platform = OK
+Montuer **integrates key actions natively**, allowing highest portability
+possible across various OS and CPU.
+"""
+
+[Thumbnail]
+HTML = """
+"""
+AMPHTML = """
+"""
+Picture = ""
+
+[Thumbnail.Image]
+AltText = "Cross-Platform is OK"
+URL = "/en/cross-platform-ok-310x162.webp"
+Width = "310"
+Height = "162"
+IsMap = ""
+LoadingMode = ""
+SrcList = """
+"""
+Layout = ""
+Class = ""
+Sizes = """
+"""

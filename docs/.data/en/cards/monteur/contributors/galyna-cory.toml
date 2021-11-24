@@ -1,0 +1,35 @@
+Type = "vertical"
+Class = "additional-css-class"
+Style = ""
+ID = ""
+Width = "187px"
+Height = "max-content"
+
+[Content]
+HTML = """
+**Galyna, Cory**
+"""
+AMPHTML = """
+**Galyna, Cory**
+"""
+
+[Thumbnail]
+HTML = """
+"""
+AMPHTML = """
+"""
+Picture = ""
+
+[Thumbnail.Image]
+AltText = "Galyna, Cory"
+URL = "/img/monteur/contributors/team-galyna-cory-560x628.webp"
+Width = "187"
+Height = "209"
+IsMap = ""
+LoadingMode = ""
+SrcList = """
+"""
+Layout = ""
+Class = ""
+Sizes = """
+"""

@@ -1,0 +1,49 @@
+Type = "vertical"
+Class = "additional-css-class"
+Style = ""
+ID = ""
+Width = "250px"
+Height = "max-content"
+
+[Content]
+HTML = """
+"""
+AMPHTML = """
+"""
+
+[CTA]
+HTML = """
+"""
+AMPHTML = """
+"""
+
+[CTA.Links.1]
+URL = "https://www.zoralab.com/"
+HTML = "Website"
+AMPHTML = "Website"
+ID = ""
+Class = "button clean"
+Rel = ""
+Download = false
+Target = "_blank"
+
+[Thumbnail]
+HTML = """
+"""
+AMPHTML = """
+"""
+Picture = ""
+
+[Thumbnail.Image]
+AltText = "ZORALab Enterprise"
+URL = "/img/monteur/portfolios/zoralab-1200x628.svg"
+Width = "250"
+Height = "130"
+IsMap = ""
+LoadingMode = ""
+SrcList = """
+"""
+Layout = ""
+Class = ""
+Sizes = """
+"""

@@ -1,0 +1,39 @@
+Type = "vertical"
+Class = "additional-css-class"
+Style = ""
+ID = ""
+Width = "310px"
+Height = "max-content"
+
+[Content]
+HTML = """
+### Portability First
+Ensures you can **operate your repository across many operating systems and CPU
+as possible**.
+"""
+AMPHTML = """
+### Portability First
+Ensures you can **operate your repository across many operating systems and CPU
+as possible**.
+"""
+
+[Thumbnail]
+HTML = """
+"""
+AMPHTML = """
+"""
+Picture = ""
+
+[Thumbnail.Image]
+AltText = "Portability First"
+URL = "/en/portability-first-310x162.webp"
+Width = "310"
+Height = "162"
+IsMap = ""
+LoadingMode = ""
+SrcList = """
+"""
+Layout = ""
+Class = ""
+Sizes = """
+"""

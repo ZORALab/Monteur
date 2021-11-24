@@ -1,0 +1,39 @@
+Type = "vertical"
+Class = "additional-css-class"
+Style = ""
+ID = ""
+Width = "310px"
+Height = "max-content"
+
+[Content]
+HTML = """
+### Open-Source License
+Monteur **is licensed under OSI's Apache 2.0 license** so you're always in
+control: from source to compiled app.
+"""
+AMPHTML = """
+### Open-Source License
+Monteur **is licensed under OSI's Apache 2.0 license** so you're always in
+control: from source to compiled app.
+"""
+
+[Thumbnail]
+HTML = """
+"""
+AMPHTML = """
+"""
+Picture = ""
+
+[Thumbnail.Image]
+AltText = "Open-Source Licensed"
+URL = "/en/open-source-licensed-310x162.webp"
+Width = "310"
+Height = "162"
+IsMap = ""
+LoadingMode = ""
+SrcList = """
+"""
+Layout = ""
+Class = ""
+Sizes = """
+"""

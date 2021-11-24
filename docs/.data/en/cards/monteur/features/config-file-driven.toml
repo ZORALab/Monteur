@@ -1,0 +1,39 @@
+Type = "vertical"
+Class = "additional-css-class"
+Style = ""
+ID = ""
+Width = "310px"
+Height = "max-content"
+
+[Content]
+HTML = """
+### Config File Driven
+**Keep every configuration data into proper data file for maximum consistency**
+CI operations.
+"""
+AMPHTML = """
+### Config File Driven
+**Keep every configuration data into proper data file for maximum consistency**
+CI operations.
+"""
+
+[Thumbnail]
+HTML = """
+"""
+AMPHTML = """
+"""
+Picture = ""
+
+[Thumbnail.Image]
+AltText = "Config File Driven"
+URL = "/en/config-controlled-310x162.webp"
+Width = "310"
+Height = "162"
+IsMap = ""
+LoadingMode = ""
+SrcList = """
+"""
+Layout = ""
+Class = ""
+Sizes = """
+"""

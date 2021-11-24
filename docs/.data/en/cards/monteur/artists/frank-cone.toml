@@ -1,0 +1,51 @@
+Type = "vertical"
+Class = "additional-css-class"
+Style = ""
+ID = ""
+Width = "187px"
+Height = "max-content"
+
+[Content]
+HTML = """
+**Frank, Cone**
+"""
+AMPHTML = """
+**Frank, Cone**
+"""
+
+[CTA]
+HTML = """
+"""
+AMPHTML = """
+"""
+
+[CTA.Links.1]
+URL = "https://www.pexels.com/@frank-cone-140140"
+HTML = "Pexels"
+AMPHTML = "Pexels"
+ID = ""
+Class = "button clean"
+Rel = ""
+Download = false
+Target = "_blank"
+
+[Thumbnail]
+HTML = """
+"""
+AMPHTML = """
+"""
+Picture = ""
+
+[Thumbnail.Image]
+AltText = "Frank Cone"
+URL = "/img/monteur/artists/frank-cone-560x628.webp"
+Width = "187"
+Height = "209"
+IsMap = ""
+LoadingMode = ""
+SrcList = """
+"""
+Layout = ""
+Class = ""
+Sizes = """
+"""

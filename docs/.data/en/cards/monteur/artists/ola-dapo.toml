@@ -1,0 +1,51 @@
+Type = "vertical"
+Class = "additional-css-class"
+Style = ""
+ID = ""
+Width = "187px"
+Height = "max-content"
+
+[Content]
+HTML = """
+**Ola, Dapo**
+"""
+AMPHTML = """
+**Ola, Dapo**
+"""
+
+[CTA]
+HTML = """
+"""
+AMPHTML = """
+"""
+
+[CTA.Links.1]
+URL = "https://www.pexels.com/@ola-dapo-1754561"
+HTML = "Pexels"
+AMPHTML = "Pexels"
+ID = ""
+Class = "button clean"
+Rel = ""
+Download = false
+Target = "_blank"
+
+[Thumbnail]
+HTML = """
+"""
+AMPHTML = """
+"""
+Picture = ""
+
+[Thumbnail.Image]
+AltText = "Ola Dapo"
+URL = "/img/monteur/artists/ola-dapo-560x628.webp"
+Width = "187"
+Height = "209"
+IsMap = ""
+LoadingMode = ""
+SrcList = """
+"""
+Layout = ""
+Class = ""
+Sizes = """
+"""

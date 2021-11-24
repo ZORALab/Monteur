@@ -1,0 +1,39 @@
+Type = "vertical"
+Class = "additional-css-class"
+Style = ""
+ID = ""
+Width = "310px"
+Height = "max-content"
+
+[Content]
+HTML = """
+### Kaizen Spirit
+Monteur carries ZORALab's spirit of **Kaizen (改善) - being continuously
+improved** one step at at time.
+"""
+AMPHTML = """
+### Kaizen Spirit
+Monteur carries ZORALab's spirit of **Kaizen (改善) - being continuously
+improved** one step at at time.
+"""
+
+[Thumbnail]
+HTML = """
+"""
+AMPHTML = """
+"""
+Picture = ""
+
+[Thumbnail.Image]
+AltText = "Kaizen Spirit"
+URL = "/en/kaizen-spirit-310x162.webp"
+Width = "310"
+Height = "162"
+IsMap = ""
+LoadingMode = ""
+SrcList = """
+"""
+Layout = ""
+Class = ""
+Sizes = """
+"""

@@ -1,0 +1,51 @@
+Type = "vertical"
+Class = "additional-css-class"
+Style = ""
+ID = ""
+Width = "187px"
+Height = "max-content"
+
+[Content]
+HTML = """
+**Andrea, Piacquadio**
+"""
+AMPHTML = """
+**Andrea, Piacquadio**
+"""
+
+[CTA]
+HTML = """
+"""
+AMPHTML = """
+"""
+
+[CTA.Links.1]
+URL = "https://www.pexels.com/@olly"
+HTML = "Pexels"
+AMPHTML = "Pexels"
+ID = ""
+Class = "button clean"
+Rel = ""
+Download = false
+Target = "_blank"
+
+[Thumbnail]
+HTML = """
+"""
+AMPHTML = """
+"""
+Picture = ""
+
+[Thumbnail.Image]
+AltText = "Andrea Piacquadio"
+URL = "/img/monteur/artists/andrea-piacquadio-560x628.webp"
+Width = "187"
+Height = "209"
+IsMap = ""
+LoadingMode = ""
+SrcList = """
+"""
+Layout = ""
+Class = ""
+Sizes = """
+"""

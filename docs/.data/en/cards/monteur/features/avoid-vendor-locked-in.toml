@@ -1,0 +1,39 @@
+Type = "vertical"
+Class = "additional-css-class"
+Style = ""
+ID = ""
+Width = "310px"
+Height = "max-content"
+
+[Content]
+HTML = """
+### Avoid Locked-In
+Montuer **acts as the single unified interface for your CI**, let other vendor
+locked-in CI to interface with Monteur.
+"""
+AMPHTML = """
+### Avoid Locked-In
+Montuer **acts as the single unified interface for your CI**, let other vendor
+locked-in CI to interface with Monteur.
+"""
+
+[Thumbnail]
+HTML = """
+"""
+AMPHTML = """
+"""
+Picture = ""
+
+[Thumbnail.Image]
+AltText = "Avoid Vendor Locked-In"
+URL = "/en/avoid-vendor-locked-in-310x162.webp"
+Width = "310"
+Height = "162"
+IsMap = ""
+LoadingMode = ""
+SrcList = """
+"""
+Layout = ""
+Class = ""
+Sizes = """
+"""
