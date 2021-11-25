@@ -17,6 +17,28 @@ Monteur **is licensed under OSI's Apache 2.0 license** so you're always in
 control: from source to compiled app.
 """
 
+
+
+
+[CTA]
+HTML = """
+"""
+AMPHTML = """
+"""
+
+[CTA.Links.1]
+URL = "/en/licenses/"
+HTML = "LICENSE"
+AMPHTML = "LICENSE"
+ID = ""
+Class = "button clean"
+Rel = ""
+Download = false
+Target = ""
+
+
+
+
 [Thumbnail]
 HTML = """
 """
