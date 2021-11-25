@@ -1,10 +1,11 @@
 # Monteur
+A localized CI software robot to manage your software repository locally and
+integrable with latest CI service providers. It is built to do more with less
+noises, business sense.
 
-Das Monteur is a localized CI tool dedicated to operate a software compilation
-locally and remotely without depending on any CI tools vendors and dependency.
 It objective is to ensure anyone having the git repository is able to build
 the software without needing to mangle with the repository build system and its
 build dependencies.
 
-Visit its [Official Website](https://monteur.zoralab.com) to get its latest
+Visit the [Official Website](https://monteur.zoralab.com) to get its latest
 specifications and information.
