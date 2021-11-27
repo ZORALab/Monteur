@@ -55,7 +55,7 @@ Das Monteur - Getting the job done locally and remotely at scale!
 
 	_ = m.Add(&args.Flag{
 		Name:  "Help",
-		Label: []string{"help"},
+		Label: []string{"help", "--help", "-h"},
 		Value: &action,
 		Help:  "call for help",
 		HelpExamples: []string{
@@ -168,7 +168,7 @@ Das Monteur - Getting the job done locally and remotely at scale!
 
 	// execute according to action
 	switch action {
-	case "help":
+	case "help", "--help", "-h":
 		fmt.Fprintf(os.Stderr, "%s", m.PrintHelp())
 		return
 	case "purge":
