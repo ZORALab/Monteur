@@ -20,16 +20,10 @@ import (
 )
 
 type cleaner struct {
-	CleanAll bool
 }
 
 func (unit *cleaner) Run() (statusCode int) {
-	message := "Placeholder: Clean function called"
-	if unit.CleanAll {
-		message = "Placeholder: Purge function called"
-	}
-
-	fmt.Println(message)
+	fmt.Println("Placeholder: Clean function called")
 
 	return STATUS_OK
 }

@@ -21,15 +21,6 @@
 // specific CI needs.
 package monteur
 
-// Purge is the function to remove all setup and data from the repository.
-//
-// The result is a clean slate git repository with all the programs, caches,
-// build artifacts, test results, etc removed.
-func Purge() int {
-	c := &cleaner{CleanAll: true}
-	return c.Run()
-}
-
 // Setup is the function to download all dependencies as per configurations.
 //
 // The action shall download all the dependencies as stated by all the
@@ -57,7 +48,7 @@ func Test() int {
 // fresh run on the next round. Unlike Purge() function, does not remove all the
 // downloaded dependencies done by Setup() function.
 func Clean() int {
-	c := &cleaner{CleanAll: false}
+	c := &cleaner{}
 	return c.Run()
 }
 

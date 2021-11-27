@@ -41,7 +41,6 @@ Das Monteur - Getting the job done locally and remotely at scale!
 	m.Version = monteur.VERSION
 	m.Examples = []string{
 		`$ monteur help`,
-		`$ monteur purge`,
 		`$ monteur setup`,
 		`$ monteur test`,
 		`$ monteur clean`,
@@ -59,16 +58,6 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		Help:  "call for help",
 		HelpExamples: []string{
 			"$ monteur help",
-		},
-	})
-
-	_ = m.Add(&args.Flag{
-		Name:  "Purge",
-		Label: []string{"purge"},
-		Value: &action,
-		Help:  "purge the entire repository to its bare minimum",
-		HelpExamples: []string{
-			"$ monteur purge",
 		},
 	})
 
@@ -160,8 +149,6 @@ Das Monteur - Getting the job done locally and remotely at scale!
 	case "help", "--help", "-h":
 		fmt.Fprintf(os.Stderr, "%s", m.PrintHelp())
 		return
-	case "purge":
-		os.Exit(monteur.Purge())
 	case "setup":
 		os.Exit(monteur.Setup())
 	case "test":
