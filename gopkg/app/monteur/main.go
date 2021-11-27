@@ -35,7 +35,7 @@ func main() {
 	m := args.NewManager()
 	m.Name = "Monteur"
 	m.Description = `
-a software manufacturing automation and assembling tools in one app.
+A software manufacturing automation and assembling tools in one app.
 Das Monteur - Getting the job done locally and remotely at scale!
 `
 	m.Version = monteur.VERSION
@@ -43,7 +43,6 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		`$ monteur help`,
 		`$ monteur purge`,
 		`$ monteur setup`,
-		`$ monteur develop`,
 		`$ monteur test`,
 		`$ monteur clean`,
 		`$ monteur build`,
@@ -80,16 +79,6 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		Help:  "run repository setup for test, develop, and etc",
 		HelpExamples: []string{
 			"$ monteur setup",
-		},
-	})
-
-	_ = m.Add(&args.Flag{
-		Name:  "Develop",
-		Label: []string{"develop"},
-		Value: &action,
-		Help:  "configure terminal settings for development",
-		HelpExamples: []string{
-			"$ monteur develop",
 		},
 	})
 
@@ -175,8 +164,6 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		os.Exit(monteur.Purge())
 	case "setup":
 		os.Exit(monteur.Setup())
-	case "develop":
-		os.Exit(monteur.Develop())
 	case "test":
 		os.Exit(monteur.Test())
 	case "clean":

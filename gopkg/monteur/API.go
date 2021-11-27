@@ -40,17 +40,6 @@ func Setup() (statusCode int) {
 	return s.Run()
 }
 
-// Develop is the function to configure the terminal matching local tools.
-//
-// The action is to ensure anyone who tries to develop the repository has the
-// same setup without needing to manually setup the workspace. Another objective
-// is to ensure everyone speaks the common language when it comes to
-// development.
-func Develop() int {
-	d := &developer{}
-	return d.Run()
-}
-
 // Test is the function to execute the autonomous test job for the repository.
 //
 // This action is to ensure the test sequences are called uniformly during
