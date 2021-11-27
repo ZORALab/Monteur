@@ -1,6 +1,9 @@
 [Metadata]
-Type = 'static-site-generator'
-Name = 'GoHugo'
+Name = 'Hugo'
+Description = """
+Using Hugo static site generator to compose Montuer's web documentations
+artifacts.
+"""
 
 [Variables]
 MainLang = 'en'

@@ -1,6 +1,8 @@
 [Metadata]
-Type = 'gvcs'
 Name = 'Gitlab Pages'
+Description = """
+Publish web documentations artifact into GitLab Pages.
+"""
 
 [Variables]
 MainLang = 'en'

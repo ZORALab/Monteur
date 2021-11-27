@@ -26,8 +26,8 @@ import (
 )
 
 type _tomlMetadata struct {
-	Type string
-	Name string
+	Name        string
+	Description string
 }
 
 type _tomlDependency struct {
@@ -234,13 +234,6 @@ func (fx *Manager) sanitizeMetadata(path string) (err error) {
 		return fx.__reportError("%s: '%s' for %s",
 			libmonteur.ERROR_PUBLISH_METADATA_MISSING,
 			"Name",
-			path,
-		)
-	}
-
-	if fx.Metadata.Type == "" {
-		return fx.__reportError("%s: '%s' for %s",
-			libmonteur.ERROR_PUBLISH_METADATA_MISSING,
 			path,
 		)
 	}
