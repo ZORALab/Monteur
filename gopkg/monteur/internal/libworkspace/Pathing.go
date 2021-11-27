@@ -62,11 +62,11 @@ type Pathing struct {
 	SetupTOMLFile         string
 
 	// sub-directories for publish fx
-	PublishTMPDir           string
-	PublishConfigDir        string
-	PublishTOMLFile         string
-	PublishBuilderConfigDir string
-	PublishBuilderTMPDir    string
+	PublishTMPDir     string
+	PublishConfigDir  string
+	PublishTOMLFile   string
+	ComposerConfigDir string
+	ComposerTMPDir    string
 
 	// user
 	User *UserPath
@@ -335,16 +335,14 @@ func (fp *Pathing) updatePublishPaths() (err error) {
 		return err
 	}
 
-	fp.PublishBuilderConfigDir = libmonteur.DIRECTORY_PUBLISH_BUILDER
-	err = fp._initConfigSubPath(&fp.PublishBuilderConfigDir,
-		"PublishBuilderConfigDir")
+	fp.ComposerConfigDir = libmonteur.DIRECTORY_PUBLISH_COMPOSER
+	err = fp._initConfigSubPath(&fp.ComposerConfigDir, "ComposerConfigDir")
 	if err != nil {
 		return err
 	}
 
-	fp.PublishBuilderTMPDir = libmonteur.DIRECTORY_PUBLISH_BUILDER
-	err = fp._initWorkingSubPath(&fp.PublishBuilderTMPDir,
-		"PublishBuilderTMPDir")
+	fp.ComposerTMPDir = libmonteur.DIRECTORY_PUBLISH_COMPOSER
+	err = fp._initWorkingSubPath(&fp.ComposerTMPDir, "ComposerTMPDir")
 	if err != nil {
 		return err
 	}

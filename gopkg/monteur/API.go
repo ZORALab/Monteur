@@ -111,11 +111,11 @@ func Publish() int {
 	return p.Publish()
 }
 
-// PublishBuild is the function to build the documentation artifacts.
+// Compose is the function to build the documentation artifacts.
 //
 // This action is to build the publication artifacts prior to `Publish`. It is
 // for local review and editing without publishing to the main web.
-func PublishBuild() int {
+func Compose() int {
 	b := &publisher{}
 	return b.Build()
 }

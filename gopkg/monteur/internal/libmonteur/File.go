@@ -31,7 +31,7 @@ const (
 	DIRECTORY_MONTEUR_CONFIG_D  = "config.d"
 	DIRECTORY_MONTEUR_CONFIG    = ".configs/monteur"
 	DIRECTORY_PUBLISH_PUBLISHER = "publish/publishers"
-	DIRECTORY_PUBLISH_BUILDER   = "publish/builders"
+	DIRECTORY_PUBLISH_COMPOSER  = "publish/composers"
 	DIRECTORY_SETUP_PROGRAMS    = "setup/programs"
 )
 

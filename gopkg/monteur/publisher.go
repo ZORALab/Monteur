@@ -39,7 +39,7 @@ func (fx *publisher) Build() (statusCode int) {
 		return fx._reportError(err)
 	}
 
-	err = filepath.Walk(fx.workspace.Filesystem.PublishBuilderConfigDir,
+	err = filepath.Walk(fx.workspace.Filesystem.ComposerConfigDir,
 		fx._filterPublisher)
 	if err != nil {
 		return fx._reportError(err)
