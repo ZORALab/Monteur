@@ -79,7 +79,7 @@ of instructions. Each unit has a standardized list of fields shown as follows:
 ```toml {linenos=table,hl_lines=[],linenostart=1}
 [[CMD]]
 Name = 'Get Publish Branch First Commit for Cleaning'
-Condition = 'all-all'
+Condition = [ 'all-all' ]
 Type = 'command'
 Location = '{{- .WorkingDir -}}'
 Source = 'git rev-list --max-parents=0 --abbrev-commit HEAD'
@@ -96,9 +96,11 @@ documentation.
   2. Mainly for logging and referencing purposes.
 * `Condition`
   1. Compulsory.
-  2. the [Platform Identification]({{< link "/internals/platform-identification/"
-    "this" "url-only" />}}) ID where the command shall be executed when Monteur
-    is operating on matching platform.
+  2. the list of supported [Platform ID]({{< link
+     "/internals/platform-identification/" "this" "url-only" />}}) where the
+     command shall be executed when Monteur is operating on matching platform.
+  3. Should `all-all` exists in the array list, it will overwrite all platform
+     IDs, both specified and unspecified, as always `true`.
 * `Type`
   1. Compulsory.
   2. The Monteur's Commands Execution ID.

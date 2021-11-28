@@ -43,7 +43,7 @@ type _tomlAction struct {
 	Source    string
 	Target    string
 	Save      string
-	Condition string
+	Condition []string
 	Type      commander.ActionID
 }
 
@@ -132,7 +132,7 @@ func (fx *Manager) sanitizeDependencies(in []*_tomlDependency) (err error) {
 
 	// scan conditions for building commands list
 	for _, dep := range in {
-		if !fx._supportedSystem(dep.Condition) {
+		if !fx._supportedSystem([]string{dep.Condition}) {
 			continue
 		}
 
@@ -257,15 +257,17 @@ func (fx *Manager) _saveFx(key string, output interface{}) (err error) {
 	return nil
 }
 
-func (fx *Manager) _supportedSystem(condition string) bool {
-	switch condition {
-	case fx.thisSystem:
-		return true
-	case fx.omniSystem:
-		return true
-	default:
-		return false
+func (fx *Manager) _supportedSystem(condition []string) bool {
+	for _, v := range condition {
+		switch v {
+		case fx.thisSystem:
+			return true
+		case fx.omniSystem:
+			return true
+		}
 	}
+
+	return false
 }
 
 // Run is to execute the publisher's commands sequence.
