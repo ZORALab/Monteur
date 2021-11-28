@@ -17,6 +17,9 @@ test:
     stage: test
     tags:
         - linux
+    except:
+        refs:
+            - gh-pages
     environment:
         name: production
     coverage: '/total:\s{1,}\(statements\)\s{1,}(\d+.\d+%)/'
@@ -27,16 +30,23 @@ build:
     stage: build
     tags:
         - linux
+    except:
+        refs:
+            - gh-pages
     environment:
         name: production
     script:
         - echo "pending build"
-scheduled_docs:
+
+compose:
     stage: docs
     tags:
         - linux
     environment:
         name: production
+    except:
+        refs:
+            - gh-pages
     only:
         refs:
             - schedules
