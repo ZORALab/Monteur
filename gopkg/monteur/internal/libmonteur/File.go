@@ -26,18 +26,22 @@ const (
 )
 
 const (
-	DIRECTORY_APP               = "app"
-	DIRECTORY_GIT               = ".git"
-	DIRECTORY_MONTEUR_CONFIG_D  = "config.d"
-	DIRECTORY_MONTEUR_CONFIG    = ".configs/monteur"
-	DIRECTORY_PUBLISH_PUBLISHER = "publish/publishers"
-	DIRECTORY_PUBLISH_COMPOSER  = "publish/composers"
-	DIRECTORY_SETUP_PROGRAMS    = "setup/programs"
+	DIRECTORY_APP              = "app"
+	DIRECTORY_GIT              = ".git"
+	DIRECTORY_MONTEUR_CONFIG_D = "config.d"
+	DIRECTORY_MONTEUR_CONFIG   = ".configs/monteur"
+
+	DIRECTORY_PUBLISH           = "publish"
+	DIRECTORY_PUBLISH_PUBLISHER = DIRECTORY_PUBLISH + "/publishers"
+	DIRECTORY_PUBLISH_COMPOSER  = DIRECTORY_PUBLISH + "/composers"
+
+	DIRECTORY_SETUP          = "setup"
+	DIRECTORY_SETUP_PROGRAMS = DIRECTORY_SETUP + "/programs"
 )
 
 const (
-	FILE_TOML_PUBLISH   = "publish/config" + EXTENSION_TOML
-	FILE_TOML_SETUP     = "setup/config" + EXTENSION_TOML
+	FILE_TOML_PUBLISH   = DIRECTORY_PUBLISH + "/config" + EXTENSION_TOML
+	FILE_TOML_SETUP     = DIRECTORY_SETUP + "/config" + EXTENSION_TOML
 	FILE_TOML_WORKSPACE = "workspace" + EXTENSION_TOML
 )
 
