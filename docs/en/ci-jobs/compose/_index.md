@@ -81,7 +81,7 @@ consistent manner with minimal to no further instructions**.
 
 ## Overall Configurations
 To configure the job for execution, you need to supply and modify
-`.configs/monteur/publish/config.toml` file. These are the various settings for
+`.configs/monteur/compose/config.toml` file. These are the various settings for
 customizations.
 
 
@@ -136,7 +136,7 @@ configuration file shares the same file structure.
 
 ### Storing Location
 All program configuration files **SHALL** be stored inside
-`.configs/monteur/publish/composers/` directory.
+`.configs/monteur/compose/composers/` directory.
 
 
 

@@ -10,7 +10,7 @@ PublishBranch = 'gh-pages'
 FirstCommitID = 'Will be overwritten by publish command sequences'
 
 [FMTVariables]
-SourceDir = '{{- .WorkingDir -}}/public'
+SourceDir = '{{- .DocsDir -}}/public'
 DestinationDir = '{{- .WorkingDir -}}/{{- .PublishBranch -}}'
 
 

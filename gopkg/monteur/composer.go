@@ -26,29 +26,29 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libworkspace"
 )
 
-type publisher struct {
+type composer struct {
 	workspace *libworkspace.Workspace
 	secrets   map[string]interface{}
 	settings  *libcmd.Run
 	workers   map[string]*libcmd.Manager
 }
 
-func (fx *publisher) Run() (statusCode int) {
+func (fx *composer) Run() (statusCode int) {
 	err := fx._init()
+	if err != nil {
+		return fx._reportError(err)
+	}
+
+	err = filepath.Walk(fx.workspace.Filesystem.ComposeConfigDir,
+		fx._filterComposer)
 	if err != nil {
 		return fx._reportError(err)
 	}
 
 	fx.workspace.Filesystem.LogDir = filepath.Join(
 		fx.workspace.Filesystem.LogDir,
-		libmonteur.DIRECTORY_PUBLISH,
+		libmonteur.DIRECTORY_COMPOSE,
 	)
-
-	err = filepath.Walk(fx.workspace.Filesystem.PublishConfigDir,
-		fx._filterPublisher)
-	if err != nil {
-		return fx._reportError(err)
-	}
 
 	for _, p := range fx.workers {
 		err = p.Run()
@@ -60,7 +60,7 @@ func (fx *publisher) Run() (statusCode int) {
 	return STATUS_OK
 }
 
-func (fx *publisher) _filterPublisher(path string,
+func (fx *composer) _filterComposer(path string,
 	info os.FileInfo, err error) error {
 	var s *libcmd.Manager
 
@@ -84,8 +84,7 @@ func (fx *publisher) _filterPublisher(path string,
 			libmonteur.VAR_OS:      fx.workspace.OS,
 			libmonteur.VAR_ARCH:    fx.workspace.ARCH,
 			libmonteur.VAR_COMPUTE: fx.workspace.ComputeSystem,
-			libmonteur.VAR_TMP:     fx.workspace.Filesystem.PublishTMPDir,
-			libmonteur.VAR_DOC:     fx.workspace.Filesystem.ComposeTMPDir,
+			libmonteur.VAR_TMP:     fx.workspace.Filesystem.ComposeTMPDir,
 			libmonteur.VAR_BIN:     fx.workspace.Filesystem.BinDir,
 			libmonteur.VAR_CFG:     fx.workspace.Filesystem.BinCfgDir,
 			libmonteur.VAR_ROOT:    fx.workspace.Filesystem.RootDir,
@@ -94,19 +93,19 @@ func (fx *publisher) _filterPublisher(path string,
 		},
 	}
 
-	// decode the publisher toml file
+	// decode the composer toml file
 	err = s.Parse(path)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
 
-	// save successful publisher data into list for further processig
+	// save successful composer data into list for further processig
 	fx.workers[s.Metadata.Name] = s
 
 	return nil
 }
 
-func (fx *publisher) _init() (err error) {
+func (fx *composer) _init() (err error) {
 	fx.settings = &libcmd.Run{}
 	fx.workspace = &libworkspace.Workspace{}
 	fx.workers = map[string]*libcmd.Manager{}
@@ -121,7 +120,7 @@ func (fx *publisher) _init() (err error) {
 	fx.secrets = libsecrets.GetSecrets(fx.workspace.Filesystem.SecretsDir)
 
 	// initialize settings
-	err = fx.settings.Parse(fx.workspace.Filesystem.PublishTOMLFile)
+	err = fx.settings.Parse(fx.workspace.Filesystem.ComposeTOMLFile)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
@@ -129,7 +128,7 @@ func (fx *publisher) _init() (err error) {
 	return nil
 }
 
-func (fx *publisher) _reportError(err error) int {
-	fmt.Fprintf(os.Stdout, "%s %s\n", libmonteur.ERROR_PUBLISH, err)
+func (fx *composer) _reportError(err error) int {
+	fmt.Fprintf(os.Stdout, "%s %s\n", libmonteur.ERROR_COMPOSE, err)
 	return STATUS_ERROR
 }

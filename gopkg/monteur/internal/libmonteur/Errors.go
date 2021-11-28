@@ -29,8 +29,9 @@ const (
 )
 
 const (
-	ERROR_SETUP   = "[ ERROR - Setup   ]"
+	ERROR_COMPOSE = "[ ERROR - Compose ]"
 	ERROR_PUBLISH = "[ ERROR - Publish ]"
+	ERROR_SETUP   = "[ ERROR - Setup   ]"
 )
 
 const (

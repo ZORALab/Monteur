@@ -88,7 +88,7 @@ func Package() int {
 // reading channels such as web, file server for PDF files, and etc.
 func Publish() int {
 	p := &publisher{}
-	return p.Publish()
+	return p.Run()
 }
 
 // Compose is the function to build the documentation artifacts.
@@ -96,6 +96,6 @@ func Publish() int {
 // This action is to build the publication artifacts prior to `Publish`. It is
 // for local review and editing without publishing to the main web.
 func Compose() int {
-	b := &publisher{}
-	return b.Build()
+	c := &composer{}
+	return c.Run()
 }

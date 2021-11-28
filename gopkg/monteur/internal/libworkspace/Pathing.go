@@ -62,11 +62,14 @@ type Pathing struct {
 	SetupTOMLFile         string
 
 	// sub-directories for publish fx
-	PublishTMPDir     string
-	PublishConfigDir  string
-	PublishTOMLFile   string
-	ComposerConfigDir string
-	ComposerTMPDir    string
+	PublishTMPDir    string
+	PublishConfigDir string
+	PublishTOMLFile  string
+
+	// sub-directories for compose fx
+	ComposeConfigDir string
+	ComposeTMPDir    string
+	ComposeTOMLFile  string
 
 	// user
 	User *UserPath
@@ -240,6 +243,11 @@ func (fp *Pathing) Update() (err error) {
 		return err
 	}
 
+	err = fp.updateComposePaths()
+	if err != nil {
+		return err
+	}
+
 	err = fp._initSecretsDir()
 	if err != nil {
 		return err
@@ -323,32 +331,42 @@ func (fp *Pathing) updateSetupPaths() (err error) {
 }
 
 func (fp *Pathing) updatePublishPaths() (err error) {
-	fp.PublishConfigDir = libmonteur.DIRECTORY_PUBLISH_PUBLISHER
+	fp.PublishConfigDir = libmonteur.DIRECTORY_PUBLISHER
 	err = fp._initConfigSubPath(&fp.PublishConfigDir, "PublishConfigDir")
 	if err != nil {
 		return err
 	}
 
-	fp.PublishTMPDir = libmonteur.DIRECTORY_PUBLISH_PUBLISHER
+	fp.PublishTMPDir = libmonteur.DIRECTORY_PUBLISH
 	err = fp._initWorkingSubPath(&fp.PublishTMPDir, "PublishTMPDir")
 	if err != nil {
 		return err
 	}
 
-	fp.ComposerConfigDir = libmonteur.DIRECTORY_PUBLISH_COMPOSER
-	err = fp._initConfigSubPath(&fp.ComposerConfigDir, "ComposerConfigDir")
-	if err != nil {
-		return err
-	}
-
-	fp.ComposerTMPDir = libmonteur.DIRECTORY_PUBLISH_COMPOSER
-	err = fp._initWorkingSubPath(&fp.ComposerTMPDir, "ComposerTMPDir")
-	if err != nil {
-		return err
-	}
-
 	fp.PublishTOMLFile = libmonteur.FILE_TOML_PUBLISH
-	err = fp._initConfigSubPath(&fp.PublishTOMLFile, "SetupTOMLConfigFile")
+	err = fp._initConfigSubPath(&fp.PublishTOMLFile, "PublishTOMLConfigFile")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (fp *Pathing) updateComposePaths() (err error) {
+	fp.ComposeConfigDir = libmonteur.DIRECTORY_COMPOSER
+	err = fp._initConfigSubPath(&fp.ComposeConfigDir, "ComposeConfigDir")
+	if err != nil {
+		return err
+	}
+
+	fp.ComposeTMPDir = libmonteur.DIRECTORY_COMPOSE
+	err = fp._initWorkingSubPath(&fp.ComposeTMPDir, "ComposeTMPDir")
+	if err != nil {
+		return err
+	}
+
+	fp.ComposeTOMLFile = libmonteur.FILE_TOML_COMPOSE
+	err = fp._initConfigSubPath(&fp.ComposeTOMLFile, "ComposeTOMLConfigFile")
 	if err != nil {
 		return err
 	}

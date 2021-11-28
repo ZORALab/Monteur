@@ -24,6 +24,7 @@ const (
 	VAR_ARCHIVE = "Archive"
 	VAR_BIN     = "BinDir"
 	VAR_CFG     = "ConfigDir"
+	VAR_DOC     = "DocsDir"
 	VAR_COMPUTE = "ComputeSystem"
 	VAR_FORMAT  = "Format"
 	VAR_HOME    = "HomeDir"
