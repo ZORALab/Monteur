@@ -186,13 +186,13 @@ linters:
     - misspell
     - nakedret
     - nolintlint
-    - paralleltest
     - prealloc
     - revive
     - sqlclosecheck
     - staticcheck
     - structcheck
     - stylecheck
+    - tparallel
     - typecheck
     - unconvert
     - unparam
