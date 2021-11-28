@@ -45,11 +45,6 @@ func (fx *composer) Run() (statusCode int) {
 		return fx._reportError(err)
 	}
 
-	fx.workspace.Filesystem.LogDir = filepath.Join(
-		fx.workspace.Filesystem.LogDir,
-		libmonteur.DIRECTORY_COMPOSE,
-	)
-
 	for _, p := range fx.workers {
 		err = p.Run()
 		if err != nil {

@@ -39,11 +39,6 @@ func (fx *publisher) Run() (statusCode int) {
 		return fx._reportError(err)
 	}
 
-	fx.workspace.Filesystem.LogDir = filepath.Join(
-		fx.workspace.Filesystem.LogDir,
-		libmonteur.DIRECTORY_PUBLISH,
-	)
-
 	err = filepath.Walk(fx.workspace.Filesystem.PublishConfigDir,
 		fx._filterPublisher)
 	if err != nil {

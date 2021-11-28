@@ -22,6 +22,7 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+	"time"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/filesystem"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
@@ -48,6 +49,7 @@ type Pathing struct {
 
 	// workspace Pathing
 	WorkspaceTOMLFile string
+	WorkspaceLogDir   string
 
 	// app
 	AppConfigDir string
@@ -248,6 +250,11 @@ func (fp *Pathing) Update() (err error) {
 		return err
 	}
 
+	err = fp.updateLogPaths()
+	if err != nil {
+		return err
+	}
+
 	err = fp._initSecretsDir()
 	if err != nil {
 		return err
@@ -370,6 +377,16 @@ func (fp *Pathing) updateComposePaths() (err error) {
 	if err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func (fp *Pathing) updateLogPaths() (err error) {
+	fp.WorkspaceLogDir = filepath.Join(
+		fp.LogDir,
+		libmonteur.DIRECTORY_COMPOSE,
+		time.Now().UTC().Format("2006-Jan-02T15-04-05UTC"),
+	)
 
 	return nil
 }
