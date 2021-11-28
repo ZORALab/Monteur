@@ -164,7 +164,7 @@ SCRIPT LOCATION
 BIN LOCATION
 %s
 
-DOC LOCATION
+LOG LOCATION
 %s
 `,
 			w.Filesystem.CurrentDir,
@@ -175,7 +175,7 @@ DOC LOCATION
 			w.Filesystem.BuildDir,
 			w.Filesystem.ScriptDir,
 			w.Filesystem.BinDir,
-			w.Filesystem.DocDir,
+			w.Filesystem.LogDir,
 		)
 }
 

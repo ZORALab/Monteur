@@ -44,7 +44,6 @@ type Pathing struct {
 	ScriptDir  string
 	BinDir     string
 	BinCfgDir  string
-	DocDir     string
 	LogDir     string
 
 	// workspace Pathing
@@ -276,11 +275,6 @@ func (fp *Pathing) updateBasePaths() (err error) {
 	}
 
 	err = fp._initDependentDir(&fp.BinCfgDir, "BinCfgDir")
-	if err != nil {
-		return err
-	}
-
-	err = fp._initDependentDir(&fp.DocDir, "DocDir")
 	if err != nil {
 		return err
 	}

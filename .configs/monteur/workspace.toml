@@ -5,7 +5,6 @@ BuildDir = ".monteurFS/build/"
 ScriptDir = ".scripts/"
 BinDir = ".monteurFS/bin/"
 BinCfgDir = ".monteurFS/config"
-DocDir = "docs/"
 LogDir = ".monteurFS/log"
 SecretsDir = [
 	"{{ .HomeDir }}/.secrets",
