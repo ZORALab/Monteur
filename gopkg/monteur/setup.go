@@ -20,6 +20,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsecrets"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsetup"
@@ -29,13 +30,9 @@ import (
 type setup struct {
 	workspace *libworkspace.Workspace
 	settings  *libsetup.Run
+	logger    *liblog.Logger
 	programs  map[string]*libsetup.Program
 	secrets   map[string]interface{}
-}
-
-func (fx *setup) _reportError(err error) int {
-	fmt.Fprintf(os.Stdout, "%s %s\n", libmonteur.ERROR_SETUP, err)
-	return STATUS_ERROR
 }
 
 // Run is to execute the setup service function in Monteur.
@@ -47,7 +44,8 @@ func (fx *setup) Run() int {
 		return fx._reportError(err)
 	}
 
-	err = fx._parseProgramsMetadata()
+	err = filepath.Walk(fx.workspace.Filesystem.SetupProgramConfigDir,
+		fx.__filterProgramMetadata)
 	if err != nil {
 		return fx._reportError(err)
 	}
@@ -65,39 +63,7 @@ func (fx *setup) Run() int {
 	return STATUS_OK
 }
 
-func (fx *setup) _init() (err error) {
-	fx.settings = &libsetup.Run{}
-	fx.programs = map[string]*libsetup.Program{}
-	fx.workspace = &libworkspace.Workspace{}
-
-	// initialize workspace
-	err = fx.workspace.Init()
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
-
-	err = fx.settings.Parse(fx.workspace.Filesystem.SetupTOMLFile)
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
-
-	// initialize secrets and parse every one of them
-	fx.secrets = libsecrets.GetSecrets(fx.workspace.Filesystem.SecretsDir)
-
-	return nil
-}
-
-func (fx *setup) _parseProgramsMetadata() (err error) {
-	err = filepath.Walk(fx.workspace.Filesystem.SetupProgramConfigDir,
-		fx.__filterProgramMetadata)
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
-
-	return nil
-}
-
-func (fx *setup) __filterProgramMetadata(pathing string,
+func (fx *setup) __filterProgramMetadata(path string,
 	info os.FileInfo, err error) error {
 	var s *libsetup.TOMLProgram
 	var app *libsetup.Program
@@ -111,9 +77,11 @@ func (fx *setup) __filterProgramMetadata(pathing string,
 	}
 
 	// ensure we only accept the correct regular file with .toml extension
-	if filepath.Ext(pathing) != libmonteur.EXTENSION_TOML || info.IsDir() {
+	if filepath.Ext(path) != libmonteur.EXTENSION_TOML || info.IsDir() {
 		return nil
 	}
+
+	fx.logger.Info("Processing %s...", path)
 
 	// initialize the TOML Program object
 	//nolint:lll
@@ -132,19 +100,33 @@ func (fx *setup) __filterProgramMetadata(pathing string,
 		},
 	}
 
-	// decode the program's toml file
-	err = s.Parse(pathing)
+	fx.logger.Info("Inserting Task Variables...")
+	for k, v := range s.Variables {
+		if k == libmonteur.VAR_SECRETS {
+			fx.logger.Info("\"%s\": !** REDACTED FOR PRIVACY **!",
+				k)
+			continue
+		}
+
+		fx.logger.Info("\"%s\": %#v", k, v)
+	}
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
+
+	fx.logger.Info("Decode Task Data from config file...")
+	err = s.Parse(path)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
 
-	// process the data and generate the program object for operation
 	app, err = s.Process()
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
 
+	fx.logger.Info("Register task into job list...")
 	fx.programs[app.Metadata.Name] = app
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
 
 	return nil
 }
@@ -245,4 +227,66 @@ func (fx *setup) _shopPrograms() (err error) {
 
 	conductor.Run()
 	return conductor.Coordinate() //nolint:wrapcheck
+}
+
+func (fx *setup) _init() (err error) {
+	fx.settings = &libsetup.Run{}
+	fx.programs = map[string]*libsetup.Program{}
+	fx.workspace = &libworkspace.Workspace{}
+
+	// initialize workspace
+	err = fx.workspace.Init()
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// initialize logger
+	fx.logger = &liblog.Logger{
+		ToTerminal: true,
+	}
+	fx.logger.Init()
+	fx.workspace.Filesystem.WorkspaceLogDir = filepath.Join(
+		fx.workspace.Filesystem.LogDir,
+		libmonteur.DIRECTORY_SETUP,
+		fx.workspace.Filesystem.WorkspaceLogDir,
+	)
+
+	err = fx.logger.Add(liblog.TYPE_STATUS, filepath.Join(
+		fx.workspace.Filesystem.WorkspaceLogDir,
+		libmonteur.FILE_LOG_PREFIX_JOB+libmonteur.FILE_LOG_STATUS,
+	))
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	err = fx.logger.Add(liblog.TYPE_OUTPUT, filepath.Join(
+		fx.workspace.Filesystem.WorkspaceLogDir,
+		libmonteur.FILE_LOG_PREFIX_JOB+libmonteur.FILE_LOG_OUTPUT,
+	))
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	fx.logger.Info("\n%s", fx.workspace.String())
+	fx.logger.Info("CURRENT CI JOB:\n%s\n", "compose")
+
+	fx.logger.Info("Parsing secrets...")
+	fx.secrets = libsecrets.GetSecrets(fx.workspace.Filesystem.SecretsDir)
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
+
+	fx.logger.Info("Initialize settings...")
+	err = fx.settings.Parse(fx.workspace.Filesystem.SetupTOMLFile)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
+
+	return nil
+}
+
+func (fx *setup) _reportError(err error) int {
+	fx.logger.Error("%s %s\n", libmonteur.ERROR_SETUP, err)
+	fx.logger.Sync()
+	fx.logger.Close()
+	return STATUS_ERROR
 }
