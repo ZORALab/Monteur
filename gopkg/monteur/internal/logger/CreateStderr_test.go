@@ -15,10 +15,31 @@
 
 package logger
 
-// Errors are the messages used in creating the `error` object.
-const (
-	ERROR_LABEL_EMPTY       = "empty writer label"
-	ERROR_FILE_INCOMPATIBLE = "not a regular file"
-	ERROR_FILE_MISSING      = "missing filepath"
-	ERROR_FILE_OPEN_FAILED  = "failed to open log file"
+import (
+	"testing"
 )
+
+func TestCreateStderr(t *testing.T) {
+	scenarios := getTestScenarios()
+
+	for i, s := range scenarios {
+		if s.TestType != testCreateStderr {
+			continue
+		}
+
+		// prepare
+		th := s.prepareTHelper(t)
+
+		// test
+		f := CreateStderr()
+
+		// assert
+		th.ExpectUIDCorrectness(i, s.UID, false)
+		s.assertCreateFile(th, f)
+		s.cleanUp()
+		s.log(th, map[string]interface{}{
+			"file": f,
+		})
+		th.Conclude()
+	}
+}

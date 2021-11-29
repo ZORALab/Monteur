@@ -18,6 +18,7 @@ package logger
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
@@ -25,12 +26,15 @@ import (
 )
 
 const (
-	testAdd     = "testAdd"
-	testRemove  = "testRemove"
-	testLogf    = "testLogf"
-	testLogln   = "testLogln"
-	testPrintf  = "testPrintf"
-	testPrintln = "testPrintln"
+	testAdd          = "testAdd"
+	testCreateFile   = "testCreateFile"
+	testCreateStderr = "testCreateStderr"
+	testCreateStdout = "testCreateStdout"
+	testRemove       = "testRemove"
+	testLogf         = "testLogf"
+	testLogln        = "testLogln"
+	testPrintf       = "testPrintf"
+	testPrintln      = "testPrintln"
 )
 
 const (
@@ -57,19 +61,25 @@ const (
 
 	useTypeOutput = "useTypeOutput"
 	useTypeStatus = "useTypeStatus"
+
+	useEmptyFilepath     = "useEmptyFilepath"
+	useProperFilepath    = "useProperFilepath"
+	useDirectoryFilepath = "useDirectoryFilepath"
 )
 
 const (
-	argument        = "CuStOm-ARgUM3nt"
-	argumentFormat  = "the value is: %v\n"
-	customTimestamp = "customTimestamp"
-	emptyFormat     = ""
-	emptyLevel      = ""
-	outLabel        = "outLog"
-	preprocessor    = "preprocessed"
-	properLevel     = "test-info"
-	statusLabel     = "statusLog"
-	statementFormat = "this is a statement"
+	argument          = "CuStOm-ARgUM3nt"
+	argumentFormat    = "the value is: %v\n"
+	customTimestamp   = "customTimestamp"
+	directoryFilepath = "."
+	emptyFormat       = ""
+	emptyLevel        = ""
+	outLabel          = "outLog"
+	preprocessor      = "preprocessed"
+	properFilepath    = "test.log"
+	properLevel       = "test-info"
+	statusLabel       = "statusLog"
+	statementFormat   = "this is a statement"
 )
 
 type testScenario thelper.Scenario
@@ -294,6 +304,29 @@ func (s *testScenario) assertRemove(th *thelper.THelper,
 	}
 }
 
+func (s *testScenario) assertCreateFile(th *thelper.THelper, f *os.File) {
+	var exist bool
+
+	if !s.Switches[expectError] {
+		exist = true
+	}
+
+	switch {
+	case s.Switches[useProperFilepath]:
+		if f == nil && exist {
+			th.Errorf("failed to create file")
+		}
+	case s.Switches[useEmptyFilepath]:
+		if f != nil && !exist {
+			th.Errorf("unknown file is created")
+		}
+	case s.Switches[useDirectoryFilepath]:
+		if f != nil && !exist {
+			th.Errorf("unknown file is created with directory path")
+		}
+	}
+}
+
 func (s *testScenario) expectError() bool {
 	return s.Switches[expectError]
 }
@@ -377,4 +410,22 @@ func (s *testScenario) generateTimestamp() string {
 	}
 
 	return customTimestamp
+}
+
+func (s *testScenario) generateFilepath() string {
+	switch {
+	case s.Switches[useEmptyFilepath]:
+		return ""
+	case s.Switches[useDirectoryFilepath]:
+		return directoryFilepath
+	case s.Switches[useProperFilepath]:
+		fallthrough
+	default:
+	}
+
+	return properFilepath
+}
+
+func (s *testScenario) cleanUp() {
+	_ = os.RemoveAll(properFilepath)
 }

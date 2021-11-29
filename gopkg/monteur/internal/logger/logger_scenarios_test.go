@@ -3456,6 +3456,62 @@ logger.Remove should work properly when:
 				useEmptyLabel: true,
 				expectRetain:  true,
 			},
+		}, {
+			UID:      177,
+			TestType: testCreateFile,
+			Description: `
+CreateFile should work properly when:
+1. proper filepath is given.
+2. not expecting error.
+`,
+			Switches: map[string]bool{
+				useProperFilepath: true,
+				expectError:       false,
+			},
+		}, {
+			UID:      178,
+			TestType: testCreateFile,
+			Description: `
+CreateFile should work properly when:
+1. empty filepath is given.
+2. expecting error.
+`,
+			Switches: map[string]bool{
+				useEmptyFilepath: true,
+				expectError:      true,
+			},
+		}, {
+			UID:      179,
+			TestType: testCreateFile,
+			Description: `
+CreateFile should work properly when:
+1. directory filepath is given.
+2. expecting error.
+`,
+			Switches: map[string]bool{
+				useDirectoryFilepath: true,
+				expectError:          true,
+			},
+		}, {
+			UID:      180,
+			TestType: testCreateStderr,
+			Description: `
+CreateStderr should work properly and:
+1. file is expected.
+`,
+			Switches: map[string]bool{
+				useProperFilepath: true,
+			},
+		}, {
+			UID:      181,
+			TestType: testCreateStdout,
+			Description: `
+CreateStdout should work properly and:
+1. file is expected.
+`,
+			Switches: map[string]bool{
+				useProperFilepath: true,
+			},
 		},
 	}
 }
