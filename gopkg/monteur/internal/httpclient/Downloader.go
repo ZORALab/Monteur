@@ -28,14 +28,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/checksum"
 )
 
 type Downloader struct {
 	request   *http.Request
 	indicator *indicator
-	checksum  *checksum.Hasher
+	checksum  Checksum
 
 	// Headers are the additional headers to add into the request.
 	Headers map[string]string
@@ -107,7 +105,7 @@ type Downloader struct {
 func (d *Downloader) Download(ctx context.Context,
 	method string,
 	urlstr string,
-	hasher *checksum.Hasher) {
+	hasher Checksum) {
 	var response *http.Response
 	var client *http.Client
 	var inReader io.Reader
@@ -216,7 +214,7 @@ func (d *Downloader) Download(ctx context.Context,
 func (d *Downloader) init(ctx context.Context,
 	method string,
 	urlStr string,
-	hasher *checksum.Hasher) (client *http.Client, err error) {
+	hasher Checksum) (client *http.Client, err error) {
 	// validate saving location
 	if d.Destination == "" {
 		d.Destination = "."
@@ -243,7 +241,7 @@ func (d *Downloader) init(ctx context.Context,
 	}
 
 	// inspect checksum is usable before acceptance
-	if hasher != nil {
+	if checksumOK(hasher) {
 		err = hasher.IsHealthy()
 		if err != nil {
 			return nil, fmt.Errorf("%s: %s",
@@ -293,7 +291,7 @@ func (d *Downloader) checksumArtifact() (err error) {
 	var f *os.File
 	var ok bool
 
-	if d.checksum == nil {
+	if !checksumOK(d.checksum) {
 		return nil
 	}
 
