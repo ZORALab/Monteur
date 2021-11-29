@@ -17,7 +17,7 @@ package httpclient
 
 const (
 	// TIMEOUT is the default timing for timeout a download in seconds.
-	TIMEOUT = 60
+	TIMEOUT = 120
 
 	// FILE_PERMISSION is the default access permission for downloaded file.
 	FILE_PERMISSION = 0600
