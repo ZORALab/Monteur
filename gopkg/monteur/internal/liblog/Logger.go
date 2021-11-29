@@ -18,6 +18,7 @@ package liblog
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/logger"
 )
@@ -36,16 +37,20 @@ type Logger struct {
 }
 
 // Init is to initialize the logger for use.
-func (log *Logger) Init() (err error) {
+func (log *Logger) Init() {
 	log.executor = logger.New()
 	log.statusWriters = map[string]*os.File{}
 	log.outputWriters = map[string]*os.File{}
-
-	return nil
 }
 
 // Add is to add a given filepath for creating the io.Writer for logger.
 func (log *Logger) Add(logType logger.StatusType, path string) (err error) {
+	if path == "" {
+		return fmt.Errorf("given path is empty")
+	}
+
+	_ = os.MkdirAll(filepath.Dir(path), 0755)
+
 	f, err := logger.CreateFile(path)
 	if err != nil {
 		return fmt.Errorf("%s: %s", "failed to open log file", err)
@@ -90,24 +95,33 @@ func (log *Logger) Close() {
 	}
 }
 
-// Error is to log an error statement straight to status type logs.
+// Error is to log an error statement straight to status and output types logs.
 func (log *Logger) Error(format string, a ...interface{}) {
+	format += "\n"
 	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_ERROR, format, a...)
+	log.executor.Logf(logger.TYPE_OUTPUT, logger.TAG_ERROR, format, a...)
+	fmt.Fprintf(logger.CreateStdout(), format, a...)
 }
 
 // Warning is to log a warning statement straight to status type logs.
 func (log *Logger) Warning(format string, a ...interface{}) {
+	format += "\n"
 	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_WARNING, format, a...)
+	fmt.Fprintf(logger.CreateStderr(), format, a...)
 }
 
 // Info is to log an info statement straight to status type logs.
 func (log *Logger) Info(format string, a ...interface{}) {
+	format += "\n"
 	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_INFO, format, a...)
+	fmt.Fprintf(logger.CreateStderr(), format, a...)
 }
 
 // Success is to log a success statement straight to status type logs.
 func (log *Logger) Success(format string, a ...interface{}) {
+	format += "\n"
 	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_SUCCESS, format, a...)
+	fmt.Fprintf(logger.CreateStderr(), format, a...)
 }
 
 // Debug is to log a debug statement straight to status type logs.
@@ -116,14 +130,17 @@ func (log *Logger) Debug(format string, a ...interface{}) {
 		return
 	}
 
+	format += "\n"
 	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_DEBUG, format, a...)
+	fmt.Fprintf(logger.CreateStderr(), format, a...)
 }
 
 // Output is to log an output statements straight to status and output logs.
 func (log *Logger) Output(format string, a ...interface{}) {
-	format = "[ OUTPUT ] " + format
+	format = "[ OUTPUT ] " + format + "\n"
 	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_NO, format, a...)
 	log.executor.Logf(logger.TYPE_OUTPUT, logger.TAG_NO, format, a...)
+	fmt.Fprintf(logger.CreateStderr(), format, a...)
 }
 
 // Logf is to log a raw statement straight to the selected logs' type.

@@ -21,6 +21,7 @@ import (
 	"path/filepath"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libcmd"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsecrets"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libworkspace"
@@ -30,6 +31,7 @@ type composer struct {
 	workspace *libworkspace.Workspace
 	secrets   map[string]interface{}
 	settings  *libcmd.Run
+	logger    *liblog.Logger
 	workers   map[string]*libcmd.Manager
 }
 
@@ -39,19 +41,31 @@ func (fx *composer) Run() (statusCode int) {
 		return fx._reportError(err)
 	}
 
+	// parse all composers
 	err = filepath.Walk(fx.workspace.Filesystem.ComposeConfigDir,
 		fx._filterComposer)
 	if err != nil {
 		return fx._reportError(err)
 	}
 
+	// execute each tasks in parallel
 	for _, p := range fx.workers {
+		fx.logger.Info("Subprocessing task %s execution...",
+			p.Metadata.Name)
+
 		err = p.Run()
 		if err != nil {
 			return fx._reportError(err)
 		}
+
+		fx.logger.Success(libmonteur.LOG_SUCCESS)
 	}
 
+	// wait for completion
+
+	// safely close the logs and exit as completion
+	fx.logger.Sync()
+	fx.logger.Close()
 	return STATUS_OK
 }
 
@@ -72,6 +86,8 @@ func (fx *composer) _filterComposer(path string,
 		return nil
 	}
 
+	fx.logger.Info("Processing %s...", path)
+
 	// initialize TOML Parser object
 	//nolint:lll
 	s = &libcmd.Manager{
@@ -89,14 +105,28 @@ func (fx *composer) _filterComposer(path string,
 		},
 	}
 
-	// decode the composer toml file
+	fx.logger.Info("Inserting Task Variables...")
+	for k, v := range s.Variables {
+		if k == libmonteur.VAR_SECRETS {
+			fx.logger.Info("\"%s\": !** REDACTED FOR PRIVACY **!",
+				k)
+			continue
+		}
+
+		fx.logger.Info("\"%s\": %#v", k, v)
+	}
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
+
+	fx.logger.Info("Decode Task Data from config file...")
 	err = s.Parse(path)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
 
-	// save successful composer data into list for further processig
+	fx.logger.Info("Register task into job list...")
 	fx.workers[s.Metadata.Name] = s
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
 
 	return nil
 }
@@ -112,19 +142,45 @@ func (fx *composer) _init() (err error) {
 		return err //nolint:wrapcheck
 	}
 
-	// initialize secrets and parse every one of them
-	fx.secrets = libsecrets.GetSecrets(fx.workspace.Filesystem.SecretsDir)
+	// initialize logger
+	fx.logger = &liblog.Logger{}
+	fx.logger.Init()
+	err = fx.logger.Add(liblog.TYPE_STATUS, filepath.Join(
+		fx.workspace.Filesystem.WorkspaceLogDir,
+		"job-status.log",
+	))
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
 
-	// initialize settings
+	err = fx.logger.Add(liblog.TYPE_OUTPUT, filepath.Join(
+		fx.workspace.Filesystem.WorkspaceLogDir,
+		"job-output.log",
+	))
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	fx.logger.Info("\n%s", fx.workspace.String())
+	fx.logger.Info("CURRENT CI JOB:\n%s\n", "compose")
+
+	fx.logger.Info("Parsing secrets...")
+	fx.secrets = libsecrets.GetSecrets(fx.workspace.Filesystem.SecretsDir)
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
+
+	fx.logger.Info("Initialize settings...")
 	err = fx.settings.Parse(fx.workspace.Filesystem.ComposeTOMLFile)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
 
 	return nil
 }
 
 func (fx *composer) _reportError(err error) int {
-	fmt.Fprintf(os.Stdout, "%s %s\n", libmonteur.ERROR_COMPOSE, err)
+	fx.logger.Error("%s %s\n", libmonteur.ERROR_COMPOSE, err)
+	fx.logger.Sync()
+	fx.logger.Close()
 	return STATUS_ERROR
 }
