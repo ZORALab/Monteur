@@ -144,7 +144,9 @@ func (fx *publisher) _init() (err error) {
 	}
 
 	// initialize logger
-	fx.logger = &liblog.Logger{}
+	fx.logger = &liblog.Logger{
+		ToTerminal: true,
+	}
 	fx.logger.Init()
 	fx.workspace.Filesystem.WorkspaceLogDir = filepath.Join(
 		fx.workspace.Filesystem.LogDir,
@@ -154,7 +156,7 @@ func (fx *publisher) _init() (err error) {
 
 	err = fx.logger.Add(liblog.TYPE_STATUS, filepath.Join(
 		fx.workspace.Filesystem.WorkspaceLogDir,
-		libmonteur.FILE_LOG_JOB_STATUS,
+		libmonteur.FILE_LOG_PREFIX_JOB+libmonteur.FILE_LOG_STATUS,
 	))
 	if err != nil {
 		return err //nolint:wrapcheck
@@ -162,7 +164,7 @@ func (fx *publisher) _init() (err error) {
 
 	err = fx.logger.Add(liblog.TYPE_OUTPUT, filepath.Join(
 		fx.workspace.Filesystem.WorkspaceLogDir,
-		libmonteur.FILE_LOG_JOB_OUTPUT,
+		libmonteur.FILE_LOG_PREFIX_JOB+libmonteur.FILE_LOG_OUTPUT,
 	))
 	if err != nil {
 		return err //nolint:wrapcheck

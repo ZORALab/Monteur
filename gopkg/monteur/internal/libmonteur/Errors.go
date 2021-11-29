@@ -52,6 +52,11 @@ const (
 )
 
 const (
+	ERROR_LOG_PATH_EMPTY = "given path is empty"
+	ERROR_LOG_PREPARE    = "failed to open and prepare log file"
+)
+
+const (
 	ERROR_PROGRAM_ARCHIVE_BAD            = "bad archived program's name"
 	ERROR_PROGRAM_ARCHIVE_FORMAT_BAD     = "bad archived program's format"
 	ERROR_PROGRAM_ARCHIVE_FORMAT_UNKNOWN = "unsupported archived program's format"

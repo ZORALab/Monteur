@@ -20,6 +20,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/logger"
 )
 
@@ -33,7 +34,8 @@ type Logger struct {
 	statusWriters map[string]*os.File
 	outputWriters map[string]*os.File
 
-	DebugMode bool
+	ToTerminal bool
+	DebugMode  bool
 }
 
 // Init is to initialize the logger for use.
@@ -46,19 +48,19 @@ func (log *Logger) Init() {
 // Add is to add a given filepath for creating the io.Writer for logger.
 func (log *Logger) Add(logType logger.StatusType, path string) (err error) {
 	if path == "" {
-		return fmt.Errorf("given path is empty")
+		return fmt.Errorf(libmonteur.ERROR_LOG_PATH_EMPTY)
 	}
 
 	_ = os.MkdirAll(filepath.Dir(path), 0755)
 
 	f, err := logger.CreateFile(path)
 	if err != nil {
-		return fmt.Errorf("%s: %s", "failed to open log file", err)
+		return fmt.Errorf("%s: %s", libmonteur.ERROR_LOG_PREPARE, err)
 	}
 
 	err = log.executor.Add(f, logType, path)
 	if err != nil {
-		return fmt.Errorf("%s: %s", "failed to register log file", err)
+		return fmt.Errorf("%s: %s", libmonteur.ERROR_LOG_PREPARE, err)
 	}
 
 	switch logType {
@@ -100,6 +102,11 @@ func (log *Logger) Error(format string, a ...interface{}) {
 	format += "\n"
 	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_ERROR, format, a...)
 	log.executor.Logf(logger.TYPE_OUTPUT, logger.TAG_ERROR, format, a...)
+
+	if !log.ToTerminal {
+		return
+	}
+
 	fmt.Fprintf(logger.CreateStdout(), format, a...)
 }
 
@@ -107,6 +114,11 @@ func (log *Logger) Error(format string, a ...interface{}) {
 func (log *Logger) Warning(format string, a ...interface{}) {
 	format += "\n"
 	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_WARNING, format, a...)
+
+	if !log.ToTerminal {
+		return
+	}
+
 	fmt.Fprintf(logger.CreateStderr(), format, a...)
 }
 
@@ -114,6 +126,11 @@ func (log *Logger) Warning(format string, a ...interface{}) {
 func (log *Logger) Info(format string, a ...interface{}) {
 	format += "\n"
 	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_INFO, format, a...)
+
+	if !log.ToTerminal {
+		return
+	}
+
 	fmt.Fprintf(logger.CreateStderr(), format, a...)
 }
 
@@ -121,6 +138,11 @@ func (log *Logger) Info(format string, a ...interface{}) {
 func (log *Logger) Success(format string, a ...interface{}) {
 	format += "\n"
 	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_SUCCESS, format, a...)
+
+	if !log.ToTerminal {
+		return
+	}
+
 	fmt.Fprintf(logger.CreateStderr(), format, a...)
 }
 
@@ -132,6 +154,11 @@ func (log *Logger) Debug(format string, a ...interface{}) {
 
 	format += "\n"
 	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_DEBUG, format, a...)
+
+	if !log.ToTerminal {
+		return
+	}
+
 	fmt.Fprintf(logger.CreateStderr(), format, a...)
 }
 
@@ -140,6 +167,11 @@ func (log *Logger) Output(format string, a ...interface{}) {
 	format = "[ OUTPUT ] " + format + "\n"
 	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_NO, format, a...)
 	log.executor.Logf(logger.TYPE_OUTPUT, logger.TAG_NO, format, a...)
+
+	if !log.ToTerminal {
+		return
+	}
+
 	fmt.Fprintf(logger.CreateStderr(), format, a...)
 }
 
@@ -147,4 +179,15 @@ func (log *Logger) Output(format string, a ...interface{}) {
 func (log *Logger) Logf(logType logger.StatusType,
 	format string, a ...interface{}) {
 	log.executor.Logf(logType, logger.TAG_NO, format, a...)
+
+	if !log.ToTerminal {
+		return
+	}
+
+	if logType == logger.TYPE_OUTPUT {
+		fmt.Fprintf(logger.CreateStdout(), format, a...)
+		return
+	}
+
+	fmt.Fprintf(logger.CreateStderr(), format, a...)
 }

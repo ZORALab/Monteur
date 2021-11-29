@@ -17,12 +17,18 @@ package libcmd
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/templater"
+)
+
+const (
+	saveNone = "libcmd:saveN0ne"
 )
 
 type _tomlMetadata struct {
@@ -54,6 +60,8 @@ type Manager struct {
 	Variables    map[string]interface{}
 	Dependencies []*commander.Dependency
 	CMD          []*commander.Action
+
+	log *liblog.Logger
 }
 
 func (fx *Manager) Parse(path string) (err error) {
@@ -65,7 +73,7 @@ func (fx *Manager) Parse(path string) (err error) {
 	// initialize all important variables
 	fx.thisSystem, ok = fx.Variables[libmonteur.VAR_COMPUTE].(string)
 	if !ok {
-		panic("MONTEUR DEV: please assign variables before Parse()!")
+		panic("MONTEUR DEV: please assign VAR_COMPUTE before Parse()!")
 	}
 
 	fx.omniSystem = libmonteur.ALL_OS +
@@ -117,6 +125,12 @@ func (fx *Manager) Parse(path string) (err error) {
 	}
 
 	err = fx.sanitizeCMD(cmd)
+	if err != nil {
+		return err
+	}
+
+	// initialize logger
+	err = fx.initializeLogger()
 	if err != nil {
 		return err
 	}
@@ -241,19 +255,91 @@ func (fx *Manager) sanitizeMetadata(path string) (err error) {
 	return nil
 }
 
-func (fx *Manager) _saveFx(key string, output interface{}) (err error) {
+func (fx *Manager) initializeLogger() (err error) {
+	var sRet, name string
+	var ok bool
 
-	switch v := output.(type) {
-	case *commander.ExecOutput:
-		val := strings.TrimRight(string(v.Stdout), "\r\n")
-		fx.Variables[key] = val
-	case commander.ExecOutput:
-		val := strings.TrimRight(string(v.Stdout), "\r\n")
-		fx.Variables[key] = val
-	default:
-		fx.Variables[key] = output
+	// initialize logger
+	sRet, ok = fx.Variables[libmonteur.VAR_LOG].(string)
+	if !ok {
+		panic("MONTEUR DEV: please assign VAR_LOG before Parse()!")
+	}
+	fx.log = &liblog.Logger{}
+	fx.log.Init()
+
+	name = strings.ToLower(fx.Metadata.Name)
+	name = strings.ReplaceAll(name, " ", "-")
+	name = strings.ReplaceAll(name, "_", "-")
+	name = strings.ReplaceAll(name, "+", "-")
+	name = strings.ReplaceAll(name, "!", "")
+	name = strings.ReplaceAll(name, "$", "")
+
+	err = fx.log.Add(liblog.TYPE_STATUS, filepath.Join(
+		sRet,
+		name+"-"+libmonteur.FILE_LOG_STATUS,
+	))
+	if err != nil {
+		return fx.__reportError("%s", err)
 	}
 
+	err = fx.log.Add(liblog.TYPE_OUTPUT, filepath.Join(
+		sRet,
+		name+"-"+libmonteur.FILE_LOG_OUTPUT,
+	))
+	if err != nil {
+		fx.log.Close()
+		return fx.__reportError("%s", err)
+	}
+
+	fx.log.Info("Task initialized successfully. Standing By...")
+
+	return nil
+}
+
+func (fx *Manager) _saveFx(key string, output interface{}) (err error) {
+	switch v := output.(type) {
+	case *commander.ExecOutput:
+		fx.log.Info("Reading STDERR...")
+		fx.log.Info("Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝",
+			string(v.Stderr))
+		fx.log.Info("Reading STDOUT...")
+		fx.log.Info("Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝",
+			string(v.Stdout))
+
+		if key != saveNone {
+			val := strings.TrimRight(string(v.Stdout), "\r\n")
+			fx.Variables[key] = val
+			fx.log.Info("Saving '%v' to '%s'...", output, key)
+		}
+	case commander.ExecOutput:
+		fx.log.Info("Reading STDERR...")
+		fx.log.Info("Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝",
+			string(v.Stderr))
+		fx.log.Info("Reading STDOUT...")
+		fx.log.Info("Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝",
+			string(v.Stdout))
+
+		if key != saveNone {
+			val := strings.TrimRight(string(v.Stdout), "\r\n")
+			fx.Variables[key] = val
+			fx.log.Info("Saving '%v' to '%s'...", output, key)
+		}
+	default:
+		fx.log.Info("Reading output...")
+		if v == nil {
+			fx.log.Info("Got:\n╔═══ BEGIN ═══╗\nnil\n╚═══  END  ═══╝")
+		} else {
+			fx.log.Info("Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝",
+				output)
+		}
+
+		if key != saveNone {
+			fx.Variables[key] = output
+			fx.log.Info("Saving '%v' to '%s'...", output, key)
+		}
+	}
+
+	fx.log.Success(libmonteur.LOG_SUCCESS)
 	return nil
 }
 
@@ -272,7 +358,16 @@ func (fx *Manager) _supportedSystem(condition []string) bool {
 
 // Run is to execute the publisher's commands sequence.
 func (fx *Manager) Run() (err error) {
+	fx.log.Success(libmonteur.LOG_SUCCESS)
+
 	for i, cmd := range fx.CMD {
+		fx.log.Info("Executing Command...")
+		fx.log.Info("Name: '%s'", cmd.Name)
+		fx.log.Info("Save: '%s'", cmd.Save)
+		fx.log.Info("SaveFx: '%v'", cmd.SaveFx)
+		fx.log.Info("Type: '%v'", cmd.Type)
+
+		fx.log.Info("Formatting cmd.Location...")
 		cmd.Location, err = templater.String(cmd.Location, fx.Variables)
 		if err != nil {
 			return fx.__reportError("%s: %s",
@@ -280,7 +375,9 @@ func (fx *Manager) Run() (err error) {
 				err,
 			)
 		}
+		fx.log.Info("Got: '%s'", cmd.Location)
 
+		fx.log.Info("Formatting cmd.Source...")
 		cmd.Source, err = templater.String(cmd.Source, fx.Variables)
 		if err != nil {
 			return fx.__reportError("%s: %s",
@@ -288,13 +385,21 @@ func (fx *Manager) Run() (err error) {
 				err,
 			)
 		}
+		fx.log.Info("Got: '%s'", cmd.Source)
 
+		fx.log.Info("Formatting cmd.Target...")
 		cmd.Target, err = templater.String(cmd.Target, fx.Variables)
 		if err != nil {
 			return fx.__reportError("%s: %s",
 				libmonteur.ERROR_COMMAND_FMT_BAD,
 				err,
 			)
+		}
+		fx.log.Info("Got: '%s'", cmd.Target)
+
+		fx.log.Info("Running cmd...")
+		if cmd.Save == "" {
+			cmd.Save = saveNone
 		}
 
 		err = cmd.Run()
@@ -307,14 +412,22 @@ func (fx *Manager) Run() (err error) {
 		}
 	}
 
+	fx.log.Sync()
+	fx.log.Close()
 	return nil
 }
 
 func (fx *Manager) __reportError(format string, args ...interface{}) error {
 	if fx.Metadata == nil || fx.Metadata.Name == "" {
-		return fmt.Errorf("publisher '' ➤ "+format, args...)
+		fx.log.Error("Task '' ➤ "+format, args...)
+		fx.log.Sync()
+		fx.log.Close()
+		return fmt.Errorf("Task '' ➤ "+format, args...)
 	}
 
 	args = append([]interface{}{fx.Metadata.Name}, args...)
-	return fmt.Errorf("'%s' ➤ "+format, args...)
+	fx.log.Error("Task '%s' ➤ "+format, args...)
+	fx.log.Sync()
+	fx.log.Close()
+	return fmt.Errorf("Task '%s' ➤ "+format, args...)
 }
