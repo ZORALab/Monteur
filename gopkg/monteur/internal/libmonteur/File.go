@@ -20,6 +20,7 @@ package libmonteur
 // These critical object names are mainly to locate root repository with Monteur
 // supports.
 const (
+	EXTENSION_LOG   = ".log"
 	EXTENSION_TOML  = ".toml"
 	EXTENSION_TARGZ = ".tar.gz"
 	EXTENSION_ZIP   = ".zip"
@@ -46,6 +47,9 @@ const (
 	FILE_TOML_PUBLISH   = DIRECTORY_PUBLISH + "/config" + EXTENSION_TOML
 	FILE_TOML_SETUP     = DIRECTORY_SETUP + "/config" + EXTENSION_TOML
 	FILE_TOML_WORKSPACE = "workspace" + EXTENSION_TOML
+
+	FILE_LOG_JOB_STATUS = "job-status" + EXTENSION_LOG
+	FILE_LOG_JOB_OUTPUT = "job-output" + EXTENSION_LOG
 )
 
 const (

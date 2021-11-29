@@ -382,11 +382,7 @@ func (fp *Pathing) updateComposePaths() (err error) {
 }
 
 func (fp *Pathing) updateLogPaths() (err error) {
-	fp.WorkspaceLogDir = filepath.Join(
-		fp.LogDir,
-		libmonteur.DIRECTORY_COMPOSE,
-		time.Now().UTC().Format("2006-Jan-02T15-04-05UTC"),
-	)
+	fp.WorkspaceLogDir = time.Now().UTC().Format("2006-Jan-02T15-04-05UTC")
 
 	return nil
 }

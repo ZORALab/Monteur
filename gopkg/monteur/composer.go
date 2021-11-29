@@ -35,6 +35,7 @@ type composer struct {
 	workers   map[string]*libcmd.Manager
 }
 
+// Run is to execute the composer algorithm.
 func (fx *composer) Run() (statusCode int) {
 	err := fx._init()
 	if err != nil {
@@ -48,7 +49,7 @@ func (fx *composer) Run() (statusCode int) {
 		return fx._reportError(err)
 	}
 
-	// execute each tasks in parallel
+	// execute each task in parallel
 	for _, p := range fx.workers {
 		fx.logger.Info("Subprocessing task %s execution...",
 			p.Metadata.Name)
@@ -145,9 +146,15 @@ func (fx *composer) _init() (err error) {
 	// initialize logger
 	fx.logger = &liblog.Logger{}
 	fx.logger.Init()
+	fx.workspace.Filesystem.WorkspaceLogDir = filepath.Join(
+		fx.workspace.Filesystem.LogDir,
+		libmonteur.DIRECTORY_PUBLISH,
+		fx.workspace.Filesystem.WorkspaceLogDir,
+	)
+
 	err = fx.logger.Add(liblog.TYPE_STATUS, filepath.Join(
 		fx.workspace.Filesystem.WorkspaceLogDir,
-		"job-status.log",
+		libmonteur.FILE_LOG_JOB_STATUS,
 	))
 	if err != nil {
 		return err //nolint:wrapcheck
@@ -155,7 +162,7 @@ func (fx *composer) _init() (err error) {
 
 	err = fx.logger.Add(liblog.TYPE_OUTPUT, filepath.Join(
 		fx.workspace.Filesystem.WorkspaceLogDir,
-		"job-output.log",
+		libmonteur.FILE_LOG_JOB_OUTPUT,
 	))
 	if err != nil {
 		return err //nolint:wrapcheck
