@@ -11,7 +11,7 @@ variables:
 
 before_script:
     - apt-get update -y
-    - apt-get install bash curl git gcc graphviz -y
+    - apt-get install bash -y
 
 test:
     stage: test
@@ -24,6 +24,7 @@ test:
         name: production
     coverage: '/total:\s{1,}\(statements\)\s{1,}(\d+.\d+%)/'
     script:
+        - apt-get install git gcc graphviz -y
         - echo "pending test"
 
 build:
@@ -51,6 +52,7 @@ compose:
         refs:
             - schedules
     script:
+        - apt-get install git -y
         - >-
           if [ -z "$GITLAB_USER_NAME" ]
             1>&2 printf "[ ERROR ] Missing GITLAB_USER_NAME\n"
