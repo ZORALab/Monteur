@@ -150,6 +150,10 @@ func (action *Action) _initType() (err error) {
 		action.actionFx = cmdMove
 	case ACTION_MOVE_QUIET:
 		action.actionFx = cmdMoveQuiet
+	case ACTION_SCRIPT:
+		action.actionFx = cmdScript
+	case ACTION_SCRIPT_QUIET:
+		action.actionFx = cmdScriptQuiet
 	default:
 		return action.__reportError("%s: %s",
 			"unknown 'Type'",

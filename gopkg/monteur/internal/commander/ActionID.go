@@ -34,4 +34,6 @@ const (
 	ACTION_IS_EXISTS              ActionID = "is-exists"
 	ACTION_MOVE                   ActionID = "move"
 	ACTION_MOVE_QUIET             ActionID = "move-quiet"
+	ACTION_SCRIPT                 ActionID = "script"
+	ACTION_SCRIPT_QUIET           ActionID = "script-quiet"
 )
