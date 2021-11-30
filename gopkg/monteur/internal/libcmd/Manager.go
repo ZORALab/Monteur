@@ -31,30 +31,8 @@ const (
 	saveNone = "libcmd:saveN0ne"
 )
 
-type _tomlMetadata struct {
-	Name        string
-	Description string
-}
-
-type _tomlDependency struct {
-	Name      string
-	Condition string
-	Command   string
-	Type      commander.ActionID
-}
-
-type _tomlAction struct {
-	Name      string
-	Location  string
-	Source    string
-	Target    string
-	Save      string
-	Condition []string
-	Type      commander.ActionID
-}
-
 type Manager struct {
-	Metadata     *_tomlMetadata
+	Metadata     *libmonteur.TOMLMetadata
 	thisSystem   string
 	omniSystem   string
 	Variables    map[string]interface{}
@@ -66,8 +44,8 @@ type Manager struct {
 
 func (fx *Manager) Parse(path string) (err error) {
 	var fmtVar map[string]interface{}
-	var dep []*_tomlDependency
-	var cmd []*_tomlAction
+	var dep []*libmonteur.TOMLDependency
+	var cmd []*libmonteur.TOMLAction
 	var ok bool
 
 	// initialize all important variables
@@ -80,16 +58,16 @@ func (fx *Manager) Parse(path string) (err error) {
 		libmonteur.COMPUTE_SYSTEM_SEPARATOR +
 		libmonteur.ALL_ARCH
 
-	fx.Metadata = &_tomlMetadata{}
-	dep = []*_tomlDependency{}
+	fx.Metadata = &libmonteur.TOMLMetadata{}
+	dep = []*libmonteur.TOMLDependency{}
 	fmtVar = map[string]interface{}{}
 
 	// construct TOML file data structure
 	s := struct {
-		Metadata     *_tomlMetadata
+		Metadata     *libmonteur.TOMLMetadata
 		Variables    map[string]interface{}
-		Dependencies *[]*_tomlDependency
-		CMD          *[]*_tomlAction
+		Dependencies *[]*libmonteur.TOMLDependency
+		CMD          *[]*libmonteur.TOMLAction
 		FMTVariables *map[string]interface{}
 	}{
 		Metadata:     fx.Metadata,
@@ -119,7 +97,7 @@ func (fx *Manager) Parse(path string) (err error) {
 		return err
 	}
 
-	err = fx.sanitizeDependencies(dep)
+	err = fx.sanitizeDeps(dep)
 	if err != nil {
 		return err
 	}
@@ -138,7 +116,7 @@ func (fx *Manager) Parse(path string) (err error) {
 	return nil
 }
 
-func (fx *Manager) sanitizeDependencies(in []*_tomlDependency) (err error) {
+func (fx *Manager) sanitizeDeps(in []*libmonteur.TOMLDependency) (err error) {
 	var val string
 
 	// initialize all variables
@@ -202,7 +180,7 @@ func (fx *Manager) sanitizeFMTVariables(in map[string]interface{}) (err error) {
 	return nil
 }
 
-func (fx *Manager) sanitizeCMD(in []*_tomlAction) (err error) {
+func (fx *Manager) sanitizeCMD(in []*libmonteur.TOMLAction) (err error) {
 	// initialize all variables
 	fx.CMD = []*commander.Action{}
 
@@ -327,10 +305,13 @@ func (fx *Manager) _saveFx(key string, output interface{}) (err error) {
 	default:
 		fx.log.Info("Reading output...")
 		if v == nil {
-			fx.log.Info("Got:\n╔═══ BEGIN ═══╗\nnil\n╚═══  END  ═══╝")
+			fx.log.Info("Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝",
+				"nil\n",
+			)
 		} else {
 			fx.log.Info("Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝",
-				output)
+				output,
+			)
 		}
 
 		if key != saveNone {
@@ -417,17 +398,20 @@ func (fx *Manager) Run() (err error) {
 	return nil
 }
 
-func (fx *Manager) __reportError(format string, args ...interface{}) error {
+func (fx *Manager) __reportError(format string,
+	args ...interface{}) (err error) {
 	if fx.Metadata == nil || fx.Metadata.Name == "" {
 		fx.log.Error("Task '' ➤ "+format, args...)
-		fx.log.Sync()
-		fx.log.Close()
-		return fmt.Errorf("Task '' ➤ "+format, args...)
+		err = fmt.Errorf("Task '' ➤ "+format, args...)
+		goto endReporting
 	}
 
 	args = append([]interface{}{fx.Metadata.Name}, args...)
 	fx.log.Error("Task '%s' ➤ "+format, args...)
+	err = fmt.Errorf("Task '%s' ➤ "+format, args...)
+
+endReporting:
 	fx.log.Sync()
 	fx.log.Close()
-	return fmt.Errorf("Task '%s' ➤ "+format, args...)
+	return err
 }
