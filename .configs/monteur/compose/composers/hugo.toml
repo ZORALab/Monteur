@@ -60,3 +60,10 @@ Condition = [ 'all-all' ]
 Location = '{{- .SourceDir -}}'
 Source = '{{- .DestinationDir -}}/{{- .MainLang -}}/404.html'
 Target = '{{- .DestinationDir -}}/404.html'
+
+[[CMD]]
+Name = "Copy GitLab CI if available"
+Type = 'copy-quiet'
+Condition = [ 'all-all' ]
+Source = '{{- .RootDir -}}/.gitlab-ci.yml'
+Target = '{{- .DestinationDir -}}/.gitlab-ci.yml'
