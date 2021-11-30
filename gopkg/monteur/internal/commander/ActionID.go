@@ -32,4 +32,6 @@ const (
 	ACTION_DELETE_RECURSIVE_QUIET ActionID = "delete-recursive-quiet"
 	ACTION_DELETE_QUIET           ActionID = "delete-quiet"
 	ACTION_IS_EXISTS              ActionID = "is-exists"
+	ACTION_MOVE                   ActionID = "move"
+	ACTION_MOVE_QUIET             ActionID = "move-quiet"
 )

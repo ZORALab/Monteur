@@ -115,6 +115,7 @@ func (action *Action) _initMeta() (err error) {
 	return nil
 }
 
+//nolint:gocyclo
 func (action *Action) _initType() (err error) {
 	switch action.Type {
 	case ACTION_PLACEHOLDER:
@@ -145,6 +146,10 @@ func (action *Action) _initType() (err error) {
 		action.actionFx = cmdDeleteQuiet
 	case ACTION_IS_EXISTS:
 		action.actionFx = cmdIsExists
+	case ACTION_MOVE:
+		action.actionFx = cmdMove
+	case ACTION_MOVE_QUIET:
+		action.actionFx = cmdMoveQuiet
 	default:
 		return action.__reportError("%s: %s",
 			"unknown 'Type'",
