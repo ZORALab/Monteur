@@ -32,7 +32,7 @@ type setup struct {
 	workspace *libworkspace.Workspace
 	settings  *libsetup.Run
 	logger    *liblog.Logger
-	programs  map[string]conductor.Job
+	workers   map[string]conductor.Job
 	secrets   map[string]interface{}
 }
 
@@ -94,7 +94,7 @@ func (fx *setup) Run() int {
 
 	// execute all tasks
 	c := &conductor.Conductor{
-		Runners: fx.programs,
+		Runners: fx.workers,
 		Log:     fx.logger,
 	}
 
@@ -108,6 +108,9 @@ func (fx *setup) Run() int {
 		return fx._reportError(err)
 	}
 
+	// safely close the logs and exit as completion
+	fx.logger.Sync()
+	fx.logger.Close()
 	return STATUS_OK
 }
 
@@ -169,7 +172,7 @@ func (fx *setup) __filterProgramMetadata(path string,
 	fx.logger.Success(libmonteur.LOG_SUCCESS)
 
 	fx.logger.Info("Register task into job list...")
-	fx.programs[s.Metadata.Name] = s
+	fx.workers[s.Metadata.Name] = s
 	fx.logger.Success(libmonteur.LOG_SUCCESS)
 
 	return nil
@@ -177,7 +180,7 @@ func (fx *setup) __filterProgramMetadata(path string,
 
 func (fx *setup) _init() (err error) {
 	fx.settings = &libsetup.Run{}
-	fx.programs = map[string]conductor.Job{}
+	fx.workers = map[string]conductor.Job{}
 	fx.workspace = &libworkspace.Workspace{}
 
 	// initialize workspace

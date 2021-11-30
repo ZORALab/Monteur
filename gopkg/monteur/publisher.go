@@ -20,6 +20,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/conductor"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libcmd"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
@@ -32,7 +33,7 @@ type publisher struct {
 	secrets   map[string]interface{}
 	settings  *libcmd.Run
 	logger    *liblog.Logger
-	workers   map[string]*libcmd.Manager
+	workers   map[string]conductor.Job
 }
 
 // Run is to execute the publisher algorithm.
@@ -50,19 +51,20 @@ func (fx *publisher) Run() (statusCode int) {
 	}
 
 	// execute each task in parallel
-	for _, p := range fx.workers {
-		fx.logger.Info("Subprocessing task %s execution...",
-			p.Metadata.Name)
-
-		err = p.Run()
-		if err != nil {
-			return fx._reportError(err)
-		}
-
-		fx.logger.Success(libmonteur.LOG_SUCCESS)
+	c := &conductor.Conductor{
+		Runners: fx.workers,
+		Log:     fx.logger,
 	}
 
-	// wait for completion
+	err = c.Run()
+	if err != nil {
+		return fx._reportError(err)
+	}
+
+	err = c.Coordinate()
+	if err != nil {
+		return fx._reportError(err)
+	}
 
 	// safely close the logs and exit as completion
 	fx.logger.Sync()
@@ -137,7 +139,7 @@ func (fx *publisher) _filterPublisher(path string,
 func (fx *publisher) _init() (err error) {
 	fx.settings = &libcmd.Run{}
 	fx.workspace = &libworkspace.Workspace{}
-	fx.workers = map[string]*libcmd.Manager{}
+	fx.workers = map[string]conductor.Job{}
 
 	// initialize workspace
 	err = fx.workspace.Init()

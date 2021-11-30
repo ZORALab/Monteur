@@ -38,8 +38,8 @@ import (
 type Manager struct {
 	Variables map[string]interface{}
 
-	log      *liblog.Logger
 	Metadata *libmonteur.TOMLMetadata
+	log      *liblog.Logger
 	source   *libmonteur.TOMLSource
 	checksum *checksum.Hasher
 
@@ -204,7 +204,7 @@ func (me *Manager) initializeLogger() (err error) {
 		return err //nolint:wrapcheck
 	}
 
-	me.log.Info("Task initialized successfully. Standing By...")
+	me.log.Info(libmonteur.LOG_JOB_INIT_SUCCESS)
 
 	return nil
 }
@@ -594,7 +594,7 @@ func (me *Manager) Name() string {
 // Everything must be setup properly before calling this function. It was meant
 // for Monteur's Setup API.
 //
-// All errors generated in this Method shall use `me.reportError` instead of
+// All errors generated in this method shall use `me.reportError` instead of
 // returning `fmt.Errorf` since it will be executed in parallel with others
 // in an asynchonous manner.
 //
@@ -611,7 +611,7 @@ func (me *Manager) Run(ctx context.Context, ch chan conductor.Message) {
 }
 
 func (me *Manager) sourceHTTPS(ctx context.Context) {
-	me.log.Info("Sourcing %s using HTTPS download...")
+	me.log.Info("Sourcing %s using HTTPS download...", me.Metadata.Name)
 
 	d := &httpclient.Downloader{
 		Destination: filepath.Join(me.workspacePath,
@@ -791,8 +791,8 @@ func (me *Manager) PostConfigure(ctx context.Context) {
 	pathing = filepath.Join(me.configPath, pathing)
 
 	// write into config directory
-	me.log.Info("Post-configuring %s...", pathing)
-	me.log.Info("File:\n%s\n", me.config)
+	me.log.Info("Post-configuring '%s'...", pathing)
+	me.log.Info("File:\n%s", me.config)
 	err = os.WriteFile(pathing,
 		[]byte(me.config),
 		libmonteur.PERMISSION_CONFIG,

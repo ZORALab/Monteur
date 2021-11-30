@@ -23,5 +23,7 @@ const (
 	LOG_FORMAT_OUTPUT_LONG = "Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝"
 	LOG_FORMAT_REDACTED    = "!** REDACTED FOR PRIVACY **!"
 
+	LOG_JOB_INIT_SUCCESS = "Task initialized successfully. Standing By..."
+
 	LOG_SUCCESS = "➤ OK\n"
 )

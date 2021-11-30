@@ -16,11 +16,13 @@
 package libcmd
 
 import (
+	"context"
 	"fmt"
 	"path/filepath"
 	"strings"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/conductor"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
@@ -28,33 +30,35 @@ import (
 )
 
 type Manager struct {
-	Metadata     *libmonteur.TOMLMetadata
-	thisSystem   string
-	Variables    map[string]interface{}
-	Dependencies []*commander.Dependency
-	CMD          []*commander.Action
+	Metadata *libmonteur.TOMLMetadata
+
+	thisSystem string
+	Variables  map[string]interface{}
+
+	dependencies []*commander.Dependency
+	cmd          []*commander.Action
+
+	reportUp chan conductor.Message
 
 	log *liblog.Logger
 }
 
 func (me *Manager) Parse(path string) (err error) {
-	var fmtVar map[string]interface{}
-	var dep []*libmonteur.TOMLDependency
-	var cmd []*libmonteur.TOMLAction
 	var ok bool
 
 	// initialize all important variables
 	me.Metadata = &libmonteur.TOMLMetadata{}
-	me.Dependencies = []*commander.Dependency{}
-	me.CMD = []*commander.Action{}
+	me.dependencies = []*commander.Dependency{}
+	me.cmd = []*commander.Action{}
 
 	me.thisSystem, ok = me.Variables[libmonteur.VAR_COMPUTE].(string)
 	if !ok {
 		panic("MONTEUR DEV: please assign VAR_COMPUTE before Parse()!")
 	}
 
-	dep = []*libmonteur.TOMLDependency{}
-	fmtVar = map[string]interface{}{}
+	dep := []*libmonteur.TOMLDependency{}
+	cmd := []*libmonteur.TOMLAction{}
+	fmtVar := map[string]interface{}{}
 
 	// construct TOML file data structure
 	s := struct {
@@ -81,7 +85,7 @@ func (me *Manager) Parse(path string) (err error) {
 	}
 
 	// sanitize
-	err = me.Metadata.Sanitize(path)
+	err = me.sanitizeMetadata(path)
 	if err != nil {
 		return err
 	}
@@ -105,132 +109,6 @@ func (me *Manager) Parse(path string) (err error) {
 	err = me.initializeLogger()
 	if err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func (me *Manager) sanitizeDeps(in []*libmonteur.TOMLDependency) (err error) {
-	var val string
-
-	// initialize all variables
-	me.Dependencies = []*commander.Dependency{}
-
-	// scan conditions for building commands list
-	for _, dep := range in {
-		if !libmonteur.IsComputeSystemSupported(me.thisSystem,
-			[]string{dep.Condition}) {
-			continue
-		}
-
-		val, err = templater.String(dep.Command, me.Variables)
-		if err != nil {
-			return fmt.Errorf("%s: %s",
-				libmonteur.ERROR_COMMAND_DEPENDENCY_FMT_BAD,
-				err,
-			)
-		}
-
-		s := &commander.Dependency{
-			Name:    dep.Name,
-			Type:    dep.Type,
-			Command: val,
-		}
-
-		me.Dependencies = append(me.Dependencies, s)
-	}
-
-	// sanitize each commands for validity
-	for _, dep := range me.Dependencies {
-		err = dep.Init()
-		if err != nil {
-			return fmt.Errorf("%s: %s",
-				libmonteur.ERROR_DEPENDENCY_BAD,
-				err,
-			)
-		}
-	}
-
-	return nil
-}
-
-func (me *Manager) sanitizeFMTVariables(in map[string]interface{}) (err error) {
-	var val interface{}
-
-	for key, value := range in {
-		switch v := value.(type) {
-		case string:
-			val, err = templater.String(v, me.Variables)
-		default:
-			val = v
-		}
-
-		if err != nil {
-			return fmt.Errorf("%s: %s",
-				libmonteur.ERROR_VARIABLES_FMT_BAD,
-				err,
-			)
-		}
-
-		me.Variables[key] = val
-	}
-
-	return nil
-}
-
-func (me *Manager) sanitizeCMD(in []*libmonteur.TOMLAction) (err error) {
-	// initialize all variables
-	me.CMD = []*commander.Action{}
-
-	// scan conditions for building commands list
-	for _, cmd := range in {
-		if !libmonteur.IsComputeSystemSupported(me.thisSystem,
-			cmd.Condition) {
-			continue
-		}
-
-		a := &commander.Action{
-			Name:     cmd.Name,
-			Type:     cmd.Type,
-			Location: cmd.Location,
-			Source:   cmd.Source,
-			Target:   cmd.Target,
-			Save:     cmd.Save,
-			SaveFx:   me._saveFx,
-		}
-
-		me.CMD = append(me.CMD, a)
-	}
-
-	// sanitize each of them
-	for i, cmd := range me.CMD {
-		err = cmd.Init()
-		if err != nil {
-			return fmt.Errorf("%s (CMD %d) %s",
-				libmonteur.ERROR_COMMAND_BAD,
-				i+1,
-				err,
-			)
-		}
-	}
-
-	return nil
-}
-
-func (me *Manager) sanitizeMetadata(path string) (err error) {
-	if me.Metadata == nil {
-		return me.__reportError("%s: %s",
-			libmonteur.ERROR_PUBLISH_METADATA_MISSING,
-			path,
-		)
-	}
-
-	if me.Metadata.Name == "" {
-		return me.__reportError("%s: '%s' for %s",
-			libmonteur.ERROR_PUBLISH_METADATA_MISSING,
-			"Name",
-			path,
-		)
 	}
 
 	return nil
@@ -272,7 +150,120 @@ func (me *Manager) initializeLogger() (err error) {
 		return err //nolint:wrapcheck
 	}
 
-	me.log.Info("Task initialized successfully. Standing By...")
+	me.log.Info(libmonteur.LOG_JOB_INIT_SUCCESS)
+
+	return nil
+}
+
+func (me *Manager) sanitizeCMD(in []*libmonteur.TOMLAction) (err error) {
+	for _, cmd := range in {
+		if !libmonteur.IsComputeSystemSupported(me.thisSystem,
+			cmd.Condition) {
+			continue
+		}
+
+		a := &commander.Action{
+			Name:     cmd.Name,
+			Type:     cmd.Type,
+			Location: cmd.Location,
+			Source:   cmd.Source,
+			Target:   cmd.Target,
+			Save:     cmd.Save,
+			SaveFx:   me._saveFx,
+		}
+
+		me.cmd = append(me.cmd, a)
+	}
+
+	// sanitize each of them
+	for i, order := range me.cmd {
+		err = order.Init()
+		if err != nil {
+			return fmt.Errorf("%s (CMD %d) %s",
+				libmonteur.ERROR_COMMAND_BAD,
+				i+1,
+				err,
+			)
+		}
+	}
+
+	return nil
+}
+
+func (me *Manager) sanitizeDeps(in []*libmonteur.TOMLDependency) (err error) {
+	var val string
+
+	// scan conditions for building commands list
+	for _, dep := range in {
+		if !libmonteur.IsComputeSystemSupported(me.thisSystem,
+			[]string{dep.Condition}) {
+			continue
+		}
+
+		val, err = templater.String(dep.Command, me.Variables)
+		if err != nil {
+			return fmt.Errorf("%s: %s",
+				libmonteur.ERROR_COMMAND_DEPENDENCY_FMT_BAD,
+				err,
+			)
+		}
+
+		s := &commander.Dependency{
+			Name:    dep.Name,
+			Type:    dep.Type,
+			Command: val,
+		}
+
+		me.dependencies = append(me.dependencies, s)
+	}
+
+	// sanitize each commands for validity
+	for _, dep := range me.dependencies {
+		err = dep.Init()
+		if err != nil {
+			return fmt.Errorf("%s: %s",
+				libmonteur.ERROR_DEPENDENCY_BAD,
+				err,
+			)
+		}
+	}
+
+	return nil
+}
+
+func (me *Manager) sanitizeFMTVariables(in map[string]interface{}) (err error) {
+	var val interface{}
+
+	if in == nil {
+		return nil
+	}
+
+	for key, value := range in {
+		switch v := value.(type) {
+		case string:
+			val, err = templater.String(v, me.Variables)
+		default:
+			val = v
+		}
+
+		if err != nil {
+			return fmt.Errorf("%s: %s",
+				libmonteur.ERROR_VARIABLES_FMT_BAD,
+				err,
+			)
+		}
+
+		me.Variables[key] = val
+	}
+
+	return nil
+}
+
+func (me *Manager) sanitizeMetadata(path string) (err error) {
+	err = me.Metadata.Sanitize(path)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
 
 	return nil
 }
@@ -315,85 +306,154 @@ func (me *Manager) _saveFx(key string, output interface{}) (err error) {
 		}
 	}
 
-	me.log.Success(libmonteur.LOG_SUCCESS)
+	me.log.Info(libmonteur.LOG_SUCCESS)
 	return nil
 }
 
+// Name is for generating the program Metadata.Name when used as in interface.
+//
+// This should only be called after the Manager is initialized successfully.
+func (me *Manager) Name() string {
+	if me.Metadata == nil {
+		return ""
+	}
+
+	return me.Metadata.Name
+}
+
 // Run is to execute the publisher's commands sequence.
-func (me *Manager) Run() (err error) {
+//
+// Everything must be setup properly before calling this function. It was meant
+// for Monteur's commands-driven API(s).
+//
+// All errors generated in this method shall use `me.reportError` instead of
+// returning `fmt.Errorf` since it will be executed in parallel with others
+// in an asynchonous manner.
+//
+// This should only be called after the Manager is initialized successfully.
+func (me *Manager) Run(ctx context.Context, ch chan conductor.Message) {
+	var err error
+
+	me.reportUp = ch
 	me.log.Success(libmonteur.LOG_SUCCESS)
 
-	for i, cmd := range me.CMD {
+	for i, order := range me.cmd {
 		me.log.Info("Executing Command...")
-		me.log.Info("Name: '%s'", cmd.Name)
-		me.log.Info("Save: '%s'", cmd.Save)
-		me.log.Info("SaveFx: '%v'", cmd.SaveFx)
-		me.log.Info("Type: '%v'", cmd.Type)
+		me.log.Info("Name: '%s'", order.Name)
+		me.log.Info("Save: '%s'", order.Save)
+		me.log.Info("SaveFx: '%v'", order.SaveFx)
+		me.log.Info("Type: '%v'", order.Type)
 
 		me.log.Info("Formatting cmd.Location...")
-		cmd.Location, err = templater.String(cmd.Location, me.Variables)
+		order.Location, err = templater.String(order.Location,
+			me.Variables,
+		)
 		if err != nil {
-			return me.__reportError("%s: %s",
+			me.reportError("%s: %s",
 				libmonteur.ERROR_COMMAND_FMT_BAD,
 				err,
 			)
+
+			return
 		}
-		me.log.Info("Got: '%s'", cmd.Location)
+		me.log.Info("Got: '%s'", order.Location)
 
 		me.log.Info("Formatting cmd.Source...")
-		cmd.Source, err = templater.String(cmd.Source, me.Variables)
+		order.Source, err = templater.String(order.Source,
+			me.Variables)
 		if err != nil {
-			return me.__reportError("%s: %s",
+			me.reportError("%s: %s",
 				libmonteur.ERROR_COMMAND_FMT_BAD,
 				err,
 			)
+
+			return
 		}
-		me.log.Info("Got: '%s'", cmd.Source)
+		me.log.Info("Got: '%s'", order.Source)
 
 		me.log.Info("Formatting cmd.Target...")
-		cmd.Target, err = templater.String(cmd.Target, me.Variables)
+		order.Target, err = templater.String(order.Target, me.Variables)
 		if err != nil {
-			return me.__reportError("%s: %s",
+			me.reportError("%s: %s",
 				libmonteur.ERROR_COMMAND_FMT_BAD,
 				err,
 			)
+
+			return
 		}
-		me.log.Info("Got: '%s'", cmd.Target)
+		me.log.Info("Got: '%s'", order.Target)
 
 		me.log.Info("Running cmd...")
-		if cmd.Save == "" {
-			cmd.Save = libmonteur.COMMAND_SAVE_NONE
+		if order.Save == "" {
+			order.Save = libmonteur.COMMAND_SAVE_NONE
 		}
 
-		err = cmd.Run()
+		err = order.Run()
 		if err != nil {
-			return me.__reportError("%s: (Step %d) %s",
+			me.reportError("%s: (Step %d) %s",
 				libmonteur.ERROR_COMMAND_FAILED,
 				i+1,
 				err,
 			)
+
+			return
 		}
 	}
 
-	me.log.Sync()
-	me.log.Close()
-	return nil
+	me.reportDone()
+	return
 }
 
-func (me *Manager) __reportError(format string,
-	args ...interface{}) (err error) {
+func (me *Manager) reportError(format string, args ...interface{}) {
 	if me.Metadata == nil || me.Metadata.Name == "" {
-		me.log.Error("Task '' ➤ "+format, args...)
-		err = fmt.Errorf("Task '' ➤ "+format, args...)
-		goto endReporting
+		format = "Task '' ➤ " + format
+	} else {
+		format = "Task '%s' ➤ " + format
+		args = append([]interface{}{me.Metadata.Name}, args...)
 	}
 
-	args = append([]interface{}{me.Metadata.Name}, args...)
-	me.log.Error("Task '%s' ➤ "+format, args...)
-	err = fmt.Errorf("Task '%s' ➤ "+format, args...)
+	if me.log != nil {
+		me.log.Error(format, args...)
+		me.log.Sync()
+		me.log.Close()
+	}
 
-endReporting:
-	me.log.Sync()
-	me.log.Close()
-	return err
+	if me.reportUp != nil {
+		me.reportUp <- conductor.CreateError(me.Metadata.Name,
+			format,
+			args...,
+		)
+	}
+}
+
+func (me *Manager) reportStatus(format string, args ...interface{}) {
+	if me.Metadata == nil || me.Metadata.Name == "" {
+		format = "Task '' ➤ " + format
+	} else {
+		format = "Task '%s' ➤ " + format
+		args = append([]interface{}{me.Metadata.Name}, args...)
+	}
+
+	if me.log != nil {
+		me.log.Info(format, args...)
+	}
+
+	if me.reportUp != nil {
+		me.reportUp <- conductor.CreateStatus(me.Metadata.Name,
+			format,
+			args...,
+		)
+	}
+}
+
+func (me *Manager) reportDone() {
+	if me.log != nil {
+		me.log.Success(libmonteur.LOG_SUCCESS)
+		me.log.Sync()
+		me.log.Close()
+	}
+
+	if me.reportUp != nil {
+		me.reportUp <- conductor.CreateDone(me.Metadata.Name)
+	}
 }
