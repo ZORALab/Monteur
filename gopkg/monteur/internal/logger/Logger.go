@@ -18,7 +18,6 @@ package logger
 import (
 	"fmt"
 	"io"
-	"os"
 	"strings"
 	"sync"
 	"time"
@@ -30,13 +29,12 @@ import (
 // structure is not safe to use the conventional `&struct{...}` creation. Please
 // use `New()` function instead.
 type Logger struct {
-	preprocessor func(string) string
-	mutex        *sync.Mutex
+	mutex         *sync.Mutex
+	outputWriters map[string]io.Writer
+	statusWriters map[string]io.Writer
 
-	outputWriters   map[string]io.Writer
-	statusWriters   map[string]io.Writer
-	outputPath      string
-	timestampFormat string
+	preprocessor    func(string) string // assigned by user
+	timestampFormat string              // assigned by user
 }
 
 // New is to create a Logger object safely with initialized internal field.
@@ -45,12 +43,33 @@ type Logger struct {
 func New() *Logger {
 	return &Logger{
 		timestampFormat: ISO8601,
-		outputPath:      "",
 		preprocessor:    nil,
 		mutex:           &sync.Mutex{},
 		outputWriters:   map[string]io.Writer{},
 		statusWriters:   map[string]io.Writer{},
 	}
+}
+
+// IsHealthy is to check the logger is healthy for operations
+//
+// This is useful for situation where one needs a sit-rep of the logger status
+// and checking the logger has been assigned into an interface object that is
+// `nil` assignable. The latter is usually used for checking its existence
+// inside that interface assignment.
+func (s *Logger) IsHealthy() (err error) {
+	if s.mutex == nil {
+		return fmt.Errorf(ERROR_UNHEALTHY)
+	}
+
+	if s.outputWriters == nil {
+		return fmt.Errorf(ERROR_UNHEALTHY)
+	}
+
+	if s.statusWriters == nil {
+		return fmt.Errorf(ERROR_UNHEALTHY)
+	}
+
+	return nil
 }
 
 // Add adds a given writer to the Logger for simultenous logging.
@@ -75,16 +94,6 @@ func (s *Logger) Add(w io.Writer, statusType StatusType, label string) error {
 		list = &s.outputWriters
 	default:
 		list = &s.statusWriters
-	}
-
-	// close the file if it is one
-	x := (*list)[label]
-	if x != nil {
-		f, ok := x.(*os.File)
-		if ok {
-			_ = f.Sync()
-			f.Close()
-		}
 	}
 
 	// create or overwrite writer

@@ -21,4 +21,5 @@ const (
 	ERROR_FILE_INCOMPATIBLE = "not a regular file"
 	ERROR_FILE_MISSING      = "missing filepath"
 	ERROR_FILE_OPEN_FAILED  = "failed to open log file"
+	ERROR_UNHEALTHY         = "logger is not healthy for use"
 )
