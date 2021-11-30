@@ -1,0 +1,43 @@
+[Metadata]
+Name = 'Go'
+Description = """
+Using Go test to test out all the Go codes in this repository.
+"""
+
+[Variables]
+Timeout = ''
+
+[FMTVariables]
+ProfileDir = '{{- .WorkingDir -}}/go.profile'
+CoverageFilepath = '{{- .WorkingDir -}}/go.coverage'
+
+
+
+
+[[Dependencies]]
+Name = 'Go'
+Condition = 'all-all'
+Type = 'command'
+Command = 'go'
+
+
+
+
+[[CMD]]
+Name = "Run Go Test Against Base Directory"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = """go test -timeout "{{ .Timeout }}" \
+-coverprofile "{{- .ProfileDir -}}" \
+-race \
+-v \
+"{{- .BaseDir -}}"
+"""
+
+[[CMD]]
+Name = "Process Go Test Coverage Profiles"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = """go tool cover -html="{{- .ProfileDir -}}" \
+-o "{{- .CoverageFilepath -}}" \
+"""
