@@ -17,12 +17,10 @@ package conductor
 
 import (
 	"context"
-
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/chmsg"
 )
 
 // Job is the execution object interface for Conductor to interact with.
 type Job interface {
-	Run(context.Context, chan chmsg.Message) error
+	Run(context.Context, chan Message)
 	Name() string
 }

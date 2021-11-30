@@ -27,14 +27,9 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/templater"
 )
 
-const (
-	saveNone = "libcmd:saveN0ne"
-)
-
 type Manager struct {
 	Metadata     *libmonteur.TOMLMetadata
 	thisSystem   string
-	omniSystem   string
 	Variables    map[string]interface{}
 	Dependencies []*commander.Dependency
 	CMD          []*commander.Action
@@ -42,23 +37,22 @@ type Manager struct {
 	log *liblog.Logger
 }
 
-func (fx *Manager) Parse(path string) (err error) {
+func (me *Manager) Parse(path string) (err error) {
 	var fmtVar map[string]interface{}
 	var dep []*libmonteur.TOMLDependency
 	var cmd []*libmonteur.TOMLAction
 	var ok bool
 
 	// initialize all important variables
-	fx.thisSystem, ok = fx.Variables[libmonteur.VAR_COMPUTE].(string)
+	me.Metadata = &libmonteur.TOMLMetadata{}
+	me.Dependencies = []*commander.Dependency{}
+	me.CMD = []*commander.Action{}
+
+	me.thisSystem, ok = me.Variables[libmonteur.VAR_COMPUTE].(string)
 	if !ok {
 		panic("MONTEUR DEV: please assign VAR_COMPUTE before Parse()!")
 	}
 
-	fx.omniSystem = libmonteur.ALL_OS +
-		libmonteur.COMPUTE_SYSTEM_SEPARATOR +
-		libmonteur.ALL_ARCH
-
-	fx.Metadata = &libmonteur.TOMLMetadata{}
 	dep = []*libmonteur.TOMLDependency{}
 	fmtVar = map[string]interface{}{}
 
@@ -70,8 +64,8 @@ func (fx *Manager) Parse(path string) (err error) {
 		CMD          *[]*libmonteur.TOMLAction
 		FMTVariables *map[string]interface{}
 	}{
-		Metadata:     fx.Metadata,
-		Variables:    fx.Variables,
+		Metadata:     me.Metadata,
+		Variables:    me.Variables,
 		FMTVariables: &fmtVar,
 		Dependencies: &dep,
 		CMD:          &cmd,
@@ -80,35 +74,35 @@ func (fx *Manager) Parse(path string) (err error) {
 	// decode
 	err = toml.DecodeFile(path, &s, nil)
 	if err != nil {
-		return fx.__reportError("%s: %s",
+		return fmt.Errorf("%s: %s",
 			libmonteur.ERROR_TOML_PARSE_FAILED,
 			err,
 		)
 	}
 
 	// sanitize
-	err = fx.sanitizeMetadata(path)
+	err = me.Metadata.Sanitize(path)
 	if err != nil {
 		return err
 	}
 
-	err = fx.sanitizeFMTVariables(fmtVar)
+	err = me.sanitizeFMTVariables(fmtVar)
 	if err != nil {
 		return err
 	}
 
-	err = fx.sanitizeDeps(dep)
+	err = me.sanitizeDeps(dep)
 	if err != nil {
 		return err
 	}
 
-	err = fx.sanitizeCMD(cmd)
+	err = me.sanitizeCMD(cmd)
 	if err != nil {
 		return err
 	}
 
 	// initialize logger
-	err = fx.initializeLogger()
+	err = me.initializeLogger()
 	if err != nil {
 		return err
 	}
@@ -116,21 +110,22 @@ func (fx *Manager) Parse(path string) (err error) {
 	return nil
 }
 
-func (fx *Manager) sanitizeDeps(in []*libmonteur.TOMLDependency) (err error) {
+func (me *Manager) sanitizeDeps(in []*libmonteur.TOMLDependency) (err error) {
 	var val string
 
 	// initialize all variables
-	fx.Dependencies = []*commander.Dependency{}
+	me.Dependencies = []*commander.Dependency{}
 
 	// scan conditions for building commands list
 	for _, dep := range in {
-		if !fx._supportedSystem([]string{dep.Condition}) {
+		if !libmonteur.IsComputeSystemSupported(me.thisSystem,
+			[]string{dep.Condition}) {
 			continue
 		}
 
-		val, err = templater.String(dep.Command, fx.Variables)
+		val, err = templater.String(dep.Command, me.Variables)
 		if err != nil {
-			return fx.__reportError("%s: %s",
+			return fmt.Errorf("%s: %s",
 				libmonteur.ERROR_COMMAND_DEPENDENCY_FMT_BAD,
 				err,
 			)
@@ -142,51 +137,55 @@ func (fx *Manager) sanitizeDeps(in []*libmonteur.TOMLDependency) (err error) {
 			Command: val,
 		}
 
-		fx.Dependencies = append(fx.Dependencies, s)
+		me.Dependencies = append(me.Dependencies, s)
 	}
 
 	// sanitize each commands for validity
-	for _, dep := range fx.Dependencies {
+	for _, dep := range me.Dependencies {
 		err = dep.Init()
 		if err != nil {
-			return fx.__reportError("%s", err)
+			return fmt.Errorf("%s: %s",
+				libmonteur.ERROR_DEPENDENCY_BAD,
+				err,
+			)
 		}
 	}
 
 	return nil
 }
 
-func (fx *Manager) sanitizeFMTVariables(in map[string]interface{}) (err error) {
+func (me *Manager) sanitizeFMTVariables(in map[string]interface{}) (err error) {
 	var val interface{}
 
 	for key, value := range in {
 		switch v := value.(type) {
 		case string:
-			val, err = templater.String(v, fx.Variables)
+			val, err = templater.String(v, me.Variables)
 		default:
 			val = v
 		}
 
 		if err != nil {
-			return fx.__reportError("%s: %s",
+			return fmt.Errorf("%s: %s",
 				libmonteur.ERROR_VARIABLES_FMT_BAD,
 				err,
 			)
 		}
 
-		fx.Variables[key] = val
+		me.Variables[key] = val
 	}
 
 	return nil
 }
 
-func (fx *Manager) sanitizeCMD(in []*libmonteur.TOMLAction) (err error) {
+func (me *Manager) sanitizeCMD(in []*libmonteur.TOMLAction) (err error) {
 	// initialize all variables
-	fx.CMD = []*commander.Action{}
+	me.CMD = []*commander.Action{}
 
 	// scan conditions for building commands list
 	for _, cmd := range in {
-		if !fx._supportedSystem(cmd.Condition) {
+		if !libmonteur.IsComputeSystemSupported(me.thisSystem,
+			cmd.Condition) {
 			continue
 		}
 
@@ -197,33 +196,37 @@ func (fx *Manager) sanitizeCMD(in []*libmonteur.TOMLAction) (err error) {
 			Source:   cmd.Source,
 			Target:   cmd.Target,
 			Save:     cmd.Save,
-			SaveFx:   fx._saveFx,
+			SaveFx:   me._saveFx,
 		}
 
-		fx.CMD = append(fx.CMD, a)
+		me.CMD = append(me.CMD, a)
 	}
 
-	// sanitize each commands for validity
-	for i, cmd := range fx.CMD {
+	// sanitize each of them
+	for i, cmd := range me.CMD {
 		err = cmd.Init()
 		if err != nil {
-			return fx.__reportError("(CMD %d) %s", i, err)
+			return fmt.Errorf("%s (CMD %d) %s",
+				libmonteur.ERROR_COMMAND_BAD,
+				i+1,
+				err,
+			)
 		}
 	}
 
 	return nil
 }
 
-func (fx *Manager) sanitizeMetadata(path string) (err error) {
-	if fx.Metadata == nil {
-		return fx.__reportError("%s: %s",
+func (me *Manager) sanitizeMetadata(path string) (err error) {
+	if me.Metadata == nil {
+		return me.__reportError("%s: %s",
 			libmonteur.ERROR_PUBLISH_METADATA_MISSING,
 			path,
 		)
 	}
 
-	if fx.Metadata.Name == "" {
-		return fx.__reportError("%s: '%s' for %s",
+	if me.Metadata.Name == "" {
+		return me.__reportError("%s: '%s' for %s",
 			libmonteur.ERROR_PUBLISH_METADATA_MISSING,
 			"Name",
 			path,
@@ -233,159 +236,138 @@ func (fx *Manager) sanitizeMetadata(path string) (err error) {
 	return nil
 }
 
-func (fx *Manager) initializeLogger() (err error) {
+func (me *Manager) initializeLogger() (err error) {
 	var sRet, name string
 	var ok bool
 
 	// initialize logger
-	sRet, ok = fx.Variables[libmonteur.VAR_LOG].(string)
+	sRet, ok = me.Variables[libmonteur.VAR_LOG].(string)
 	if !ok {
 		panic("MONTEUR DEV: please assign VAR_LOG before Parse()!")
 	}
-	fx.log = &liblog.Logger{}
-	fx.log.Init()
+	me.log = &liblog.Logger{}
+	me.log.Init()
 
-	name = strings.ToLower(fx.Metadata.Name)
+	name = strings.ToLower(me.Metadata.Name)
 	name = strings.ReplaceAll(name, " ", "-")
 	name = strings.ReplaceAll(name, "_", "-")
 	name = strings.ReplaceAll(name, "+", "-")
 	name = strings.ReplaceAll(name, "!", "")
 	name = strings.ReplaceAll(name, "$", "")
 
-	err = fx.log.Add(liblog.TYPE_STATUS, filepath.Join(
+	err = me.log.Add(liblog.TYPE_STATUS, filepath.Join(
 		sRet,
 		name+"-"+libmonteur.FILE_LOG_STATUS,
 	))
 	if err != nil {
-		return fx.__reportError("%s", err)
+		return err //nolint:wrapcheck
 	}
 
-	err = fx.log.Add(liblog.TYPE_OUTPUT, filepath.Join(
+	err = me.log.Add(liblog.TYPE_OUTPUT, filepath.Join(
 		sRet,
 		name+"-"+libmonteur.FILE_LOG_OUTPUT,
 	))
 	if err != nil {
-		fx.log.Close()
-		return fx.__reportError("%s", err)
+		me.log.Close()
+		return err //nolint:wrapcheck
 	}
 
-	fx.log.Info("Task initialized successfully. Standing By...")
+	me.log.Info("Task initialized successfully. Standing By...")
 
 	return nil
 }
 
-func (fx *Manager) _saveFx(key string, output interface{}) (err error) {
+func (me *Manager) _saveFx(key string, output interface{}) (err error) {
 	switch v := output.(type) {
 	case *commander.ExecOutput:
-		fx.log.Info("Reading STDERR...")
-		fx.log.Info("Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝",
-			string(v.Stderr))
-		fx.log.Info("Reading STDOUT...")
-		fx.log.Info("Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝",
-			string(v.Stdout))
+		me.log.Info("Reading STDERR...")
+		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stderr))
+		me.log.Info("Reading STDOUT...")
+		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stdout))
 
-		if key != saveNone {
+		if key != libmonteur.COMMAND_SAVE_NONE {
 			val := strings.TrimRight(string(v.Stdout), "\r\n")
-			fx.Variables[key] = val
-			fx.log.Info("Saving '%v' to '%s'...", output, key)
+			me.Variables[key] = val
+			me.log.Info("Saving '%v' to '%s'...", output, key)
 		}
 	case commander.ExecOutput:
-		fx.log.Info("Reading STDERR...")
-		fx.log.Info("Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝",
-			string(v.Stderr))
-		fx.log.Info("Reading STDOUT...")
-		fx.log.Info("Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝",
-			string(v.Stdout))
+		me.log.Info("Reading STDERR...")
+		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stderr))
+		me.log.Info("Reading STDOUT...")
+		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stdout))
 
-		if key != saveNone {
+		if key != libmonteur.COMMAND_SAVE_NONE {
 			val := strings.TrimRight(string(v.Stdout), "\r\n")
-			fx.Variables[key] = val
-			fx.log.Info("Saving '%v' to '%s'...", output, key)
+			me.Variables[key] = val
+			me.log.Info("Saving '%v' to '%s'...", output, key)
 		}
 	default:
-		fx.log.Info("Reading output...")
+		me.log.Info("Reading output...")
 		if v == nil {
-			fx.log.Info("Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝",
-				"nil\n",
-			)
+			me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, "nil\n")
 		} else {
-			fx.log.Info("Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝",
-				output,
-			)
+			me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, output)
 		}
 
-		if key != saveNone {
-			fx.Variables[key] = output
-			fx.log.Info("Saving '%v' to '%s'...", output, key)
+		if key != libmonteur.COMMAND_SAVE_NONE {
+			me.Variables[key] = output
+			me.log.Info("Saving '%v' to '%s'...", output, key)
 		}
 	}
 
-	fx.log.Success(libmonteur.LOG_SUCCESS)
+	me.log.Success(libmonteur.LOG_SUCCESS)
 	return nil
-}
-
-func (fx *Manager) _supportedSystem(condition []string) bool {
-	for _, v := range condition {
-		switch v {
-		case fx.thisSystem:
-			return true
-		case fx.omniSystem:
-			return true
-		}
-	}
-
-	return false
 }
 
 // Run is to execute the publisher's commands sequence.
-func (fx *Manager) Run() (err error) {
-	fx.log.Success(libmonteur.LOG_SUCCESS)
+func (me *Manager) Run() (err error) {
+	me.log.Success(libmonteur.LOG_SUCCESS)
 
-	for i, cmd := range fx.CMD {
-		fx.log.Info("Executing Command...")
-		fx.log.Info("Name: '%s'", cmd.Name)
-		fx.log.Info("Save: '%s'", cmd.Save)
-		fx.log.Info("SaveFx: '%v'", cmd.SaveFx)
-		fx.log.Info("Type: '%v'", cmd.Type)
+	for i, cmd := range me.CMD {
+		me.log.Info("Executing Command...")
+		me.log.Info("Name: '%s'", cmd.Name)
+		me.log.Info("Save: '%s'", cmd.Save)
+		me.log.Info("SaveFx: '%v'", cmd.SaveFx)
+		me.log.Info("Type: '%v'", cmd.Type)
 
-		fx.log.Info("Formatting cmd.Location...")
-		cmd.Location, err = templater.String(cmd.Location, fx.Variables)
+		me.log.Info("Formatting cmd.Location...")
+		cmd.Location, err = templater.String(cmd.Location, me.Variables)
 		if err != nil {
-			return fx.__reportError("%s: %s",
+			return me.__reportError("%s: %s",
 				libmonteur.ERROR_COMMAND_FMT_BAD,
 				err,
 			)
 		}
-		fx.log.Info("Got: '%s'", cmd.Location)
+		me.log.Info("Got: '%s'", cmd.Location)
 
-		fx.log.Info("Formatting cmd.Source...")
-		cmd.Source, err = templater.String(cmd.Source, fx.Variables)
+		me.log.Info("Formatting cmd.Source...")
+		cmd.Source, err = templater.String(cmd.Source, me.Variables)
 		if err != nil {
-			return fx.__reportError("%s: %s",
+			return me.__reportError("%s: %s",
 				libmonteur.ERROR_COMMAND_FMT_BAD,
 				err,
 			)
 		}
-		fx.log.Info("Got: '%s'", cmd.Source)
+		me.log.Info("Got: '%s'", cmd.Source)
 
-		fx.log.Info("Formatting cmd.Target...")
-		cmd.Target, err = templater.String(cmd.Target, fx.Variables)
+		me.log.Info("Formatting cmd.Target...")
+		cmd.Target, err = templater.String(cmd.Target, me.Variables)
 		if err != nil {
-			return fx.__reportError("%s: %s",
+			return me.__reportError("%s: %s",
 				libmonteur.ERROR_COMMAND_FMT_BAD,
 				err,
 			)
 		}
-		fx.log.Info("Got: '%s'", cmd.Target)
+		me.log.Info("Got: '%s'", cmd.Target)
 
-		fx.log.Info("Running cmd...")
+		me.log.Info("Running cmd...")
 		if cmd.Save == "" {
-			cmd.Save = saveNone
+			cmd.Save = libmonteur.COMMAND_SAVE_NONE
 		}
 
 		err = cmd.Run()
 		if err != nil {
-			return fx.__reportError("%s: (Step %d) %s",
+			return me.__reportError("%s: (Step %d) %s",
 				libmonteur.ERROR_COMMAND_FAILED,
 				i+1,
 				err,
@@ -393,25 +375,25 @@ func (fx *Manager) Run() (err error) {
 		}
 	}
 
-	fx.log.Sync()
-	fx.log.Close()
+	me.log.Sync()
+	me.log.Close()
 	return nil
 }
 
-func (fx *Manager) __reportError(format string,
+func (me *Manager) __reportError(format string,
 	args ...interface{}) (err error) {
-	if fx.Metadata == nil || fx.Metadata.Name == "" {
-		fx.log.Error("Task '' ➤ "+format, args...)
+	if me.Metadata == nil || me.Metadata.Name == "" {
+		me.log.Error("Task '' ➤ "+format, args...)
 		err = fmt.Errorf("Task '' ➤ "+format, args...)
 		goto endReporting
 	}
 
-	args = append([]interface{}{fx.Metadata.Name}, args...)
-	fx.log.Error("Task '%s' ➤ "+format, args...)
+	args = append([]interface{}{me.Metadata.Name}, args...)
+	me.log.Error("Task '%s' ➤ "+format, args...)
 	err = fmt.Errorf("Task '%s' ➤ "+format, args...)
 
 endReporting:
-	fx.log.Sync()
-	fx.log.Close()
+	me.log.Sync()
+	me.log.Close()
 	return err
 }

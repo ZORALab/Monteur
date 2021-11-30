@@ -112,10 +112,11 @@ Value = 'ddbd0a9db25e245d52d2ad4bd9aa6c6d86307a416ad679148266fdab603c39a8'
 #
 # NOTE: The key field is mainly for sorting purposes.
 [[Setup]]
+Name = 'Install Golang-CI Linter'
 Type = 'move'
-Condition = 'all-all'
-Source = 'golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}/golangci-lint'
-Target = 'golangci-lint'
+Condition = [ 'all-all' ]
+Source = '{{- .WorkingDir -}}/golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}/golangci-lint'
+Target = '{{- .BinDir -}}/golangci-lint'
 
 
 

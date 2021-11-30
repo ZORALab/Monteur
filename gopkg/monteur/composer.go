@@ -109,8 +109,10 @@ func (fx *composer) _filterComposer(path string,
 	fx.logger.Info("Inserting Task Variables...")
 	for k, v := range s.Variables {
 		if k == libmonteur.VAR_SECRETS {
-			fx.logger.Info("\"%s\": !** REDACTED FOR PRIVACY **!",
-				k)
+			fx.logger.Info("\"%s\": %v",
+				k,
+				libmonteur.LOG_FORMAT_REDACTED,
+			)
 			continue
 		}
 

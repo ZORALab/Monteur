@@ -20,6 +20,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/conductor"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsecrets"
@@ -31,7 +32,7 @@ type setup struct {
 	workspace *libworkspace.Workspace
 	settings  *libsetup.Run
 	logger    *liblog.Logger
-	programs  map[string]*libsetup.Program
+	programs  map[string]conductor.Job
 	secrets   map[string]interface{}
 }
 
@@ -44,18 +45,65 @@ func (fx *setup) Run() int {
 		return fx._reportError(err)
 	}
 
+	// parse all programs
 	err = filepath.Walk(fx.workspace.Filesystem.SetupProgramConfigDir,
 		fx.__filterProgramMetadata)
 	if err != nil {
 		return fx._reportError(err)
 	}
 
-	err = fx._cleanUp()
+	// setup repository
+	fx.logger.Info("Cleaning %s...", fx.workspace.Filesystem.SetupTMPDir)
+	err = fx.settings.CleanDir(fx.workspace.Filesystem.SetupTMPDir)
+	if err != nil {
+		return fx._reportError(err)
+	}
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
+
+	fx.logger.Info("Cleaning %s...", fx.workspace.Filesystem.BinCfgDir)
+	err = fx.settings.CleanDir(fx.workspace.Filesystem.BinCfgDir)
+	if err != nil {
+		return fx._reportError(err)
+	}
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
+
+	fx.logger.Info("Cleaning %s...", fx.workspace.Filesystem.BinConfigdDir)
+	err = fx.settings.CleanDir(fx.workspace.Filesystem.BinConfigdDir)
+	if err != nil {
+		return fx._reportError(err)
+	}
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
+
+	fx.logger.Info("Cleaning %s...", fx.workspace.Filesystem.BinDir)
+	err = fx.settings.CleanDir(fx.workspace.Filesystem.BinDir)
+	if err != nil {
+		return fx._reportError(err)
+	}
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
+
+	fx.logger.Info("Setup %s...", fx.workspace.Filesystem.BinConfigFile)
+	err = fx.settings.SetupConfig(fx.workspace.OS,
+		fx.workspace.Filesystem.BinConfigFile,
+		fx.workspace.Filesystem.BinDir,
+		fx.workspace.Filesystem.BinConfigdDir,
+	)
+	if err != nil {
+		return fx._reportError(err)
+	}
+	fx.logger.Success(libmonteur.LOG_SUCCESS)
+
+	// execute all tasks
+	c := &conductor.Conductor{
+		Runners: fx.programs,
+		Log:     fx.logger,
+	}
+
+	err = c.Run()
 	if err != nil {
 		return fx._reportError(err)
 	}
 
-	err = fx._shopPrograms()
+	err = c.Coordinate()
 	if err != nil {
 		return fx._reportError(err)
 	}
@@ -65,8 +113,7 @@ func (fx *setup) Run() int {
 
 func (fx *setup) __filterProgramMetadata(path string,
 	info os.FileInfo, err error) error {
-	var s *libsetup.TOMLProgram
-	var app *libsetup.Program
+	var s *libsetup.Manager
 
 	// return err if occurred
 	if err != nil {
@@ -85,7 +132,7 @@ func (fx *setup) __filterProgramMetadata(path string,
 
 	// initialize the TOML Program object
 	//nolint:lll
-	s = &libsetup.TOMLProgram{
+	s = &libsetup.Manager{
 		Variables: map[string]interface{}{
 			libmonteur.VAR_OS:      fx.workspace.OS,
 			libmonteur.VAR_ARCH:    fx.workspace.ARCH,
@@ -103,8 +150,10 @@ func (fx *setup) __filterProgramMetadata(path string,
 	fx.logger.Info("Inserting Task Variables...")
 	for k, v := range s.Variables {
 		if k == libmonteur.VAR_SECRETS {
-			fx.logger.Info("\"%s\": !** REDACTED FOR PRIVACY **!",
-				k)
+			fx.logger.Info("\"%s\": %v",
+				k,
+				libmonteur.LOG_FORMAT_REDACTED,
+			)
 			continue
 		}
 
@@ -117,121 +166,18 @@ func (fx *setup) __filterProgramMetadata(path string,
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
-
-	app, err = s.Process()
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
 	fx.logger.Success(libmonteur.LOG_SUCCESS)
 
 	fx.logger.Info("Register task into job list...")
-	fx.programs[app.Metadata.Name] = app
+	fx.programs[s.Metadata.Name] = s
 	fx.logger.Success(libmonteur.LOG_SUCCESS)
 
 	return nil
-}
-
-func (fx *setup) _cleanUp() (err error) {
-	var data []byte
-
-	// remove all
-	_ = os.RemoveAll(fx.workspace.Filesystem.SetupTMPDir)
-	_ = os.RemoveAll(fx.workspace.Filesystem.BinCfgDir)
-	_ = os.RemoveAll(fx.workspace.Filesystem.BinConfigdDir)
-	_ = os.RemoveAll(fx.workspace.Filesystem.BinDir)
-
-	// create all
-	err = os.MkdirAll(fx.workspace.Filesystem.SetupTMPDir,
-		libmonteur.PERMISSION_DIRECTORY)
-	if err != nil {
-		return fmt.Errorf("%s: %s",
-			libmonteur.ERROR_DIR_CREATE_FAILED,
-			err,
-		)
-	}
-
-	err = os.MkdirAll(fx.workspace.Filesystem.BinDir,
-		libmonteur.PERMISSION_DIRECTORY)
-	if err != nil {
-		return fmt.Errorf("%s: %s",
-			libmonteur.ERROR_DIR_CREATE_FAILED,
-			err,
-		)
-	}
-
-	err = os.MkdirAll(fx.workspace.Filesystem.BinCfgDir,
-		libmonteur.PERMISSION_DIRECTORY)
-	if err != nil {
-		return fmt.Errorf("%s: %s",
-			libmonteur.ERROR_DIR_CREATE_FAILED,
-			err,
-		)
-	}
-
-	err = os.MkdirAll(fx.workspace.Filesystem.BinConfigdDir,
-		libmonteur.PERMISSION_DIRECTORY)
-	if err != nil {
-		return fmt.Errorf("%s: %s",
-			libmonteur.ERROR_DIR_CREATE_FAILED,
-			err,
-		)
-	}
-
-	// create config
-	switch {
-	case fx.workspace.OS == "windows":
-		data = []byte(``)
-	default:
-		data = []byte(`#!/bin/sh
-export LOCAL_BIN="` + fx.workspace.Filesystem.BinDir + `"
-config_dir="` + fx.workspace.Filesystem.BinConfigdDir + `"
-
-stop() {
-	PATH=:${PATH}:
-	PATH=${PATH//:$LOCAL_BIN:/:}
-
-	for cfg in "$config_dir"/*; do
-		source "$cfg" --stop
-	done
-}
-
-case $1 in
---stop)
-	stop
-	;;
-*)
-	export PATH="${PATH}:$LOCAL_BIN"
-	for cfg in "$config_dir"/*; do
-		source $cfg
-	done
-esac`)
-	}
-
-	err = os.WriteFile(fx.workspace.Filesystem.BinConfigFile,
-		data,
-		libmonteur.PERMISSION_CONFIG)
-	if err != nil {
-		return fmt.Errorf("%s: %s",
-			libmonteur.ERROR_PROGRAM_CONFIG_FAILED,
-			err,
-		)
-	}
-
-	return nil
-}
-
-func (fx *setup) _shopPrograms() (err error) {
-	conductor := &libsetup.Conductor{
-		Runners: fx.programs,
-	}
-
-	conductor.Run()
-	return conductor.Coordinate() //nolint:wrapcheck
 }
 
 func (fx *setup) _init() (err error) {
 	fx.settings = &libsetup.Run{}
-	fx.programs = map[string]*libsetup.Program{}
+	fx.programs = map[string]conductor.Job{}
 	fx.workspace = &libworkspace.Workspace{}
 
 	// initialize workspace
@@ -268,7 +214,7 @@ func (fx *setup) _init() (err error) {
 	}
 
 	fx.logger.Info("\n%s", fx.workspace.String())
-	fx.logger.Info("CURRENT CI JOB:\n%s\n", "compose")
+	fx.logger.Info("CURRENT CI JOB:\n%s\n", "setup")
 
 	fx.logger.Info("Parsing secrets...")
 	fx.secrets = libsecrets.GetSecrets(fx.workspace.Filesystem.SecretsDir)

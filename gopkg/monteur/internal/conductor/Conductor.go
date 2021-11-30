@@ -28,7 +28,7 @@ const (
 
 // Conductor is the coordinators for executing multiple Jobs in parallel.
 //
-// This is similar to conducting an orchestra in a theatre where the main
+// This is similar to conducting an orchestra in a theater where the main
 // conductor coordinates various musicians to make a good presentation.
 //
 // Conductor is safe to be created using the standard `&struct{}` method.
@@ -114,6 +114,7 @@ func (me *Conductor) Coordinate() (err error) {
 			case jobDone:
 				continue
 			case jobAllCompleted:
+				me.logSuccess("➤ DONE")
 				return nil
 			case jobNotDone:
 				fallthrough
@@ -159,9 +160,9 @@ func (me *Conductor) checkStatus(msg Message) {
 
 	// log the status
 	if name != "" {
-		me.logInfo("Job '%s': %s\n", name, status)
+		me.logError("Status from Job '%s' ➤ %s", name, status)
 	} else {
-		me.logInfo("Job '': %s\n", status)
+		me.logError("Status ➤ %s", status)
 	}
 }
 
@@ -192,9 +193,9 @@ func (me *Conductor) checkError(msg Message) (err error) {
 
 	// log the output before returning error
 	if name != "" {
-		me.logError("Got an Error from Job '%s': %s\n", name, err)
+		me.logError("Error from Job '%s' ➤ %s", name, err)
 	} else {
-		me.logError("Got an Error: %s\n", err)
+		me.logError("Error ➤ %s", err)
 	}
 
 	// return error for conductor to stop the orchestra
@@ -235,11 +236,10 @@ func (me *Conductor) checkDone(msg Message) (state uint) {
 	// a job is done
 	state = jobDone
 	delete(me.Runners, name)
-	me.logInfo("Job '%s' = COMPLETED", name)
+	me.logInfo("Job '%s' ➤ COMPLETED", name)
 
 	if len(me.Runners) == 0 {
 		state = jobAllCompleted
-		me.logSuccess("All Jobs are COMPLETED.")
 	}
 
 	return state

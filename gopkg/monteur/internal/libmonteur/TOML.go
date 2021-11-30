@@ -16,12 +16,26 @@
 package libmonteur
 
 import (
+	"fmt"
+
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
 )
 
 type TOMLMetadata struct {
 	Name        string
 	Description string
+	Type        string
+}
+
+func (me *TOMLMetadata) Sanitize(path string) (err error) {
+	if me.Name == "" {
+		return fmt.Errorf("%s: Name for %s",
+			ERROR_PUBLISH_METADATA_MISSING,
+			path,
+		)
+	}
+
+	return nil
 }
 
 type TOMLDependency struct {
@@ -40,3 +54,78 @@ type TOMLAction struct {
 	Condition []string
 	Type      commander.ActionID
 }
+
+type TOMLChecksum struct {
+	Type   string
+	Format string
+	Value  string
+}
+
+type TOMLSource struct {
+	Checksum *TOMLChecksum
+	Headers  map[string]string
+	Archive  string
+	Format   string
+	URL      string
+	Method   string
+}
+
+func (base *TOMLSource) Merge(in *TOMLSource) {
+	if in.Archive != "" {
+		base.Archive = in.Archive
+	}
+
+	if in.Format != "" {
+		base.Format = in.Format
+	}
+
+	if in.URL != "" {
+		base.URL = in.URL
+	}
+
+	if in.Method != "" {
+		base.Method = in.Method
+	}
+
+	if len(in.Headers) > 0 {
+		if len(base.Headers) == 0 {
+			base.Headers = map[string]string{}
+		}
+
+		for k, v := range in.Headers {
+			base.Headers[k] = v
+		}
+	}
+
+	base.mergeChecksum(in)
+}
+
+func (base *TOMLSource) mergeChecksum(in *TOMLSource) {
+	if in.Checksum == nil {
+		return
+	}
+
+	if base.Checksum == nil {
+		base.Checksum = &TOMLChecksum{}
+	}
+
+	// if both checksum value is not available, disable checksum entirely
+	if base.Checksum.Value == "" && in.Checksum.Value == "" {
+		base.Checksum = nil
+		return
+	}
+
+	if in.Checksum.Value != "" {
+		base.Checksum.Value = in.Checksum.Value
+	}
+
+	if in.Checksum.Type != "" {
+		base.Checksum.Type = in.Checksum.Type
+	}
+
+	if in.Checksum.Format != "" {
+		base.Checksum.Format = in.Checksum.Format
+	}
+}
+
+type TOMLSourceConfig map[string]string

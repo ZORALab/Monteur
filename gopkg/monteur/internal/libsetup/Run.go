@@ -17,6 +17,7 @@ package libsetup
 
 import (
 	"fmt"
+	"os"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
@@ -26,17 +27,77 @@ type Run struct {
 	Limit uint64
 }
 
-func (data *Run) Parse(path string) (err error) {
+func (me *Run) Parse(path string) (err error) {
 	s := struct {
 		Downloads *Run
 	}{
-		Downloads: data,
+		Downloads: me,
 	}
 
 	err = toml.DecodeFile(path, &s, nil)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
 			libmonteur.ERROR_TOML_PARSE_FAILED,
+			err,
+		)
+	}
+
+	return nil
+}
+
+func (me *Run) CleanDir(path string) (err error) {
+	// delete
+	_ = os.RemoveAll(path)
+
+	// create
+	err = os.MkdirAll(path, libmonteur.PERMISSION_DIRECTORY)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_DIR_CREATE_FAILED,
+			err,
+		)
+	}
+
+	return nil
+}
+
+func (me *Run) SetupConfig(currentOS string,
+	path string, binDir string, configDir string) (err error) {
+	var data []byte
+
+	switch currentOS {
+	case "windows":
+		return nil // yet to support
+	default:
+		data = []byte(`#!/bin/sh
+export LOCAL_BIN="` + binDir + `"
+config_dir="` + configDir + `"
+
+stop() {
+	PATH=:${PATH}:
+	PATH=${PATH//:$LOCAL_BIN:/:}
+
+	for cfg in "$config_dir"/*; do
+		source "$cfg" --stop
+	done
+}
+
+case $1 in
+--stop)
+	stop
+	;;
+*)
+	export PATH="${PATH}:$LOCAL_BIN"
+	for cfg in "$config_dir"/*; do
+		source $cfg
+	done
+esac`)
+	}
+
+	err = os.WriteFile(path, data, libmonteur.PERMISSION_CONFIG)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_PROGRAM_CONFIG_FAILED,
 			err,
 		)
 	}

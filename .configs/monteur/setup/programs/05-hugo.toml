@@ -123,10 +123,11 @@ Value = '58e7b0b09119bff974264f2ca506755bffa5fc79823a4c491834278effaa8aa3'
 #
 # NOTE: The key field is mainly for sorting purposes.
 [[Setup]]
+Name = 'Install Go Hugo'
 Type = 'move'
-Condition = 'all-all'
-Source = 'hugo'
-Target = 'hugo'
+Condition = [ 'all-all' ]
+Source = '{{- .WorkingDir -}}/hugo'
+Target = '{{- .BinDir -}}/hugo'
 
 
 

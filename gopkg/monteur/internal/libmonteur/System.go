@@ -23,4 +23,19 @@ const (
 	COMPUTE_SYSTEM_SEPARATOR = "-"
 	ALL_OS                   = "all"
 	ALL_ARCH                 = "all"
+
+	COMPUTE_SYSTEM_OMNI = ALL_OS + COMPUTE_SYSTEM_SEPARATOR + ALL_ARCH
 )
+
+func IsComputeSystemSupported(expect string, list []string) bool {
+	for _, v := range list {
+		switch v {
+		case expect:
+			return true
+		case COMPUTE_SYSTEM_OMNI:
+			return true
+		}
+	}
+
+	return false
+}

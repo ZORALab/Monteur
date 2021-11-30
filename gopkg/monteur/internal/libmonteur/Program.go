@@ -23,6 +23,7 @@ const (
 	PROGRAM_TYPE_HTTPS_DOWNLOAD = "https-download"
 	PROGRAM_TYPE_LOCAL_SYSTEM   = "local-system"
 
+	PROGRAM_FORMAT_RAW    = "raw"
 	PROGRAM_FORMAT_TAR_GZ = "tar.gz"
 	PROGRAM_FORMAT_ZIP    = "zip"
 

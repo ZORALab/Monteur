@@ -42,9 +42,14 @@ const (
 )
 
 const (
+	ERROR_COMMAND_BAD                = "bad command"
 	ERROR_COMMAND_DEPENDENCY_FMT_BAD = "bad command's dependency formatting"
 	ERROR_COMMAND_FAILED             = "failed to execute command"
 	ERROR_COMMAND_FMT_BAD            = "bad command formatting"
+)
+
+const (
+	ERROR_DEPENDENCY_BAD = "bad dependency"
 )
 
 const (
@@ -82,6 +87,7 @@ const (
 	ERROR_PROGRAM_TYPE_BAD     = "bad program sourcing type"
 	ERROR_PROGRAM_TYPE_UNKNOWN = "unknown program sourcing type"
 
+	ERROR_PROGRAM_MISSING     = "program is missing from local system"
 	ERROR_PROGRAM_UNSUPPORTED = "unsupported program for this hardware"
 
 	ERROR_PROGRAM_URL_BAD = "bad program's source URL"

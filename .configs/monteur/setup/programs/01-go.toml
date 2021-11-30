@@ -105,10 +105,11 @@ Value = '4e7f9a19af8a96e81b644846f27d739344375f9c69bad2e673406ab8e8a01101'
 #
 # NOTE: The key field is mainly for sorting purposes.
 [[Setup]]
+Name = 'Install Go Programming Language Entire Directory'
 Type = 'move'
-Condition = 'all-all'
-Source = 'go'
-Target = 'golang'
+Condition = ['all-all']
+Source = '{{- .WorkingDir -}}/go'
+Target = '{{- .BinDir -}}/golang'
 
 
 

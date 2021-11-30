@@ -13,18 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package libsetup
-
-type iNST uint
+package libmonteur
 
 const (
-	iNST_UNKNOWN iNST = 0
-	iNST_MOVE    iNST = 1
-	iNST_SCRIPT  iNST = 2
+	COMMAND_SAVE_NONE = "libcmd:saveN0ne"
 )
-
-type Setup struct {
-	Source string
-	Target string
-	Type   iNST
-}
