@@ -120,6 +120,10 @@ func (action *Action) _initType() (err error) {
 	switch action.Type {
 	case ACTION_PLACEHOLDER:
 		action.actionFx = cmdPlaceholder
+	case ACTION_CHOWN:
+		action.actionFx = cmdChown
+	case ACTION_CHOWN_QUIET:
+		action.actionFx = cmdChownQuiet
 	case ACTION_COMMAND:
 		action.actionFx = cmdExec
 	case ACTION_COMMAND_QUIET:

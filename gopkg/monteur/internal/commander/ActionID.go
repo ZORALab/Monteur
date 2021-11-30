@@ -19,6 +19,8 @@ type ActionID string
 
 const (
 	ACTION_PLACEHOLDER            ActionID = "placeholder"
+	ACTION_CHOWN                  ActionID = "chown"
+	ACTION_CHOWN_QUIET            ActionID = "chown-quiet"
 	ACTION_COMMAND                ActionID = "command"
 	ACTION_COMMAND_QUIET          ActionID = "command-quiet"
 	ACTION_COPY                   ActionID = "copy"
