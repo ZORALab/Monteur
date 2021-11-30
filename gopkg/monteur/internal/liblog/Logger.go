@@ -45,6 +45,23 @@ func (log *Logger) Init() {
 	log.outputWriters = map[string]*os.File{}
 }
 
+// IsHealthy is to check the status of the logger.
+func (log *Logger) IsHealthy() (err error) {
+	if log.executor == nil {
+		return fmt.Errorf(libmonteur.ERROR_LOG_UNHEALTHY)
+	}
+
+	if log.statusWriters == nil {
+		return fmt.Errorf(libmonteur.ERROR_LOG_UNHEALTHY)
+	}
+
+	if log.outputWriters == nil {
+		return fmt.Errorf(libmonteur.ERROR_LOG_UNHEALTHY)
+	}
+
+	return nil
+}
+
 // Add is to add a given filepath for creating the io.Writer for logger.
 func (log *Logger) Add(logType logger.StatusType, path string) (err error) {
 	if path == "" {

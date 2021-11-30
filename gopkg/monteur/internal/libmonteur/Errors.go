@@ -54,6 +54,7 @@ const (
 const (
 	ERROR_LOG_PATH_EMPTY = "given path is empty"
 	ERROR_LOG_PREPARE    = "failed to open and prepare log file"
+	ERROR_LOG_UNHEALTHY  = "logger is unhealthy"
 )
 
 const (
