@@ -8,9 +8,10 @@ Using Go test to test out all the Go codes in this repository.
 Timeout = '14400s'
 
 [FMTVariables]
-ProfileFilepath = '{{- .WorkingDir -}}/go.profile'
-CoverageFilepath = '{{- .WorkingDir -}}/go.coverage'
-
+ProfileFilepath = '{{- .WorkingDir -}}/go-profile.txt'
+CoverageFilepath = '{{- .WorkingDir -}}/go-coverage.html'
+TestPath = '{{- .BaseDir -}}/...'
+TestCoverage = 'Will be overwritten'
 
 
 
@@ -24,6 +25,12 @@ Command = 'go'
 
 
 [[CMD]]
+Name = "Create Test Directory For Housing Test Data"
+Type = 'create-path'
+Condition = [ 'all-all' ]
+Source = '{{- .WorkingDir -}}'
+
+[[CMD]]
 Name = "Run Go Test Against Base Directory"
 Type = 'command'
 Condition = [ 'all-all' ]
@@ -32,7 +39,7 @@ Source = """go test -timeout "{{ .Timeout }}" \
 -coverprofile "{{- .ProfileFilepath -}}" \
 -race \
 -v \
-"{{- .BaseDir -}}/..."
+"{{- .TestPath -}}"
 """
 
 [[CMD]]
@@ -40,6 +47,15 @@ Name = "Process Go Test Coverage Profiles"
 Type = 'command'
 Condition = [ 'all-all' ]
 Location = '{{- .BaseDir -}}'
-Source = """go tool cover -html="{{- .ProfileDir -}}" \
+Source = """go tool cover -html="{{- .ProfileFilepath -}}" \
 	-o "{{- .CoverageFilepath -}}"
 """
+
+[[CMD]]
+Name = "Process Go Test Coverage Overall Percentage"
+Type = 'command'
+Condition = [ 'all-all' ]
+Location = '{{- .BaseDir -}}'
+Source = 'go tool cover -func "{{- .ProfileFilepath -}}"'
+Save = 'TestCoverage'
+SaveRegex = 'total:\s{1,}\(statements\)\s{1,}(\d+.\d+%)'

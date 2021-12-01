@@ -136,7 +136,12 @@ documentation.
 * `SaveRegex`
   1. Optional.
   2. A regular expression filter to process the data prior saving.
-  3. Only works if `Save` is enabled (Not empty) and itself is not empty.
+  3. Use capturing group in your regex using parenthesis `(...)`. Every captured
+     groups shall be concatenated from left to right. Example:
+     `(\w{1,}):(\s{1}).{1,}\((\d+.\d+%)\)` for `total:    statement  (50.0%)`
+     yields `total 50.0%`.
+  4. **DO NOT** include the regex slashes (as in `/ YOUR_REGEX /`).
+  4. Only works if `Save` is enabled (Not empty) and itself is not empty.
 * `SaveStderr`
   1. Optional.
   2. Instruct Monteur to save `STDERR` instead of the default `STDOUT` data.

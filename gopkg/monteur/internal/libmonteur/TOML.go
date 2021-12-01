@@ -49,13 +49,13 @@ type TOMLDependency struct {
 
 type TOMLAction struct {
 	Name       string
+	Type       commander.ActionID
 	Location   string
 	Source     string
 	Target     string
 	Save       string
 	SaveRegex  string
 	Condition  []string
-	Type       commander.ActionID
 	SaveStderr bool
 }
 
@@ -85,11 +85,21 @@ func (base *TOMLAction) Sanitize() (err error) {
 }
 
 func (base *TOMLAction) ParseExec(in string) (out string) {
-	out = strings.TrimRight(in, "\r\n")
+	in = strings.TrimRight(in, "\r\n")
 
 	if base.SaveRegex != "" {
 		r, _ := regexp.Compile(base.SaveRegex)
-		out = r.FindString(out)
+
+		list := r.FindStringSubmatch(in)
+		for i, s := range list {
+			if i == 0 {
+				continue
+			}
+
+			out += s
+		}
+	} else {
+		out = in
 	}
 
 	return out
