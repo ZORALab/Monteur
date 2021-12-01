@@ -46,7 +46,7 @@ func (fx *setup) Run() int {
 	}
 
 	// parse all programs
-	err = filepath.Walk(fx.workspace.Filesystem.SetupProgramConfigDir,
+	err = filepath.Walk(fx.workspace.Filesystem.SetupConfigDir,
 		fx.__filterProgramMetadata)
 	if err != nil {
 		return fx._reportError(err)

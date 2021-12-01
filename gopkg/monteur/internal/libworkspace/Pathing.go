@@ -59,9 +59,9 @@ type Pathing struct {
 	BinConfigFile string
 
 	// sub-directories for setup fx
-	SetupTMPDir           string
-	SetupProgramConfigDir string
-	SetupTOMLFile         string
+	SetupTMPDir    string
+	SetupConfigDir string
+	SetupTOMLFile  string
 
 	// sub-directories for publish fx
 	PublishTMPDir    string
@@ -72,6 +72,11 @@ type Pathing struct {
 	ComposeConfigDir string
 	ComposeTMPDir    string
 	ComposeTOMLFile  string
+
+	// sub-directories for test fx
+	TestConfigDir string
+	TestTMPDir    string
+	TestTOMLFile  string
 
 	// user
 	User *UserPath
@@ -250,6 +255,11 @@ func (fp *Pathing) Update() (err error) {
 		return err
 	}
 
+	err = fp.updateTestPaths()
+	if err != nil {
+		return err
+	}
+
 	err = fp.updateLogPaths()
 	if err != nil {
 		return err
@@ -314,20 +324,21 @@ func (fp *Pathing) updateBasePaths() (err error) {
 }
 
 func (fp *Pathing) updateSetupPaths() (err error) {
-	fp.SetupTMPDir = libmonteur.DIRECTORY_SETUP_PROGRAMS
+	fp.SetupConfigDir = libmonteur.DIRECTORY_SETUP_PROGRAMS
+	err = fp._initConfigSubPath(&fp.SetupConfigDir, "SetupConfigDir")
+	if err != nil {
+		return err
+	}
+
+	fp.SetupTMPDir = libmonteur.DIRECTORY_SETUP
 	err = fp._initWorkingSubPath(&fp.SetupTMPDir, "SetupTMPDir")
 	if err != nil {
 		return err
 	}
 
-	fp.SetupProgramConfigDir = libmonteur.DIRECTORY_SETUP_PROGRAMS
-	err = fp._initConfigSubPath(&fp.SetupProgramConfigDir,
-		"SetupProgramConfigDir")
-	if err != nil {
-		return err
-	}
-
-	fp.SetupTOMLFile = libmonteur.FILE_TOML_SETUP
+	fp.SetupTOMLFile = filepath.Join(libmonteur.DIRECTORY_SETUP,
+		libmonteur.FILE_TOML,
+	)
 	err = fp._initConfigSubPath(&fp.SetupTOMLFile,
 		"SetupTOMLConfigFile")
 	if err != nil {
@@ -350,7 +361,9 @@ func (fp *Pathing) updatePublishPaths() (err error) {
 		return err
 	}
 
-	fp.PublishTOMLFile = libmonteur.FILE_TOML_PUBLISH
+	fp.PublishTOMLFile = filepath.Join(libmonteur.DIRECTORY_PUBLISH,
+		libmonteur.FILE_TOML,
+	)
 	err = fp._initConfigSubPath(&fp.PublishTOMLFile, "PublishTOMLConfigFile")
 	if err != nil {
 		return err
@@ -372,8 +385,34 @@ func (fp *Pathing) updateComposePaths() (err error) {
 		return err
 	}
 
-	fp.ComposeTOMLFile = libmonteur.FILE_TOML_COMPOSE
+	fp.ComposeTOMLFile = filepath.Join(libmonteur.DIRECTORY_COMPOSE,
+		libmonteur.FILE_TOML,
+	)
 	err = fp._initConfigSubPath(&fp.ComposeTOMLFile, "ComposeTOMLConfigFile")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (fp *Pathing) updateTestPaths() (err error) {
+	fp.TestConfigDir = libmonteur.DIRECTORY_TESTER
+	err = fp._initConfigSubPath(&fp.TestConfigDir, "TestConfigDir")
+	if err != nil {
+		return err
+	}
+
+	fp.TestTMPDir = libmonteur.DIRECTORY_TEST
+	err = fp._initWorkingSubPath(&fp.TestTMPDir, "TestTMPDir")
+	if err != nil {
+		return err
+	}
+
+	fp.TestTOMLFile = filepath.Join(libmonteur.DIRECTORY_TEST,
+		libmonteur.FILE_TOML,
+	)
+	err = fp._initConfigSubPath(&fp.TestTOMLFile, "TestTOMLConfigFile")
 	if err != nil {
 		return err
 	}

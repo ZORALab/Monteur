@@ -194,8 +194,13 @@ func (action *Action) Run() (err error) {
 	}
 
 	output, err := action.actionFx(action)
+
 	if action.Location != "" {
 		errPWD = os.Chdir(action.PWD)
+	}
+
+	if action.Save != "" {
+		_ = action.SaveFx(action.Save, output)
 	}
 
 	switch {
@@ -210,18 +215,9 @@ func (action *Action) Run() (err error) {
 			"failed to change back to PWD directory",
 			errPWD,
 		)
-	default:
 	}
 
-	if err != nil {
-		return err
-	}
-
-	if action.Save == "" {
-		return nil
-	}
-
-	return action.SaveFx(action.Save, output)
+	return err
 }
 
 func (action *Action) __reportError(format string, args ...interface{}) error {

@@ -5,10 +5,10 @@ Using Go test to test out all the Go codes in this repository.
 """
 
 [Variables]
-Timeout = ''
+Timeout = '14400s'
 
 [FMTVariables]
-ProfileDir = '{{- .WorkingDir -}}/go.profile'
+ProfileFilepath = '{{- .WorkingDir -}}/go.profile'
 CoverageFilepath = '{{- .WorkingDir -}}/go.coverage'
 
 
@@ -27,17 +27,19 @@ Command = 'go'
 Name = "Run Go Test Against Base Directory"
 Type = 'command'
 Condition = [ 'all-all' ]
+Location = '{{- .BaseDir -}}'
 Source = """go test -timeout "{{ .Timeout }}" \
--coverprofile "{{- .ProfileDir -}}" \
+-coverprofile "{{- .ProfileFilepath -}}" \
 -race \
 -v \
-"{{- .BaseDir -}}"
+"{{- .BaseDir -}}/..."
 """
 
 [[CMD]]
 Name = "Process Go Test Coverage Profiles"
 Type = 'command'
 Condition = [ 'all-all' ]
+Location = '{{- .BaseDir -}}'
 Source = """go tool cover -html="{{- .ProfileDir -}}" \
--o "{{- .CoverageFilepath -}}" \
+	-o "{{- .CoverageFilepath -}}"
 """

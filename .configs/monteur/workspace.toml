@@ -1,5 +1,5 @@
 [Filesystem]
-BaseDir = "pkg/"
+BaseDir = "gopkg/"
 WorkingDir = ".monteurFS/tmp/"
 BuildDir = ".monteurFS/build/"
 ScriptDir = ".scripts/"

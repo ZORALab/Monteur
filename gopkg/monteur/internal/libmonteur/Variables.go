@@ -22,6 +22,7 @@ package libmonteur
 const (
 	VAR_ARCH    = "Arch"
 	VAR_ARCHIVE = "Archive"
+	VAR_BASE    = "BaseDir"
 	VAR_BIN     = "BinDir"
 	VAR_CFG     = "ConfigDir"
 	VAR_COMPUTE = "ComputeSystem"
