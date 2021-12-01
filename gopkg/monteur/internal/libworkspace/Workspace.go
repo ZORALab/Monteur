@@ -17,6 +17,7 @@ package libworkspace
 
 import (
 	"fmt"
+	"path/filepath"
 	"runtime"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
@@ -33,10 +34,13 @@ type Workspace struct {
 	Language   *schema.Language
 	App        *schema.Software
 
+	Job           string
 	Version       string
 	OS            string
 	ARCH          string
 	ComputeSystem string
+	ConfigDir     string
+	JobTOMLFile   string
 }
 
 // Init is to initialize the workspace for usage
@@ -53,6 +57,7 @@ func (w *Workspace) Init() error {
 	w.ARCH = runtime.GOARCH
 	w.Version = libmonteur.VERSION
 	w.ComputeSystem = w.OS + libmonteur.COMPUTE_SYSTEM_SEPARATOR + w.ARCH
+	w._processPathingByJob()
 
 	return nil
 }
@@ -113,6 +118,48 @@ func (w *Workspace) _parseAppData() (err error) {
 	}
 
 	return nil
+}
+
+func (w *Workspace) _processPathingByJob() {
+	switch w.Job {
+	case libmonteur.JOB_SETUP:
+	case libmonteur.JOB_CLEAN:
+	case libmonteur.JOB_TEST:
+		w.ConfigDir = w.Filesystem.TestConfigDir
+
+		w.Filesystem.WorkspaceLogDir = filepath.Join(
+			w.Filesystem.LogDir,
+			libmonteur.DIRECTORY_TEST,
+			w.Filesystem.WorkspaceLogDir,
+		)
+
+		w.JobTOMLFile = w.Filesystem.TestTOMLFile
+	case libmonteur.JOB_BUILD:
+	case libmonteur.JOB_PACKAGE:
+	case libmonteur.JOB_RELEASE:
+	case libmonteur.JOB_COMPOSE:
+		w.ConfigDir = w.Filesystem.ComposeConfigDir
+
+		w.Filesystem.WorkspaceLogDir = filepath.Join(
+			w.Filesystem.LogDir,
+			libmonteur.DIRECTORY_COMPOSE,
+			w.Filesystem.WorkspaceLogDir,
+		)
+
+		w.JobTOMLFile = w.Filesystem.ComposeTOMLFile
+	case libmonteur.JOB_PUBLISH:
+		w.ConfigDir = w.Filesystem.PublishConfigDir
+
+		w.Filesystem.WorkspaceLogDir = filepath.Join(
+			w.Filesystem.LogDir,
+			libmonteur.DIRECTORY_PUBLISH,
+			w.Filesystem.WorkspaceLogDir,
+		)
+
+		w.JobTOMLFile = w.Filesystem.PublishTOMLFile
+	default:
+		panic("Monteur DEV: what kind of CI Job is this? ➤ " + w.Job)
+	}
 }
 
 // String is the standard string interface for printing out Workspace data.

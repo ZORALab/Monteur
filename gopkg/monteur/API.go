@@ -21,6 +21,10 @@
 // specific CI needs.
 package monteur
 
+import (
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+)
+
 // Setup is the function to download all dependencies as per configurations.
 //
 // The action shall download all the dependencies as stated by all the
@@ -38,8 +42,11 @@ func Setup() (statusCode int) {
 // including the CI infrastructure can run testing for the repository both
 // manually and autonomously at any given time.
 func Test() int {
-	t := &tester{}
-	return t.Run()
+	api := &apiCommand{
+		Job:      libmonteur.JOB_TEST,
+		ErrorTag: libmonteur.ERROR_TEST,
+	}
+	return api.Run()
 }
 
 // Clean is the function to clear up the repository for the next run.
@@ -87,8 +94,11 @@ func Package() int {
 // this action generates the documentations artifact and publish it to its
 // reading channels such as web, file server for PDF files, and etc.
 func Publish() int {
-	p := &publisher{}
-	return p.Run()
+	api := &apiCommand{
+		Job:      libmonteur.JOB_PUBLISH,
+		ErrorTag: libmonteur.ERROR_PUBLISH,
+	}
+	return api.Run()
 }
 
 // Compose is the function to build the documentation artifacts.
@@ -96,6 +106,9 @@ func Publish() int {
 // This action is to build the publication artifacts prior to `Publish`. It is
 // for local review and editing without publishing to the main web.
 func Compose() int {
-	c := &composer{}
-	return c.Run()
+	api := &apiCommand{
+		Job:      libmonteur.JOB_COMPOSE,
+		ErrorTag: libmonteur.ERROR_COMPOSE,
+	}
+	return api.Run()
 }

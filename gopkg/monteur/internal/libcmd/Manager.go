@@ -30,17 +30,15 @@ import (
 )
 
 type Manager struct {
-	Metadata *libmonteur.TOMLMetadata
-
 	thisSystem string
-	Variables  map[string]interface{}
 
+	Variables map[string]interface{}
+	Metadata  *libmonteur.TOMLMetadata
+
+	reportUp     chan conductor.Message
+	log          *liblog.Logger
 	dependencies []*commander.Dependency
 	cmd          []*libmonteur.TOMLAction
-
-	reportUp chan conductor.Message
-
-	log *liblog.Logger
 }
 
 func (me *Manager) Parse(path string) (err error) {
@@ -254,96 +252,90 @@ func (me *Manager) sanitizeMetadata(path string) (err error) {
 func (me *Manager) _saveFx(key string, variable, output interface{}) {
 	cmd, ok := variable.(*libmonteur.TOMLAction)
 	if !ok {
-		me.reportError("%s: %s",
-			libmonteur.ERROR_COMMAND_FAILED,
-			"failed to recover Command's TOML data on SaveFx",
-		)
-
-		return
+		panic("MONTEUR DEV: why is TOMLAction owner not assigned here?")
 	}
 
 	// process commander output
 	switch v := output.(type) {
 	case *commander.ExecOutput:
-		me.log.Info("Reading STDERR...")
-		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stderr))
-		me.log.Info("Reading STDOUT...")
-		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stdout))
-
-		if key == libmonteur.COMMAND_SAVE_NONE {
-			return
-		}
-
-		val := ""
-		if cmd.SaveStderr {
-			val = cmd.ParseExec(string(v.Stderr))
-			me.log.Info("Requested to save STDERR instead...")
-		} else {
-			val = cmd.ParseExec(string(v.Stdout))
-		}
-
-		me.Variables[key] = val
-		me.log.Info("Saving '%v' to '%s'...", val, key)
+		me.__saveExecOutput(key, v, cmd)
 	case commander.ExecOutput:
-		me.log.Info("Reading STDERR...")
-		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stderr))
-		me.log.Info("Reading STDOUT...")
-		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stdout))
-
-		if key == libmonteur.COMMAND_SAVE_NONE {
-			return
-		}
-
-		val := ""
-		if cmd.SaveStderr {
-			val = cmd.ParseExec(string(v.Stderr))
-			me.log.Info("Requested to save STDERR instead...")
-		} else {
-			val = cmd.ParseExec(string(v.Stdout))
-		}
-
-		me.Variables[key] = val
-		me.log.Info("Saving '%v' to '%s'...", val, key)
+		me.__saveExecOutput(key, &v, cmd)
 	case string:
-		me.log.Info("Reading output...")
-		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, v)
-
-		if key == libmonteur.COMMAND_SAVE_NONE {
-			return
-		}
-
-		v = cmd.ParseExec(v)
-		me.Variables[key] = v
-		me.log.Info("Saving '%v' to '%s'...", v, key)
+		me.__saveString(key, v, cmd)
 	case *string:
-		me.log.Info("Reading output...")
-		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, *v)
-
-		if key == libmonteur.COMMAND_SAVE_NONE {
-			return
-		}
-
-		*v = cmd.ParseExec(*v)
-		me.Variables[key] = *v
-		me.log.Info("Saving '%v' to '%s'...", *v, key)
+		me.__saveString(key, *v, cmd)
 	default:
-		me.log.Info("Reading output...")
-		if v == nil {
-			me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, "nil\n")
-		} else {
-			me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, output)
-		}
+		me.__save(key, v)
+	}
+}
 
-		if key == libmonteur.COMMAND_SAVE_NONE {
-			return
-		}
-
-		me.Variables[key] = output
-		me.log.Info("Saving '%v' to '%s'...", output, key)
+func (me *Manager) __save(key string, v interface{}) {
+	me.log.Info("Reading output...")
+	if v == nil {
+		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, "nil\n")
+	} else {
+		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, v)
 	}
 
+	if key == libmonteur.COMMAND_SAVE_NONE {
+		goto completed
+	}
+
+	me.log.Info("Saving '%v' to '%s'...", v, key)
+	me.Variables[key] = v
+
+completed:
 	me.log.Info(libmonteur.LOG_SUCCESS)
-	return
+}
+
+func (me *Manager) __saveString(key string,
+	v string,
+	cmd *libmonteur.TOMLAction) {
+	me.log.Info("Reading output...")
+	me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, v)
+
+	if key == libmonteur.COMMAND_SAVE_NONE {
+		goto completed
+	}
+
+	v = cmd.ParseExec(v)
+
+	me.log.Info("Saving '%v' to '%s'...", v, key)
+	me.Variables[key] = v
+
+completed:
+	me.log.Info(libmonteur.LOG_SUCCESS)
+}
+
+func (me *Manager) __saveExecOutput(key string,
+	v *commander.ExecOutput,
+	cmd *libmonteur.TOMLAction) {
+	var val string
+
+	me.log.Info("Reading STDERR...")
+	me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stderr))
+	me.log.Info("Reading STDOUT...")
+	me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stdout))
+
+	// save
+	if key == libmonteur.COMMAND_SAVE_NONE {
+		me.log.Info(libmonteur.LOG_SUCCESS)
+		goto completed
+	}
+
+	if cmd.SaveStderr {
+		val = cmd.ParseExec(string(v.Stderr))
+		me.log.Info("Requested to save STDERR instead...")
+	} else {
+		val = cmd.ParseExec(string(v.Stdout))
+	}
+
+	me.log.Info("Saving '%v' to '%s'...", val, key)
+	me.Variables[key] = val
+
+completed:
+	me.log.Info(libmonteur.LOG_SUCCESS)
 }
 
 // Name is for generating the program Metadata.Name when used as in interface.
@@ -461,7 +453,6 @@ func (me *Manager) Run(ctx context.Context, ch chan conductor.Message) {
 	}
 
 	me.reportDone()
-	return
 }
 
 func (me *Manager) reportError(format string, args ...interface{}) {

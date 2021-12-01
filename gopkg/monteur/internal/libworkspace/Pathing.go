@@ -34,6 +34,8 @@ type UserPath struct {
 
 // Pathing is the data structure holding the Monteur working filesystem.
 type Pathing struct {
+	timestampDir string
+
 	CurrentDir string
 	RootDir    string
 	ConfigDir  string
@@ -91,6 +93,8 @@ type Pathing struct {
 // as Monteur fails to detect any git repository with Monteur support throughout
 // the current directory Pathing or failed to obtain current directory Pathing.
 func (fp *Pathing) Init() (err error) {
+	fp.timestampDir = time.Now().UTC().Format("2006-Jan-02T15-04-05UTC")
+
 	err = fp._initCurrentDir(filepath.Abs)
 	if err != nil {
 		return err
@@ -364,7 +368,8 @@ func (fp *Pathing) updatePublishPaths() (err error) {
 	fp.PublishTOMLFile = filepath.Join(libmonteur.DIRECTORY_PUBLISH,
 		libmonteur.FILE_TOML,
 	)
-	err = fp._initConfigSubPath(&fp.PublishTOMLFile, "PublishTOMLConfigFile")
+	err = fp._initConfigSubPath(&fp.PublishTOMLFile,
+		"PublishTOMLConfigFile")
 	if err != nil {
 		return err
 	}
@@ -388,7 +393,8 @@ func (fp *Pathing) updateComposePaths() (err error) {
 	fp.ComposeTOMLFile = filepath.Join(libmonteur.DIRECTORY_COMPOSE,
 		libmonteur.FILE_TOML,
 	)
-	err = fp._initConfigSubPath(&fp.ComposeTOMLFile, "ComposeTOMLConfigFile")
+	err = fp._initConfigSubPath(&fp.ComposeTOMLFile,
+		"ComposeTOMLConfigFile")
 	if err != nil {
 		return err
 	}
@@ -403,7 +409,9 @@ func (fp *Pathing) updateTestPaths() (err error) {
 		return err
 	}
 
-	fp.TestTMPDir = libmonteur.DIRECTORY_TEST
+	fp.TestTMPDir = filepath.Join(libmonteur.DIRECTORY_TEST,
+		fp.timestampDir,
+	)
 	err = fp._initWorkingSubPath(&fp.TestTMPDir, "TestTMPDir")
 	if err != nil {
 		return err
@@ -421,7 +429,7 @@ func (fp *Pathing) updateTestPaths() (err error) {
 }
 
 func (fp *Pathing) updateLogPaths() (err error) {
-	fp.WorkspaceLogDir = time.Now().UTC().Format("2006-Jan-02T15-04-05UTC")
+	fp.WorkspaceLogDir = fp.timestampDir
 
 	return nil
 }
