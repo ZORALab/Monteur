@@ -87,6 +87,8 @@ Target = ''
 Save = 'FirstCommitID'
 SaveRegex = '(\w*)'
 SaveStderr = true
+ToSTDOUT = '{{- FirstCommitID -}}'
+ToSTDERR = 'Completed obtaining first commit ID'
 ```
 
 The Commands Execution Unit definition is declared by the CI Job. Example, in
@@ -145,8 +147,18 @@ documentation.
 * `SaveStderr`
   1. Optional.
   2. Instruct Monteur to save `STDERR` instead of the default `STDOUT` data.
-  3. Only works if `Save` is enabled (Not empty) and itself is set to `true`
+  3. Only works if `Save` is enabled (not empty) and itself is set to `true`
      (boolean).
+* `ToSTDOUT`, `ToSTDERR`
+  1. Optional.
+  2. Dump written string to `STDERR` and `STDOUT` respectively after the command
+     is executed successfully.
+  3. [Variables formatting]({{< link
+     "/internals/variables-processing/#variables-formatting" "this"
+     "url-only" />}}) is available for this field **including its own save
+     variable**.
+  4. No action will be taken respectively if `ToSTDOUT` and `ToSTDERR` are empty
+     string (`""`) after formatting.
 
 
 
