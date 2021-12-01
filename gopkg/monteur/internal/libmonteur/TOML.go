@@ -55,6 +55,8 @@ type TOMLAction struct {
 	Target     string
 	Save       string
 	SaveRegex  string
+	ToSTDERR   string
+	ToSTDOUT   string
 	Condition  []string
 	SaveStderr bool
 }

@@ -58,4 +58,5 @@ Condition = [ 'all-all' ]
 Location = '{{- .BaseDir -}}'
 Source = 'go tool cover -func "{{- .ProfileFilepath -}}"'
 Save = 'TestCoverage'
-SaveRegex = 'total:\s{1,}\(statements\)\s{1,}(\d+.\d+%)'
+SaveRegex = 'total:\s{1,}\(statements\)\s{1,}(\d+.\d+)%'
+ToSTDOUT = 'TOTAL TEST COVERAGE: {{ .TestCoverage -}}%%'

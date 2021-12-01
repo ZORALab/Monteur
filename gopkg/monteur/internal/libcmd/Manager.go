@@ -366,88 +366,42 @@ func (me *Manager) Run(ctx context.Context, ch chan conductor.Message) {
 	me.log.Success(libmonteur.LOG_SUCCESS)
 
 	for i, order := range me.cmd {
-		x := &commander.Action{
-			Name:    order.Name,
-			Save:    order.Save,
-			SaveFx:  me._saveFx,
-			SaveVar: order,
-			Type:    order.Type,
-		}
+		x := me.createCMD(order)
 
-		me.log.Info("Executing Command...")
-		me.log.Info("Name: '%s'", x.Name)
-		me.log.Info("SaveFx: '%v'", x.SaveFx)
-		me.log.Info("SaveVar: '%v'", x.SaveVar)
-		me.log.Info("Type: '%v'", x.Type)
-
-		me.log.Info("Formatting cmd.Location...")
-		order.Location, err = templater.String(order.Location,
-			me.Variables,
-		)
+		err = me.processCMDLocation(order, x)
 		if err != nil {
-			me.reportError("%s: %s",
-				libmonteur.ERROR_COMMAND_FMT_BAD,
-				err,
-			)
-
 			return
 		}
-		x.Location = order.Location
-		me.log.Info("Got: '%s'", x.Location)
 
-		me.log.Info("Formatting cmd.Source...")
-		order.Source, err = templater.String(order.Source,
-			me.Variables)
+		err = me.processCMDSource(order, x)
 		if err != nil {
-			me.reportError("%s: %s",
-				libmonteur.ERROR_COMMAND_FMT_BAD,
-				err,
-			)
-
 			return
 		}
-		x.Source = order.Source
-		me.log.Info("Got: '%s'", x.Source)
 
-		me.log.Info("Formatting cmd.Target...")
-		order.Target, err = templater.String(order.Target, me.Variables)
+		err = me.processCMDTarget(order, x)
 		if err != nil {
-			me.reportError("%s: %s",
-				libmonteur.ERROR_COMMAND_FMT_BAD,
-				err,
-			)
-
 			return
 		}
-		x.Target = order.Target
-		me.log.Info("Got: '%s'", x.Target)
 
-		me.log.Info("Processing cmd.Save...")
-		if x.Save == "" {
-			x.Save = libmonteur.COMMAND_SAVE_NONE
-		}
-		me.log.Info("Got: '%s'", x.Save)
+		me.processCMDSave(order, x)
 
-		me.log.Info("Initialize cmd...")
-		err = x.Init()
+		err = me.initCMD(x)
 		if err != nil {
-			me.reportError("%s: %s",
-				libmonteur.ERROR_COMMAND_BAD,
-				err,
-			)
+			return
 		}
-		me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
 
-		me.log.Info("Running cmd...")
-
-		err = x.Run()
+		err = me.runCMD(i+1, x)
 		if err != nil {
-			me.reportError("%s: (Step %d) %s",
-				libmonteur.ERROR_COMMAND_FAILED,
-				i+1,
-				err,
-			)
+			return
+		}
 
+		err = me.formatToSTDERR(order)
+		if err != nil {
+			return
+		}
+
+		err = me.formatToSTDOUT(order)
+		if err != nil {
 			return
 		}
 	}
@@ -455,14 +409,179 @@ func (me *Manager) Run(ctx context.Context, ch chan conductor.Message) {
 	me.reportDone()
 }
 
-func (me *Manager) reportError(format string, args ...interface{}) {
-	if me.Metadata == nil || me.Metadata.Name == "" {
-		format = "Task '' ➤ " + format
-	} else {
-		format = "Task '%s' ➤ " + format
-		args = append([]interface{}{me.Metadata.Name}, args...)
+func (me *Manager) formatToSTDOUT(order *libmonteur.TOMLAction) (err error) {
+	me.log.Info("Formatting order.ToSTDOUT...")
+
+	order.ToSTDOUT, err = templater.String(order.ToSTDOUT,
+		me.Variables)
+	if err != nil {
+		me.reportError("%s: %s",
+			libmonteur.ERROR_COMMAND_FMT_BAD,
+			err,
+		)
+
+		return err //nolint:wrapcheck
+	}
+	me.log.Info("Got: '%s'", order.ToSTDOUT)
+	if order.ToSTDOUT != "" {
+		me.reportOutput(order.ToSTDOUT)
 	}
 
+	return nil
+}
+
+func (me *Manager) formatToSTDERR(order *libmonteur.TOMLAction) (err error) {
+	me.log.Info("Formatting order.ToSTDERR...")
+
+	order.ToSTDERR, err = templater.String(order.ToSTDERR,
+		me.Variables)
+	if err != nil {
+		me.reportError("%s: %s",
+			libmonteur.ERROR_COMMAND_FMT_BAD,
+			err,
+		)
+
+		return
+	}
+
+	me.log.Info("Got: '%s'", order.ToSTDERR)
+	if order.ToSTDERR != "" {
+		me.reportStatus(order.ToSTDERR)
+	}
+
+	return nil
+}
+
+func (me *Manager) runCMD(i int, x *commander.Action) (err error) {
+	me.log.Info("Running cmd...")
+
+	err = x.Run()
+	if err != nil {
+		me.reportError("%s: (Step %d) %s",
+			libmonteur.ERROR_COMMAND_FAILED,
+			i,
+			err,
+		)
+
+		return err //nolint:wrapcheck
+	}
+
+	return nil
+}
+
+func (me *Manager) initCMD(x *commander.Action) (err error) {
+	me.log.Info("Initialize cmd...")
+
+	err = x.Init()
+	if err != nil {
+		me.reportError("%s: %s",
+			libmonteur.ERROR_COMMAND_BAD,
+			err,
+		)
+
+		return err //nolint:wrapcheck
+	}
+
+	me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
+	return nil
+}
+
+func (me *Manager) processCMDSave(order *libmonteur.TOMLAction,
+	x *commander.Action) {
+	me.log.Info("Processing cmd.Save...")
+
+	if order.Save == "" {
+		x.Save = libmonteur.COMMAND_SAVE_NONE
+	} else {
+		x.Save = order.Save
+	}
+
+	me.log.Info("Got: '%s'", x.Save)
+
+	// always input x.SaveFx
+	me.log.Info("Processing cmd.SaveFx...")
+	x.SaveFx = me._saveFx
+	me.log.Info("Got: '%s'", x.SaveFx)
+
+	// always input x.SaveVar as the order for _saveFx operation or panic
+	me.log.Info("Processing cmd.SaveVar...")
+	x.SaveVar = order
+	me.log.Info("Got: '%s'", x.SaveVar)
+}
+
+func (me *Manager) processCMDTarget(order *libmonteur.TOMLAction,
+	x *commander.Action) (err error) {
+	me.log.Info("Formatting cmd.Target...")
+
+	order.Target, err = templater.String(order.Target, me.Variables)
+	if err != nil {
+		me.reportError("%s: %s",
+			libmonteur.ERROR_COMMAND_FMT_BAD,
+			err,
+		)
+
+		return err //nolint:wrapcheck
+	}
+	x.Target = order.Target
+
+	me.log.Info("Got: '%s'", x.Target)
+	return nil
+}
+
+func (me *Manager) processCMDSource(order *libmonteur.TOMLAction,
+	x *commander.Action) (err error) {
+	me.log.Info("Formatting cmd.Source...")
+
+	order.Source, err = templater.String(order.Source, me.Variables)
+	if err != nil {
+		me.reportError("%s: %s",
+			libmonteur.ERROR_COMMAND_FMT_BAD,
+			err,
+		)
+
+		return err //nolint:wrapcheck
+	}
+	x.Source = order.Source
+
+	me.log.Info("Got: '%s'", x.Source)
+	return nil
+}
+
+func (me *Manager) processCMDLocation(order *libmonteur.TOMLAction,
+	x *commander.Action) (err error) {
+	me.log.Info("Formatting cmd.Location...")
+
+	order.Location, err = templater.String(order.Location,
+		me.Variables,
+	)
+	if err != nil {
+		me.reportError("%s: %s",
+			libmonteur.ERROR_COMMAND_FMT_BAD,
+			err,
+		)
+
+		return err //nolint:wrapcheck
+	}
+	x.Location = order.Location
+
+	me.log.Info("Got: '%s'", x.Location)
+	return nil
+}
+
+func (me *Manager) createCMD(cmd *libmonteur.TOMLAction) (x *commander.Action) {
+	me.log.Info("Executing Command...")
+
+	x = &commander.Action{
+		Name: cmd.Name,
+		Type: cmd.Type,
+	}
+
+	me.log.Info("Name: '%s'", x.Name)
+	me.log.Info("Type: '%v'", x.Type)
+	return x
+}
+
+func (me *Manager) reportError(format string, args ...interface{}) {
 	if me.log != nil {
 		me.log.Error(format, args...)
 		me.log.Sync()
@@ -477,14 +596,20 @@ func (me *Manager) reportError(format string, args ...interface{}) {
 	}
 }
 
-func (me *Manager) reportStatus(format string, args ...interface{}) {
-	if me.Metadata == nil || me.Metadata.Name == "" {
-		format = "Task '' ➤ " + format
-	} else {
-		format = "Task '%s' ➤ " + format
-		args = append([]interface{}{me.Metadata.Name}, args...)
+func (me *Manager) reportOutput(format string, args ...interface{}) {
+	if me.log != nil {
+		me.log.Output(format, args...)
 	}
 
+	if me.reportUp != nil {
+		me.reportUp <- conductor.CreateOutput(me.Metadata.Name,
+			format,
+			args...,
+		)
+	}
+}
+
+func (me *Manager) reportStatus(format string, args ...interface{}) {
 	if me.log != nil {
 		me.log.Info(format, args...)
 	}

@@ -24,6 +24,7 @@ type Logger interface {
 	Success(string, ...interface{})
 	Warning(string, ...interface{})
 	Error(string, ...interface{})
+	Output(string, ...interface{})
 	IsHealthy() error
 }
 

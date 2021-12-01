@@ -25,6 +25,7 @@ const (
 	CHMSG_ERROR  = "error"
 	CHMSG_OWNER  = "owner"
 	CHMSG_STATUS = "status"
+	CHMSG_OUTPUT = "output"
 )
 
 // Message is the interface for message payload used in Go channel tramissions.
@@ -100,6 +101,18 @@ func CreateStatus(owner string, format string, a ...interface{}) Message {
 
 	m.Add(CHMSG_OWNER, owner)
 	m.Add(CHMSG_STATUS, fmt.Sprintf(format, a...))
+
+	return m
+}
+
+// CreateOutput creates a standard Message object for Conductor.
+//
+// It takes 2 inputs: the Job owner name and the fmt.Printf like message.
+func CreateOutput(owner string, format string, a ...interface{}) Message {
+	m := NewMessage()
+
+	m.Add(CHMSG_OWNER, owner)
+	m.Add(CHMSG_OUTPUT, fmt.Sprintf(format, a...))
 
 	return m
 }

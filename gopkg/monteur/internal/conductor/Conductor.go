@@ -127,8 +127,43 @@ func (me *Conductor) Coordinate() (err error) {
 				return err
 			}
 
+			me.checkOutput(msg)
 			me.checkStatus(msg)
 		}
+	}
+}
+
+func (me *Conductor) checkOutput(msg Message) {
+	var name string
+	var ok bool
+	var rmsg, rname interface{}
+	var output string
+
+	// obtain message and owner from Message
+	rmsg, ok = msg.Get(CHMSG_OUTPUT)
+	if !ok {
+		return
+	}
+
+	rname, ok = msg.Get(CHMSG_OWNER)
+	if ok {
+		name, ok = rname.(string)
+		if !ok {
+			name = ""
+		}
+	}
+
+	// handle coordinated display printout
+	output, ok = rmsg.(string)
+	if !ok {
+		return
+	}
+
+	// log the output
+	if name != "" {
+		me.logOutput("Job '%s' Output ➤ %s", name, output)
+	} else {
+		me.logOutput("Output ➤ %s", output)
 	}
 }
 
@@ -160,9 +195,9 @@ func (me *Conductor) checkStatus(msg Message) {
 
 	// log the status
 	if name != "" {
-		me.logError("Status from Job '%s' ➤ %s", name, status)
+		me.logInfo("Job '%s' Status ➤ %s", name, status)
 	} else {
-		me.logError("Status ➤ %s", status)
+		me.logInfo("Status ➤ %s", status)
 	}
 }
 
@@ -193,7 +228,7 @@ func (me *Conductor) checkError(msg Message) (err error) {
 
 	// log the output before returning error
 	if name != "" {
-		me.logError("Error from Job '%s' ➤ %s", name, err)
+		me.logError("Job '%s' Error ➤ %s", name, err)
 	} else {
 		me.logError("Error ➤ %s", err)
 	}
@@ -275,4 +310,12 @@ func (me *Conductor) logInfo(format string, a ...interface{}) {
 	}
 
 	me.Log.Info(format, a...)
+}
+
+func (me *Conductor) logOutput(format string, a ...interface{}) {
+	if !loggerAvailable(me.Log) {
+		return
+	}
+
+	me.Log.Output(format, a...)
 }
