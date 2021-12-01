@@ -16,5 +16,5 @@
 package libmonteur
 
 const (
-	COMMAND_SAVE_NONE = "libcmd:saveN0ne"
+	COMMAND_SAVE_NONE = "monteur:saveN0NE"
 )

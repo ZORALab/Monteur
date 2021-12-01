@@ -55,6 +55,31 @@ type TOMLAction struct {
 	Type      commander.ActionID
 }
 
+func (base *TOMLAction) Sanitize() (err error) {
+	if base.Name == "" {
+		return fmt.Errorf("%s: %s",
+			ERROR_COMMAND_BAD,
+			"Command.Name is empty",
+		)
+	}
+
+	if base.Type == "" {
+		return fmt.Errorf("%s: %s",
+			ERROR_COMMAND_BAD,
+			"Command.Type is empty",
+		)
+	}
+
+	if len(base.Condition) == 0 {
+		return fmt.Errorf("%s: %s",
+			ERROR_COMMAND_BAD,
+			"Command.Condition is empty",
+		)
+	}
+
+	return nil
+}
+
 type TOMLChecksum struct {
 	Type   string
 	Format string

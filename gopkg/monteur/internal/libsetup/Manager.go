@@ -47,7 +47,7 @@ type Manager struct {
 	unpackFx func(context.Context)
 
 	dependencies []*commander.Dependency
-	setup        []*commander.Action
+	setup        []*libmonteur.TOMLAction
 
 	reportUp chan conductor.Message
 
@@ -72,7 +72,7 @@ func (me *Manager) Parse(path string) (err error) {
 	// initialize all important variables
 	me.Metadata = &libmonteur.TOMLMetadata{}
 	me.dependencies = []*commander.Dependency{}
-	me.setup = []*commander.Action{}
+	me.setup = []*libmonteur.TOMLAction{}
 
 	me.thisSystem, ok = me.Variables[libmonteur.VAR_COMPUTE].(string)
 	if !ok {
@@ -245,29 +245,12 @@ func (me *Manager) sanitizeSetup(in []*libmonteur.TOMLAction) (err error) {
 			continue
 		}
 
-		s := &commander.Action{
-			Name:     cmd.Name,
-			Type:     cmd.Type,
-			Location: cmd.Location,
-			Source:   cmd.Source,
-			Target:   cmd.Target,
-			Save:     cmd.Save,
-			SaveFx:   me._saveFx,
-		}
-
-		me.setup = append(me.setup, s)
-	}
-
-	// sanitize each of them
-	for i, cmd := range me.setup {
-		err = cmd.Init()
+		err = cmd.Sanitize()
 		if err != nil {
-			return fmt.Errorf("%s (Setup %d): %s",
-				libmonteur.ERROR_COMMAND_BAD,
-				i+1,
-				err,
-			)
+			return err //nolint:wrapcheck
 		}
+
+		me.setup = append(me.setup, cmd)
 	}
 
 	return nil
@@ -676,11 +659,17 @@ func (me *Manager) Install(ctx context.Context) {
 	var err error
 
 	for i, cmd := range me.setup {
+		x := &commander.Action{
+			Name:   cmd.Name,
+			Save:   cmd.Save,
+			SaveFx: me._saveFx,
+			Type:   cmd.Type,
+		}
+
 		me.log.Info("Executing Setup Commands...")
-		me.log.Info("Name: '%s'", cmd.Name)
-		me.log.Info("Save: '%s'", cmd.Save)
-		me.log.Info("SaveFx: '%v'", cmd.SaveFx)
-		me.log.Info("Type: '%v'", cmd.Type)
+		me.log.Info("Name: '%s'", x.Name)
+		me.log.Info("SaveFx: '%v'", x.SaveFx)
+		me.log.Info("Type: '%v'", x.Type)
 
 		me.log.Info("Formatting cmd.Location...")
 		cmd.Location, err = templater.String(cmd.Location, me.Variables)
@@ -692,7 +681,8 @@ func (me *Manager) Install(ctx context.Context) {
 
 			return
 		}
-		me.log.Info("Got: '%s'", cmd.Location)
+		x.Location = cmd.Location
+		me.log.Info("Got: '%s'", x.Location)
 
 		me.log.Info("Formatting cmd.Source...")
 		cmd.Source, err = templater.String(cmd.Source, me.Variables)
@@ -704,7 +694,8 @@ func (me *Manager) Install(ctx context.Context) {
 
 			return
 		}
-		me.log.Info("Got: '%s'", cmd.Source)
+		x.Source = cmd.Source
+		me.log.Info("Got: '%s'", x.Source)
 
 		me.log.Info("Formatting cmd.Target...")
 		cmd.Target, err = templater.String(cmd.Target, me.Variables)
@@ -716,14 +707,27 @@ func (me *Manager) Install(ctx context.Context) {
 
 			return
 		}
-		me.log.Info("Got: '%s'", cmd.Target)
+		x.Target = cmd.Target
+		me.log.Info("Got: '%s'", x.Target)
 
-		me.log.Info("Running cmd...")
+		me.log.Info("Processing cmd.Save...")
 		if cmd.Save == "" {
 			cmd.Save = libmonteur.COMMAND_SAVE_NONE
 		}
+		me.log.Info("Got: '%s'", x.Save)
 
-		err = cmd.Run()
+		me.log.Info("Initialize cmd...")
+		err = x.Init()
+		if err != nil {
+			me.reportError("%s: %s",
+				libmonteur.ERROR_COMMAND_BAD,
+				err,
+			)
+		}
+		me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
+
+		me.log.Info("Running cmd...")
+		err = x.Run()
 		if err != nil {
 			me.reportError("%s: (Step %d) %s",
 				libmonteur.ERROR_COMMAND_FAILED,

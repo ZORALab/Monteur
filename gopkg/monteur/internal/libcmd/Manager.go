@@ -36,7 +36,7 @@ type Manager struct {
 	Variables  map[string]interface{}
 
 	dependencies []*commander.Dependency
-	cmd          []*commander.Action
+	cmd          []*libmonteur.TOMLAction
 
 	reportUp chan conductor.Message
 
@@ -49,7 +49,7 @@ func (me *Manager) Parse(path string) (err error) {
 	// initialize all important variables
 	me.Metadata = &libmonteur.TOMLMetadata{}
 	me.dependencies = []*commander.Dependency{}
-	me.cmd = []*commander.Action{}
+	me.cmd = []*libmonteur.TOMLAction{}
 
 	me.thisSystem, ok = me.Variables[libmonteur.VAR_COMPUTE].(string)
 	if !ok {
@@ -57,8 +57,8 @@ func (me *Manager) Parse(path string) (err error) {
 	}
 
 	dep := []*libmonteur.TOMLDependency{}
-	cmd := []*libmonteur.TOMLAction{}
 	fmtVar := map[string]interface{}{}
+	cmd := []*libmonteur.TOMLAction{}
 
 	// construct TOML file data structure
 	s := struct {
@@ -70,9 +70,9 @@ func (me *Manager) Parse(path string) (err error) {
 	}{
 		Metadata:     me.Metadata,
 		Variables:    me.Variables,
-		FMTVariables: &fmtVar,
 		Dependencies: &dep,
 		CMD:          &cmd,
+		FMTVariables: &fmtVar,
 	}
 
 	// decode
@@ -162,29 +162,12 @@ func (me *Manager) sanitizeCMD(in []*libmonteur.TOMLAction) (err error) {
 			continue
 		}
 
-		a := &commander.Action{
-			Name:     cmd.Name,
-			Type:     cmd.Type,
-			Location: cmd.Location,
-			Source:   cmd.Source,
-			Target:   cmd.Target,
-			Save:     cmd.Save,
-			SaveFx:   me._saveFx,
-		}
-
-		me.cmd = append(me.cmd, a)
-	}
-
-	// sanitize each of them
-	for i, order := range me.cmd {
-		err = order.Init()
+		err = cmd.Sanitize()
 		if err != nil {
-			return fmt.Errorf("%s (CMD %d) %s",
-				libmonteur.ERROR_COMMAND_BAD,
-				i+1,
-				err,
-			)
+			return err //nolint:wrapcheck
 		}
+
+		me.cmd = append(me.cmd, cmd)
 	}
 
 	return nil
@@ -338,11 +321,17 @@ func (me *Manager) Run(ctx context.Context, ch chan conductor.Message) {
 	me.log.Success(libmonteur.LOG_SUCCESS)
 
 	for i, order := range me.cmd {
+		x := &commander.Action{
+			Name:   order.Name,
+			Save:   order.Save,
+			SaveFx: me._saveFx,
+			Type:   order.Type,
+		}
+
 		me.log.Info("Executing Command...")
-		me.log.Info("Name: '%s'", order.Name)
-		me.log.Info("Save: '%s'", order.Save)
-		me.log.Info("SaveFx: '%v'", order.SaveFx)
-		me.log.Info("Type: '%v'", order.Type)
+		me.log.Info("Name: '%s'", x.Name)
+		me.log.Info("SaveFx: '%v'", x.SaveFx)
+		me.log.Info("Type: '%v'", x.Type)
 
 		me.log.Info("Formatting cmd.Location...")
 		order.Location, err = templater.String(order.Location,
@@ -356,7 +345,8 @@ func (me *Manager) Run(ctx context.Context, ch chan conductor.Message) {
 
 			return
 		}
-		me.log.Info("Got: '%s'", order.Location)
+		x.Location = order.Location
+		me.log.Info("Got: '%s'", x.Location)
 
 		me.log.Info("Formatting cmd.Source...")
 		order.Source, err = templater.String(order.Source,
@@ -369,7 +359,8 @@ func (me *Manager) Run(ctx context.Context, ch chan conductor.Message) {
 
 			return
 		}
-		me.log.Info("Got: '%s'", order.Source)
+		x.Source = order.Source
+		me.log.Info("Got: '%s'", x.Source)
 
 		me.log.Info("Formatting cmd.Target...")
 		order.Target, err = templater.String(order.Target, me.Variables)
@@ -381,14 +372,28 @@ func (me *Manager) Run(ctx context.Context, ch chan conductor.Message) {
 
 			return
 		}
-		me.log.Info("Got: '%s'", order.Target)
+		x.Target = order.Target
+		me.log.Info("Got: '%s'", x.Target)
+
+		me.log.Info("Processing cmd.Save...")
+		if x.Save == "" {
+			x.Save = libmonteur.COMMAND_SAVE_NONE
+		}
+		me.log.Info("Got: '%s'", x.Save)
+
+		me.log.Info("Initialize cmd...")
+		err = x.Init()
+		if err != nil {
+			me.reportError("%s: %s",
+				libmonteur.ERROR_COMMAND_BAD,
+				err,
+			)
+		}
+		me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
 
 		me.log.Info("Running cmd...")
-		if order.Save == "" {
-			order.Save = libmonteur.COMMAND_SAVE_NONE
-		}
 
-		err = order.Run()
+		err = x.Run()
 		if err != nil {
 			me.reportError("%s: (Step %d) %s",
 				libmonteur.ERROR_COMMAND_FAILED,
