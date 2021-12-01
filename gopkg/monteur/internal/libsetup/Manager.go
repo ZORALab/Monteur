@@ -736,7 +736,7 @@ func (me *Manager) Install(ctx context.Context) {
 	}
 }
 
-func (me *Manager) _saveFx(key string, output interface{}) (err error) {
+func (me *Manager) _saveFx(key string, output interface{}) {
 	switch v := output.(type) {
 	case *commander.ExecOutput:
 		me.log.Info("Reading STDERR...")
@@ -775,7 +775,6 @@ func (me *Manager) _saveFx(key string, output interface{}) (err error) {
 	}
 
 	me.log.Info(libmonteur.LOG_SUCCESS)
-	return nil
 }
 
 func (me *Manager) PostConfigure(ctx context.Context) {

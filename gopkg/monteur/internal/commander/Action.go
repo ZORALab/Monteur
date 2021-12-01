@@ -50,7 +50,7 @@ type Action struct {
 	// SaveFx is the function to operate value storing for `Save` key.
 	//
 	// This function **MUST** be set if `Save` is set.
-	SaveFx func(key string, output interface{}) (err error)
+	SaveFx func(key string, output interface{})
 
 	actionFx func(action *Action) (output interface{}, err error)
 
@@ -200,7 +200,7 @@ func (action *Action) Run() (err error) {
 	}
 
 	if action.Save != "" {
-		_ = action.SaveFx(action.Save, output)
+		action.SaveFx(action.Save, output)
 	}
 
 	switch {

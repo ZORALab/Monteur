@@ -268,7 +268,7 @@ func (me *Manager) sanitizeMetadata(path string) (err error) {
 	return nil
 }
 
-func (me *Manager) _saveFx(key string, output interface{}) (err error) {
+func (me *Manager) _saveFx(key string, output interface{}) {
 	switch v := output.(type) {
 	case *commander.ExecOutput:
 		me.log.Info("Reading STDERR...")
@@ -307,7 +307,7 @@ func (me *Manager) _saveFx(key string, output interface{}) (err error) {
 	}
 
 	me.log.Info(libmonteur.LOG_SUCCESS)
-	return nil
+	return
 }
 
 // Name is for generating the program Metadata.Name when used as in interface.
