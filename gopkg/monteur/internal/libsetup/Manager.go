@@ -660,15 +660,17 @@ func (me *Manager) Install(ctx context.Context) {
 
 	for i, cmd := range me.setup {
 		x := &commander.Action{
-			Name:   cmd.Name,
-			Save:   cmd.Save,
-			SaveFx: me._saveFx,
-			Type:   cmd.Type,
+			Name:    cmd.Name,
+			Save:    cmd.Save,
+			SaveFx:  me._saveFx,
+			SaveVar: cmd,
+			Type:    cmd.Type,
 		}
 
 		me.log.Info("Executing Setup Commands...")
 		me.log.Info("Name: '%s'", x.Name)
 		me.log.Info("SaveFx: '%v'", x.SaveFx)
+		me.log.Info("SaveVar: '%v'", x.SaveVar)
 		me.log.Info("Type: '%v'", x.Type)
 
 		me.log.Info("Formatting cmd.Location...")
@@ -740,7 +742,18 @@ func (me *Manager) Install(ctx context.Context) {
 	}
 }
 
-func (me *Manager) _saveFx(key string, output interface{}) {
+func (me *Manager) _saveFx(key string, variable, output interface{}) {
+	cmd, ok := variable.(*libmonteur.TOMLAction)
+	if !ok {
+		me.reportError("%s: %s",
+			libmonteur.ERROR_COMMAND_FAILED,
+			"failed to recover Command's TOML data on SaveFx",
+		)
+
+		return
+	}
+
+	// process commander output
 	switch v := output.(type) {
 	case *commander.ExecOutput:
 		me.log.Info("Reading STDERR...")
@@ -748,22 +761,62 @@ func (me *Manager) _saveFx(key string, output interface{}) {
 		me.log.Info("Reading STDOUT...")
 		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stdout))
 
-		if key != libmonteur.COMMAND_SAVE_NONE {
-			val := strings.TrimRight(string(v.Stdout), "\r\n")
-			me.Variables[key] = val
-			me.log.Info("Saving '%v' to '%s'...", output, key)
+		if key == libmonteur.COMMAND_SAVE_NONE {
+			return
 		}
+
+		val := ""
+		if cmd.SaveStderr {
+			val = cmd.ParseExec(string(v.Stderr))
+			me.log.Info("Requested to save STDERR instead...")
+		} else {
+			val = cmd.ParseExec(string(v.Stdout))
+		}
+
+		me.Variables[key] = val
+		me.log.Info("Saving '%v' to '%s'...", val, key)
 	case commander.ExecOutput:
 		me.log.Info("Reading STDERR...")
 		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stderr))
 		me.log.Info("Reading STDOUT...")
 		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stdout))
 
-		if key != libmonteur.COMMAND_SAVE_NONE {
-			val := strings.TrimRight(string(v.Stdout), "\r\n")
-			me.Variables[key] = val
-			me.log.Info("Saving '%v' to '%s'...", output, key)
+		if key == libmonteur.COMMAND_SAVE_NONE {
+			return
 		}
+
+		val := ""
+		if cmd.SaveStderr {
+			val = cmd.ParseExec(string(v.Stderr))
+			me.log.Info("Requested to save STDERR instead...")
+		} else {
+			val = cmd.ParseExec(string(v.Stdout))
+		}
+
+		me.Variables[key] = val
+		me.log.Info("Saving '%v' to '%s'...", val, key)
+	case string:
+		me.log.Info("Reading output...")
+		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, v)
+
+		if key == libmonteur.COMMAND_SAVE_NONE {
+			return
+		}
+
+		v = cmd.ParseExec(v)
+		me.Variables[key] = v
+		me.log.Info("Saving '%v' to '%s'...", v, key)
+	case *string:
+		me.log.Info("Reading output...")
+		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, *v)
+
+		if key == libmonteur.COMMAND_SAVE_NONE {
+			return
+		}
+
+		*v = cmd.ParseExec(*v)
+		me.Variables[key] = *v
+		me.log.Info("Saving '%v' to '%s'...", *v, key)
 	default:
 		me.log.Info("Reading output...")
 		if v == nil {
@@ -772,10 +825,12 @@ func (me *Manager) _saveFx(key string, output interface{}) {
 			me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, output)
 		}
 
-		if key != libmonteur.COMMAND_SAVE_NONE {
-			me.Variables[key] = output
-			me.log.Info("Saving '%v' to '%s'...", output, key)
+		if key == libmonteur.COMMAND_SAVE_NONE {
+			return
 		}
+
+		me.Variables[key] = output
+		me.log.Info("Saving '%v' to '%s'...", output, key)
 	}
 
 	me.log.Info(libmonteur.LOG_SUCCESS)

@@ -17,6 +17,8 @@ package libmonteur
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
 )
@@ -46,13 +48,15 @@ type TOMLDependency struct {
 }
 
 type TOMLAction struct {
-	Name      string
-	Location  string
-	Source    string
-	Target    string
-	Save      string
-	Condition []string
-	Type      commander.ActionID
+	Name       string
+	Location   string
+	Source     string
+	Target     string
+	Save       string
+	SaveRegex  string
+	Condition  []string
+	Type       commander.ActionID
+	SaveStderr bool
 }
 
 func (base *TOMLAction) Sanitize() (err error) {
@@ -78,6 +82,17 @@ func (base *TOMLAction) Sanitize() (err error) {
 	}
 
 	return nil
+}
+
+func (base *TOMLAction) ParseExec(in string) (out string) {
+	out = strings.TrimRight(in, "\r\n")
+
+	if base.SaveRegex != "" {
+		r, _ := regexp.Compile(base.SaveRegex)
+		out = r.FindString(out)
+	}
+
+	return out
 }
 
 type TOMLChecksum struct {

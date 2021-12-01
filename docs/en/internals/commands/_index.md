@@ -85,6 +85,8 @@ Location = '{{- .WorkingDir -}}'
 Source = 'git rev-list --max-parents=0 --abbrev-commit HEAD'
 Target = ''
 Save = 'FirstCommitID'
+SaveRegex = '(\w*)'
+SaveStderr = true
 ```
 
 The Commands Execution Unit definition is declared by the CI Job. Example, in
@@ -128,9 +130,18 @@ documentation.
      "url-only" />}}) is available for this field.
 * `Save`
   1. Optional.
-  2. The `Key` value for saving the output (e.g. Stdout) of the executed
+  2. The `Key` value for saving the output (e.g. `STDOUT`) of the executed
      commands into the [Variables]({{< link "/internals/variables-processing/"
      "this" "url-only" />}}) list for later use.
+* `SaveRegex`
+  1. Optional.
+  2. A regular expression filter to process the data prior saving.
+  3. Only works if `Save` is enabled (Not empty) and itself is not empty.
+* `SaveStderr`
+  1. Optional.
+  2. Instruct Monteur to save `STDERR` instead of the default `STDOUT` data.
+  3. Only works if `Save` is enabled (Not empty) and itself is set to `true`
+     (boolean).
 
 
 
