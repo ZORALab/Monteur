@@ -1,0 +1,36 @@
+[Control]
+Compat = 9
+Standards = '3.9.8'
+Section = 'devel'
+Priority = 'optional'
+
+[Control.Depends]
+Build = [
+	'debhelper (>=9)',
+]
+Dependencies = [
+	'${misc:Depends}'.
+]
+
+[Source]
+Format = '3.0 (native)'
+
+[Copyrights]
+Format = 'http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/'
+
+[Executions]
+Rules = """
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	echo "nothing to override"
+"""
+Install = [
+	"monteur usr/share/monteur/bin",
+]

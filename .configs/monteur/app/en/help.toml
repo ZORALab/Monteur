@@ -1,0 +1,29 @@
+[Command]
+CMD = '$ {{ .App.Metadata.Command -}} help'
+
+[Manpage]
+Lv1 = """
+.\" Lv1 - Manpage for {{ .App.Metadata.Name -}}
+.\" Contact hello@zoralab.com for errors or typos.
+.TH man 1 "01 Jan 2022" "1.1" "{{- .App.Metadata.ID }} man page"
+
+.SH NAME
+{{ .App.Metadata.Name }} \- {{ .App.Summary }}
+
+.SH SYNOPSIS
+{{ .App.Help.Command.CMD }}
+
+.SH DESCRIPTION
+{{ .App.Metadata.Description -}}
+
+.SH OPTIONS
+{{ .App.Help.Description }}
+
+.SH SEE ALSO
+{{ .App.Help.Resources }}
+
+.SH AUTHORS
+{{ range $index, $owner := .App.Copyrights.Owners -}}
+	{{- $owner.Name }} ({{- $owner.Email -}})
+{{ end -}}
+"""
