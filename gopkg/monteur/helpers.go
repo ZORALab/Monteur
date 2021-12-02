@@ -167,8 +167,12 @@ func _initCMDSettings(x **libcmd.Run,
 }
 
 func _reportError(l *liblog.Logger, tag string, err error) int {
-	l.Error("%s %s\n", tag, err)
-	l.Sync()
-	l.Close()
+	if l != nil {
+		l.Error("%s %s\n", tag, err)
+		l.Sync()
+		l.Close()
+	} else {
+		fmt.Fprintf(os.Stderr, "%s %s\n", tag, err)
+	}
 	return STATUS_ERROR
 }
