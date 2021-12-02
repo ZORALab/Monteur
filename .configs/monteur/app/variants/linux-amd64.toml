@@ -1,0 +1,46 @@
+[Metadata]
+Name = 'linux-amd64'
+Description = """
+Monteur for Linux OS with AMD64 CPU Architecture.
+"""
+
+[Variables]
+PlatformOS = 'linux'
+PlatformCPU = 'amd64'
+PlatformName = 'linux-amd64'
+PlatformExt = ''
+
+[FMTVariables]
+SrcPath = '{{- .BaseDir -}}/app/monteur/main.go'
+BuildPath = '{{- .WorkingDir -}}/{{- .PlatformName -}}{{- .PlatformExt -}}'
+
+
+
+
+# Build API Specific
+[[BuildDeps]]
+Name = 'Go'
+Condition = 'all-all'
+Type = 'command'
+Command = 'go'
+
+
+
+
+[[BuildCMD]]
+Name = "Create Build Directory to House the Compiled Binary"
+Type = 'create-path'
+Condition = [ 'all-all' ]
+Source = '{{- .WorkingDir -}}'
+
+[[BuildCMD]]
+Name = "Build the Go Binary"
+Type = 'command'
+Condition = [ 'all-all' ]
+Location = '{{- .BaseDir -}}'
+Source = """GOOS={{- .PlatformOS -}} \
+GOARCH={{- .PlatformCPU -}} \
+go build -ldflags "-s -w" \
+-o "{{- .BuildPath -}}" \
+"{{- .SrcPath -}}"
+"""
