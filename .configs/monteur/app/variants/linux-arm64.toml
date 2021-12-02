@@ -7,12 +7,13 @@ Monteur for Linux OS with ARM64 CPU Architecture.
 [Variables]
 PlatformOS = 'linux'
 PlatformCPU = 'arm64'
-PlatformName = 'linux-arm64'
 PlatformExt = ''
 
 [FMTVariables]
 SrcPath = '{{- .BaseDir -}}/app/monteur/main.go'
-BuildPath = '{{- .WorkingDir -}}/{{- .PlatformName -}}{{- .PlatformExt -}}'
+BuildPath = """
+{{- .WorkingDir -}}/{{- .PlatformOS -}}-{{- .PlatformCPU -}}{{- .PlatformExt -}}
+"""
 
 
 

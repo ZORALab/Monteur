@@ -7,12 +7,13 @@ Monteur for Linux OS with AMD64 CPU Architecture.
 [Variables]
 PlatformOS = 'linux'
 PlatformCPU = 'amd64'
-PlatformName = 'linux-amd64'
 PlatformExt = ''
 
 [FMTVariables]
 SrcPath = '{{- .BaseDir -}}/app/monteur/main.go'
-BuildPath = '{{- .WorkingDir -}}/{{- .PlatformName -}}{{- .PlatformExt -}}'
+BuildPath = """
+{{- .WorkingDir -}}/{{- .PlatformOS -}}-{{- .PlatformCPU -}}{{- .PlatformExt -}}
+"""
 
 
 
