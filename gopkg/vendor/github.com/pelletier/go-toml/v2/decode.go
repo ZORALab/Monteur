@@ -35,13 +35,22 @@ func parseLocalDate(b []byte) (LocalDate, error) {
 		return date, newDecodeError(b, "dates are expected to have the format YYYY-MM-DD")
 	}
 
-	date.Year = parseDecimalDigits(b[0:4])
+	var err error
 
-	v := parseDecimalDigits(b[5:7])
+	date.Year, err = parseDecimalDigits(b[0:4])
+	if err != nil {
+		return LocalDate{}, err
+	}
 
-	date.Month = v
+	date.Month, err = parseDecimalDigits(b[5:7])
+	if err != nil {
+		return LocalDate{}, err
+	}
 
-	date.Day = parseDecimalDigits(b[8:10])
+	date.Day, err = parseDecimalDigits(b[8:10])
+	if err != nil {
+		return LocalDate{}, err
+	}
 
 	if !isValidDate(date.Year, date.Month, date.Day) {
 		return LocalDate{}, newDecodeError(b, "impossible date")
@@ -50,15 +59,18 @@ func parseLocalDate(b []byte) (LocalDate, error) {
 	return date, nil
 }
 
-func parseDecimalDigits(b []byte) int {
+func parseDecimalDigits(b []byte) (int, error) {
 	v := 0
 
-	for _, c := range b {
+	for i, c := range b {
+		if c < '0' || c > '9' {
+			return 0, newDecodeError(b[i:i+1], "expected digit (0-9)")
+		}
 		v *= 10
 		v += int(c - '0')
 	}
 
-	return v
+	return v, nil
 }
 
 func parseDateTime(b []byte) (time.Time, error) {
@@ -87,9 +99,18 @@ func parseDateTime(b []byte) (time.Time, error) {
 		if len(b) != dateTimeByteLen {
 			return time.Time{}, newDecodeError(b, "invalid date-time timezone")
 		}
-		direction := 1
-		if b[0] == '-' {
+		var direction int
+		switch b[0] {
+		case '-':
 			direction = -1
+		case '+':
+			direction = +1
+		default:
+			return time.Time{}, newDecodeError(b[:1], "invalid timezone offset character")
+		}
+
+		if b[3] != ':' {
+			return time.Time{}, newDecodeError(b[3:4], "expected a : separator")
 		}
 
 		hours := digitsToInt(b[1:3])
@@ -159,7 +180,13 @@ func parseLocalTime(b []byte) (LocalTime, []byte, error) {
 		return t, nil, newDecodeError(b, "times are expected to have the format HH:MM:SS[.NNNNNN]")
 	}
 
-	t.Hour = parseDecimalDigits(b[0:2])
+	var err error
+
+	t.Hour, err = parseDecimalDigits(b[0:2])
+	if err != nil {
+		return t, nil, err
+	}
+
 	if t.Hour > 23 {
 		return t, nil, newDecodeError(b[0:2], "hour cannot be greater 23")
 	}
@@ -167,7 +194,10 @@ func parseLocalTime(b []byte) (LocalTime, []byte, error) {
 		return t, nil, newDecodeError(b[2:3], "expecting colon between hours and minutes")
 	}
 
-	t.Minute = parseDecimalDigits(b[3:5])
+	t.Minute, err = parseDecimalDigits(b[3:5])
+	if err != nil {
+		return t, nil, err
+	}
 	if t.Minute > 59 {
 		return t, nil, newDecodeError(b[3:5], "minutes cannot be greater 59")
 	}
@@ -175,28 +205,32 @@ func parseLocalTime(b []byte) (LocalTime, []byte, error) {
 		return t, nil, newDecodeError(b[5:6], "expecting colon between minutes and seconds")
 	}
 
-	t.Second = parseDecimalDigits(b[6:8])
-	if t.Second > 59 {
-		return t, nil, newDecodeError(b[3:5], "seconds cannot be greater 59")
+	t.Second, err = parseDecimalDigits(b[6:8])
+	if err != nil {
+		return t, nil, err
 	}
 
-	const minLengthWithFrac = 9
-	if len(b) >= minLengthWithFrac && b[minLengthWithFrac-1] == '.' {
+	if t.Second > 59 {
+		return t, nil, newDecodeError(b[6:8], "seconds cannot be greater 59")
+	}
+
+	b = b[8:]
+
+	if len(b) >= 1 && b[0] == '.' {
 		frac := 0
 		digits := 0
 
-		for i, c := range b[minLengthWithFrac:] {
+		for i, c := range b[1:] {
 			if !isDigit(c) {
 				if i == 0 {
-					return t, nil, newDecodeError(b[i:i+1], "need at least one digit after fraction point")
+					return t, nil, newDecodeError(b[0:1], "need at least one digit after fraction point")
 				}
-
 				break
 			}
 
 			const maxFracPrecision = 9
 			if i >= maxFracPrecision {
-				return t, nil, newDecodeError(b[i:i+1], "maximum precision for date time is nanosecond")
+				return t, nil, newDecodeError(b[i-1:i], "maximum precision for date time is nanosecond")
 			}
 
 			frac *= 10
@@ -204,13 +238,16 @@ func parseLocalTime(b []byte) (LocalTime, []byte, error) {
 			digits++
 		}
 
+		if digits == 0 {
+			return t, nil, newDecodeError(b[:1], "nanoseconds need at least one digit")
+		}
+
 		t.Nanosecond = frac * nspow[digits]
 		t.Precision = digits
 
-		return t, b[9+digits:], nil
+		return t, b[1+digits:], nil
 	}
-
-	return t, b[8:], nil
+	return t, b, nil
 }
 
 //nolint:cyclop
@@ -405,6 +442,9 @@ func checkAndRemoveUnderscoresFloats(b []byte) ([]byte, error) {
 			if !before {
 				return nil, newDecodeError(b[i-1:i+1], "number must have at least one digit between underscores")
 			}
+			if i < len(b)-1 && (b[i+1] == 'e' || b[i+1] == 'E') {
+				return nil, newDecodeError(b[i+1:i+2], "cannot have underscore before exponent")
+			}
 			before = false
 		case 'e', 'E':
 			if i < len(b)-1 && b[i+1] == '_' {
@@ -430,7 +470,7 @@ func checkAndRemoveUnderscoresFloats(b []byte) ([]byte, error) {
 
 // isValidDate checks if a provided date is a date that exists.
 func isValidDate(year int, month int, day int) bool {
-	return day <= daysIn(month, year)
+	return month > 0 && month < 13 && day > 0 && day <= daysIn(month, year)
 }
 
 // daysBefore[m] counts the number of days in a non-leap year

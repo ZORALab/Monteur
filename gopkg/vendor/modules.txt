@@ -1,4 +1,4 @@
-# github.com/pelletier/go-toml/v2 v2.0.0-beta.4
+# github.com/pelletier/go-toml/v2 v2.0.0-beta.4.0.20211201025922-c862c344b302
 ## explicit; go 1.16
 github.com/pelletier/go-toml/v2
 github.com/pelletier/go-toml/v2/internal/ast

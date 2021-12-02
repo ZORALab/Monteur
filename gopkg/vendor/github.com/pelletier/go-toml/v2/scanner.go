@@ -53,7 +53,7 @@ func scanLiteralString(b []byte) ([]byte, []byte, error) {
 		switch b[i] {
 		case '\'':
 			return b[:i+1], b[i+1:], nil
-		case '\n':
+		case '\n', '\r':
 			return nil, nil, newDecodeError(b[i:i+1], "literal strings cannot have new lines")
 		}
 		size := utf8ValidNext(b[i:])
@@ -76,30 +76,42 @@ func scanMultilineLiteralString(b []byte) ([]byte, []byte, error) {
 	// mll-char = %x09 / %x20-26 / %x28-7E / non-ascii
 	// mll-quotes = 1*2apostrophe
 	for i := 3; i < len(b); {
-		if scanFollowsMultilineLiteralStringDelimiter(b[i:]) {
-			i += 3
+		switch b[i] {
+		case '\'':
+			if scanFollowsMultilineLiteralStringDelimiter(b[i:]) {
+				i += 3
 
-			// At that point we found 3 apostrophe, and i is the
-			// index of the byte after the third one. The scanner
-			// needs to be eager, because there can be an extra 2
-			// apostrophe that can be accepted at the end of the
-			// string.
+				// At that point we found 3 apostrophe, and i is the
+				// index of the byte after the third one. The scanner
+				// needs to be eager, because there can be an extra 2
+				// apostrophe that can be accepted at the end of the
+				// string.
 
-			if i >= len(b) || b[i] != '\'' {
+				if i >= len(b) || b[i] != '\'' {
+					return b[:i], b[i:], nil
+				}
+				i++
+
+				if i >= len(b) || b[i] != '\'' {
+					return b[:i], b[i:], nil
+				}
+				i++
+
+				if i < len(b) && b[i] == '\'' {
+					return nil, nil, newDecodeError(b[i-3:i+1], "''' not allowed in multiline literal string")
+				}
+
 				return b[:i], b[i:], nil
 			}
-			i++
-
-			if i >= len(b) || b[i] != '\'' {
-				return b[:i], b[i:], nil
+		case '\r':
+			if len(b) < i+2 {
+				return nil, nil, newDecodeError(b[len(b):], `need a \n after \r`)
 			}
-			i++
-
-			if i < len(b) && b[i] == '\'' {
-				return nil, nil, newDecodeError(b[i-3:i+1], "''' not allowed in multiline literal string")
+			if b[i+1] != '\n' {
+				return nil, nil, newDecodeError(b[i:i+2], `need a \n after \r`)
 			}
-
-			return b[:i], b[i:], nil
+			i += 2 // skip the \n
+			continue
 		}
 		size := utf8ValidNext(b[i:])
 		if size == 0 {
@@ -149,6 +161,12 @@ func scanComment(b []byte) ([]byte, []byte, error) {
 		if b[i] == '\n' {
 			return b[:i], b[i:], nil
 		}
+		if b[i] == '\r' {
+			if i+1 < len(b) && b[i+1] == '\n' {
+				return b[:i+1], b[i+1:], nil
+			}
+			return nil, nil, newDecodeError(b[i:i+1], "invalid character in comment")
+		}
 		size := utf8ValidNext(b[i:])
 		if size == 0 {
 			return nil, nil, newDecodeError(b[i:i+1], "invalid character in comment")
@@ -160,42 +178,26 @@ func scanComment(b []byte) ([]byte, []byte, error) {
 	return b, b[len(b):], nil
 }
 
-func scanBasicString(b []byte) ([]byte, int, []byte, error) {
+func scanBasicString(b []byte) ([]byte, bool, []byte, error) {
 	// basic-string = quotation-mark *basic-char quotation-mark
 	// quotation-mark = %x22            ; "
 	// basic-char = basic-unescaped / escaped
 	// basic-unescaped = wschar / %x21 / %x23-5B / %x5D-7E / non-ascii
 	// escaped = escape escape-seq-char
-	escaped := -1 // index of the first \. -1 means no escape character in there.
+	escaped := false
 	i := 1
 
-loop:
 	for ; i < len(b); i++ {
 		switch b[i] {
 		case '"':
 			return b[:i+1], escaped, b[i+1:], nil
-		case '\n':
+		case '\n', '\r':
 			return nil, escaped, nil, newDecodeError(b[i:i+1], "basic strings cannot have new lines")
 		case '\\':
 			if len(b) < i+2 {
 				return nil, escaped, nil, newDecodeError(b[i:i+1], "need a character after \\")
 			}
-			escaped = i
-			i += 2 // skip the next character
-			break loop
-		}
-	}
-
-	for ; i < len(b); i++ {
-		switch b[i] {
-		case '"':
-			return b[:i+1], escaped, b[i+1:], nil
-		case '\n':
-			return nil, escaped, nil, newDecodeError(b[i:i+1], "basic strings cannot have new lines")
-		case '\\':
-			if len(b) < i+2 {
-				return nil, escaped, nil, newDecodeError(b[i:i+1], "need a character after \\")
-			}
+			escaped = true
 			i++ // skip the next character
 		}
 	}
@@ -203,7 +205,7 @@ loop:
 	return nil, escaped, nil, newDecodeError(b[len(b):], `basic string not terminated by "`)
 }
 
-func scanMultilineBasicString(b []byte) ([]byte, int, []byte, error) {
+func scanMultilineBasicString(b []byte) ([]byte, bool, []byte, error) {
 	// ml-basic-string = ml-basic-string-delim [ newline ] ml-basic-body
 	// ml-basic-string-delim
 	// ml-basic-string-delim = 3quotation-mark
@@ -215,10 +217,9 @@ func scanMultilineBasicString(b []byte) ([]byte, int, []byte, error) {
 	// mlb-unescaped = wschar / %x21 / %x23-5B / %x5D-7E / non-ascii
 	// mlb-escaped-nl = escape ws newline *( wschar / newline )
 
-	escaped := -1
+	escaped := false
 	i := 3
 
-loop:
 	for ; i < len(b); i++ {
 		switch b[i] {
 		case '"':
@@ -251,23 +252,16 @@ loop:
 			if len(b) < i+2 {
 				return nil, escaped, nil, newDecodeError(b[len(b):], "need a character after \\")
 			}
-			escaped = i
-			i += 2 // skip the next character
-			break loop
-		}
-	}
-
-	for ; i < len(b); i++ {
-		switch b[i] {
-		case '"':
-			if scanFollowsMultilineBasicStringDelimiter(b[i:]) {
-				return b[:i+3], escaped, b[i+3:], nil
-			}
-		case '\\':
-			if len(b) < i+2 {
-				return nil, escaped, nil, newDecodeError(b[len(b):], "need a character after \\")
-			}
+			escaped = true
 			i++ // skip the next character
+		case '\r':
+			if len(b) < i+2 {
+				return nil, escaped, nil, newDecodeError(b[len(b):], `need a \n after \r`)
+			}
+			if b[i+1] != '\n' {
+				return nil, escaped, nil, newDecodeError(b[i:i+2], `need a \n after \r`)
+			}
+			i++ // skip the \n
 		}
 	}
 

@@ -15,6 +15,8 @@ github.com/googleapis/gax-go v0.0.0-20161107002406-da06d194a00e/go.mod h1:SFVmuj
 github.com/mattn/go-sqlite3 v0.0.0-20161215041557-2d44decb4941/go.mod h1:FPy6KqzDD04eiIsT53CuJW3U88zkxoIYsOqkbpncsNc=
 github.com/pelletier/go-toml/v2 v2.0.0-beta.4 h1:GCs8ebsDtEH3RiO78+BvhHqj65d/I6tjESitJZc07Rc=
 github.com/pelletier/go-toml/v2 v2.0.0-beta.4/go.mod h1:ke6xncR3W76Ba8xnVxkrZG0js6Rd2BsQEAYrfgJ6eQA=
+github.com/pelletier/go-toml/v2 v2.0.0-beta.4.0.20211201025922-c862c344b302 h1:q8Qn5A5AsrqZ57vu0jhLiPiNa1XCnYNXmuOAvbQCf4E=
+github.com/pelletier/go-toml/v2 v2.0.0-beta.4.0.20211201025922-c862c344b302/go.mod h1:ke6xncR3W76Ba8xnVxkrZG0js6Rd2BsQEAYrfgJ6eQA=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=

@@ -549,7 +549,7 @@ func (p *parser) parseMultilineBasicString(b []byte) ([]byte, []byte, []byte, er
 	startIdx := i
 	endIdx := len(token) - len(`"""`)
 
-	if escaped < 0 {
+	if !escaped {
 		str := token[startIdx:endIdx]
 		verr := utf8TomlValidAlreadyEscaped(str)
 		if verr.Zero() {
@@ -692,10 +692,6 @@ func (p *parser) parseSimpleKey(b []byte) (raw, key, rest []byte, err error) {
 	// simple-key = quoted-key / unquoted-key
 	// unquoted-key = 1*( ALPHA / DIGIT / %x2D / %x5F ) ; A-Z / a-z / 0-9 / - / _
 	// quoted-key = basic-string / literal-string
-	if len(b) == 0 {
-		return nil, nil, nil, newDecodeError(b, "key is incomplete")
-	}
-
 	switch {
 	case b[0] == '\'':
 		return p.parseLiteralString(b)
@@ -736,7 +732,7 @@ func (p *parser) parseBasicString(b []byte) ([]byte, []byte, []byte, error) {
 	// Fast path. If there is no escape sequence, the string should just be
 	// an UTF-8 encoded string, which is the same as Go. In that case,
 	// validate the string and return a direct reference to the buffer.
-	if escaped < 0 {
+	if !escaped {
 		str := token[startIdx:endIdx]
 		verr := utf8TomlValidAlreadyEscaped(str)
 		if verr.Zero() {
@@ -866,7 +862,6 @@ func (p *parser) parseIntOrFloatOrDateTime(b []byte) (ast.Reference, []byte, err
 		return p.scanIntOrFloat(b)
 	}
 
-	//nolint:gomnd
 	if len(b) < 3 {
 		return p.scanIntOrFloat(b)
 	}
@@ -884,6 +879,8 @@ func (p *parser) parseIntOrFloatOrDateTime(b []byte) (ast.Reference, []byte, err
 		if idx == 2 && c == ':' || (idx == 4 && c == '-') {
 			return p.scanDateTime(b)
 		}
+
+		break
 	}
 
 	return p.scanIntOrFloat(b)
@@ -970,7 +967,7 @@ byteLoop:
 func (p *parser) scanIntOrFloat(b []byte) (ast.Reference, []byte, error) {
 	i := 0
 
-	if len(b) > 2 && b[0] == '0' && b[1] != '.' && b[1] != 'e' {
+	if len(b) > 2 && b[0] == '0' && b[1] != '.' && b[1] != 'e' && b[1] != 'E' {
 		var isValidRune validRuneFn
 
 		switch b[1] {

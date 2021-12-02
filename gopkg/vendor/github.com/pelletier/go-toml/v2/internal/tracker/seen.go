@@ -65,7 +65,7 @@ type entry struct {
 	explicit bool
 }
 
-// Remove all descendent of node at position idx.
+// Remove all descendants of node at position idx.
 func (s *SeenTracker) clear(idx int) {
 	p := s.entries[idx].id
 	rest := clear(p, s.entries[idx+1:])
@@ -102,19 +102,21 @@ func (s *SeenTracker) create(parentIdx int, name []byte, kind keyKind, explicit 
 	return idx
 }
 
-// CheckExpression takes a top-level node and checks that it does not contain keys
-// that have been seen in previous calls, and validates that types are consistent.
+// CheckExpression takes a top-level node and checks that it does not contain
+// keys that have been seen in previous calls, and validates that types are
+// consistent.
 func (s *SeenTracker) CheckExpression(node *ast.Node) error {
 	if s.entries == nil {
-		// Skip ID = 0 to remove the confusion between nodes whose parent has
-		// id 0 and root nodes (parent id is 0 because it's the zero value).
+		// Skip ID = 0 to remove the confusion between nodes whose
+		// parent has id 0 and root nodes (parent id is 0 because it's
+		// the zero value).
 		s.nextID = 1
 		// Start unscoped, so idx is negative.
 		s.currentIdx = -1
 	}
 	switch node.Kind {
 	case ast.KeyValue:
-		return s.checkKeyValue(node)
+		return s.checkKeyValue(s.currentIdx, node)
 	case ast.Table:
 		return s.checkTable(node)
 	case ast.ArrayTable:
@@ -206,36 +208,79 @@ func (s *SeenTracker) checkArrayTable(node *ast.Node) error {
 	return nil
 }
 
-func (s *SeenTracker) checkKeyValue(node *ast.Node) error {
+func (s *SeenTracker) checkKeyValue(parentIdx int, node *ast.Node) error {
 	it := node.Key()
-
-	parentIdx := s.currentIdx
 
 	for it.Next() {
 		k := it.Node().Data
 
 		idx := s.find(parentIdx, k)
 
-		if idx >= 0 {
-			if s.entries[idx].kind != tableKind {
-				return fmt.Errorf("toml: expected %s to be a table, not a %s", string(k), s.entries[idx].kind)
-			}
-			if s.entries[idx].explicit {
+		if idx < 0 {
+			idx = s.create(parentIdx, k, tableKind, false)
+		} else {
+			entry := s.entries[idx]
+			if it.IsLast() {
+				return fmt.Errorf("toml: key %s is already defined", string(k))
+			} else if entry.kind != tableKind {
+				return fmt.Errorf("toml: expected %s to be a table, not a %s", string(k), entry.kind)
+			} else if entry.explicit {
 				return fmt.Errorf("toml: cannot redefine table %s that has already been explicitly defined", string(k))
 			}
-		} else {
-			idx = s.create(parentIdx, k, tableKind, false)
 		}
+
 		parentIdx = idx
 	}
 
-	kind := valueKind
+	s.entries[parentIdx].kind = valueKind
 
-	if node.Value().Kind == ast.InlineTable {
-		kind = tableKind
+	value := node.Value()
+
+	switch value.Kind {
+	case ast.InlineTable:
+		return s.checkInlineTable(parentIdx, value)
+	case ast.Array:
+		return s.checkArray(parentIdx, value)
 	}
-	s.entries[parentIdx].kind = kind
 
+	return nil
+}
+
+func (s *SeenTracker) checkArray(parentIdx int, node *ast.Node) error {
+	set := false
+	it := node.Children()
+	for it.Next() {
+		if set {
+			s.clear(parentIdx)
+		}
+		n := it.Node()
+		switch n.Kind {
+		case ast.InlineTable:
+			err := s.checkInlineTable(parentIdx, n)
+			if err != nil {
+				return err
+			}
+			set = true
+		case ast.Array:
+			err := s.checkArray(parentIdx, n)
+			if err != nil {
+				return err
+			}
+			set = true
+		}
+	}
+	return nil
+}
+
+func (s *SeenTracker) checkInlineTable(parentIdx int, node *ast.Node) error {
+	it := node.Children()
+	for it.Next() {
+		n := it.Node()
+		err := s.checkKeyValue(parentIdx, n)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
