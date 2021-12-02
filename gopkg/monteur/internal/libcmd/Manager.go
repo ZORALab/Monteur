@@ -344,7 +344,7 @@ func (me *Manager) __save(key string, v interface{}) {
 	me.Variables[key] = v
 
 completed:
-	me.log.Info(libmonteur.LOG_SUCCESS)
+	me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
 }
 
 func (me *Manager) __saveString(key string,
@@ -363,7 +363,7 @@ func (me *Manager) __saveString(key string,
 	me.Variables[key] = v
 
 completed:
-	me.log.Info(libmonteur.LOG_SUCCESS)
+	me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
 }
 
 func (me *Manager) __saveExecOutput(key string,
@@ -393,7 +393,7 @@ func (me *Manager) __saveExecOutput(key string,
 	me.Variables[key] = val
 
 completed:
-	me.log.Info(libmonteur.LOG_SUCCESS)
+	me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
 }
 
 // Name is for generating the program Metadata.Name when used as in interface.
@@ -421,9 +421,10 @@ func (me *Manager) Run(ctx context.Context, ch chan conductor.Message) {
 	var err error
 
 	me.reportUp = ch
-	me.log.Success(libmonteur.LOG_SUCCESS)
+	me.log.Info("Run Task Now: " + libmonteur.LOG_SUCCESS + "\n")
 
 	for i, order := range me.cmd {
+		me.log.Info("Executing Command...")
 		x := me.createCMD(order)
 
 		err = me.processCMDLocation(order, x)
@@ -462,6 +463,8 @@ func (me *Manager) Run(ctx context.Context, ch chan conductor.Message) {
 		if err != nil {
 			return
 		}
+
+		me.log.Info("Execute Command ➤ DONE\n\n")
 	}
 
 	me.reportDone()
@@ -627,8 +630,6 @@ func (me *Manager) processCMDLocation(order *libmonteur.TOMLAction,
 }
 
 func (me *Manager) createCMD(cmd *libmonteur.TOMLAction) (x *commander.Action) {
-	me.log.Info("Executing Command...")
-
 	x = &commander.Action{
 		Name: cmd.Name,
 		Type: cmd.Type,
