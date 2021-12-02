@@ -61,7 +61,7 @@ alternateText = "Monteur Compose CI Job"
 parent = "CI Jobs"
 name = "Compose"
 pre = "📝"
-weight = 9
+weight = 10
 identifier = "ci-jobs-compose"
 
 
@@ -128,7 +128,7 @@ into `[Variables]` table depending on its `Key-Value` existence.
 ## Composers' Configurations
 Monteur accepts one composer configuration file per publishing channel (e.g.
 one `hugo.toml` for `Hugo`). However, the internal operations
-allow many programs to be setup simultenously and asynchonously (e.g.
+allow many programs to compose simultenously and asynchonously (e.g.
 `hugo.toml`, `doxygen.toml`, `jekyll.toml`, ...). Each composer
 configuration file shares the same file structure.
 
@@ -210,7 +210,7 @@ variables list.
 
 #### `[[Dependencies]]`
 The `[Dependencies]` is an array of program data for checking all required
-programs only for this `Publish` task. Therefore, it has extra square braces
+programs only for this `Compose` task. Therefore, it has extra square braces
 when defining its data.
 
 **DO NOT CONFUSE `[Dependencies]` with your product's dependencies**. This

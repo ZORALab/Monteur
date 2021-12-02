@@ -127,7 +127,7 @@ into `[Variables]` table depending on its `Key-Value` existence.
 ## Tests' Configurations
 Monteur accepts one test configuration file per test suite (e.g.
 one `go-test.toml` for `Go Test with Consolidated Coverage`). However, the
-internal operations allow many programs to be setup simultenously and
+internal operations allow many test suites to be running simultenously and
 asynchonously (e.g. `go-performance.toml`, `go-smoke.toml`, `go-crash.toml`,
 ...). Each tester configuration file shares the same file structure.
 
@@ -178,7 +178,7 @@ purposes. You can write a short description for it.
 #### `[Variables]`
 This table houses all [Plain Variables Definition]({{< link
 "/internals/variables-processing/#plain-variables-definition" "this"
-"url-only" />}}) **specific to this composer**. Example:
+"url-only" />}}) **specific to this test suite**. Example:
 
 ```toml {linenos=table,hl_lines=[],linenostart=1}
 [Variables]
@@ -192,7 +192,7 @@ list.
 #### `[FMTVariables]`
 This table houses all [Formattable Variables Definition]({{< link
 "/internals/variables-processing/#formattable-variables-definition" "this"
-"url-only" />}}) (e.g. `{{- .Version -}}`) **specific to this composer**.
+"url-only" />}}) (e.g. `{{- .Version -}}`) **specific to this test suite**.
 Example:
 
 ```toml {linenos=table,hl_lines=[],linenostart=1}
@@ -249,8 +249,8 @@ Currently, Monteur supports the following `Type` values:
 
 
 #### `[[CMD]]`
-`[CMD]` is basically an array of instructions for publishing the repository's
-documentations to the publisher. Hence, this is why it has extra square braces.
+`[CMD]` is basically an array of instructions for executing the testing steps
+for the test suite. Hence, this is why it has extra square braces.
 
 Its values are complying to Monteur's [Commands Execution Units]({{< link
 "/internals/commands/" "this" "url-only" />}}). Here is an example:

@@ -127,7 +127,7 @@ into `[Variables]` table depending on its `Key-Value` existence.
 ## Publishers' Configurations
 Monteur accepts one publisher configuration file per publishing channel (e.g.
 one `gitlab-pages.toml` for `GitLab Pages`). However, the internal operations
-allow many programs to be setup simultenously and asynchonously (e.g.
+allow many programs to publish simultenously and asynchonously (e.g.
 `nginx.toml`, `gitlab-pages.toml`, `github-pages.toml`, ...). Each publishers
 configuration file shares the same file structure.
 
