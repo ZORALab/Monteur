@@ -183,12 +183,16 @@ func (w *Workspace) String() string {
 }
 
 func (w *Workspace) _stringCIBasic() string {
-	return fmt.Sprintf(`VERSION
+	return fmt.Sprintf(`JOB
+%s
+
+VERSION
 %s
 
 LANGUAGE
 %s (%s)
 `,
+		w.Job,
 		w.Version,
 		w.Language.Name, w.Language.AlternateName,
 	)
