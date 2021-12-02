@@ -30,6 +30,9 @@ type Language struct {
 	// language without depending on another language translations.
 	Name string
 
-	// AlternateName houses the language code like `en` and `en-us`.
+	// AlternateName is ISO-639-1 (optionally +ISO 31661-1 Alpha 2) code.
+	//
+	// These codes are something like `en`, `en-us`, `en-gb`, `en-ca`, and
+	// so on.
 	AlternateName string
 }

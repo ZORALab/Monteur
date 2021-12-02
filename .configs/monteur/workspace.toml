@@ -1,16 +1,17 @@
 [Filesystem]
-BaseDir = "gopkg/"
-WorkingDir = ".monteurFS/tmp/"
-BuildDir = ".monteurFS/build/"
-ScriptDir = ".scripts/"
-BinDir = ".monteurFS/bin/"
-BinCfgDir = ".monteurFS/config"
-LogDir = ".monteurFS/log"
+BaseDir = 'gopkg/'
+WorkingDir = '.monteurFS/tmp/'
+BuildDir = '.monteurFS/build/'
+ScriptDir = '.scripts/'
+BinDir = '.monteurFS/bin/'
+BinCfgDir = '.monteurFS/config'
+LogDir = '.monteurFS/log'
+DataDir = '{{- .RootDir -}}/.configs/monteur/data'
 SecretsDir = [
-	"{{ .HomeDir }}/.secrets",
-	"{{ .RootDir }}/.configs/monteur/secrets",
+	'{{ .HomeDir }}/.secrets',
+	'{{ .RootDir }}/.configs/monteur/secrets',
 ]
 
 [Language]
-Name = "English"
-AlternateName = "en"
+Name = 'English'
+AlternateName = 'en'
