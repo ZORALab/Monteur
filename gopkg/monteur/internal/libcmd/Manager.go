@@ -32,6 +32,7 @@ import (
 type Manager struct {
 	thisSystem string
 
+	Job       string
 	Variables map[string]interface{}
 	Metadata  *libmonteur.TOMLMetadata
 
@@ -54,6 +55,32 @@ func (me *Manager) Parse(path string) (err error) {
 		panic("MONTEUR DEV: please assign VAR_COMPUTE before Parse()!")
 	}
 
+	// parse data file
+	switch me.Job {
+	case libmonteur.JOB_TEST:
+		err = me.parseTOMLCMD(path)
+	case libmonteur.JOB_COMPOSE:
+		err = me.parseTOMLCMD(path)
+	case libmonteur.JOB_PUBLISH:
+		err = me.parseTOMLCMD(path)
+	default:
+		panic("MONTEUR DEV: What kind of job is this? ➤ " + me.Job)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	// initialize logger
+	err = me.initializeLogger()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (me *Manager) parseTOMLCMD(path string) (err error) {
 	dep := []*libmonteur.TOMLDependency{}
 	fmtVar := map[string]interface{}{}
 	cmd := []*libmonteur.TOMLAction{}
@@ -62,15 +89,15 @@ func (me *Manager) Parse(path string) (err error) {
 	s := struct {
 		Metadata     *libmonteur.TOMLMetadata
 		Variables    map[string]interface{}
+		FMTVariables *map[string]interface{}
 		Dependencies *[]*libmonteur.TOMLDependency
 		CMD          *[]*libmonteur.TOMLAction
-		FMTVariables *map[string]interface{}
 	}{
 		Metadata:     me.Metadata,
 		Variables:    me.Variables,
+		FMTVariables: &fmtVar,
 		Dependencies: &dep,
 		CMD:          &cmd,
-		FMTVariables: &fmtVar,
 	}
 
 	// decode
@@ -99,12 +126,6 @@ func (me *Manager) Parse(path string) (err error) {
 	}
 
 	err = me.sanitizeCMD(cmd)
-	if err != nil {
-		return err
-	}
-
-	// initialize logger
-	err = me.initializeLogger()
 	if err != nil {
 		return err
 	}

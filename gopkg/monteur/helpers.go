@@ -53,6 +53,7 @@ func _createCMDManager(l *liblog.Logger,
 	l.Info("Processing %s...", path)
 
 	s = &libcmd.Manager{
+		Job: w.Job,
 		Variables: map[string]interface{}{
 			libmonteur.VAR_OS:      w.OS,
 			libmonteur.VAR_ARCH:    w.ARCH,
