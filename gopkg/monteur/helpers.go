@@ -71,6 +71,8 @@ func _createCMDManager(l *liblog.Logger,
 	switch w.Job {
 	case "testing":
 		s.Variables[libmonteur.VAR_TMP] = w.Filesystem.TestTMPDir
+	case libmonteur.JOB_BUILD:
+		s.Variables[libmonteur.VAR_TMP] = w.Filesystem.BuildTMPDir
 	case "publish":
 		s.Variables[libmonteur.VAR_TMP] = w.Filesystem.PublishTMPDir
 		s.Variables[libmonteur.VAR_DOC] = w.Filesystem.ComposeTMPDir

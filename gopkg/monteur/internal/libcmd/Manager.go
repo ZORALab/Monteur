@@ -55,58 +55,27 @@ func (me *Manager) Parse(path string) (err error) {
 		panic("MONTEUR DEV: please assign VAR_COMPUTE before Parse()!")
 	}
 
+	// initialize raw input variables
+	dep := []*libmonteur.TOMLDependency{}
+	fmtVar := map[string]interface{}{}
+	cmd := []*libmonteur.TOMLAction{}
+
 	// parse data file
 	switch me.Job {
 	case libmonteur.JOB_TEST:
-		err = me.parseTOMLCMD(path)
+		err = me.parseTOMLCMD(path, &dep, &fmtVar, &cmd)
+	case libmonteur.JOB_BUILD:
+		err = me.parseTOMLBuildCMD(path, &dep, &fmtVar, &cmd)
 	case libmonteur.JOB_COMPOSE:
-		err = me.parseTOMLCMD(path)
+		err = me.parseTOMLCMD(path, &dep, &fmtVar, &cmd)
 	case libmonteur.JOB_PUBLISH:
-		err = me.parseTOMLCMD(path)
+		err = me.parseTOMLCMD(path, &dep, &fmtVar, &cmd)
 	default:
 		panic("MONTEUR DEV: What kind of job is this? ➤ " + me.Job)
 	}
 
 	if err != nil {
 		return err
-	}
-
-	// initialize logger
-	err = me.initializeLogger()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (me *Manager) parseTOMLCMD(path string) (err error) {
-	dep := []*libmonteur.TOMLDependency{}
-	fmtVar := map[string]interface{}{}
-	cmd := []*libmonteur.TOMLAction{}
-
-	// construct TOML file data structure
-	s := struct {
-		Metadata     *libmonteur.TOMLMetadata
-		Variables    map[string]interface{}
-		FMTVariables *map[string]interface{}
-		Dependencies *[]*libmonteur.TOMLDependency
-		CMD          *[]*libmonteur.TOMLAction
-	}{
-		Metadata:     me.Metadata,
-		Variables:    me.Variables,
-		FMTVariables: &fmtVar,
-		Dependencies: &dep,
-		CMD:          &cmd,
-	}
-
-	// decode
-	err = toml.DecodeFile(path, &s, nil)
-	if err != nil {
-		return fmt.Errorf("%s: %s",
-			libmonteur.ERROR_TOML_PARSE_FAILED,
-			err,
-		)
 	}
 
 	// sanitize
@@ -128,6 +97,74 @@ func (me *Manager) parseTOMLCMD(path string) (err error) {
 	err = me.sanitizeCMD(cmd)
 	if err != nil {
 		return err
+	}
+
+	// initialize logger
+	err = me.initializeLogger()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (me *Manager) parseTOMLBuildCMD(path string,
+	dep *[]*libmonteur.TOMLDependency,
+	fmtVar *map[string]interface{},
+	cmd *[]*libmonteur.TOMLAction) (err error) {
+	// construct TOML file data structure
+	s := struct {
+		Metadata     *libmonteur.TOMLMetadata
+		Variables    map[string]interface{}
+		FMTVariables *map[string]interface{}
+		BuildDeps    *[]*libmonteur.TOMLDependency
+		BuildCMD     *[]*libmonteur.TOMLAction
+	}{
+		Metadata:     me.Metadata,
+		Variables:    me.Variables,
+		FMTVariables: fmtVar,
+		BuildDeps:    dep,
+		BuildCMD:     cmd,
+	}
+
+	// decode
+	err = toml.DecodeFile(path, &s, nil)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_TOML_PARSE_FAILED,
+			err,
+		)
+	}
+
+	return nil
+}
+
+func (me *Manager) parseTOMLCMD(path string,
+	dep *[]*libmonteur.TOMLDependency,
+	fmtVar *map[string]interface{},
+	cmd *[]*libmonteur.TOMLAction) (err error) {
+	// construct TOML file data structure
+	s := struct {
+		Metadata     *libmonteur.TOMLMetadata
+		Variables    map[string]interface{}
+		FMTVariables *map[string]interface{}
+		Dependencies *[]*libmonteur.TOMLDependency
+		CMD          *[]*libmonteur.TOMLAction
+	}{
+		Metadata:     me.Metadata,
+		Variables:    me.Variables,
+		FMTVariables: fmtVar,
+		Dependencies: dep,
+		CMD:          cmd,
+	}
+
+	// decode
+	err = toml.DecodeFile(path, &s, nil)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_TOML_PARSE_FAILED,
+			err,
+		)
 	}
 
 	return nil

@@ -1,13 +1,13 @@
 [Metadata]
-Name = 'linux-amd64'
+Name = 'linux-arm64'
 Description = """
-Monteur for Linux OS with AMD64 CPU Architecture.
+Monteur for Linux OS with ARM64 CPU Architecture.
 """
 
 [Variables]
 PlatformOS = 'linux'
-PlatformCPU = 'amd64'
-PlatformName = 'linux-amd64'
+PlatformCPU = 'arm64'
+PlatformName = 'linux-arm64'
 PlatformExt = ''
 
 [FMTVariables]

@@ -166,7 +166,9 @@ Das Monteur - Getting the job done locally and remotely at scale!
 	case "compose":
 		os.Exit(monteur.Compose())
 	default:
-		fmt.Fprintf(os.Stderr, "[ ERROR ] unknown action: %s", action)
+		fmt.Fprintf(os.Stderr,
+			"[ ERROR ] unknown action. Use 'help' to start.\n",
+		)
 		os.Exit(1)
 	}
 

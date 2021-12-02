@@ -135,6 +135,15 @@ func (w *Workspace) _processPathingByJob() {
 
 		w.JobTOMLFile = w.Filesystem.TestTOMLFile
 	case libmonteur.JOB_BUILD:
+		w.ConfigDir = w.Filesystem.BuildConfigDir
+
+		w.Filesystem.WorkspaceLogDir = filepath.Join(
+			w.Filesystem.LogDir,
+			libmonteur.DIRECTORY_BUILD,
+			w.Filesystem.WorkspaceLogDir,
+		)
+
+		w.JobTOMLFile = w.Filesystem.BuildTOMLFile
 	case libmonteur.JOB_PACKAGE:
 	case libmonteur.JOB_RELEASE:
 	case libmonteur.JOB_COMPOSE:

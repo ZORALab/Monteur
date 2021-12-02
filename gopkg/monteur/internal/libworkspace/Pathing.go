@@ -80,6 +80,11 @@ type Pathing struct {
 	TestTMPDir    string
 	TestTOMLFile  string
 
+	// sub-directories for build fx
+	BuildConfigDir string
+	BuildTMPDir    string
+	BuildTOMLFile  string
+
 	// user
 	User *UserPath
 
@@ -264,6 +269,11 @@ func (fp *Pathing) Update() (err error) {
 		return err
 	}
 
+	err = fp.updateBuildPaths()
+	if err != nil {
+		return err
+	}
+
 	err = fp.updateLogPaths()
 	if err != nil {
 		return err
@@ -421,6 +431,30 @@ func (fp *Pathing) updateTestPaths() (err error) {
 		libmonteur.FILE_TOML,
 	)
 	err = fp._initConfigSubPath(&fp.TestTOMLFile, "TestTOMLConfigFile")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (fp *Pathing) updateBuildPaths() (err error) {
+	fp.BuildConfigDir = libmonteur.DIRECTORY_BUILDER
+	err = fp._initConfigSubPath(&fp.BuildConfigDir, "BuildConfigDir")
+	if err != nil {
+		return err
+	}
+
+	fp.BuildTMPDir = libmonteur.DIRECTORY_BUILD
+	err = fp._initWorkingSubPath(&fp.BuildTMPDir, "BuildTMPDir")
+	if err != nil {
+		return err
+	}
+
+	fp.BuildTOMLFile = filepath.Join(libmonteur.DIRECTORY_BUILD,
+		libmonteur.FILE_TOML,
+	)
+	err = fp._initConfigSubPath(&fp.BuildTOMLFile, "BuildTOMLFile")
 	if err != nil {
 		return err
 	}

@@ -27,10 +27,11 @@ const (
 )
 
 const (
-	DIRECTORY_APP              = "app"
 	DIRECTORY_GIT              = ".git"
 	DIRECTORY_MONTEUR_CONFIG_D = "config.d"
 	DIRECTORY_MONTEUR_CONFIG   = ".configs/monteur"
+
+	DIRECTORY_APP = "app"
 
 	DIRECTORY_PUBLISH   = "publish"
 	DIRECTORY_PUBLISHER = DIRECTORY_PUBLISH + "/publishers"
@@ -43,6 +44,9 @@ const (
 
 	DIRECTORY_TEST   = "test"
 	DIRECTORY_TESTER = DIRECTORY_TEST + "/testers"
+
+	DIRECTORY_BUILD   = "build"
+	DIRECTORY_BUILDER = DIRECTORY_APP + "/variants"
 )
 
 const (

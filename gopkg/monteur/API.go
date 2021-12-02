@@ -46,6 +46,7 @@ func Test() int {
 		Job:      libmonteur.JOB_TEST,
 		ErrorTag: libmonteur.ERROR_TEST,
 	}
+
 	return api.Run()
 }
 
@@ -75,8 +76,12 @@ func Release() int {
 // variants such as but not limited to operating system, CPU types, packaging
 // types (e.g. plugins).
 func Build() int {
-	b := &builder{}
-	return b.Run()
+	api := &apiCommand{
+		Job:      libmonteur.JOB_BUILD,
+		ErrorTag: libmonteur.ERROR_BUILD,
+	}
+
+	return api.Run()
 }
 
 // Package is the function to package the built software into distributions.
@@ -98,6 +103,7 @@ func Publish() int {
 		Job:      libmonteur.JOB_PUBLISH,
 		ErrorTag: libmonteur.ERROR_PUBLISH,
 	}
+
 	return api.Run()
 }
 
@@ -110,5 +116,6 @@ func Compose() int {
 		Job:      libmonteur.JOB_COMPOSE,
 		ErrorTag: libmonteur.ERROR_COMPOSE,
 	}
+
 	return api.Run()
 }
