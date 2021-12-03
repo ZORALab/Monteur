@@ -120,7 +120,9 @@ func (api *apiCommand) _init() (err error) {
 	api.logger.Info("Initialize settings...")
 	api.settings = &libcmd.Run{}
 
-	err = api.settings.Parse(api.workspace.JobTOMLFile)
+	err = api.settings.Parse(api.workspace.JobTOMLFile,
+		api.workspace.Variables,
+	)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}

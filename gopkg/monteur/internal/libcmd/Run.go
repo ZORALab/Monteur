@@ -25,16 +25,32 @@ import (
 type Run struct {
 }
 
-func (fx *Run) Parse(path string) (err error) {
-	s := struct {
-	}{}
+func (fx *Run) Parse(path string, varList *map[string]interface{}) (err error) {
+	// initiate working variables
+	fmtVar := &map[string]interface{}{}
 
+	// construct TOML file data structure
+	s := struct {
+		Variables    *map[string]interface{}
+		FMTVariables *map[string]interface{}
+	}{
+		Variables:    varList,
+		FMTVariables: fmtVar,
+	}
+
+	// decode
 	err = toml.DecodeFile(path, &s, nil)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
 			libmonteur.ERROR_TOML_PARSE_FAILED,
 			err,
 		)
+	}
+
+	// sanitize
+	err = libmonteur.SanitizeVariables(varList, fmtVar)
+	if err != nil {
+		return err //nolint:wrapcheck
 	}
 
 	return nil
