@@ -34,34 +34,11 @@ func _createCMDManager(l *liblog.Logger,
 	l.Info("Processing %s...", path)
 
 	s = &libcmd.Manager{
-		Job: w.Job,
-		Variables: map[string]interface{}{
-			libmonteur.VAR_OS:      w.OS,
-			libmonteur.VAR_ARCH:    w.ARCH,
-			libmonteur.VAR_COMPUTE: w.ComputeSystem,
-			libmonteur.VAR_HOME:    w.Filesystem.CurrentDir,
-			libmonteur.VAR_ROOT:    w.Filesystem.RootDir,
-			libmonteur.VAR_BASE:    w.Filesystem.BaseDir,
-			libmonteur.VAR_LOG:     w.Filesystem.WorkspaceLogDir,
-			libmonteur.VAR_CFG:     w.Filesystem.BinCfgDir,
-			libmonteur.VAR_BIN:     w.Filesystem.BinDir,
-			libmonteur.VAR_SECRETS: *secrets,
-		},
+		Job:       w.Job,
+		Variables: *w.Variables,
 	}
 
-	switch w.Job {
-	case "testing":
-		s.Variables[libmonteur.VAR_TMP] = w.Filesystem.TestTMPDir
-	case libmonteur.JOB_BUILD:
-		s.Variables[libmonteur.VAR_TMP] = w.Filesystem.BuildTMPDir
-	case "publish":
-		s.Variables[libmonteur.VAR_TMP] = w.Filesystem.PublishTMPDir
-		s.Variables[libmonteur.VAR_DOC] = w.Filesystem.ComposeTMPDir
-	case "compose":
-		s.Variables[libmonteur.VAR_TMP] = w.Filesystem.ComposeTMPDir
-	default:
-		s.Variables[libmonteur.VAR_TMP] = w.Filesystem.WorkingDir
-	}
+	s.Variables[libmonteur.VAR_SECRETS] = *secrets
 
 	_logVariables(l, &s.Variables)
 

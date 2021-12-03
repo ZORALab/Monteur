@@ -362,51 +362,69 @@ func (me *Workspace) _parseAppSpec() (err error) {
 }
 
 func (me *Workspace) processDataByJob() {
+	(*me.Variables)[libmonteur.VAR_OS] = me.OS
+	(*me.Variables)[libmonteur.VAR_ARCH] = me.ARCH
+	(*me.Variables)[libmonteur.VAR_COMPUTE] = me.ComputeSystem
+	(*me.Variables)[libmonteur.VAR_HOME] = me.Filesystem.CurrentDir
+	(*me.Variables)[libmonteur.VAR_ROOT] = me.Filesystem.RootDir
+	(*me.Variables)[libmonteur.VAR_BASE] = me.Filesystem.BaseDir
+	(*me.Variables)[libmonteur.VAR_LOG] = me.Filesystem.WorkspaceLogDir
+	(*me.Variables)[libmonteur.VAR_CFG] = me.Filesystem.BinCfgDir
+	(*me.Variables)[libmonteur.VAR_BIN] = me.Filesystem.BinDir
+
 	switch me.Job {
 	case libmonteur.JOB_SETUP:
 	case libmonteur.JOB_CLEAN:
 	case libmonteur.JOB_TEST:
 		me.ConfigDir = me.Filesystem.TestConfigDir
-
+		me.JobTOMLFile = me.Filesystem.TestTOMLFile
 		me.Filesystem.WorkspaceLogDir = filepath.Join(
 			me.Filesystem.LogDir,
 			libmonteur.DIRECTORY_TEST,
 			me.Filesystem.WorkspaceLogDir,
 		)
 
-		me.JobTOMLFile = me.Filesystem.TestTOMLFile
+		// assign specific variables
+		(*me.Variables)[libmonteur.VAR_TMP] = me.Filesystem.TestTMPDir
 	case libmonteur.JOB_BUILD:
 		me.ConfigDir = me.Filesystem.BuildConfigDir
-
+		me.JobTOMLFile = me.Filesystem.BuildTOMLFile
 		me.Filesystem.WorkspaceLogDir = filepath.Join(
 			me.Filesystem.LogDir,
 			libmonteur.DIRECTORY_BUILD,
 			me.Filesystem.WorkspaceLogDir,
 		)
 
-		me.JobTOMLFile = me.Filesystem.BuildTOMLFile
+		// assign specific variables
+		//nolint:lll
+		(*me.Variables)[libmonteur.VAR_DOC] = me.Filesystem.ComposeTMPDir
+		(*me.Variables)[libmonteur.VAR_TMP] = me.Filesystem.BuildTMPDir
 	case libmonteur.JOB_PACKAGE:
 	case libmonteur.JOB_RELEASE:
 	case libmonteur.JOB_COMPOSE:
 		me.ConfigDir = me.Filesystem.ComposeConfigDir
-
+		me.JobTOMLFile = me.Filesystem.ComposeTOMLFile
 		me.Filesystem.WorkspaceLogDir = filepath.Join(
 			me.Filesystem.LogDir,
 			libmonteur.DIRECTORY_COMPOSE,
 			me.Filesystem.WorkspaceLogDir,
 		)
 
-		me.JobTOMLFile = me.Filesystem.ComposeTOMLFile
+		// assign specific variables
+		//nolint:lll
+		(*me.Variables)[libmonteur.VAR_TMP] = me.Filesystem.ComposeTMPDir
 	case libmonteur.JOB_PUBLISH:
 		me.ConfigDir = me.Filesystem.PublishConfigDir
-
+		me.JobTOMLFile = me.Filesystem.PublishTOMLFile
 		me.Filesystem.WorkspaceLogDir = filepath.Join(
 			me.Filesystem.LogDir,
 			libmonteur.DIRECTORY_PUBLISH,
 			me.Filesystem.WorkspaceLogDir,
 		)
 
-		me.JobTOMLFile = me.Filesystem.PublishTOMLFile
+		// assign specific variables
+		//nolint:lll
+		(*me.Variables)[libmonteur.VAR_TMP] = me.Filesystem.PublishTMPDir
 	default:
 		panic("Monteur DEV: what kind of CI Job is this? ➤ " + me.Job)
 	}

@@ -78,7 +78,7 @@ func (api *apiCommand) _filter(path string, info os.FileInfo, err error) error {
 
 	ok, err = libmonteur.AcceptTOML(path, info, err)
 	if !ok {
-		return err
+		return err //nolint:wrapcheck
 	}
 
 	s, err = _createCMDManager(api.logger,
