@@ -27,25 +27,6 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libworkspace"
 )
 
-func _acceptanceFilter(path string, info os.FileInfo, err error) (bool, error) {
-	// return if err occurred
-	if err != nil {
-		return false, fmt.Errorf("%s: %s",
-			libmonteur.ERROR_TOML_PARSE_FAILED,
-			err,
-		)
-	}
-
-	// ensures we only accepts regular file with .toml extension
-	if filepath.Ext(path) != libmonteur.EXTENSION_TOML ||
-		!info.Mode().IsRegular() {
-		return false, nil
-	}
-
-	// accepted
-	return true, nil
-}
-
 func _createCMDManager(l *liblog.Logger,
 	w *libworkspace.Workspace,
 	secrets *map[string]interface{},

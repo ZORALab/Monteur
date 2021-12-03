@@ -17,6 +17,8 @@ package libmonteur
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -181,3 +183,18 @@ func (base *TOMLSource) mergeChecksum(in *TOMLSource) {
 }
 
 type TOMLSourceConfig map[string]string
+
+func AcceptTOML(path string, info os.FileInfo, err error) (bool, error) {
+	// return if err occurred
+	if err != nil {
+		return false, fmt.Errorf("%s: %s", ERROR_TOML_PARSE_FAILED, err)
+	}
+
+	// ensures we only accepts regular file with .toml extension
+	if filepath.Ext(path) != EXTENSION_TOML || !info.Mode().IsRegular() {
+		return false, nil
+	}
+
+	// accepted
+	return true, nil
+}

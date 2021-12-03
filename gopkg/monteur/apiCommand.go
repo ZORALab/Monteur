@@ -76,7 +76,7 @@ func (api *apiCommand) _filter(path string, info os.FileInfo, err error) error {
 	var ok bool
 	var s *libcmd.Manager
 
-	ok, err = _acceptanceFilter(path, info, err)
+	ok, err = libmonteur.AcceptTOML(path, info, err)
 	if !ok {
 		return err
 	}
