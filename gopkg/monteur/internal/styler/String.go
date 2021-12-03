@@ -16,6 +16,7 @@
 package styler
 
 import (
+	"strconv"
 	"strings"
 )
 
@@ -57,4 +58,51 @@ func BoxString(content string, borderType uint) string {
 	return tl + strings.Repeat(h, l) + tr + "\n" +
 		v + content + v + "\n" +
 		bl + strings.Repeat(h, l) + br + "\n"
+}
+
+// PortraitKV styles a key:string data into a vertical portrait string.
+func PortraitKV(key string, value string) string {
+	if value == "" {
+		value = "''"
+	}
+
+	return strings.ToUpper(key) + "\n" + value + "\n\n"
+}
+
+// PortraitKMap styles a key:map(string) into a vertical portrait string.
+func PortraitKMap(key string, value map[string]string) (s string) {
+	if len(value) == 0 {
+		return ""
+	}
+
+	s = strings.ToUpper(key) + "\n"
+	for k, v := range value {
+		if v == "" {
+			continue
+		}
+
+		s += "(" + k + "): " + v + "\n"
+	}
+	s += "\n"
+
+	return s
+}
+
+// PortraitKArray styles a key:array(string) into a vertical portrait string.
+func PortraitKArray(key string, value []string) (s string) {
+	if len(value) == 0 {
+		return ""
+	}
+
+	s = strings.ToUpper(key) + "\n"
+	for i, v := range value {
+		if v == "" {
+			continue
+		}
+
+		s += "(" + strconv.Itoa(i+1) + "): " + v + "\n"
+	}
+	s += "\n"
+
+	return s
 }
