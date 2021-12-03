@@ -81,18 +81,25 @@ func (api *apiCommand) _filter(path string, info os.FileInfo, err error) error {
 		return err //nolint:wrapcheck
 	}
 
-	s, err = _createCMDManager(api.logger,
-		api.workspace,
-		&api.secrets,
-		path,
-	)
-	if err != nil {
-		return err
+	api.logger.Info("Processing %s...", path)
+	s = &libcmd.Manager{
+		Job:       api.workspace.Job,
+		Variables: *api.workspace.Variables,
 	}
+	s.Variables[libmonteur.VAR_SECRETS] = api.secrets
+
+	_logVariables(api.logger, &s.Variables)
+
+	api.logger.Info("Decode Task Data from config file...")
+	err = s.Parse(path)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+	api.logger.Info(libmonteur.LOG_SUCCESS)
 
 	api.logger.Info("Register task into job list...")
 	api.workers[s.Metadata.Name] = s
-	api.logger.Success(libmonteur.LOG_SUCCESS)
+	api.logger.Info(libmonteur.LOG_SUCCESS)
 
 	return nil
 }
@@ -115,13 +122,14 @@ func (api *apiCommand) _init() (err error) {
 		api.workspace.Filesystem.SecretsDir,
 	)
 
-	err = _initCMDSettings(&api.settings,
-		api.logger,
-		api.workspace.JobTOMLFile,
-	)
+	api.logger.Info("Initialize settings...")
+	api.settings = &libcmd.Run{}
+
+	err = api.settings.Parse(api.workspace.JobTOMLFile)
 	if err != nil {
-		return err
+		return err //nolint:wrapcheck
 	}
+	api.logger.Info(libmonteur.LOG_SUCCESS)
 
 	return nil
 }

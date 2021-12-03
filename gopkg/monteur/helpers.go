@@ -20,37 +20,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libcmd"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsecrets"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libworkspace"
 )
-
-func _createCMDManager(l *liblog.Logger,
-	w *libworkspace.Workspace,
-	secrets *map[string]interface{},
-	path string) (s *libcmd.Manager, err error) {
-	l.Info("Processing %s...", path)
-
-	s = &libcmd.Manager{
-		Job:       w.Job,
-		Variables: *w.Variables,
-	}
-
-	s.Variables[libmonteur.VAR_SECRETS] = *secrets
-
-	_logVariables(l, &s.Variables)
-
-	l.Info("Decode Task Data from config file...")
-	err = s.Parse(path)
-	if err != nil {
-		return nil, err //nolint:wrapcheck
-	}
-
-	l.Success(libmonteur.LOG_SUCCESS)
-	return s, nil
-}
 
 func _logVariables(l *liblog.Logger, list *map[string]interface{}) {
 	l.Info("Inserting Task Variables...")
@@ -62,7 +36,7 @@ func _logVariables(l *liblog.Logger, list *map[string]interface{}) {
 
 		l.Info("\"%s\": %#v", k, v)
 	}
-	l.Success(libmonteur.LOG_SUCCESS)
+	l.Info(libmonteur.LOG_SUCCESS)
 }
 
 func _initLogger(l **liblog.Logger, w *libworkspace.Workspace) (err error) {
@@ -107,21 +81,6 @@ func _initSecrets(list *map[string]interface{},
 	l.Info("Parsing secrets...")
 	*list = libsecrets.GetSecrets(path)
 	l.Success(libmonteur.LOG_SUCCESS)
-}
-
-func _initCMDSettings(x **libcmd.Run,
-	l *liblog.Logger, path string) (err error) {
-	l.Info("Initialize settings...")
-
-	*x = &libcmd.Run{}
-	err = (*x).Parse(path)
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
-
-	l.Success(libmonteur.LOG_SUCCESS)
-
-	return nil
 }
 
 func _reportError(l *liblog.Logger, tag string, err error) int {
