@@ -27,7 +27,6 @@ import (
 )
 
 type apiCommand struct {
-	secrets   map[string]interface{}
 	workers   map[string]conductor.Job
 	workspace *libworkspace.Workspace
 	settings  *libcmd.Run
@@ -84,9 +83,12 @@ func (api *apiCommand) _filter(path string, info os.FileInfo, err error) error {
 	api.logger.Info("Processing %s...", path)
 	s = &libcmd.Manager{
 		Job:       api.workspace.Job,
-		Variables: *api.workspace.Variables,
+		Variables: map[string]interface{}{},
 	}
-	s.Variables[libmonteur.VAR_SECRETS] = api.secrets
+
+	for k, v := range *api.workspace.Variables {
+		s.Variables[k] = v
+	}
 
 	_logVariables(api.logger, &s.Variables)
 
