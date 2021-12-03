@@ -1,0 +1,48 @@
+[Software]
+Name = 'Monteur'
+Command = 'monteur'
+ID = 'monteur'
+Version = 'v0.0.1'
+Category = 'devel'
+Suite = ''
+Abstract = 'A software manufacturing automation tools in one single app.'
+Description = """
+Monteur focuses on keeping the software development repository's continuous
+improvements execution seamlessly scalable with great consistency.
+
+Das Monteur - Getting the job done locally and remotely at scale!
+"""
+
+
+
+
+[Software.Contact]
+Name = 'ZORALab'
+Email = [ 'hello@zoralab.com' ]
+
+
+
+
+[Software.Maintainers.zoralab]
+Name = 'ZORALab Enterprise'
+Email = [ 'tech@zoralab.com' ]
+[Software.Maintainers.zoralab.JointTime]
+Year = '2021'
+
+
+
+
+[Software.Contributors.zoralab]
+Name = 'ZORALab Enterprise'
+Email = [ 'tech@zoralab.com' ]
+[Software.Contributors.zoralab.JointTime]
+Year = '2021'
+
+
+
+
+[Software.Sponsors.zoralab]
+Name = 'ZORALab Enterprise'
+Email = [ 'tech@zoralab.com' ]
+[Software.Sponsors.zoralab.JointTime]
+Year = '2021'

@@ -215,7 +215,7 @@ the train of thoughts.
 
 ### Level 1: Main Variables Definition
 Monteur starts off by parsing the variables from the main configuration files
-located in `.configs/monteur/variables.toml`. This will serves as the foundation
+located in `.configs/monteur/workspace.toml`. This will serves as the foundation
 of the variables.
 
 The variables are visible globally across all [CI Jobs]({{< link "/ci-jobs/"
@@ -228,7 +228,7 @@ Montuer shall do the following in sequences:
 
 ### Level 2: Job Variables Definition
 Monteur then parse the variables from the job configuration files located in
-`.configs/monteur/<THE-CI-JOB>/variables.toml`. This will append any new found
+`.configs/monteur/<THE-CI-JOB>/config.toml`. This will append any new found
 variables into the list while overwrite any conflicing variables with the latest
 values.
 

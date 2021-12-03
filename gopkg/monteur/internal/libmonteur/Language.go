@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package schema
+package libmonteur
 
 // Language is the data structure for defining a language metadata.
 //
@@ -30,9 +30,9 @@ type Language struct {
 	// language without depending on another language translations.
 	Name string
 
-	// AlternateName is ISO-639-1 (optionally +ISO 31661-1 Alpha 2) code.
+	// Code is ISO-639-1 (optionally +ISO 31661-1 Alpha 2) code.
 	//
 	// These codes are something like `en`, `en-us`, `en-gb`, `en-ca`, and
 	// so on.
-	AlternateName string
+	Code string
 }

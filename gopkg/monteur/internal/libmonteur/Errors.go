@@ -37,6 +37,10 @@ const (
 )
 
 const (
+	ERROR_APP_FMT_BAD = "bad app data formatting"
+)
+
+const (
 	ERROR_CHECKSUM_ALGO_UNKNOWN   = "unsupported checksum value"
 	ERROR_CHECKSUM_BAD            = "bad checksum value"
 	ERROR_CHECKSUM_FORMAT_BAD     = "bad checksum format"
@@ -56,6 +60,11 @@ const (
 
 const (
 	ERROR_VARIABLES_FMT_BAD = "bad variable formatting"
+)
+
+const (
+	ERROR_LANGUAGE_CODE_MISSING = "missing language code"
+	ERROR_LANGUAGE_NAME_MISSING = "missing language name"
 )
 
 const (

@@ -22,7 +22,6 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
-	"time"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/filesystem"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
@@ -54,7 +53,11 @@ type Pathing struct {
 	WorkspaceLogDir   string
 
 	// app
-	AppConfigDir string
+	AppConfigDir      string
+	AppMetaTOMLFile   string
+	AppHelpTOMLFile   string
+	AppDebianTOMLFile string
+	AppCopyrightsDir  string
 
 	// bin
 	BinConfigdDir string
@@ -98,8 +101,6 @@ type Pathing struct {
 // as Monteur fails to detect any git repository with Monteur support throughout
 // the current directory Pathing or failed to obtain current directory Pathing.
 func (fp *Pathing) Init() (err error) {
-	fp.timestampDir = time.Now().UTC().Format("2006-Jan-02T15-04-05UTC")
-
 	err = fp._initCurrentDir(filepath.Abs)
 	if err != nil {
 		return err
@@ -243,8 +244,8 @@ func (fp *Pathing) _initUserDir() (err error) {
 // This function should only be called after all the relative paths are filled
 // into Pathing data structure AND the Pathing was initialized successfully via
 // `Init()` function.
-func (fp *Pathing) Update() (err error) {
-	err = fp.updateBasePaths()
+func (fp *Pathing) Update(langCode string) (err error) {
+	err = fp.updateBasePaths(langCode)
 	if err != nil {
 		return err
 	}
@@ -279,6 +280,11 @@ func (fp *Pathing) Update() (err error) {
 		return err
 	}
 
+	err = fp.updateAppPaths()
+	if err != nil {
+		return err
+	}
+
 	err = fp._initSecretsDir()
 	if err != nil {
 		return err
@@ -287,7 +293,7 @@ func (fp *Pathing) Update() (err error) {
 	return nil
 }
 
-func (fp *Pathing) updateBasePaths() (err error) {
+func (fp *Pathing) updateBasePaths(langCode string) (err error) {
 	err = fp._initDependentDir(&fp.BaseDir, "BaseDir")
 	if err != nil {
 		return err
@@ -328,8 +334,9 @@ func (fp *Pathing) updateBasePaths() (err error) {
 		return err
 	}
 
-	fp.AppConfigDir = libmonteur.DIRECTORY_APP
-	err = fp._initConfigSubPath(&fp.AppConfigDir, "WorkspaceAppDir")
+	fp.AppConfigDir = filepath.Join(libmonteur.DIRECTORY_APP_CONFIG,
+		langCode)
+	err = fp._initConfigSubPath(&fp.AppConfigDir, "AppConfigDir")
 	if err != nil {
 		return err
 	}
@@ -462,8 +469,62 @@ func (fp *Pathing) updateBuildPaths() (err error) {
 	return nil
 }
 
+func (fp *Pathing) updateAppPaths() (err error) {
+	fp.AppMetaTOMLFile = libmonteur.FILE_TOML_APP_METADATA
+	err = fp._initAppConfigPath(&fp.AppMetaTOMLFile, "AppMetaTOMLFile")
+	if err != nil {
+		return err
+	}
+
+	fp.AppCopyrightsDir = libmonteur.DIRECTORY_APP_COPYRIGHT
+	err = fp._initAppConfigPath(&fp.AppCopyrightsDir,
+		"AppCopyrightsTOMLFile",
+	)
+	if err != nil {
+		return err
+	}
+
+	fp.AppHelpTOMLFile = libmonteur.FILE_TOML_APP_HELP
+	err = fp._initAppConfigPath(&fp.AppHelpTOMLFile, "AppHelpTOMLFile")
+	if err != nil {
+		return err
+	}
+
+	fp.AppDebianTOMLFile = libmonteur.FILE_TOML_APP_DEBIAN
+	err = fp._initAppConfigPath(&fp.AppDebianTOMLFile, "AppDebianTOMLFile")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (fp *Pathing) updateLogPaths() (err error) {
 	fp.WorkspaceLogDir = fp.timestampDir
+
+	return nil
+}
+
+func (fp *Pathing) _initAppConfigPath(p *string, name string) (err error) {
+	// NOTE:
+	// 1) `name` is mainly for specifying the variable name without needing
+	//    to import the heavy-duty reflect package to do such a simple job
+	//    for error reporting.
+	if *p == "" {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_DIR_MISSING,
+			name,
+		)
+	}
+
+	if fp.AppConfigDir == "" {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_DIR_MISSING,
+			"AppConfigDir",
+		)
+	}
+
+	*p = filepath.Join(fp.AppConfigDir, *p)
 
 	return nil
 }

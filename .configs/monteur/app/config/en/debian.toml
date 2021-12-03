@@ -1,24 +1,24 @@
-[Control]
+[DEB]
 Compat = 9
+Source = '3.0 (native)'
+
+[DEB.Control]
 Standards = '3.9.8'
 Section = 'devel'
 Priority = 'optional'
 
-[Control.Depends]
+[DEB.Depends]
 Build = [
 	'debhelper (>=9)',
 ]
 Dependencies = [
-	'${misc:Depends}'.
+	'${misc:Depends}',
 ]
 
-[Source]
-Format = '3.0 (native)'
-
-[Copyrights]
+[DEB.Copyrights]
 Format = 'http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/'
 
-[Executions]
+[DEB.Executions]
 Rules = """
 #!/usr/bin/make -f
 

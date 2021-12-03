@@ -14,4 +14,10 @@ SecretsDir = [
 
 [Language]
 Name = 'English'
-AlternateName = 'en'
+Code = 'en'
+
+[Variables]
+Placeholder = 'en'
+
+[FMTVariables]
+FMTPlaceholer = 'Language: "{{- .Placeholder -}}"'

@@ -17,22 +17,28 @@ package libworkspace
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
+	"strings"
+	"time"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/schema"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/styler"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/templater"
 )
 
 // Workspace is the Monteur continuous integration main data sructure.
 //
 // This data structure is responsible for running through all Monteur operations
 type Workspace struct {
+	Timestamp  *time.Time
 	Filesystem *Pathing
-	Language   *schema.Language
-	App        *schema.Software
+	Language   *libmonteur.Language
+	App        *libmonteur.Software
+	Variables  *map[string]interface{}
 
 	Job           string
 	Version       string
@@ -44,42 +50,58 @@ type Workspace struct {
 }
 
 // Init is to initialize the workspace for usage
-func (w *Workspace) Init() error {
-	if err := w._parseWorkspaceData(); err != nil {
+func (me *Workspace) Init() error {
+	x := time.Now().UTC()
+	me.Timestamp = &x
+
+	if err := me.parseWorkspaceData(); err != nil {
 		return err
 	}
 
-	if err := w._parseAppData(); err != nil {
+	if err := me.parseAppData(); err != nil {
 		return err
 	}
 
-	w.OS = runtime.GOOS
-	w.ARCH = runtime.GOARCH
-	w.Version = libmonteur.VERSION
-	w.ComputeSystem = w.OS + libmonteur.COMPUTE_SYSTEM_SEPARATOR + w.ARCH
-	w._processPathingByJob()
+	me.processDataByJob()
 
 	return nil
 }
 
-func (w *Workspace) _parseWorkspaceData() (err error) {
-	w.Filesystem = &Pathing{}
-	w.Language = &schema.Language{}
+func (me *Workspace) parseWorkspaceData() (err error) {
+	me.Language = &libmonteur.Language{}
+	me.Variables = &map[string]interface{}{}
+	me.OS = runtime.GOOS
+	me.ARCH = runtime.GOARCH
+	me.Version = libmonteur.VERSION
+	me.ComputeSystem = me.OS + libmonteur.COMPUTE_SYSTEM_SEPARATOR + me.ARCH
 
-	err = w.Filesystem.Init()
+	// initialize pathing for parsing
+	me.Filesystem = &Pathing{
+		timestampDir: me.Timestamp.Format("2006-Jan-02T15-04-05UTC"),
+	}
+
+	err = me.Filesystem.Init()
 	if err != nil {
 		return err
 	}
 
+	// initialize processing data
+	fmtVar := map[string]interface{}{}
+
+	// parse workspace TOML data
 	s := struct {
-		Language   *schema.Language
-		Filesystem *Pathing
+		Language     *libmonteur.Language
+		Filesystem   *Pathing
+		Variables    map[string]interface{}
+		FMTVariables *map[string]interface{}
 	}{
-		Language:   w.Language,
-		Filesystem: w.Filesystem,
+		Language:     me.Language,
+		Filesystem:   me.Filesystem,
+		Variables:    *me.Variables,
+		FMTVariables: &fmtVar,
 	}
 
-	err = toml.DecodeFile(w.Filesystem.WorkspaceTOMLFile, &s, nil)
+	err = toml.DecodeFile(me.Filesystem.WorkspaceTOMLFile, &s, nil)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
 			libmonteur.ERROR_TOML_PARSE_FAILED,
@@ -87,7 +109,68 @@ func (w *Workspace) _parseWorkspaceData() (err error) {
 		)
 	}
 
-	err = w.Filesystem.Update()
+	err = libmonteur.SanitizeVariables(me.Variables, &fmtVar)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	err = me._sanitizeLanguage()
+	if err != nil {
+		return err
+	}
+
+	// update filesystem pathing
+	err = me.Filesystem.Update(me.Language.Code)
+	if err != nil {
+		return err
+	}
+
+	// init app
+	me.App = &libmonteur.Software{
+		Time: &libmonteur.Timestamp{
+			Year:   strconv.Itoa(me.Timestamp.Year()),
+			Month:  strconv.Itoa(int(me.Timestamp.Month())),
+			Day:    strconv.Itoa(me.Timestamp.Day()),
+			Hour:   strconv.Itoa(me.Timestamp.Hour()),
+			Minute: strconv.Itoa(me.Timestamp.Minute()),
+			Second: strconv.Itoa(me.Timestamp.Second()),
+			Zone:   "00:00",
+		},
+	}
+	(*me.Variables)[libmonteur.VAR_APP] = me.App
+
+	return nil
+}
+
+func (me *Workspace) _sanitizeLanguage() (err error) {
+	if me.Language.Code == "" {
+		return fmt.Errorf(libmonteur.ERROR_LANGUAGE_CODE_MISSING)
+	}
+
+	if me.Language.Name == "" {
+		return fmt.Errorf(libmonteur.ERROR_LANGUAGE_NAME_MISSING)
+	}
+
+	return nil
+}
+
+func (me *Workspace) parseAppData() (err error) {
+	err = me._parseAppSpec()
+	if err != nil {
+		return err
+	}
+
+	err = me._parseAppDebian()
+	if err != nil {
+		return err
+	}
+
+	err = me._parseAppCopyrights()
+	if err != nil {
+		return err
+	}
+
+	err = me._parseAppHelp()
 	if err != nil {
 		return err
 	}
@@ -95,21 +178,57 @@ func (w *Workspace) _parseWorkspaceData() (err error) {
 	return nil
 }
 
-func (w *Workspace) _parseAppData() (err error) {
-	if w.App == nil {
-		w.App = &schema.Software{}
+func (me *Workspace) _parseAppCopyrights() (err error) {
+	//nolint:wrapcheck
+	return filepath.Walk(me.Filesystem.AppCopyrightsDir,
+		me.__filterAppCopyright,
+	)
+}
+
+func (me *Workspace) __filterAppCopyright(path string,
+	info os.FileInfo, err error) error {
+	var ok bool
+
+	ok, err = libmonteur.AcceptTOML(path, info, err)
+	if !ok {
+		return err //nolint:wrapcheck
 	}
 
-	p := w.Filesystem.Join(w.Filesystem.AppConfigDir,
-		w.Language.AlternateName+libmonteur.EXTENSION_TOML)
+	// create data type for parsing
+	c := &libmonteur.Copyright{}
 
-	s := &struct {
-		Metadata *schema.Software
+	// parse workspace TOML data
+	s := struct {
+		Copyright *libmonteur.Copyright
 	}{
-		Metadata: w.App,
+		Copyright: c,
 	}
 
-	err = toml.DecodeFile(p, s, nil)
+	err = toml.DecodeFile(path, &s, nil)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_TOML_PARSE_FAILED,
+			err,
+		)
+	}
+
+	// save into copyright list
+	me.App.Copyrights = append(me.App.Copyrights, c)
+
+	return nil
+}
+
+func (me *Workspace) _parseAppDebian() (err error) {
+	me.App.Debian = &libmonteur.DEB{}
+
+	// parse workspace TOML data
+	s := struct {
+		DEB *libmonteur.DEB
+	}{
+		DEB: me.App.Debian,
+	}
+
+	err = toml.DecodeFile(me.Filesystem.AppDebianTOMLFile, &s, nil)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
 			libmonteur.ERROR_TOML_PARSE_FAILED,
@@ -120,54 +239,176 @@ func (w *Workspace) _parseAppData() (err error) {
 	return nil
 }
 
-func (w *Workspace) _processPathingByJob() {
-	switch w.Job {
+func (me *Workspace) _parseAppHelp() (err error) {
+	me.App.Help = &libmonteur.SoftwareHelp{
+		Manpage: &libmonteur.SoftwareManpage{},
+	}
+
+	// parse workspace TOML data
+	s := struct {
+		Help *libmonteur.SoftwareHelp
+	}{
+		Help: me.App.Help,
+	}
+
+	err = toml.DecodeFile(me.Filesystem.AppHelpTOMLFile, &s, nil)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_TOML_PARSE_FAILED,
+			err,
+		)
+	}
+
+	// sanitize all help fields
+	err = me.__formatAppString(&me.App.Help.Command)
+	if err != nil {
+		return err
+	}
+
+	err = me.__formatAppString(&me.App.Help.Description)
+	if err != nil {
+		return err
+	}
+
+	err = me.__formatAppString(&me.App.Help.Resources)
+	if err != nil {
+		return err
+	}
+
+	if me.App.Help.Manpage == nil {
+		return nil
+	}
+
+	err = me.__formatAppString(&me.App.Help.Manpage.Lv1)
+	if err != nil {
+		return err
+	}
+
+	err = me.__formatAppString(&me.App.Help.Manpage.Lv2)
+	if err != nil {
+		return err
+	}
+
+	err = me.__formatAppString(&me.App.Help.Manpage.Lv3)
+	if err != nil {
+		return err
+	}
+
+	err = me.__formatAppString(&me.App.Help.Manpage.Lv4)
+	if err != nil {
+		return err
+	}
+
+	err = me.__formatAppString(&me.App.Help.Manpage.Lv5)
+	if err != nil {
+		return err
+	}
+
+	err = me.__formatAppString(&me.App.Help.Manpage.Lv6)
+	if err != nil {
+		return err
+	}
+
+	err = me.__formatAppString(&me.App.Help.Manpage.Lv7)
+	if err != nil {
+		return err
+	}
+
+	err = me.__formatAppString(&me.App.Help.Manpage.Lv8)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (me *Workspace) __formatAppString(s *string) (err error) {
+	*s, err = templater.String(*s, *me.Variables)
+	if err != nil {
+		return fmt.Errorf("%s: %s", libmonteur.ERROR_APP_FMT_BAD, err)
+	}
+
+	return nil
+}
+
+func (me *Workspace) _parseAppSpec() (err error) {
+	// parse workspace TOML data
+	s := struct {
+		Software *libmonteur.Software
+	}{
+		Software: me.App,
+	}
+
+	err = toml.DecodeFile(me.Filesystem.AppMetaTOMLFile, &s, nil)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_TOML_PARSE_FAILED,
+			err,
+		)
+	}
+
+	// sanitize all important data
+	me.App.Time = &libmonteur.Timestamp{ // DISALLOWED USER OVERWRITE
+		Year:   strconv.Itoa(me.Timestamp.Year()),
+		Month:  strconv.Itoa(int(me.Timestamp.Month())),
+		Day:    strconv.Itoa(me.Timestamp.Day()),
+		Hour:   strconv.Itoa(me.Timestamp.Hour()),
+		Minute: strconv.Itoa(me.Timestamp.Minute()),
+		Second: strconv.Itoa(me.Timestamp.Second()),
+		Zone:   "00:00",
+	}
+
+	return nil
+}
+
+func (me *Workspace) processDataByJob() {
+	switch me.Job {
 	case libmonteur.JOB_SETUP:
 	case libmonteur.JOB_CLEAN:
 	case libmonteur.JOB_TEST:
-		w.ConfigDir = w.Filesystem.TestConfigDir
+		me.ConfigDir = me.Filesystem.TestConfigDir
 
-		w.Filesystem.WorkspaceLogDir = filepath.Join(
-			w.Filesystem.LogDir,
+		me.Filesystem.WorkspaceLogDir = filepath.Join(
+			me.Filesystem.LogDir,
 			libmonteur.DIRECTORY_TEST,
-			w.Filesystem.WorkspaceLogDir,
+			me.Filesystem.WorkspaceLogDir,
 		)
 
-		w.JobTOMLFile = w.Filesystem.TestTOMLFile
+		me.JobTOMLFile = me.Filesystem.TestTOMLFile
 	case libmonteur.JOB_BUILD:
-		w.ConfigDir = w.Filesystem.BuildConfigDir
+		me.ConfigDir = me.Filesystem.BuildConfigDir
 
-		w.Filesystem.WorkspaceLogDir = filepath.Join(
-			w.Filesystem.LogDir,
+		me.Filesystem.WorkspaceLogDir = filepath.Join(
+			me.Filesystem.LogDir,
 			libmonteur.DIRECTORY_BUILD,
-			w.Filesystem.WorkspaceLogDir,
+			me.Filesystem.WorkspaceLogDir,
 		)
 
-		w.JobTOMLFile = w.Filesystem.BuildTOMLFile
+		me.JobTOMLFile = me.Filesystem.BuildTOMLFile
 	case libmonteur.JOB_PACKAGE:
 	case libmonteur.JOB_RELEASE:
 	case libmonteur.JOB_COMPOSE:
-		w.ConfigDir = w.Filesystem.ComposeConfigDir
+		me.ConfigDir = me.Filesystem.ComposeConfigDir
 
-		w.Filesystem.WorkspaceLogDir = filepath.Join(
-			w.Filesystem.LogDir,
+		me.Filesystem.WorkspaceLogDir = filepath.Join(
+			me.Filesystem.LogDir,
 			libmonteur.DIRECTORY_COMPOSE,
-			w.Filesystem.WorkspaceLogDir,
+			me.Filesystem.WorkspaceLogDir,
 		)
 
-		w.JobTOMLFile = w.Filesystem.ComposeTOMLFile
+		me.JobTOMLFile = me.Filesystem.ComposeTOMLFile
 	case libmonteur.JOB_PUBLISH:
-		w.ConfigDir = w.Filesystem.PublishConfigDir
+		me.ConfigDir = me.Filesystem.PublishConfigDir
 
-		w.Filesystem.WorkspaceLogDir = filepath.Join(
-			w.Filesystem.LogDir,
+		me.Filesystem.WorkspaceLogDir = filepath.Join(
+			me.Filesystem.LogDir,
 			libmonteur.DIRECTORY_PUBLISH,
-			w.Filesystem.WorkspaceLogDir,
+			me.Filesystem.WorkspaceLogDir,
 		)
 
-		w.JobTOMLFile = w.Filesystem.PublishTOMLFile
+		me.JobTOMLFile = me.Filesystem.PublishTOMLFile
 	default:
-		panic("Monteur DEV: what kind of CI Job is this? ➤ " + w.Job)
+		panic("Monteur DEV: what kind of CI Job is this? ➤ " + me.Job)
 	}
 }
 
@@ -175,75 +416,49 @@ func (w *Workspace) _processPathingByJob() {
 //
 // Since Workspace is a complicated data structure, its String() method has to
 // be uniquely constructed.
-func (w *Workspace) String() string {
-	return styler.BoxString("Das Monteur", styler.BORDER_DOUBLE) +
-		w._stringCIBasic() + "\n" +
-		w._stringCILocation() + "\n" +
-		w._stringApp()
+func (me *Workspace) String() (s string) {
+	s = styler.BoxString("Monteur", styler.BORDER_DOUBLE)
+	s += "One manufacturing automation app ➤ Do more with less noises!\n\n"
+	s += styler.PortraitKV("Monteur Version", me.Version)
+	s += me.stringCIJob() + "\n"
+	s += me.stringCILocation() + "\n"
+	s += me.stringApp()
+	s += styler.BoxString("Execution Log", styler.BORDER_SINGLE)
+	s = strings.TrimRight(s, "\n")
+
+	return s
 }
 
-func (w *Workspace) _stringCIBasic() string {
-	return fmt.Sprintf(`JOB
-%s
+func (me *Workspace) stringCIJob() (s string) {
+	s = styler.BoxString("CI Job", styler.BORDER_SINGLE)
+	s += styler.PortraitKV("Job Name", me.Job)
+	s += styler.PortraitKV("Language Name", me.Language.Name)
+	s += styler.PortraitKV("Language Code", me.Language.Code)
+	s += styler.PortraitKV("Job Timestamp", me.Timestamp.String())
 
-VERSION
-%s
-
-LANGUAGE
-%s (%s)
-`,
-		w.Job,
-		w.Version,
-		w.Language.Name, w.Language.AlternateName,
-	)
+	return s
 }
 
-func (w *Workspace) _stringCILocation() string {
-	return styler.BoxString("CI Pathing", styler.BORDER_SINGLE) +
-		fmt.Sprintf(`CURRENT DIRECTORY LOCATION
-%s
+func (me *Workspace) stringCILocation() (s string) {
+	s = styler.BoxString("CI Pathing", styler.BORDER_SINGLE)
+	s += styler.PortraitKV("Current Directory", me.Filesystem.CurrentDir)
+	s += styler.PortraitKV("Root Directory", me.Filesystem.RootDir)
+	s += styler.PortraitKV("Config Directory", me.Filesystem.ConfigDir)
+	s += styler.PortraitKV("Base Directory", me.Filesystem.BaseDir)
+	s += styler.PortraitKV("Working Directory", me.Filesystem.WorkingDir)
+	s += styler.PortraitKV("Build Directory", me.Filesystem.BuildDir)
+	s += styler.PortraitKV("Script Directory", me.Filesystem.ScriptDir)
+	s += styler.PortraitKV("Bin Directory", me.Filesystem.BinDir)
+	s += styler.PortraitKV("Log Directory", me.Filesystem.LogDir)
+	s += styler.PortraitKV("App Config Directory",
+		me.Filesystem.AppConfigDir)
 
-ROOT REPOSITORY LOCATION
-%s
-
-MONTEUR CONFIG LOCATION
-%s
-
-SOURCE CODE BASE LOCATION
-%s
-
-WORKING LOCATION
-%s
-
-BUILD LOCATION
-%s
-
-SCRIPT LOCATION
-%s
-
-BIN LOCATION
-%s
-
-LOG LOCATION
-%s
-`,
-			w.Filesystem.CurrentDir,
-			w.Filesystem.RootDir,
-			w.Filesystem.ConfigDir,
-			w.Filesystem.BaseDir,
-			w.Filesystem.WorkingDir,
-			w.Filesystem.BuildDir,
-			w.Filesystem.ScriptDir,
-			w.Filesystem.BinDir,
-			w.Filesystem.LogDir,
-		)
+	return s
 }
 
-func (w *Workspace) _stringApp() string {
-	return styler.BoxString("Product Metadata", styler.BORDER_SINGLE) +
-		fmt.Sprintf(`NAME
-%s
-`,
-			w.App.Name,
-		)
+func (me *Workspace) stringApp() (s string) {
+	s = styler.BoxString("Product Metadata", styler.BORDER_SINGLE)
+	s += me.App.String()
+
+	return s
 }

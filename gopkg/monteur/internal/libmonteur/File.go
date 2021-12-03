@@ -31,7 +31,9 @@ const (
 	DIRECTORY_MONTEUR_CONFIG_D = "config.d"
 	DIRECTORY_MONTEUR_CONFIG   = ".configs/monteur"
 
-	DIRECTORY_APP = "app"
+	DIRECTORY_APP           = "app"
+	DIRECTORY_APP_CONFIG    = DIRECTORY_APP + "/config"
+	DIRECTORY_APP_COPYRIGHT = "copyrights" // has lang prefix
 
 	DIRECTORY_PUBLISH   = "publish"
 	DIRECTORY_PUBLISHER = DIRECTORY_PUBLISH + "/publishers"
@@ -50,8 +52,12 @@ const (
 )
 
 const (
-	FILE_TOML           = "config" + EXTENSION_TOML
-	FILE_TOML_WORKSPACE = "workspace" + EXTENSION_TOML
+	FILE_TOML               = "config" + EXTENSION_TOML
+	FILE_TOML_WORKSPACE     = "workspace" + EXTENSION_TOML
+	FILE_TOML_APP_METADATA  = "metadata" + EXTENSION_TOML
+	FILE_TOML_APP_COPYRIGHT = "copyrights" + EXTENSION_TOML
+	FILE_TOML_APP_HELP      = "help" + EXTENSION_TOML
+	FILE_TOML_APP_DEBIAN    = "debian" + EXTENSION_TOML
 
 	FILE_LOG_PREFIX_JOB = "job-"
 
