@@ -26,6 +26,7 @@ import (
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsecrets"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/styler"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/templater"
 )
@@ -39,6 +40,7 @@ type Workspace struct {
 	Language   *libmonteur.Language
 	App        *libmonteur.Software
 	Variables  *map[string]interface{}
+	secrets    *map[string]interface{}
 
 	Job           string
 	Version       string
@@ -62,6 +64,7 @@ func (me *Workspace) Init() error {
 		return err
 	}
 
+	me.processSecrets()
 	me.processDataByJob()
 
 	return nil
@@ -361,6 +364,12 @@ func (me *Workspace) _parseAppSpec() (err error) {
 	return nil
 }
 
+func (me *Workspace) processSecrets() {
+	me.secrets = &map[string]interface{}{}
+
+	*(me).secrets = libsecrets.GetSecrets(me.Filesystem.SecretsDir)
+}
+
 func (me *Workspace) processDataByJob() {
 	(*me.Variables)[libmonteur.VAR_OS] = me.OS
 	(*me.Variables)[libmonteur.VAR_ARCH] = me.ARCH
@@ -371,6 +380,7 @@ func (me *Workspace) processDataByJob() {
 	(*me.Variables)[libmonteur.VAR_LOG] = me.Filesystem.WorkspaceLogDir
 	(*me.Variables)[libmonteur.VAR_CFG] = me.Filesystem.BinCfgDir
 	(*me.Variables)[libmonteur.VAR_BIN] = me.Filesystem.BinDir
+	(*me.Variables)[libmonteur.VAR_SECRETS] = *(me).secrets
 
 	switch me.Job {
 	case libmonteur.JOB_SETUP:

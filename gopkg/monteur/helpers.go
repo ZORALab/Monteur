@@ -22,7 +22,6 @@ import (
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsecrets"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libworkspace"
 )
 
@@ -73,14 +72,6 @@ func _initWorkspace(job string, w **libworkspace.Workspace) (err error) {
 	}
 
 	return nil
-}
-
-func _initSecrets(list *map[string]interface{},
-	l *liblog.Logger,
-	path []string) {
-	l.Info("Parsing secrets...")
-	*list = libsecrets.GetSecrets(path)
-	l.Success(libmonteur.LOG_SUCCESS)
 }
 
 func _reportError(l *liblog.Logger, tag string, err error) int {

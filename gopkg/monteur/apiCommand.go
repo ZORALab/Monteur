@@ -117,11 +117,6 @@ func (api *apiCommand) _init() (err error) {
 		return err
 	}
 
-	_initSecrets(&api.secrets,
-		api.logger,
-		api.workspace.Filesystem.SecretsDir,
-	)
-
 	api.logger.Info("Initialize settings...")
 	api.settings = &libcmd.Run{}
 
