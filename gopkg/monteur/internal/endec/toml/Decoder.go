@@ -47,7 +47,12 @@ func DecodeFile(path string,
 		c = config.(*Config)
 	}
 
-	return decode(f, data, c)
+	err = decode(f, data, c)
+	if err != nil {
+		return fmt.Errorf("%s (%s): %s", ERROR_FAILED_DECODE, err, path)
+	}
+
+	return nil
 }
 
 // SilentDecodeFile is to decode TOML data from a file quietly.
@@ -60,6 +65,7 @@ func DecodeFile(path string,
 func SilentDecodeFile(path string,
 	data interface{}, config interface{}) (err error) {
 	_ = DecodeFile(path, data, config)
+
 	return nil
 }
 
@@ -78,7 +84,16 @@ func DecodeString(input string,
 		c = config.(*Config)
 	}
 
-	return decode(f, data, c)
+	err = decode(f, data, c)
+	if err != nil {
+		return fmt.Errorf("%s (%s): %s",
+			ERROR_FAILED_DECODE,
+			err,
+			input,
+		)
+	}
+
+	return nil
 }
 
 // DecodeBytes is to decode TOML data from an in-memory `[]byte`.
@@ -96,7 +111,16 @@ func DecodeBytes(input []byte,
 		c = config.(*Config)
 	}
 
-	return decode(f, data, c)
+	err = decode(f, data, c)
+	if err != nil {
+		return fmt.Errorf("%s (%s): %#v",
+			ERROR_FAILED_DECODE,
+			err,
+			input,
+		)
+	}
+
+	return nil
 }
 
 func decode(input io.Reader, data interface{}, config *Config) (err error) {
@@ -110,7 +134,7 @@ func decode(input io.Reader, data interface{}, config *Config) (err error) {
 
 	err = decoder.Decode(data)
 	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_FAILED_DECODE, err)
+		return err //nolint:wrapcheck
 	}
 
 	return nil
