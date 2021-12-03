@@ -15,6 +15,12 @@
 
 package libmonteur
 
+import (
+	"fmt"
+
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/templater"
+)
+
 // Supported variables keys in key:value variables placholders.
 //
 // It is used in every toml config file inside setup/program/ config directory
@@ -22,6 +28,7 @@ package libmonteur
 const (
 	VAR_ARCH    = "Arch"
 	VAR_ARCHIVE = "Archive"
+	VAR_APP     = "App"
 	VAR_BASE    = "BaseDir"
 	VAR_BIN     = "BinDir"
 	VAR_CFG     = "ConfigDir"
@@ -37,3 +44,34 @@ const (
 	VAR_TMP     = "WorkingDir"
 	VAR_URL     = "URL"
 )
+
+func SanitizeVariables(list, fmtVar *map[string]interface{}) (err error) {
+	var val interface{}
+
+	switch {
+	case list == nil, *list == nil:
+		panic("MONTEUR DEV: given Variables list is nil")
+	case fmtVar == nil, *fmtVar == nil:
+		panic("MONTEUR DEV: given FMTVariables list is nil")
+	}
+
+	for key, value := range *fmtVar {
+		switch v := value.(type) {
+		case string:
+			val, err = templater.String(v, *list)
+		default:
+			val = v
+		}
+
+		if err != nil {
+			return fmt.Errorf("%s: %s",
+				ERROR_VARIABLES_FMT_BAD,
+				err,
+			)
+		}
+
+		(*list)[key] = val
+	}
+
+	return nil
+}

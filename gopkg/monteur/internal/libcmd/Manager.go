@@ -84,9 +84,9 @@ func (me *Manager) Parse(path string) (err error) {
 		return err
 	}
 
-	err = me.sanitizeFMTVariables(fmtVar)
+	err = libmonteur.SanitizeVariables(&me.Variables, &fmtVar)
 	if err != nil {
-		return err
+		return err //nolint:wrapcheck
 	}
 
 	err = me.sanitizeDeps(dep)
@@ -265,34 +265,6 @@ func (me *Manager) sanitizeDeps(in []*libmonteur.TOMLDependency) (err error) {
 				err,
 			)
 		}
-	}
-
-	return nil
-}
-
-func (me *Manager) sanitizeFMTVariables(in map[string]interface{}) (err error) {
-	var val interface{}
-
-	if in == nil {
-		return nil
-	}
-
-	for key, value := range in {
-		switch v := value.(type) {
-		case string:
-			val, err = templater.String(v, me.Variables)
-		default:
-			val = v
-		}
-
-		if err != nil {
-			return fmt.Errorf("%s: %s",
-				libmonteur.ERROR_VARIABLES_FMT_BAD,
-				err,
-			)
-		}
-
-		me.Variables[key] = val
 	}
 
 	return nil
