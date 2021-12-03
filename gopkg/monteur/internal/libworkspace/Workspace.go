@@ -377,7 +377,6 @@ func (me *Workspace) processDataByJob() {
 	(*me.Variables)[libmonteur.VAR_HOME] = me.Filesystem.CurrentDir
 	(*me.Variables)[libmonteur.VAR_ROOT] = me.Filesystem.RootDir
 	(*me.Variables)[libmonteur.VAR_BASE] = me.Filesystem.BaseDir
-	(*me.Variables)[libmonteur.VAR_LOG] = me.Filesystem.WorkspaceLogDir
 	(*me.Variables)[libmonteur.VAR_CFG] = me.Filesystem.BinCfgDir
 	(*me.Variables)[libmonteur.VAR_BIN] = me.Filesystem.BinDir
 	(*me.Variables)[libmonteur.VAR_SECRETS] = *(me).secrets
@@ -451,6 +450,9 @@ func (me *Workspace) processDataByJob() {
 	default:
 		panic("Monteur DEV: what kind of CI Job is this? ➤ " + me.Job)
 	}
+
+	// assign log directory after job specific processing
+	(*me.Variables)[libmonteur.VAR_LOG] = me.Filesystem.WorkspaceLogDir
 }
 
 // String is the standard string interface for printing out Workspace data.
