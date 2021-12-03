@@ -379,6 +379,8 @@ func (me *Workspace) processDataByJob() {
 	(*me.Variables)[libmonteur.VAR_BASE] = me.Filesystem.BaseDir
 	(*me.Variables)[libmonteur.VAR_CFG] = me.Filesystem.BinCfgDir
 	(*me.Variables)[libmonteur.VAR_BIN] = me.Filesystem.BinDir
+	(*me.Variables)[libmonteur.VAR_BUILD] = me.Filesystem.BuildTMPDir
+	(*me.Variables)[libmonteur.VAR_DOC] = me.Filesystem.ComposeTMPDir
 	(*me.Variables)[libmonteur.VAR_SECRETS] = *(me).secrets
 
 	switch me.Job {
@@ -405,8 +407,6 @@ func (me *Workspace) processDataByJob() {
 		)
 
 		// assign specific variables
-		//nolint:lll
-		(*me.Variables)[libmonteur.VAR_DOC] = me.Filesystem.ComposeTMPDir
 		(*me.Variables)[libmonteur.VAR_TMP] = me.Filesystem.BuildTMPDir
 	case libmonteur.JOB_PACKAGE:
 		me.ConfigDir = me.Filesystem.PackageConfigDir
@@ -418,8 +418,6 @@ func (me *Workspace) processDataByJob() {
 		)
 
 		// assign specific variables
-		//nolint:lll
-		(*me.Variables)[libmonteur.VAR_BUILD] = me.Filesystem.BuildTMPDir
 		//nolint:lll
 		(*me.Variables)[libmonteur.VAR_TMP] = me.Filesystem.PackageTMPDir
 	case libmonteur.JOB_RELEASE:
