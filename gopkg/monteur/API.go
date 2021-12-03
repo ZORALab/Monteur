@@ -90,8 +90,12 @@ func Build() int {
 // formats like .msi for Microsoft Windows OS, .deb for Debian-based Linux OS,
 // .rpm for RPM-based Linux OS, .dmg for MacOS, .appImage for AppImage.
 func Package() int {
-	p := &packager{}
-	return p.Run()
+	api := &apiCommand{
+		Job:      libmonteur.JOB_PACKAGE,
+		ErrorTag: libmonteur.ERROR_PACKAGE,
+	}
+
+	return api.Run()
 }
 
 // Publish is the function to update and publish the documentations.

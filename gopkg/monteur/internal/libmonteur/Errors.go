@@ -32,6 +32,7 @@ const (
 	ERROR_SETUP   = "[ ERROR - Setup   ]"
 	ERROR_TEST    = "[ ERROR - Test    ]"
 	ERROR_BUILD   = "[ ERROR - Build   ]"
+	ERROR_PACKAGE = "[ ERROR - Package ]"
 	ERROR_COMPOSE = "[ ERROR - Compose ]"
 	ERROR_PUBLISH = "[ ERROR - Publish ]"
 )

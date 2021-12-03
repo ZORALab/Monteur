@@ -30,6 +30,7 @@ const (
 	VAR_ARCHIVE = "Archive"
 	VAR_APP     = "App"
 	VAR_BASE    = "BaseDir"
+	VAR_BUILD   = "BuildDir"
 	VAR_BIN     = "BinDir"
 	VAR_CFG     = "ConfigDir"
 	VAR_COMPUTE = "ComputeSystem"

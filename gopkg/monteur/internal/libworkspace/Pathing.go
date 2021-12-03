@@ -88,6 +88,11 @@ type Pathing struct {
 	BuildTMPDir    string
 	BuildTOMLFile  string
 
+	// sub-directories for package fx
+	PackageConfigDir string
+	PackageTMPDir    string
+	PackageTOMLFile  string
+
 	// user
 	User *UserPath
 
@@ -271,6 +276,11 @@ func (fp *Pathing) Update(langCode string) (err error) {
 	}
 
 	err = fp.updateBuildPaths()
+	if err != nil {
+		return err
+	}
+
+	err = fp.updatePackagePaths()
 	if err != nil {
 		return err
 	}
@@ -462,6 +472,30 @@ func (fp *Pathing) updateBuildPaths() (err error) {
 		libmonteur.FILE_TOML,
 	)
 	err = fp._initConfigSubPath(&fp.BuildTOMLFile, "BuildTOMLFile")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (fp *Pathing) updatePackagePaths() (err error) {
+	fp.PackageConfigDir = libmonteur.DIRECTORY_PACKAGER
+	err = fp._initConfigSubPath(&fp.PackageConfigDir, "PackageConfigDir")
+	if err != nil {
+		return err
+	}
+
+	fp.PackageTMPDir = libmonteur.DIRECTORY_PACKAGE
+	err = fp._initWorkingSubPath(&fp.PackageTMPDir, "PackageTMPDir")
+	if err != nil {
+		return err
+	}
+
+	fp.PackageTOMLFile = filepath.Join(libmonteur.DIRECTORY_PACKAGE,
+		libmonteur.FILE_TOML,
+	)
+	err = fp._initConfigSubPath(&fp.PackageTOMLFile, "PackageTOMLFile")
 	if err != nil {
 		return err
 	}

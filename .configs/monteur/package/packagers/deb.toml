@@ -1,0 +1,34 @@
+[Metadata]
+Name = 'DEB'
+Description = """
+Package monteur into .deb package file.
+"""
+
+[Variables]
+Timeout = '14400s'
+
+[FMTVariables]
+CoverageFilepath = '{{- .WorkingDir -}}/go-coverage.html'
+
+
+
+[[Dependencies]]
+Name = 'Go'
+Condition = 'all-all'
+Type = 'command'
+Command = 'go'
+
+
+
+
+[[CMD]]
+Name = "Create Directory for Housing Artifacts"
+Type = 'create-path'
+Condition = [ 'all-all' ]
+Source = '{{- .WorkingDir -}}'
+
+[[CMD]]
+Name = "Placeholder"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'echo "placeholder" > {{ .WorkingDir -}}/placeholder.txt'

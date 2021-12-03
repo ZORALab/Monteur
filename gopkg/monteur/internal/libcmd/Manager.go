@@ -66,6 +66,8 @@ func (me *Manager) Parse(path string) (err error) {
 		err = me.parseTOMLCMD(path, &dep, &fmtVar, &cmd)
 	case libmonteur.JOB_BUILD:
 		err = me.parseTOMLBuildCMD(path, &dep, &fmtVar, &cmd)
+	case libmonteur.JOB_PACKAGE:
+		err = me.parseTOMLCMD(path, &dep, &fmtVar, &cmd)
 	case libmonteur.JOB_COMPOSE:
 		err = me.parseTOMLCMD(path, &dep, &fmtVar, &cmd)
 	case libmonteur.JOB_PUBLISH:

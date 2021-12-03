@@ -49,6 +49,9 @@ const (
 
 	DIRECTORY_BUILD   = "build"
 	DIRECTORY_BUILDER = DIRECTORY_APP + "/variants"
+
+	DIRECTORY_PACKAGE  = "package"
+	DIRECTORY_PACKAGER = DIRECTORY_PACKAGE + "/packagers"
 )
 
 const (
