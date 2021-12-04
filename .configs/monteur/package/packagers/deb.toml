@@ -3,12 +3,12 @@ Name = 'DEB'
 Description = """
 Package monteur into .deb package file.
 """
+Type = 'deb'
 
 [Variables]
-Timeout = '14400s'
 
 [FMTVariables]
-CoverageFilepath = '{{- .WorkingDir -}}/go-coverage.html'
+
 
 
 
@@ -21,14 +21,21 @@ Command = 'go'
 
 
 
-[[CMD]]
-Name = "Create Directory for Housing Artifacts"
-Type = 'create-path'
-Condition = [ 'all-all' ]
-Source = '{{- .WorkingDir -}}'
+[Package.linux-amd64]
+Source = '{{- .BuildDir -}}/linux-amd64'
+OS = 'linux'
+CPU = 'amd64'
+
+[Package.linux-arm64]
+Source = '{{- .BuildDir -}}/linux-arm64'
+OS = 'linux'
+CPU = 'arm64'
+
+
+
 
 [[CMD]]
 Name = "Placeholder"
 Type = 'command'
 Condition = [ 'all-all' ]
-Source = 'echo "placeholder" > {{ .WorkingDir -}}/placeholder.txt'
+Source = 'echo "just a command placeholder"'
