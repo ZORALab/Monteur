@@ -181,7 +181,7 @@ func (fx *setup) __filterProgramMetadata(path string,
 func (fx *setup) _init() (err error) {
 	fx.settings = &libsetup.Run{}
 	fx.workers = map[string]conductor.Job{}
-	fx.workspace = &libworkspace.Workspace{}
+	fx.workspace = &libworkspace.Workspace{Job: libmonteur.JOB_SETUP}
 
 	// initialize workspace
 	err = fx.workspace.Init()
