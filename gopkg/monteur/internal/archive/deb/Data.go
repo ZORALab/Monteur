@@ -26,8 +26,8 @@ type Data struct {
 	// Changelog are the changelog data saved into DEBIAN/changelog
 	Changelog *Changelog
 
-	// Source is the deb file format saved into DEBIAN/source
-	Source string
+	// Source is the deb file format saved into DEBIAN/source directory.
+	Source *Source
 
 	// Manpage is the manpage data saved into DEBIAN/app.manpages
 	Manpage map[string]string

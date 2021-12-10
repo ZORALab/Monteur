@@ -64,6 +64,8 @@ const (
 	ERROR_LICENSE_FILE_EMPTY         = "files cannot be empty for file license"
 	ERROR_LICENSE_MULTI              = "only 1 license for file license"
 
+	ERROR_SOURCE_FORMAT_UNKNOWN = "unknown debian/source/format"
+
 	ERROR_TESTSUITE_BAD = "bad testsuite path"
 
 	ERROR_VCS_TYPE_BAD    = "bad VCS type"

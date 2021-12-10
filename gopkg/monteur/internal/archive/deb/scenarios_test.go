@@ -5349,6 +5349,96 @@ License.String() should work properly when:
 				useBuildSourceFlag:        true,
 				expectPanic:               false,
 			},
+		}, {
+			UID:      161,
+			TestType: testSourceSanitize,
+			Description: `
+Source.Sanitize() should work properly when:
+1. Format is properly given as Native 3.0.
+2. Local Options are properly given.
+3. Options are properly given.
+4. Error is not expected.
+5. Panic is not expected.
+`,
+			Switches: map[string]bool{
+				useSourceFormatNative3p0:    true,
+				useProperSourceLocalOptions: true,
+				useProperSourceOptions:      true,
+				expectError:                 false,
+				expectPanic:                 false,
+			},
+		}, {
+			UID:      162,
+			TestType: testSourceSanitize,
+			Description: `
+Source.Sanitize() should work properly when:
+1. Format is properly given as Quilt 3.0.
+2. Local Options are properly given.
+3. Options are properly given.
+4. Error is not expected.
+5. Panic is not expected.
+`,
+			Switches: map[string]bool{
+				useSourceFormatNative3p0:    true,
+				useProperSourceLocalOptions: true,
+				useProperSourceOptions:      true,
+				expectError:                 false,
+				expectPanic:                 false,
+			},
+		}, {
+			UID:      163,
+			TestType: testSourceSanitize,
+			Description: `
+Source.Sanitize() should work properly when:
+1. Format is badly given.
+2. Local Options are properly given.
+3. Options are properly given.
+4. Error is expected.
+5. Panic is not expected.
+`,
+			Switches: map[string]bool{
+				useSourceFormatNative3p0:    false,
+				useProperSourceLocalOptions: true,
+				useProperSourceOptions:      true,
+				expectError:                 true,
+				expectPanic:                 false,
+			},
+		}, {
+			UID:      164,
+			TestType: testSourceSanitize,
+			Description: `
+Source.Sanitize() should work properly when:
+1. Format is properly given as Native 3.0.
+2. Local Options are badly given.
+3. Options are properly given.
+4. Error is not expected.
+5. Panic is not expected.
+`,
+			Switches: map[string]bool{
+				useSourceFormatNative3p0:    true,
+				useProperSourceLocalOptions: false,
+				useProperSourceOptions:      true,
+				expectError:                 false,
+				expectPanic:                 false,
+			},
+		}, {
+			UID:      165,
+			TestType: testSourceSanitize,
+			Description: `
+Source.Sanitize() should work properly when:
+1. Format is properly given as Native 3.0.
+2. Local Options are properly given.
+3. Options are badly given.
+4. Error is not expected.
+5. Panic is not expected.
+`,
+			Switches: map[string]bool{
+				useSourceFormatNative3p0:    true,
+				useProperSourceLocalOptions: true,
+				useProperSourceOptions:      false,
+				expectError:                 false,
+				expectPanic:                 false,
+			},
 		},
 	}
 }

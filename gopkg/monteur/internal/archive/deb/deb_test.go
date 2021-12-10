@@ -36,12 +36,14 @@ const (
 	testLicenseString     = "testLicenseString"
 	testPackageListString = "testPackageListString"
 	testPackageMetaString = "testPackageMetaString"
+	testSourceSanitize    = "testSourceSanitize"
 	testTestsuiteString   = "testTestsuiteString"
 	testVCSString         = "testVCSString"
 	testVersionString     = "testVersionString"
 )
 
 const (
+	expectError = "expectError"
 	expectPanic = "expectPanic"
 
 	simulateStatFxError = "simulateStatFxError"
@@ -145,6 +147,8 @@ const (
 	useProperPath                 = "useProperPath"
 	useProperPathDirectory        = "useProperPathDirectory"
 	useProperSection              = "useProperSection"
+	useProperSourceLocalOptions   = "useProperSourceLocalOptions"
+	useProperSourceOptions        = "useProperSourceOptions"
 	useProperStandardsVersion     = "useProperStandardsVersion"
 	useProperSynopsis             = "useProperSynopsis"
 	useProperTestsuite            = "useProperTestsuite"
@@ -156,6 +160,8 @@ const (
 	useProperVersionRevision      = "useProperVersionRevision"
 	useProperVersionUpstream      = "useProperVersionUpstream"
 	useProperYear                 = "useProperYear"
+	useSourceFormatNative3p0      = "useSourceFormatNative3p0"
+	useSourceFormatQuilt3p0       = "useSourceFormatQuilt3p0"
 	useRRRBinTarget               = "useRRRBinTarget"
 	useRRRCustom                  = "useRRRCustom"
 	useRRRNo                      = "useRRRNo"
@@ -179,36 +185,40 @@ const (
 	useBadYear                    = "useBadYear"
 )
 
+//nolint:lll
 const (
-	app             = "TestApp"
-	appControl      = "ControlApp"
-	changelogA      = "changed feature A"
-	changelogB      = "changed feature B"
-	customRRR       = "namespace/case1"
-	branch          = "next"
-	distroDebian    = "debian"
-	distroUbuntu    = "ubuntu"
-	epoch           = 5
-	email           = "john.smith@testing.email"
-	emailControl    = "aoi.fujimura@testing.corp"
-	emailControl2   = "nasuki.aoi@testing.corp"
-	ghostPath       = "p/package"
-	keySynopsis     = "sys"
-	keyDescription  = "body"
-	name            = "John Smith"
-	nameControl     = "Aoi Fujimura"
-	nameControl2    = "Nasuki Aoi"
-	nonHTTPURL      = "file:///home/u0/Documents/testfile"
-	path            = "testsuite/.gitkeep"
-	directory       = "testsuite"
-	arch            = "amd64"
-	archANY         = "any"
-	properHTTPURL   = "https://www.example.com/path/to/dir?query=language"
-	revision        = "0.50.0~upstream"
-	revisionDash    = "-dbg"
-	revisionIllegal = "my/VersionX.51"
-	revisionPrefix  = "u"
-	section         = "contrib/devel"
+	app                = "TestApp"
+	appControl         = "ControlApp"
+	changelogA         = "changed feature A"
+	changelogB         = "changed feature B"
+	customRRR          = "namespace/case1"
+	branch             = "next"
+	distroDebian       = "debian"
+	distroUbuntu       = "ubuntu"
+	epoch              = 5
+	email              = "john.smith@testing.email"
+	emailControl       = "aoi.fujimura@testing.corp"
+	emailControl2      = "nasuki.aoi@testing.corp"
+	ghostPath          = "p/package"
+	keySynopsis        = "sys"
+	keyDescription     = "body"
+	name               = "John Smith"
+	nameControl        = "Aoi Fujimura"
+	nameControl2       = "Nasuki Aoi"
+	nonHTTPURL         = "file:///home/u0/Documents/testfile"
+	path               = "testsuite/.gitkeep"
+	directory          = "testsuite"
+	arch               = "amd64"
+	archANY            = "any"
+	properHTTPURL      = "https://www.example.com/path/to/dir?query=language"
+	revision           = "0.50.0~upstream"
+	revisionDash       = "-dbg"
+	revisionIllegal    = "my/VersionX.51"
+	revisionPrefix     = "u"
+	section            = "contrib/devel"
+	sourceLocalOptions = `unapply-patches
+abort-on-upstream-changes`
+	sourceOptions   = `extend-diff-ignore = "(^|/)(config\.sub|config\.guess|Makefile)$`
 	timestamp       = "Tue, 07 Dec 2021 16:08:49 +0000"
 	timestampZero   = "Mon, 01 Jan 0001 00:00:00 +0000"
 	upstream        = "0.50.0~testapp"
@@ -243,6 +253,19 @@ func (s *testScenario) log(th *thelper.THelper, data map[string]interface{}) {
 
 func (s *testScenario) stringUID() string {
 	return strconv.Itoa(s.UID)
+}
+
+func (s *testScenario) assertSource(th *thelper.THelper, err error) {
+	switch {
+	case s.Switches[expectError]:
+		if err == nil {
+			th.Errorf("expected error is not raised.")
+		}
+	default:
+		if err != nil {
+			th.Errorf("unexpected error was raised.")
+		}
+	}
 }
 
 //nolint:lll,gocognit
@@ -1821,4 +1844,33 @@ func (s *testScenario) createUploaders() (x []*Entity) {
 	}
 
 	return x
+}
+
+func (s *testScenario) createSourceFormat() SourceFormatType {
+	switch {
+	case s.Switches[useSourceFormatNative3p0]:
+		return SOURCE_FORMAT_NATIVE_3_0
+	case s.Switches[useSourceFormatQuilt3p0]:
+		return SOURCE_FORMAT_QUILT_3_0
+	default:
+		return ""
+	}
+}
+
+func (s *testScenario) createSourceLocalOptions() string {
+	switch {
+	case s.Switches[useProperSourceLocalOptions]:
+		return sourceLocalOptions
+	default:
+		return ""
+	}
+}
+
+func (s *testScenario) createSourceOptions() string {
+	switch {
+	case s.Switches[useProperSourceOptions]:
+		return sourceOptions
+	default:
+		return ""
+	}
 }
