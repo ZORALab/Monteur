@@ -24,6 +24,14 @@ linters-settings:
     check-blank: false
   exhaustive:
     default-signifies-exhaustive: true
+  goconst:
+    min-len: 1
+    min-occurrences: 2
+    ignore-tests: false
+    match-constant: true
+    numbers: true
+    min: 3
+    max: 3
   govet:
     check-shadowing: true
     settings:
@@ -44,7 +52,7 @@ linters-settings:
   goimports:
     local-prefixes: github.com/org/project
   gocyclo:
-    min-complexity: 15
+    min-complexity: 20
   gocognit:
     min-complexity: 20
   maligned:
@@ -173,7 +181,6 @@ linters:
     - gochecknoinits
     - gochecknoglobals
     - gocritic
-    - gocyclo
     - gofmt
     - goimports
     - gomodguard
@@ -204,6 +211,9 @@ linters:
 
 issues:
   exclude-rules:
+    - path: _test\.go
+      linters:
+        - dupl
     - linters:
         - typecheck
       text: "use of internal package"
