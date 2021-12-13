@@ -5439,6 +5439,584 @@ Source.Sanitize() should work properly when:
 				expectError:                 false,
 				expectPanic:                 false,
 			},
+		}, {
+			UID:      166,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is not expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  false,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      167,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is given as nil.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                true,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      168,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is given as nil.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              true,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      169,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is given as nil.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              true,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      170,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is given as nil.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 true,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      171,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is given as nil.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             false,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      172,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is emptily given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useEmptyManpage:              true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      173,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is badly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useFaultyScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      174,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is emptily given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is not expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useEmptyScripts:              true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  false,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      175,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is given as nil.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is not expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             false,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  false,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      176,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is emptily given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useEmptyInstall:              true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      177,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is given as nil.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             false,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      178,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is badly given.
+9. Compat is properly given.
+10. error is expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               false,
+				useProperCompat:              true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      179,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is badly given.
+10. error is expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              false,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      180,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is given with 3.7.0 checklist triggering data.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				use3p7p0Install:              true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      181,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is given with 4.6.0 checklist triggering data.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				use4p6p0Install:              true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      182,
+			TestType: testDataSanitize,
+			Description: `
+Data.Sanitize() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is given with 4.0.0 checklist triggering data.
+8. Rules is properly given.
+9. Compat is properly given.
+10. error is expected.
+11. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				use4p0p0Install:              true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
 		},
 	}
 }

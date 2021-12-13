@@ -31,6 +31,7 @@ const (
 	testChangelogString   = "testChangelogString"
 	testControlString     = "testControlString"
 	testCopyrightString   = "testCopyrightString"
+	testDataSanitize      = "testDataSanitize"
 	testDescriptionString = "testDescriptionString"
 	testEntityString      = "testEntityString"
 	testLicenseString     = "testLicenseString"
@@ -48,6 +49,9 @@ const (
 
 	simulateStatFxError = "simulateStatFxError"
 
+	use3p7p0Install               = "use3p7p0Install"
+	use4p0p0Install               = "use4p0p0Install"
+	use4p6p0Install               = "use4p6p0Install"
 	useAlphaLedVersionRevision    = "useAlphaLedVersionRevision"
 	useAlphaLedVersionUpstream    = "useAlphaLedVersionUpstream"
 	useAnyArch                    = "useAnyArch"
@@ -67,10 +71,13 @@ const (
 	useEmptyDescription           = "useEmptyDescription"
 	useEmptyDistro                = "useEmptyDistro"
 	useEmptyEntities              = "useEmptyEntities"
+	useEmptyInstall               = "useEmptyInstall"
 	useEmptyLicenses              = "useEmptyLicenses"
+	useEmptyManpage               = "useEmptyManpage"
 	useEmptyPackageList           = "useEmptyPackageList"
 	useEmptyPackageListing        = "useEmptyPackageListing"
 	useEmptyPath                  = "useEmptyPath"
+	useEmptyScripts               = "useEmptyScripts"
 	useEmptySection               = "useEmptySection"
 	useEmptyTestsuite             = "useEmptyTestsuite"
 	useEmptyTimestamp             = "useEmptyTimestamp"
@@ -80,8 +87,13 @@ const (
 	useEssentialFlag              = "useEssentialFlag"
 	useFaultyDescription          = "useFaultyDescription"
 	useFaultyPackageList          = "useFaultyPackageList"
+	useFaultyScripts              = "useFaultyScripts"
 	useFaultySection              = "useFaultySection"
 	useFaultyStandardsVersion     = "useFaultyStandardsVersion"
+	useFaultyTestedDataControl    = "useFaultyTestedDataControl"
+	useFaultyTestedDataCopyright  = "useFaultyTestedDataCopyright"
+	useFaultyTestedDataChangelog  = "useFaultyTestedDataChangelog"
+	useFaultyTestedDataSource     = "useFaultyTestedDataSource"
 	useFaultyTestsuite            = "useFaultyTestsuite"
 	useFaultyUploaders            = "useFaultyUploaders"
 	useFaultyVCS                  = "useFaultyVCS"
@@ -97,8 +109,12 @@ const (
 	useLicenseWithoutFiles        = "useLicenseWithoutFiles"
 	useLicenseWithoutTag          = "useLicenseWithoutTag"
 	useLongSynopsis               = "useLongSynopsis"
+	useNilChangelog               = "useNilChangelog"
 	useNilContentPackageList      = "useNilContentPackageList"
+	useNilControl                 = "useNilControl"
+	useNilCopyright               = "useNilCopyright"
 	useNilPackageList             = "useNilPackageList"
+	useNilSource                  = "useNilSource"
 	useNilVersion                 = "useNilVersion"
 	useNonHTTPURL                 = "useNonHTTPURL"
 	usePackageTypeDEB             = "usePackageTypeDEB"
@@ -132,6 +148,7 @@ const (
 	useProperBranch               = "useProperBranch"
 	useProperBrowser              = "useProperBrowser"
 	useProperChangelogChanges     = "useProperChangelogChanges"
+	useProperCompat               = "useProperCompat"
 	useProperCopyrightDisclaimer  = "useProperCopyrightDisclaimer"
 	useProperCopyrightSource      = "useProperCopyrightSource"
 	useProperDescription          = "useProperDescription"
@@ -141,11 +158,15 @@ const (
 	useProperEntity               = "useProperEntity"
 	useProperEmail                = "useProperEmail"
 	useProperLicenses             = "useProperLicenses"
+	useProperManpage              = "useProperManpage"
 	useProperName                 = "useProperName"
 	useProperPackageList          = "useProperPackageList"
 	useProperPackageListing       = "useProperPackageListing"
 	useProperPath                 = "useProperPath"
 	useProperPathDirectory        = "useProperPathDirectory"
+	useProperInstall              = "useProperInstall"
+	useProperRules                = "useProperRules"
+	useProperScripts              = "useProperScript"
 	useProperSection              = "useProperSection"
 	useProperSourceLocalOptions   = "useProperSourceLocalOptions"
 	useProperSourceOptions        = "useProperSourceOptions"
@@ -187,35 +208,49 @@ const (
 
 //nolint:lll
 const (
-	app                = "TestApp"
-	appControl         = "ControlApp"
-	changelogA         = "changed feature A"
-	changelogB         = "changed feature B"
-	customRRR          = "namespace/case1"
-	branch             = "next"
-	distroDebian       = "debian"
-	distroUbuntu       = "ubuntu"
-	epoch              = 5
-	email              = "john.smith@testing.email"
-	emailControl       = "aoi.fujimura@testing.corp"
-	emailControl2      = "nasuki.aoi@testing.corp"
-	ghostPath          = "p/package"
-	keySynopsis        = "sys"
-	keyDescription     = "body"
-	name               = "John Smith"
-	nameControl        = "Aoi Fujimura"
-	nameControl2       = "Nasuki Aoi"
-	nonHTTPURL         = "file:///home/u0/Documents/testfile"
-	path               = "testsuite/.gitkeep"
-	directory          = "testsuite"
-	arch               = "amd64"
-	archANY            = "any"
-	properHTTPURL      = "https://www.example.com/path/to/dir?query=language"
-	revision           = "0.50.0~upstream"
-	revisionDash       = "-dbg"
-	revisionIllegal    = "my/VersionX.51"
-	revisionPrefix     = "u"
-	section            = "contrib/devel"
+	app             = "TestApp"
+	appControl      = "ControlApp"
+	changelogA      = "changed feature A"
+	changelogB      = "changed feature B"
+	compat          = 9
+	customRRR       = "namespace/case1"
+	branch          = "next"
+	distroDebian    = "debian"
+	distroUbuntu    = "ubuntu"
+	epoch           = 5
+	email           = "john.smith@testing.email"
+	emailControl    = "aoi.fujimura@testing.corp"
+	emailControl2   = "nasuki.aoi@testing.corp"
+	ghostPath       = "p/package"
+	installPath     = "usr/local/testapp/program"
+	installPath2    = "usr/bin/program"
+	installProgram  = "testapp"
+	keySynopsis     = "sys"
+	keyDescription  = "body"
+	name            = "John Smith"
+	nameControl     = "Aoi Fujimura"
+	nameControl2    = "Nasuki Aoi"
+	nonHTTPURL      = "file:///home/u0/Documents/testfile"
+	path            = "testsuite/.gitkeep"
+	directory       = "testsuite"
+	arch            = "amd64"
+	archANY         = "any"
+	properHTTPURL   = "https://www.example.com/path/to/dir?query=language"
+	revision        = "0.50.0~upstream"
+	revisionDash    = "-dbg"
+	revisionIllegal = "my/VersionX.51"
+	revisionPrefix  = "u"
+	rulesFile       = `#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+        dh $@`
+	section     = "contrib/devel"
+	shellScript = `#!/bin/sh
+1>&2 printf "shell script executed"
+`
 	sourceLocalOptions = `unapply-patches
 abort-on-upstream-changes`
 	sourceOptions   = `extend-diff-ignore = "(^|/)(config\.sub|config\.guess|Makefile)$`
@@ -1873,4 +1908,238 @@ func (s *testScenario) createSourceOptions() string {
 	default:
 		return ""
 	}
+}
+
+func (s *testScenario) preConfigureTestedData() {
+	// control, copyright, changelog
+	s.Switches[useProperName] = true
+	s.Switches[useProperEmail] = true
+	s.Switches[useProperYear] = true
+	s.Switches[useProperEntity] = true
+	s.Switches[useProperAppName] = true
+
+	// control, changelog
+	s.Switches[useProperVersionUpstream] = true
+
+	// control
+	s.Switches[useProperPackageList] = true
+	s.Switches[useProperURL] = true
+	s.Switches[useProperDescription] = true
+	s.Switches[useProperVCS] = true
+	s.Switches[useProperTestsuite] = true
+	s.Switches[useProperSection] = true
+	s.Switches[usePackageTypeDEB] = true
+	s.Switches[useRRRBinTarget] = true
+	s.Switches[usePriorityRequired] = true
+	s.Switches[useProperArch] = true
+	s.Switches[useProperUploaders] = true
+	s.Switches[useEssentialFlag] = true
+	s.Switches[useBuildSourceFlag] = true
+	if !s.Switches[useFaultyTestedDataControl] {
+		s.Switches[useProperStandardsVersion] = true
+	} else {
+		s.Switches[useProperStandardsVersion] = false
+	}
+
+	// copyright
+	s.Switches[useProperEntities] = true
+	s.Switches[useProperLicenses] = true
+	s.Switches[useProperCopyrightSource] = true
+	s.Switches[useProperCopyrightDisclaimer] = true
+	if !s.Switches[useFaultyTestedDataCopyright] {
+		s.Switches[useCopyrightFormat1p0] = true
+	} else {
+		s.Switches[useCopyrightFormat1p0] = false
+	}
+
+	// changelog
+	s.Switches[useChangelogUrgencyLow] = true
+	s.Switches[useProperDistro] = true
+	s.Switches[useProperChangelogChanges] = true
+	s.Switches[useProperPath] = true
+	if !s.Switches[useFaultyTestedDataChangelog] {
+		s.Switches[useProperTimestamp] = true
+	} else {
+		s.Switches[useProperTimestamp] = false
+	}
+
+	// Source
+	s.Switches[useProperSourceLocalOptions] = true
+	s.Switches[useProperSourceOptions] = true
+	if !s.Switches[useFaultyTestedDataSource] {
+		s.Switches[useSourceFormatNative3p0] = true
+	} else {
+		s.Switches[useSourceFormatNative3p0] = false
+	}
+}
+
+func (s *testScenario) createControl() *Control {
+	// depends on: preConfigureTestedData()
+	if s.Switches[useNilControl] {
+		return nil
+	}
+
+	return &Control{
+		Maintainer:        s.createEntity(),
+		Packages:          s.createRelPackages(),
+		Version:           s.createVersion(),
+		Homepage:          s.createURL(),
+		Description:       s.createDescription(),
+		VCS:               s.createVCS(),
+		Testsuite:         s.createTestsuite(),
+		Name:              s.createAppName(),
+		Section:           s.createSection(),
+		StandardsVersion:  s.createStandardsVersion(),
+		PackageType:       s.createPackageType(),
+		RulesRequiresRoot: s.createRulesRequiresRoot(),
+		Priority:          s.createPriority(),
+		Architecture:      s.createArchitecture(),
+		Uploaders:         s.createUploaders(),
+		Essential:         s.createEssential(),
+		BuildSource:       s.createBuildSource(),
+	}
+}
+
+func (s *testScenario) createCopyright() *Copyright {
+	// depends on: preConfigureTestedData()
+	if s.Switches[useNilCopyright] {
+		return nil
+	}
+
+	_, license, _, comment := s.createLicense()
+
+	return &Copyright{
+		Format:     s.createCopyrightFormat(),
+		Name:       s.createAppName(),
+		Contact:    s.createEntity(),
+		Source:     s.createCopyrightSource(),
+		Disclaimer: s.createCopyrightDisclaimer(),
+		Comment:    comment,
+		License:    license,
+		Copyright:  s.createEntities(),
+		Licenses:   s.createLicenses(),
+	}
+}
+
+func (s *testScenario) createChangelog() *Changelog {
+	// depends on: preConfigureTestedData()
+	if s.Switches[useNilChangelog] {
+		return nil
+	}
+
+	return &Changelog{
+		Version:      s.createVersion(),
+		Maintainer:   s.createEntity(),
+		Timestamp:    s.createTimestamp(),
+		Package:      s.createAppName(),
+		Urgency:      s.createChangelogUrgency(),
+		Changes:      s.createChangelogChanges(),
+		Distribution: s.createChangelogDistro(),
+		Path:         s.createPath(),
+	}
+}
+
+func (s *testScenario) createSource() *Source {
+	// depends on: preConfigureTestedData()
+	if s.Switches[useNilSource] {
+		return nil
+	}
+
+	return &Source{
+		Format:       s.createSourceFormat(),
+		LocalOptions: s.createSourceLocalOptions(),
+		Options:      s.createSourceOptions(),
+	}
+}
+
+func (s *testScenario) createManpage() (x map[string]string) {
+	switch {
+	case s.Switches[useProperManpage]:
+		x = map[string]string{
+			manPageTag1: manPage1Content,
+			"":          manPage1Content,
+			manPageTagX: "",
+		}
+	case s.Switches[useEmptyManpage]:
+		x = map[string]string{}
+	}
+
+	return x
+}
+
+func (s *testScenario) createScripts() (x map[ShellScriptType]string) {
+	switch {
+	case s.Switches[useProperScripts]:
+		x = map[ShellScriptType]string{
+			SHELL_PRE_INSTALL:  shellScript,
+			SHELL_POST_INSTALL: shellScript,
+			SHELL_PRE_REMOVE:   shellScript,
+			SHELL_POST_REMOVE:  shellScript,
+		}
+	case s.Switches[useFaultyScripts]:
+		x = map[ShellScriptType]string{
+			SHELL_POST_REMOVE: "",
+			unknown:           shellScript,
+		}
+	case s.Switches[useEmptyScripts]:
+		x = map[ShellScriptType]string{}
+	}
+
+	return x
+}
+
+func (s *testScenario) createInstalls() (x map[string]string) {
+	switch {
+	case s.Switches[useProperInstall]:
+		x = map[string]string{
+			installPath:  installProgram,
+			"":           installProgram,
+			installPath2: installProgram,
+		}
+	case s.Switches[use3p7p0Install]:
+		x = map[string]string{
+			"":                   installProgram,
+			"usr/X11R6/testapp":  installProgram,
+			"/usr/X11R6/testapp": installProgram,
+		}
+	case s.Switches[use4p0p0Install]:
+		x = map[string]string{
+			"":                      installProgram,
+			"usr/bin/testapp/app":   installProgram,
+			"usr/share/testapp/app": installProgram,
+			"testapp/app":           installProgram,
+		}
+	case s.Switches[use4p6p0Install]:
+		x = map[string]string{
+			"":                   installProgram,
+			"usr/lib64/testapp":  installProgram,
+			"/usr/lib64/testapp": installProgram,
+		}
+	case s.Switches[useEmptyInstall]:
+		x = map[string]string{}
+	}
+
+	return x
+}
+
+func (s *testScenario) createRules() (x string) {
+	switch {
+	case s.Switches[useProperRules]:
+		x = rulesFile
+	default:
+		x = ""
+	}
+
+	return x
+}
+
+func (s *testScenario) createCompat() (x uint) {
+	switch {
+	case s.Switches[useProperCompat]:
+		x = compat
+	default:
+		x = 0
+	}
+
+	return x
 }

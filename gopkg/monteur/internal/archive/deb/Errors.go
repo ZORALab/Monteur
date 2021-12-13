@@ -17,10 +17,18 @@ package deb
 
 //nolint:lll
 const (
+	ERROR_CHANGELOG_BAD          = "bad debian/changelog file"
 	ERROR_CHANGELOG_ENTRY_BAD    = "bad debian/changelog entry"
 	ERROR_CHANGELOG_FILEPATH_BAD = "bad debian/changelog filepath"
 
+	ERROR_CHECKLIST_4_6_0_LIB64 = "Error Checklist 4.6.0: no package allowed to install files into /usr/lib64/"
+	ERROR_CHECKLIST_4_0_0_PATHS = "Error Checklist 4.0.0: same programs cannot be installed into both /path and /usr/path"
+	ERROR_CHECKLIST_3_7_0_XORG  = "Error Checklist 3.7.0: /usr/X11R6 is gone forever."
+
+	ERROR_COMPAT_UNSET = "DEBIAN/compat cannot be left unset"
+
 	ERROR_CONTROL_ARCHITECTURE_BAD      = "bad debian/control Architecture"
+	ERROR_CONTROL_BAD                   = "bad debian/control file"
 	ERROR_CONTROL_CHANGEDBY_BAD         = "bad debian/control Changed-By"
 	ERROR_CONTROL_DESCRIPTION_BAD       = "bad debian/control Description"
 	ERROR_CONTROL_MAINTAINER_BAD        = "bad debian/control Maintainer"
@@ -36,6 +44,7 @@ const (
 	ERROR_CONTROL_VERSION_BAD           = "bad debian/control Version"
 	ERROR_CONTROL_TESTSUITE_BAD         = "bad debian/control Testsuite"
 
+	ERROR_COPYRIGHT_BAD                  = "bad debian/copyright file"
 	ERROR_COPYRIGHT_FORMAT_BAD           = "bad debian/copyright Format"
 	ERROR_COPYRIGHT_LICENSE_MISSING      = "missing debian/copyright License"
 	ERROR_COPYRIGHT_UPSTREAM_CONTACT_BAD = "bad debian/copyright Upstream-Contact"
@@ -58,12 +67,21 @@ const (
 
 	ERROR_EXTRACT_UNSUPPORTED = "Extract(...) is unsupported"
 
+	ERROR_INSTALL_BAD = "bad DEBIAN/install data"
+
 	ERROR_LICENSE_COPYRIGHT_EMPTY    = "copyright cannot be empty for file license"
 	ERROR_LICENSE_COPYRIGHT_YEAR_BAD = "Copyright.Year must be > 0"
 	ERROR_LICENSE_EMPTY              = "license cannot be empty for file license"
 	ERROR_LICENSE_FILE_EMPTY         = "files cannot be empty for file license"
 	ERROR_LICENSE_MULTI              = "only 1 license for file license"
 
+	ERROR_MANPAGE_BAD = "bad manpages"
+
+	ERROR_RULES_EMPTY = "DEBIAN/rules cannot be left empty"
+
+	ERROR_SHELL_SCRIPT_TYPE_UNKNOWN = "unknown debian/script type"
+
+	ERROR_SOURCE_BAD            = "bad debian/source data"
 	ERROR_SOURCE_FORMAT_UNKNOWN = "unknown debian/source/format"
 
 	ERROR_TESTSUITE_BAD = "bad testsuite path"
