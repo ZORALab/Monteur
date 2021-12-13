@@ -5379,7 +5379,7 @@ Source.Sanitize() should work properly when:
 5. Panic is not expected.
 `,
 			Switches: map[string]bool{
-				useSourceFormatNative3p0:    true,
+				useSourceFormatQuilt3p0:     true,
 				useProperSourceLocalOptions: true,
 				useProperSourceOptions:      true,
 				expectError:                 false,
