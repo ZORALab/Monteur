@@ -159,6 +159,10 @@ func (action *Action) _initType() (err error) {
 		action.actionFx = cmdDeleteQuiet
 	case ACTION_IS_EXISTS:
 		action.actionFx = cmdIsExists
+	case ACTION_IS_EMPTY:
+		action.actionFx = cmdIsEmpty
+	case ACTION_IS_NOT_EMPTY:
+		action.actionFx = cmdIsNotEmpty
 	case ACTION_MOVE:
 		action.actionFx = cmdMove
 	case ACTION_MOVE_QUIET:

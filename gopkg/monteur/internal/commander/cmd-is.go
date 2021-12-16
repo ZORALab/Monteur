@@ -18,6 +18,7 @@ package commander
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 func cmdIsExists(action *Action) (out interface{}, err error) {
@@ -38,4 +39,27 @@ func cmdIsExists(action *Action) (out interface{}, err error) {
 		"error finding target existence",
 		err,
 	)
+}
+
+func cmdIsEmpty(action *Action) (out interface{}, err error) {
+	if _cmdIsEmpty(action.Source) {
+		return true, nil
+	}
+
+	return false, fmt.Errorf("source is not empty")
+}
+
+func cmdIsNotEmpty(action *Action) (out interface{}, err error) {
+	if !_cmdIsEmpty(action.Source) {
+		return true, nil
+	}
+
+	return false, fmt.Errorf("source is empty")
+}
+
+func _cmdIsEmpty(data string) bool {
+	data = strings.TrimLeft(data, "\r\n ")
+	data = strings.TrimRight(data, "\r\n ")
+
+	return data == ""
 }
