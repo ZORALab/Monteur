@@ -18,6 +18,7 @@ package deb
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -31,6 +32,19 @@ const (
 	CHANGELOG_URGENCY_HIGH      ChangelogUrgency = "high"
 	CHANGELOG_URGENCY_EMERGENCY ChangelogUrgency = "emergency"
 	CHANGELOG_URGENCY_CRITICAL  ChangelogUrgency = "critical"
+)
+
+// changelogParseStatus are the status of the Changelog parser.
+type changelogParseStatus uint
+
+const (
+	_CHANGELOG_PARSE_HEADER changelogParseStatus = iota
+	_CHANGELOG_PARSE_CHANGE
+	_CHANGELOG_PARSE_SIGNATURE
+)
+
+const (
+	_CHANGELOG_TIMESTAMP_FORMAT = time.RFC1123Z
 )
 
 // Changelog is the DEBIAN/changelog file data.
@@ -88,6 +102,272 @@ type Changelog struct {
 	//
 	// Space separator will be added automatically during rendering.
 	Distribution []string
+
+	parseStatus changelogParseStatus
+}
+
+func (me *Changelog) Parse(line string) (ready bool, err error) {
+	// format the input line
+	line = strings.TrimLeft(line, "\n")
+	line = strings.TrimLeft(line, "\r")
+	line = strings.TrimRight(line, "\n")
+	line = strings.TrimRight(line, "\r")
+	line = strings.TrimRight(line, " ")
+
+	// line is empty. Ignore it
+	if line == "" {
+		goto done
+	}
+
+	// check line expectation
+	switch me.parseStatus {
+	case _CHANGELOG_PARSE_HEADER:
+		err = me.parseHeader(line)
+	case _CHANGELOG_PARSE_CHANGE:
+		err = me.parseChanges(line)
+	case _CHANGELOG_PARSE_SIGNATURE:
+		err = fmt.Errorf("%s: Unexpected line '%s'",
+			ERROR_CHANGELOG_PARSE_COMPLETED,
+			line,
+		)
+	default:
+		panic("MONTEUR DEV: what is this changelog parse status? " +
+			strconv.Itoa(int(me.parseStatus)))
+	}
+
+done:
+	return (me.Sanitize() == nil), err
+}
+
+func (me *Changelog) parseSignature(line string) (err error) {
+	line = strings.TrimPrefix(line, _FIELD_CHANGELOG_DELIMIT_SIGNATURE)
+
+	// parse maintainer name
+	me.Maintainer = &Entity{}
+	fragments := strings.Split(line, _FIELD_CHANGELOG_DELIMIT_EMAIL)
+	if len(fragments) != 2 {
+		return fmt.Errorf("%s: unknown maintainer name. Got: '%s'",
+			ERROR_CHANGELOG_PARSE_BAD,
+			line,
+		)
+	}
+	me.Maintainer.Name = fragments[0]
+	line = fragments[1]
+
+	// parse maintainer email
+	fragments = strings.Split(line, _FIELD_CHANGELOG_DELIMIT_TIMESTAMP)
+	if len(fragments) != 2 {
+		return fmt.Errorf("%s: unknown maintainer email. Got: '%s'",
+			ERROR_CHANGELOG_PARSE_BAD,
+			line,
+		)
+	}
+	me.Maintainer.Email = fragments[0]
+	me.Maintainer.Email = strings.TrimLeft(me.Maintainer.Email, "> ")
+	me.Maintainer.Email = strings.TrimRight(me.Maintainer.Email, "> ")
+	line = fragments[1]
+
+	// parse timestamp
+	line = strings.TrimLeft(line, " ")
+	line = strings.TrimRight(line, "\n")
+	line = strings.TrimRight(line, "\r")
+	line = strings.TrimRight(line, " ")
+	t, err := time.Parse(_CHANGELOG_TIMESTAMP_FORMAT, line)
+	if err != nil || t.IsZero() || line == "" {
+		return fmt.Errorf("%s: unknown timestamp. Got: '%s'",
+			ERROR_CHANGELOG_PARSE_BAD,
+			line,
+		)
+	}
+
+	me.Timestamp = &t
+	me.Maintainer.Year = me.Timestamp.Year()
+
+	// perform checking and sanitization
+	err = me.Maintainer.Sanitize()
+	if err != nil {
+		return fmt.Errorf("%s: bad maintainer data. Got: '%s'",
+			ERROR_CHANGELOG_PARSE_BAD,
+			err,
+		)
+	}
+
+	// secure the parsing lock so that we do not expect parsing activity
+	me.parseStatus = _CHANGELOG_PARSE_SIGNATURE
+	return nil
+}
+
+func (me *Changelog) parseChanges(line string) (err error) {
+	switch {
+	case strings.Contains(line, _FIELD_CHANGELOG_DELIMIT_URGENCY):
+		return fmt.Errorf("%s: expect change entry. Got: '%s'",
+			ERROR_CHANGELOG_PARSE_BAD,
+			line,
+		)
+	case strings.HasPrefix(line, _FIELD_CHANGELOG_DELIMIT_SIGNATURE):
+		if len(me.Changes) == 0 {
+			return fmt.Errorf("%s: expect change entry. Got: '%s'",
+				ERROR_CHANGELOG_PARSE_BAD,
+				line,
+			)
+		}
+
+		// call signature since this line is a signature itself
+		me.parseStatus = _CHANGELOG_PARSE_SIGNATURE
+		return me.parseSignature(line)
+	}
+
+	if me.Changes == nil {
+		me.Changes = []string{}
+	}
+
+	line = strings.TrimPrefix(line, _FIELD_CHANGELOG_DELIMIT_CHANGE)
+	me.Changes = append(me.Changes, line)
+
+	return nil
+}
+
+func (me *Changelog) parseHeader(line string) (err error) {
+	switch {
+	case strings.HasPrefix(line, _FIELD_CHANGELOG_DELIMIT_CHANGE):
+		return fmt.Errorf("%s: expected header. Got: '%s'",
+			ERROR_CHANGELOG_PARSE_BAD,
+			line,
+		)
+	case strings.HasPrefix(line, _FIELD_CHANGELOG_DELIMIT_SIGNATURE):
+		return fmt.Errorf("%s: expected header. Got: '%s'",
+			ERROR_CHANGELOG_PARSE_BAD,
+			line,
+		)
+	}
+
+	// perform header parsing
+	line, err = me._parseUrgency(line)
+	if err != nil {
+		return err
+	}
+
+	line, err = me._parsePackage(line)
+	if err != nil {
+		return err
+	}
+
+	line, err = me._parseVersion(line)
+	if err != nil {
+		return err
+	}
+
+	err = me._parseDistro(line)
+	if err != nil {
+		return err
+	}
+
+	// switch to parsing changes
+	me.parseStatus = _CHANGELOG_PARSE_CHANGE
+
+	return nil
+}
+
+func (me *Changelog) _parseDistro(line string) (err error) {
+	line = strings.TrimLeft(line, " ")
+	line = strings.TrimRight(line, " ")
+	me.Distribution = strings.Split(line, " ")
+
+	if line == "" || len(me.Distribution) == 0 {
+		return fmt.Errorf("%s: missing distro '%s'",
+			ERROR_CHANGELOG_PARSE_DISTRO_FAILED,
+			line,
+		)
+	}
+
+	return nil
+}
+
+func (me *Changelog) _parseVersion(input string) (line string, err error) {
+	var epoch int
+
+	lines := strings.Split(input, _FIELD_CHANGELOG_DELIMIT_DISTRO)
+	if len(lines) != 2 {
+		return input, fmt.Errorf("%s: broken format '%s'",
+			ERROR_CHANGELOG_PARSE_VERSION_FAILED,
+			input,
+		)
+	}
+
+	ver := lines[0]
+	line = lines[1]
+
+	me.Version = &Version{}
+
+	// obtain upstream and revision
+	fragments := strings.Split(ver, "-")
+	if len(fragments) == 1 {
+		me.Version.Upstream = ver
+	} else {
+		me.Version.Revision = fragments[len(fragments)-1]
+		me.Version.Upstream = strings.TrimSuffix(ver,
+			"-"+me.Version.Revision,
+		)
+	}
+
+	// strip epoch
+	fragments = strings.Split(me.Version.Upstream, ":")
+	if len(fragments) == 2 {
+		// strip epoch
+		epoch, err = strconv.Atoi(fragments[0])
+		if err != nil {
+			return input, fmt.Errorf(
+				"%s: error in epoch conversion: %s",
+				ERROR_CHANGELOG_PARSE_VERSION_FAILED,
+				err,
+			)
+		}
+		me.Version.Epoch = uint(epoch)
+
+		// update upstream
+		me.Version.Upstream = fragments[1]
+	}
+
+	// sanitize version
+	err = me.Version.Sanitize()
+	if err != nil {
+		return input, fmt.Errorf("%s: %s",
+			ERROR_CHANGELOG_PARSE_VERSION_FAILED,
+			err,
+		)
+	}
+
+	return line, nil
+}
+
+func (me *Changelog) _parsePackage(input string) (line string, err error) {
+	lines := strings.Split(input, _FIELD_CHANGELOG_DELIMIT_PACKAGE)
+	if len(lines) != 2 {
+		return input, fmt.Errorf("%s: bad format '%s'",
+			ERROR_CHANGELOG_PARSE_PACKAGE_FAILED,
+			input,
+		)
+	}
+
+	me.Package = lines[0]
+	line = lines[1]
+
+	return line, err
+}
+
+func (me *Changelog) _parseUrgency(input string) (line string, err error) {
+	lines := strings.Split(input, _FIELD_CHANGELOG_DELIMIT_URGENCY)
+	if len(lines) != 2 {
+		return input, fmt.Errorf("%s: bad format '%s'",
+			ERROR_CHANGELOG_PARSE_URGENCY_FAILED,
+			input,
+		)
+	}
+
+	me.Urgency = ChangelogUrgency(lines[1])
+	line = lines[0]
+
+	return line, err
 }
 
 // Sanitize is to ensure Changelog data is compliant to the strict format.
@@ -176,7 +456,7 @@ func (me *Changelog) sanitizeTimestamp() (err error) {
 		return fmt.Errorf("%s (%s): not set. Got '%s'",
 			ERROR_CHANGELOG_ENTRY_BAD,
 			"Timestamp",
-			me.Timestamp.Format(time.RFC1123Z),
+			me.Timestamp.Format(_CHANGELOG_TIMESTAMP_FORMAT),
 		)
 	}
 
@@ -304,26 +584,27 @@ func (me *Changelog) String() (s string) {
 
 	// header
 	s += me.Package
-	s += " (" + me.Version.String() + ")"
-	s += " " + strings.Join(me.Distribution, " ")
-	s += "; urgency=" + string(me.Urgency) + "\n"
+	s += _FIELD_CHANGELOG_DELIMIT_PACKAGE + me.Version.String()
+	s += _FIELD_CHANGELOG_DELIMIT_DISTRO +
+		strings.Join(me.Distribution, " ")
+	s += _FIELD_CHANGELOG_DELIMIT_URGENCY + string(me.Urgency) + "\n"
 
 	// optional line spacing
 	s += "\n"
 
 	// change data
 	for _, v := range me.Changes {
-		s += "  * " + v + "\n"
+		s += _FIELD_CHANGELOG_DELIMIT_CHANGE + v + "\n"
 	}
 
 	// optional line spacing
 	s += "\n"
 
 	// signed-off
-	s += " --" +
+	s += _FIELD_CHANGELOG_DELIMIT_SIGNATURE +
 		me.Maintainer.Tag() +
-		"  " +
-		me.Timestamp.Format(time.RFC1123Z)
+		_FIELD_CHANGELOG_DELIMIT_TIMESTAMP +
+		me.Timestamp.Format(_CHANGELOG_TIMESTAMP_FORMAT)
 
 	return s
 }

@@ -16,9 +16,11 @@
 package deb
 
 import (
+	"bufio"
 	"fmt"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"testing"
@@ -28,219 +30,247 @@ import (
 )
 
 const (
-	testChangelogString   = "testChangelogString"
-	testControlString     = "testControlString"
-	testCopyrightString   = "testCopyrightString"
-	testDataSanitize      = "testDataSanitize"
-	testDescriptionString = "testDescriptionString"
-	testEntityString      = "testEntityString"
-	testLicenseString     = "testLicenseString"
-	testPackageListString = "testPackageListString"
-	testPackageMetaString = "testPackageMetaString"
-	testSourceSanitize    = "testSourceSanitize"
-	testTestsuiteString   = "testTestsuiteString"
-	testVCSString         = "testVCSString"
-	testVersionString     = "testVersionString"
+	testChangelogParseForErrorPanic = "testChangelogParseForErrorPanic"
+	testChangelogString             = "testChangelogString"
+	testControlString               = "testControlString"
+	testCopyrightString             = "testCopyrightString"
+	testDataGenerate                = "testDataGenerate"
+	testDataSanitize                = "testDataSanitize"
+	testDescriptionString           = "testDescriptionString"
+	testEntityString                = "testEntityString"
+	testLicenseString               = "testLicenseString"
+	testPackageListString           = "testPackageListString"
+	testPackageMetaString           = "testPackageMetaString"
+	testSourceSanitize              = "testSourceSanitize"
+	testTestsuiteString             = "testTestsuiteString"
+	testVCSString                   = "testVCSString"
+	testVersionString               = "testVersionString"
 )
 
+//nolint:lll
 const (
 	expectError = "expectError"
 	expectPanic = "expectPanic"
 
 	simulateStatFxError = "simulateStatFxError"
 
-	use3p7p0Install               = "use3p7p0Install"
-	use4p0p0Install               = "use4p0p0Install"
-	use4p6p0Install               = "use4p6p0Install"
-	useAlphaLedVersionRevision    = "useAlphaLedVersionRevision"
-	useAlphaLedVersionUpstream    = "useAlphaLedVersionUpstream"
-	useAnyArch                    = "useAnyArch"
-	useBuildSourceFlag            = "useBuildSourceFlag"
-	useChangelogUrgencyCritical   = "useChangelogUrgencyCritical"
-	useChangelogUrgencyEmergency  = "useChangelogUrgencyEmergency"
-	useChangelogUrgencyHigh       = "useChangelogUrgencyHigh"
-	useChangelogUrgencyLow        = "useChangelogUrgencyLow"
-	useChangelogUrgencyMedium     = "useChangelogUrgencyMedium"
-	useChangelogUrgencyUnknown    = "useChangelogUrgencyUnknown"
-	useCopyrightFormat1p0         = "useCopyrightFormat1p0"
-	useDashVersionRevision        = "useDashVersionRevision"
-	useDashVersionUpstream        = "useDashVersionUpstream"
-	useEmptyArchList              = "useEmptyArchList"
-	useEmptyBrowser               = "useEmptyBrowser"
-	useEmptyChangelogChanges      = "useEmptyChangelogChanges"
-	useEmptyDescription           = "useEmptyDescription"
-	useEmptyDistro                = "useEmptyDistro"
-	useEmptyEntities              = "useEmptyEntities"
-	useEmptyInstall               = "useEmptyInstall"
-	useEmptyLicenses              = "useEmptyLicenses"
-	useEmptyManpage               = "useEmptyManpage"
-	useEmptyPackageList           = "useEmptyPackageList"
-	useEmptyPackageListing        = "useEmptyPackageListing"
-	useEmptyPath                  = "useEmptyPath"
-	useEmptyScripts               = "useEmptyScripts"
-	useEmptySection               = "useEmptySection"
-	useEmptyTestsuite             = "useEmptyTestsuite"
-	useEmptyTimestamp             = "useEmptyTimestamp"
-	useEmptyUploaders             = "useEmptyUploaders"
-	useEmptyURL                   = "useEmptyURL"
-	useEmptyVCS                   = "useEmptyVCS"
-	useEssentialFlag              = "useEssentialFlag"
-	useFaultyDescription          = "useFaultyDescription"
-	useFaultyPackageList          = "useFaultyPackageList"
-	useFaultyScripts              = "useFaultyScripts"
-	useFaultySection              = "useFaultySection"
-	useFaultyStandardsVersion     = "useFaultyStandardsVersion"
-	useFaultyTestedDataControl    = "useFaultyTestedDataControl"
-	useFaultyTestedDataCopyright  = "useFaultyTestedDataCopyright"
-	useFaultyTestedDataChangelog  = "useFaultyTestedDataChangelog"
-	useFaultyTestedDataSource     = "useFaultyTestedDataSource"
-	useFaultyTestsuite            = "useFaultyTestsuite"
-	useFaultyUploaders            = "useFaultyUploaders"
-	useFaultyVCS                  = "useFaultyVCS"
-	useGhostPath                  = "useGhostPath"
-	useIllegalVersionUpstream     = "useIllegalVersionUpstream"
-	useIllegalVersionRevision     = "useIllegalVersionRevision"
-	useLicenseTagAnd              = "useLicenseTagAnd"
-	useLicenseTagOr               = "useLicenseTagOr"
-	useLicenseTagSymbol           = "useLicenseTagSymbol"
-	useLicenseWithNilFiles        = "useLicenseWithNilFiles"
-	useLicenseWithoutBody         = "useLicenseWithoutBody"
-	useLicenseWithoutComment      = "useLicenseWithoutComment"
-	useLicenseWithoutFiles        = "useLicenseWithoutFiles"
-	useLicenseWithoutTag          = "useLicenseWithoutTag"
-	useLongSynopsis               = "useLongSynopsis"
-	useNilChangelog               = "useNilChangelog"
-	useNilContentPackageList      = "useNilContentPackageList"
-	useNilControl                 = "useNilControl"
-	useNilCopyright               = "useNilCopyright"
-	useNilPackageList             = "useNilPackageList"
-	useNilSource                  = "useNilSource"
-	useNilVersion                 = "useNilVersion"
-	useNonHTTPURL                 = "useNonHTTPURL"
-	usePackageTypeDEB             = "usePackageTypeDEB"
-	usePackageTypeUDEB            = "usePackageTypeUDEB"
-	usePackageTypeUnknown         = "usePackageTypeUnknown"
-	usePkgListBuildDepends        = "usePkgListBuildDepends"
-	usePkgListBuildDependsIndep   = "usePkgListBuildDependsIndep"
-	usePkgListBuildDependsArch    = "usePkgListBuildDependesArch"
-	usePkgListBuildConflicts      = "usePkgListBuildConflicts"
-	usePkgListBuildConflictsIndep = "usePkgListBuildConflictsIndep"
-	usePkgListBuildConflictsArch  = "usePkgListBuildConflictsArch"
-	usePkgListBuiltUsing          = "usePkgListBuiltUsing"
-	usePkgListPreDepends          = "usePkgListPreDepends"
-	usePkgListDepends             = "usePkgListDepends"
-	usePkgListRecommends          = "usePkgListRecommends"
-	usePkgListSuggests            = "usePkgListSuggests"
-	usePkgListEnhances            = "usePkgListEnhances"
-	usePkgListBreaks              = "usePkgListBreaks"
-	usePkgListConflicts           = "usePkgListConflicts"
-	usePkgListProvides            = "usePkgListProvides"
-	usePkgListReplaces            = "usePkgListReplaces"
-	usePkgListUnknown             = "usePkgListUnknown"
-	usePriorityImportant          = "usePriorityImportant"
-	usePriorityOptional           = "usePriorityOptional"
-	usePriorityRequired           = "usePriorityRequired"
-	usePriorityStandard           = "usePriorityStandard"
-	usePriorityUnknown            = "usePriorityUnknown"
-	useProperAppName              = "useProperAppName"
-	useProperArch                 = "useProperArch"
-	useProperArchList             = "useProperArchList"
-	useProperBranch               = "useProperBranch"
-	useProperBrowser              = "useProperBrowser"
-	useProperChangelogChanges     = "useProperChangelogChanges"
-	useProperCompat               = "useProperCompat"
-	useProperCopyrightDisclaimer  = "useProperCopyrightDisclaimer"
-	useProperCopyrightSource      = "useProperCopyrightSource"
-	useProperDescription          = "useProperDescription"
-	useProperDescriptionText      = "useProperDescriptionText"
-	useProperDistro               = "useProperDistro"
-	useProperEntities             = "useProperEntities"
-	useProperEntity               = "useProperEntity"
-	useProperEmail                = "useProperEmail"
-	useProperLicenses             = "useProperLicenses"
-	useProperManpage              = "useProperManpage"
-	useProperName                 = "useProperName"
-	useProperPackageList          = "useProperPackageList"
-	useProperPackageListing       = "useProperPackageListing"
-	useProperPath                 = "useProperPath"
-	useProperPathDirectory        = "useProperPathDirectory"
-	useProperInstall              = "useProperInstall"
-	useProperRules                = "useProperRules"
-	useProperScripts              = "useProperScript"
-	useProperSection              = "useProperSection"
-	useProperSourceLocalOptions   = "useProperSourceLocalOptions"
-	useProperSourceOptions        = "useProperSourceOptions"
-	useProperStandardsVersion     = "useProperStandardsVersion"
-	useProperSynopsis             = "useProperSynopsis"
-	useProperTestsuite            = "useProperTestsuite"
-	useProperTimestamp            = "useProperTimestmap"
-	useProperUploaders            = "useProperUploaders"
-	useProperURL                  = "useProperURL"
-	useProperVCS                  = "useProperVCS"
-	useProperVersionEpoch         = "useProperVersionEpoch"
-	useProperVersionRevision      = "useProperVersionRevision"
-	useProperVersionUpstream      = "useProperVersionUpstream"
-	useProperYear                 = "useProperYear"
-	useSourceFormatNative3p0      = "useSourceFormatNative3p0"
-	useSourceFormatQuilt3p0       = "useSourceFormatQuilt3p0"
-	useRRRBinTarget               = "useRRRBinTarget"
-	useRRRCustom                  = "useRRRCustom"
-	useRRRNo                      = "useRRRNo"
-	useRRRUnknown                 = "useRRRUnknown"
-	useUnknownArch                = "useUnknownArch"
-	useVCSArch                    = "useVCSArch"
-	useVCSBazaar                  = "useVCSBazaar"
-	useVCSCVS                     = "useVCSCVS"
-	useVCSDarcs                   = "useVCSDarcs"
-	useVCSGit                     = "useVCSGit"
-	useVCSMercurial               = "useVCSMercurial"
-	useVCSMonotone                = "useVCSMonotone"
-	useVCSSubversion              = "useVCSSubversion"
-	useVCSUnknown                 = "useVCSUnknown"
-	useVERControlSTER             = "useVERControlSTER"
-	useVERControlEAEQ             = "useVERControlEAEQ"
-	useVERControlEXEQ             = "useVERControlEXEQ"
-	useVERControlLAEQ             = "useVERControlLAEQ"
-	useVERControlSTLA             = "useVERControlSTLA"
-	useVERControlUnknown          = "useVERControlUnknown"
-	useBadYear                    = "useBadYear"
+	createBadHeaderChangelogFile                = "createBadHeaderChangelogFile"
+	createBadNameChangelogFile                  = "createBadNameChangelogFile"
+	createBadEmailChangelogFile                 = "createBadEmailChangelogFile"
+	createBadEmailDelimiterChangelogFile        = "createBadEmailDelimiterChangelogFile"
+	createBadTimestampChangelogFile             = "createBadTimestampChangelogFile"
+	createBadVersionHeaderChangelogFile         = "createBadVersionHeaderChangelogFile"
+	createBadVersionEpochHeaderChangelogFile    = "createBadVersionEpochHeaderChangelogFile"
+	createBadVersionUpstreamHeaderChangelogFile = "createBadVersionUpstreamHeaderChangelogFile"
+	createChangesLeadChangelogFile              = "createChangesLeadChangelogFile"
+	createDoubleHeaderChangelogFile             = "createDoubleHeaderChangelogFile"
+	createSigHeaderChangelogFile                = "createSigHeaderChangelogFile"
+	createSigLeadChangelogFile                  = "createSigLeadChangelogFile"
+	createMissingDistroHeaderChangelogFile      = "createMissingDistroChangelogFile"
+	createNoChangelogFile                       = "createNoChangelogFile"
+	createBadPackageHeaderChangelogFile         = "createBadPackageHeaderChangelogFile"
+	createTailingHeaderChangelogFile            = "createTailingHeaderChangelogFile"
+	createTailingChangesChangelogFile           = "createTailingChangesChangelogFile"
+	createTailingSigChangelogFile               = "createTailingSigChangelogFile"
+
+	use3p7p0Install                  = "use3p7p0Install"
+	use4p0p0Install                  = "use4p0p0Install"
+	use4p6p0Install                  = "use4p6p0Install"
+	useAlphaLedVersionRevision       = "useAlphaLedVersionRevision"
+	useAlphaLedVersionUpstream       = "useAlphaLedVersionUpstream"
+	useAnyArch                       = "useAnyArch"
+	useBuildSourceFlag               = "useBuildSourceFlag"
+	useChangelogUrgencyCritical      = "useChangelogUrgencyCritical"
+	useChangelogUrgencyEmergency     = "useChangelogUrgencyEmergency"
+	useChangelogUrgencyHigh          = "useChangelogUrgencyHigh"
+	useChangelogUrgencyLow           = "useChangelogUrgencyLow"
+	useChangelogUrgencyMedium        = "useChangelogUrgencyMedium"
+	useChangelogUrgencyUnknown       = "useChangelogUrgencyUnknown"
+	useCompletedChangelogParseStatus = "useCompletedChangelogParseStatus"
+	useCopyrightFormat1p0            = "useCopyrightFormat1p0"
+	useDashVersionRevision           = "useDashVersionRevision"
+	useDashVersionUpstream           = "useDashVersionUpstream"
+	useEmptyArchList                 = "useEmptyArchList"
+	useEmptyBrowser                  = "useEmptyBrowser"
+	useEmptyChangelogChanges         = "useEmptyChangelogChanges"
+	useEmptyDescription              = "useEmptyDescription"
+	useEmptyDistro                   = "useEmptyDistro"
+	useEmptyEntities                 = "useEmptyEntities"
+	useEmptyInstall                  = "useEmptyInstall"
+	useEmptyLicenses                 = "useEmptyLicenses"
+	useEmptyManpage                  = "useEmptyManpage"
+	useEmptyPackageList              = "useEmptyPackageList"
+	useEmptyPackageListing           = "useEmptyPackageListing"
+	useEmptyPath                     = "useEmptyPath"
+	useEmptyScripts                  = "useEmptyScripts"
+	useEmptySection                  = "useEmptySection"
+	useEmptyTestsuite                = "useEmptyTestsuite"
+	useEmptyTimestamp                = "useEmptyTimestamp"
+	useEmptyUploaders                = "useEmptyUploaders"
+	useEmptyURL                      = "useEmptyURL"
+	useEmptyVCS                      = "useEmptyVCS"
+	useEssentialFlag                 = "useEssentialFlag"
+	useFaultyDescription             = "useFaultyDescription"
+	useFaultyPackageList             = "useFaultyPackageList"
+	useFaultyScripts                 = "useFaultyScripts"
+	useFaultySection                 = "useFaultySection"
+	useFaultyStandardsVersion        = "useFaultyStandardsVersion"
+	useFaultyTestedDataControl       = "useFaultyTestedDataControl"
+	useFaultyTestedDataCopyright     = "useFaultyTestedDataCopyright"
+	useFaultyTestedDataChangelog     = "useFaultyTestedDataChangelog"
+	useFaultyTestedDataSource        = "useFaultyTestedDataSource"
+	useFaultyTestsuite               = "useFaultyTestsuite"
+	useFaultyUploaders               = "useFaultyUploaders"
+	useFaultyVCS                     = "useFaultyVCS"
+	useFaultyWorkDir                 = "useFaultyWorkDir"
+	useGhostPath                     = "useGhostPath"
+	useIllegalVersionUpstream        = "useIllegalVersionUpstream"
+	useIllegalVersionRevision        = "useIllegalVersionRevision"
+	useLicenseTagAnd                 = "useLicenseTagAnd"
+	useLicenseTagOr                  = "useLicenseTagOr"
+	useLicenseTagSymbol              = "useLicenseTagSymbol"
+	useLicenseWithNilFiles           = "useLicenseWithNilFiles"
+	useLicenseWithoutBody            = "useLicenseWithoutBody"
+	useLicenseWithoutComment         = "useLicenseWithoutComment"
+	useLicenseWithoutFiles           = "useLicenseWithoutFiles"
+	useLicenseWithoutTag             = "useLicenseWithoutTag"
+	useLongSynopsis                  = "useLongSynopsis"
+	useNilChangelog                  = "useNilChangelog"
+	useNilContentPackageList         = "useNilContentPackageList"
+	useNilControl                    = "useNilControl"
+	useNilCopyright                  = "useNilCopyright"
+	useNilPackageList                = "useNilPackageList"
+	useNilSource                     = "useNilSource"
+	useNilVersion                    = "useNilVersion"
+	useNonHTTPURL                    = "useNonHTTPURL"
+	usePackageTypeDEB                = "usePackageTypeDEB"
+	usePackageTypeUDEB               = "usePackageTypeUDEB"
+	usePackageTypeUnknown            = "usePackageTypeUnknown"
+	usePkgListBuildDepends           = "usePkgListBuildDepends"
+	usePkgListBuildDependsIndep      = "usePkgListBuildDependsIndep"
+	usePkgListBuildDependsArch       = "usePkgListBuildDependesArch"
+	usePkgListBuildConflicts         = "usePkgListBuildConflicts"
+	usePkgListBuildConflictsIndep    = "usePkgListBuildConflictsIndep"
+	usePkgListBuildConflictsArch     = "usePkgListBuildConflictsArch"
+	usePkgListBuiltUsing             = "usePkgListBuiltUsing"
+	usePkgListPreDepends             = "usePkgListPreDepends"
+	usePkgListDepends                = "usePkgListDepends"
+	usePkgListRecommends             = "usePkgListRecommends"
+	usePkgListSuggests               = "usePkgListSuggests"
+	usePkgListEnhances               = "usePkgListEnhances"
+	usePkgListBreaks                 = "usePkgListBreaks"
+	usePkgListConflicts              = "usePkgListConflicts"
+	usePkgListProvides               = "usePkgListProvides"
+	usePkgListReplaces               = "usePkgListReplaces"
+	usePkgListUnknown                = "usePkgListUnknown"
+	usePriorityImportant             = "usePriorityImportant"
+	usePriorityOptional              = "usePriorityOptional"
+	usePriorityRequired              = "usePriorityRequired"
+	usePriorityStandard              = "usePriorityStandard"
+	usePriorityUnknown               = "usePriorityUnknown"
+	useProperAppName                 = "useProperAppName"
+	useProperArch                    = "useProperArch"
+	useProperArchList                = "useProperArchList"
+	useProperBranch                  = "useProperBranch"
+	useProperBrowser                 = "useProperBrowser"
+	useProperChangelogChanges        = "useProperChangelogChanges"
+	useProperCompat                  = "useProperCompat"
+	useProperCopyrightDisclaimer     = "useProperCopyrightDisclaimer"
+	useProperCopyrightSource         = "useProperCopyrightSource"
+	useProperDescription             = "useProperDescription"
+	useProperDescriptionText         = "useProperDescriptionText"
+	useProperDistro                  = "useProperDistro"
+	useProperEntities                = "useProperEntities"
+	useProperEntity                  = "useProperEntity"
+	useProperEmail                   = "useProperEmail"
+	useProperLicenses                = "useProperLicenses"
+	useProperManpage                 = "useProperManpage"
+	useProperName                    = "useProperName"
+	useProperPackageList             = "useProperPackageList"
+	useProperPackageListing          = "useProperPackageListing"
+	useProperPath                    = "useProperPath"
+	useProperPathDirectory           = "useProperPathDirectory"
+	useProperInstall                 = "useProperInstall"
+	useProperRules                   = "useProperRules"
+	useProperScripts                 = "useProperScript"
+	useProperSection                 = "useProperSection"
+	useProperSourceLocalOptions      = "useProperSourceLocalOptions"
+	useProperSourceOptions           = "useProperSourceOptions"
+	useProperStandardsVersion        = "useProperStandardsVersion"
+	useProperSynopsis                = "useProperSynopsis"
+	useProperTestsuite               = "useProperTestsuite"
+	useProperTimestamp               = "useProperTimestmap"
+	useProperUploaders               = "useProperUploaders"
+	useProperURL                     = "useProperURL"
+	useProperVCS                     = "useProperVCS"
+	useProperVersionEpoch            = "useProperVersionEpoch"
+	useProperVersionRevision         = "useProperVersionRevision"
+	useProperVersionUpstream         = "useProperVersionUpstream"
+	useProperWorkDir                 = "useProperWorkDir"
+	useProperYear                    = "useProperYear"
+	useSourceFormatNative3p0         = "useSourceFormatNative3p0"
+	useSourceFormatQuilt3p0          = "useSourceFormatQuilt3p0"
+	useRRRBinTarget                  = "useRRRBinTarget"
+	useRRRCustom                     = "useRRRCustom"
+	useRRRNo                         = "useRRRNo"
+	useRRRUnknown                    = "useRRRUnknown"
+	useUnknownArch                   = "useUnknownArch"
+	useUnknownChangelogParseStatus   = "useUnknownChangelogParseStatus"
+	useVCSArch                       = "useVCSArch"
+	useVCSBazaar                     = "useVCSBazaar"
+	useVCSCVS                        = "useVCSCVS"
+	useVCSDarcs                      = "useVCSDarcs"
+	useVCSGit                        = "useVCSGit"
+	useVCSMercurial                  = "useVCSMercurial"
+	useVCSMonotone                   = "useVCSMonotone"
+	useVCSSubversion                 = "useVCSSubversion"
+	useVCSUnknown                    = "useVCSUnknown"
+	useVERControlSTER                = "useVERControlSTER"
+	useVERControlEAEQ                = "useVERControlEAEQ"
+	useVERControlEXEQ                = "useVERControlEXEQ"
+	useVERControlLAEQ                = "useVERControlLAEQ"
+	useVERControlSTLA                = "useVERControlSTLA"
+	useVERControlUnknown             = "useVERControlUnknown"
+	useBadYear                       = "useBadYear"
 )
 
 //nolint:lll
 const (
-	app             = "TestApp"
-	appControl      = "ControlApp"
-	changelogA      = "changed feature A"
-	changelogB      = "changed feature B"
-	compat          = 9
-	customRRR       = "namespace/case1"
-	branch          = "next"
-	distroDebian    = "debian"
-	distroUbuntu    = "ubuntu"
-	epoch           = 5
-	email           = "john.smith@testing.email"
-	emailControl    = "aoi.fujimura@testing.corp"
-	emailControl2   = "nasuki.aoi@testing.corp"
-	ghostPath       = "p/package"
-	installPath     = "usr/local/testapp/program"
-	installPath2    = "usr/bin/program"
-	installProgram  = "testapp"
-	keySynopsis     = "sys"
-	keyDescription  = "body"
-	name            = "John Smith"
-	nameControl     = "Aoi Fujimura"
-	nameControl2    = "Nasuki Aoi"
-	nonHTTPURL      = "file:///home/u0/Documents/testfile"
-	path            = "testsuite/.gitkeep"
-	directory       = "testsuite"
-	arch            = "amd64"
-	archANY         = "any"
-	properHTTPURL   = "https://www.example.com/path/to/dir?query=language"
-	revision        = "0.50.0~upstream"
-	revisionDash    = "-dbg"
-	revisionIllegal = "my/VersionX.51"
-	revisionPrefix  = "u"
-	rulesFile       = `#!/usr/bin/make -f
+	app               = "TestApp"
+	appControl        = "ControlApp"
+	changelogA        = "changed feature A"
+	changelogB        = "changed feature B"
+	compat            = 9
+	customRRR         = "namespace/case1"
+	branch            = "next"
+	distroDebian      = "debian"
+	distroUbuntu      = "ubuntu"
+	epoch             = 5
+	email             = "john.smith@testing.email"
+	emailControl      = "aoi.fujimura@testing.corp"
+	emailControl2     = "nasuki.aoi@testing.corp"
+	ghostPath         = "p/package"
+	installPath       = "usr/local/testapp/program"
+	installPath2      = "usr/bin/program"
+	installProgram    = "testapp"
+	keySynopsis       = "sys"
+	keyDescription    = "body"
+	name              = "John Smith"
+	nameControl       = "Aoi Fujimura"
+	nameControl2      = "Nasuki Aoi"
+	nonHTTPURL        = "file:///home/u0/Documents/testfile"
+	path              = "testsuite/changelog"
+	testsuitePath     = "testsuite/.gitkeep"
+	directory         = "testsuite"
+	arch              = "amd64"
+	archANY           = "any"
+	properHTTPURL     = "https://www.example.com/path/to/dir?query=language"
+	restrictedWorkDir = "./restricted"
+	revision          = "0.50.0~upstream"
+	revisionDash      = "-dbg"
+	revisionIllegal   = "my/VersionX.51"
+	revisionPrefix    = "u"
+	rulesFile         = `#!/usr/bin/make -f
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
@@ -262,6 +292,7 @@ abort-on-upstream-changes`
 	upstreamPrefix  = "v"
 	unknown         = "unknown"
 	urgencyUnknown  = "unknownUrgency"
+	workDir         = "./workdir/testapp"
 	year            = 2021
 	yearControl     = 2020
 	yearControl2    = 2019
@@ -288,6 +319,147 @@ func (s *testScenario) log(th *thelper.THelper, data map[string]interface{}) {
 
 func (s *testScenario) stringUID() string {
 	return strconv.Itoa(s.UID)
+}
+
+func (s *testScenario) assertChangelogParseForErrorPanic(th *thelper.THelper,
+	err error) {
+	switch {
+	case s.Switches[useCompletedChangelogParseStatus]:
+		if err == nil {
+			th.Errorf("error is expected but was not raised")
+		}
+
+		return
+	default:
+		if err != nil {
+			th.Errorf("unexpected error raised")
+		}
+
+		return
+	}
+}
+
+func (s *testScenario) assertDataGenerate(th *thelper.THelper, err error) {
+	switch {
+	case s.Switches[useFaultyTestedDataControl],
+		s.Switches[useNilControl],
+		s.Switches[useFaultyTestedDataCopyright],
+		s.Switches[useNilCopyright],
+		s.Switches[useFaultyTestedDataChangelog],
+		s.Switches[useNilChangelog],
+		s.Switches[useFaultyTestedDataSource],
+		s.Switches[useNilSource],
+		!s.Switches[useProperManpage],
+		s.Switches[useEmptyManpage],
+		!s.Switches[useProperScripts],
+		!s.Switches[useProperRules],
+		!s.Switches[useProperCompat],
+		s.Switches[useEmptyInstall],
+		s.Switches[use3p7p0Install],
+		s.Switches[use4p6p0Install],
+		s.Switches[use4p0p0Install]:
+		if err == nil {
+			th.Errorf("expected error but none was raised")
+		}
+
+		return
+	case !s.Switches[useProperInstall]:
+		if err == nil {
+			th.Errorf("expected error but none was raised")
+		}
+
+		return
+	case s.Switches[expectError]:
+		if err == nil {
+			th.Errorf("expected error but none was raised")
+		}
+
+		return
+	}
+
+	if err != nil {
+		th.Errorf("unexpected error was raised")
+	}
+}
+
+func (s *testScenario) logFiles(th *thelper.THelper, err error) {
+	if err != nil {
+		th.Logf("test has error, skipping files logging.")
+		return
+	}
+
+	// build filepath
+	workPath := filepath.Join(workDir, "DEBIAN")
+	if s.Switches[useBuildSourceFlag] {
+		workPath = filepath.Join(workDir, "debian")
+	}
+
+	s._assertFile(th, filepath.Join(workPath, "control"))
+	s._assertFile(th, filepath.Join(workPath, "copyright"))
+	s._assertFile(th, filepath.Join(workPath, "changelog"))
+	s._assertFile(th, path)
+	s._assertFile(th, filepath.Join(workPath, "source", "format"))
+	if s.Switches[useProperSourceLocalOptions] {
+		s._assertFile(th, filepath.Join(workPath,
+			"source",
+			"local-options"),
+		)
+	}
+	if s.Switches[useProperSourceOptions] {
+		s._assertFile(th, filepath.Join(workPath, "source", "options"))
+	}
+
+	if s.Switches[useProperManpage] {
+		s._assertFile(th, filepath.Join(workPath, app+".manpages"))
+		s._assertFile(th, filepath.Join(workPath, app+"."+manPageTag1))
+	}
+
+	if s.Switches[useProperScripts] {
+		s._assertFile(th, filepath.Join(workPath,
+			string(SHELL_PRE_INSTALL)))
+		s._assertFile(th, filepath.Join(workPath,
+			string(SHELL_POST_INSTALL)))
+		s._assertFile(th, filepath.Join(workPath,
+			string(SHELL_PRE_REMOVE)))
+		s._assertFile(th, filepath.Join(workPath,
+			string(SHELL_POST_REMOVE)))
+	}
+
+	s._assertFile(th, filepath.Join(workPath, "rules"))
+	s._assertFile(th, filepath.Join(workPath, "compat"))
+	s._assertFile(th, filepath.Join(workPath, "install"))
+}
+
+func (s *testScenario) _assertFile(th *thelper.THelper, path string) {
+	var out string
+	var err error
+	var scanner *bufio.Scanner
+	var f *os.File
+
+	f, err = os.OpenFile(path, os.O_RDONLY, _PERMISSION_FILE)
+	if err != nil {
+		th.Errorf("failed to open asserted file: '%s'", path)
+		return
+	}
+
+	scanner = bufio.NewScanner(f)
+	out = ""
+	isFirst := true
+	for scanner.Scan() {
+		if !isFirst {
+			out += "\n"
+		}
+
+		out += scanner.Text()
+		isFirst = false
+	}
+
+	f.Close()
+
+	th.Logf("File '%s' HAS:\n╔═══ BEGIN ═══╗\n%s\n╚═══  END  ═══╝\n",
+		path,
+		out,
+	)
 }
 
 func (s *testScenario) assertSource(th *thelper.THelper, err error) {
@@ -483,13 +655,14 @@ func (s *testScenario) assertChangelog(th *thelper.THelper, str string) {
 	}
 
 	// header line
-	expect := app + " (" + upstream
+	expect := app + _FIELD_CHANGELOG_DELIMIT_PACKAGE + upstream
 	if s.Switches[useProperVersionRevision] {
 		expect += "-" + revision
 	}
-	expect += ") " +
-		distroDebian + " " + distroUbuntu + "; urgency="
+	expect += _FIELD_CHANGELOG_DELIMIT_DISTRO + distroDebian + " " +
+		distroUbuntu
 
+	expect += _FIELD_CHANGELOG_DELIMIT_URGENCY
 	switch {
 	case s.Switches[useChangelogUrgencyMedium]:
 		expect += string(CHANGELOG_URGENCY_MEDIUM)
@@ -509,14 +682,16 @@ func (s *testScenario) assertChangelog(th *thelper.THelper, str string) {
 	expect += "\n"
 
 	// changelog contents
-	expect += "  * " + changelogA + "\n"
-	expect += "  * " + changelogB + "\n"
+	expect += _FIELD_CHANGELOG_DELIMIT_CHANGE + changelogA + "\n"
+	expect += _FIELD_CHANGELOG_DELIMIT_CHANGE + changelogB + "\n"
 
 	// line spacing
 	expect += "\n"
 
 	// signed-off
-	expect += " --" + name + " <" + email + ">  " + timestamp
+	expect += _FIELD_CHANGELOG_DELIMIT_SIGNATURE + name
+	expect += _FIELD_CHANGELOG_DELIMIT_EMAIL + email
+	expect += ">" + _FIELD_CHANGELOG_DELIMIT_TIMESTAMP + timestamp
 
 	// assert
 	if expect != str {
@@ -840,7 +1015,7 @@ func (s *testScenario) assertTestsuite(th *thelper.THelper, str string) {
 	expect := ""
 
 	if s.Switches[useProperPath] {
-		expect = path
+		expect = testsuitePath
 	}
 
 	if str != expect {
@@ -1257,7 +1432,9 @@ func (s *testScenario) createTestsuite() *Testsuite {
 	switch {
 	case s.Switches[useProperTestsuite]:
 		return &Testsuite{
-			Paths: []string{path, path, path},
+			Paths: []string{testsuitePath,
+				testsuitePath,
+				testsuitePath},
 		}
 	case s.Switches[useEmptyTestsuite]:
 		return &Testsuite{}
@@ -1271,7 +1448,11 @@ func (s *testScenario) createTestsuite() *Testsuite {
 }
 
 func (s *testScenario) createPath() string {
+	s._createChangelogFile()
+
 	switch {
+	case s.Switches[useProperPath] && s.TestType == testTestsuiteString:
+		return testsuitePath
 	case s.Switches[useProperPath]:
 		return path
 	case s.Switches[useProperPathDirectory]:
@@ -1281,10 +1462,117 @@ func (s *testScenario) createPath() string {
 	}
 }
 
+func (s *testScenario) createChangelogParseStatus() changelogParseStatus {
+	switch {
+	case s.Switches[useCompletedChangelogParseStatus]:
+		return _CHANGELOG_PARSE_SIGNATURE
+	case s.Switches[useUnknownChangelogParseStatus]:
+		return 100000
+	default:
+		return _CHANGELOG_PARSE_HEADER
+	}
+}
+
+func (s *testScenario) createChangelogData() []string {
+	data := s.__createChangelogData()
+	if data == "" {
+		return []string{}
+	}
+
+	return strings.Split(data, "\n")
+}
+
+func (s *testScenario) _createChangelogFile() {
+	var err error
+
+	data := s.__createChangelogData()
+	if data == "" {
+		return
+	}
+
+	_ = os.RemoveAll(path)
+
+	err = s.__writeFile(path, _PERMISSION_FILE, data)
+	if err != nil {
+		panic("failed to setup changelog file for testing")
+	}
+}
+
+func (s *testScenario) __createChangelogData() string {
+	switch {
+	case s.Switches[createNoChangelogFile]:
+		return ""
+	case s.Switches[createBadHeaderChangelogFile]:
+		return changelogBadHeaderFile
+	case s.Switches[createBadPackageHeaderChangelogFile]:
+		return changelogBadPackageHeaderFile
+	case s.Switches[createBadVersionHeaderChangelogFile]:
+		return changelogBadVersionHeaderFile
+	case s.Switches[createDoubleHeaderChangelogFile]:
+		return changelogDoubleHeaderFile
+	case s.Switches[createSigHeaderChangelogFile]:
+		return changelogSigHeaderFile
+	case s.Switches[createChangesLeadChangelogFile]:
+		return changelogChangesLeadFile
+	case s.Switches[createSigLeadChangelogFile]:
+		return changelogSigLeadFile
+	case s.Switches[createTailingHeaderChangelogFile]:
+		return changelogTailingHeaderFile
+	case s.Switches[createTailingChangesChangelogFile]:
+		return changelogTailingChangesFile
+	case s.Switches[createTailingSigChangelogFile]:
+		return changelogTailingSigFile
+	case s.Switches[createBadVersionEpochHeaderChangelogFile]:
+		return changelogBadVersionEpochFile
+	case s.Switches[createBadVersionUpstreamHeaderChangelogFile]:
+		return changelogBadVersionUpstreamFile
+	case s.Switches[createMissingDistroHeaderChangelogFile]:
+		return changelogMissingDistroFile
+	case s.Switches[createBadNameChangelogFile]:
+		return changelogBadNameFile
+	case s.Switches[createBadEmailChangelogFile]:
+		return changelogBadEmailFile
+	case s.Switches[createBadEmailDelimiterChangelogFile]:
+		return changelogBadEmailDelimiterFile
+	case s.Switches[createBadTimestampChangelogFile]:
+		return changelogBadTimestampFile
+	default:
+		return changelogFile
+	}
+}
+
+func (s *testScenario) __writeFile(path string,
+	perm os.FileMode, data string) (err error) {
+	var f *os.File
+
+	f, err = os.OpenFile(path, os.O_RDWR|os.O_CREATE, _PERMISSION_FILE)
+	if err != nil {
+		return fmt.Errorf("%s: %s", ERROR_FILE_OPEN_FAILED, err)
+	}
+
+	_, err = f.WriteString(data)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", ERROR_FILE_WRITE_FAILED, err)
+		goto closeWriter
+	}
+
+	err = f.Chmod(perm)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", ERROR_FILE_CHMOD_FAILED, err)
+	}
+
+closeWriter:
+	_ = f.Sync()
+	f.Close()
+	return err
+}
+
 func (s *testScenario) createPaths() (x []string) {
 	switch {
 	case s.Switches[useEmptyPath]:
 		return []string{}
+	case s.Switches[useProperPath] && s.TestType == testTestsuiteString:
+		return []string{testsuitePath, testsuitePath, testsuitePath}
 	case s.Switches[useProperPath]:
 		return []string{path, path, path}
 	case s.Switches[useGhostPath]:
@@ -1736,10 +2024,10 @@ func (s *testScenario) createChangelogDistro() []string {
 func (s *testScenario) createTimestamp() *time.Time {
 	switch {
 	case s.Switches[useProperTimestamp]:
-		x, _ := time.Parse(time.RFC1123Z, timestamp)
+		x, _ := time.Parse(_CHANGELOG_TIMESTAMP_FORMAT, timestamp)
 		return &x
 	case s.Switches[useEmptyTimestamp]:
-		x, _ := time.Parse(time.RFC1123Z, timestampZero)
+		x, _ := time.Parse(_CHANGELOG_TIMESTAMP_FORMAT, timestampZero)
 		return &x
 	default:
 		return nil
@@ -1934,7 +2222,6 @@ func (s *testScenario) preConfigureTestedData() {
 	s.Switches[useProperArch] = true
 	s.Switches[useProperUploaders] = true
 	s.Switches[useEssentialFlag] = true
-	s.Switches[useBuildSourceFlag] = true
 	if !s.Switches[useFaultyTestedDataControl] {
 		s.Switches[useProperStandardsVersion] = true
 	} else {
@@ -1956,7 +2243,6 @@ func (s *testScenario) preConfigureTestedData() {
 	s.Switches[useChangelogUrgencyLow] = true
 	s.Switches[useProperDistro] = true
 	s.Switches[useProperChangelogChanges] = true
-	s.Switches[useProperPath] = true
 	if !s.Switches[useFaultyTestedDataChangelog] {
 		s.Switches[useProperTimestamp] = true
 	} else {
@@ -1964,8 +2250,6 @@ func (s *testScenario) preConfigureTestedData() {
 	}
 
 	// Source
-	s.Switches[useProperSourceLocalOptions] = true
-	s.Switches[useProperSourceOptions] = true
 	if !s.Switches[useFaultyTestedDataSource] {
 		s.Switches[useSourceFormatNative3p0] = true
 	} else {
@@ -2142,4 +2426,37 @@ func (s *testScenario) createCompat() (x uint) {
 	}
 
 	return x
+}
+
+func (s *testScenario) createWorkDir() (x string) {
+	switch {
+	case s.Switches[useProperWorkDir]:
+		x = workDir
+	case s.Switches[useFaultyWorkDir]:
+		x = restrictedWorkDir
+	default:
+		x = ""
+	}
+
+	return x
+}
+
+func (s *testScenario) cleanUpDataGenerate() {
+	// remove all working directories
+	_ = os.RemoveAll(workDir)
+	_ = os.Chmod(restrictedWorkDir, 0777)
+	_ = os.RemoveAll(restrictedWorkDir)
+
+	// remove all changelog file
+	_ = os.RemoveAll(path)
+}
+
+func (s *testScenario) setupDataGenerate() {
+	// call remove to purge previous test leftovers
+	s.cleanUpDataGenerate()
+
+	// create all working directories for testing
+	_ = os.MkdirAll(restrictedWorkDir, 0755)
+	_ = os.MkdirAll(workDir, 0755)
+	_ = os.Chmod(restrictedWorkDir, 0600)
 }

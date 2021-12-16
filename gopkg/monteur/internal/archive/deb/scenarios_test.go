@@ -15,6 +15,7 @@
 
 package deb
 
+//nolint:lll
 func getTestScenarios() []testScenario {
 	return []testScenario{
 		{
@@ -5453,8 +5454,12 @@ Data.Sanitize() should work properly when:
 7. Install is properly given.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is not expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is not expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5470,6 +5475,10 @@ Data.Sanitize() should work properly when:
 				useProperInstall:             true,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  false,
 				expectPanic:                  false,
 			},
@@ -5487,8 +5496,12 @@ Data.Sanitize() should work properly when:
 7. Install is properly given.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5504,6 +5517,10 @@ Data.Sanitize() should work properly when:
 				useProperInstall:             true,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  true,
 				expectPanic:                  false,
 			},
@@ -5521,8 +5538,12 @@ Data.Sanitize() should work properly when:
 7. Install is properly given.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5538,6 +5559,10 @@ Data.Sanitize() should work properly when:
 				useProperInstall:             true,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  true,
 				expectPanic:                  false,
 			},
@@ -5555,8 +5580,12 @@ Data.Sanitize() should work properly when:
 7. Install is properly given.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5572,6 +5601,10 @@ Data.Sanitize() should work properly when:
 				useProperInstall:             true,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  true,
 				expectPanic:                  false,
 			},
@@ -5589,8 +5622,12 @@ Data.Sanitize() should work properly when:
 7. Install is properly given.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5606,6 +5643,10 @@ Data.Sanitize() should work properly when:
 				useProperInstall:             true,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  true,
 				expectPanic:                  false,
 			},
@@ -5623,8 +5664,12 @@ Data.Sanitize() should work properly when:
 7. Install is properly given.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5640,6 +5685,10 @@ Data.Sanitize() should work properly when:
 				useProperInstall:             true,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  true,
 				expectPanic:                  false,
 			},
@@ -5657,8 +5706,12 @@ Data.Sanitize() should work properly when:
 7. Install is properly given.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5674,6 +5727,10 @@ Data.Sanitize() should work properly when:
 				useProperInstall:             true,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  true,
 				expectPanic:                  false,
 			},
@@ -5691,8 +5748,12 @@ Data.Sanitize() should work properly when:
 7. Install is properly given.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5708,6 +5769,10 @@ Data.Sanitize() should work properly when:
 				useProperInstall:             true,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  true,
 				expectPanic:                  false,
 			},
@@ -5725,8 +5790,12 @@ Data.Sanitize() should work properly when:
 7. Install is properly given.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is not expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is not expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5742,6 +5811,10 @@ Data.Sanitize() should work properly when:
 				useProperInstall:             true,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  false,
 				expectPanic:                  false,
 			},
@@ -5759,8 +5832,12 @@ Data.Sanitize() should work properly when:
 7. Install is properly given.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is not expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is not expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5776,6 +5853,10 @@ Data.Sanitize() should work properly when:
 				useProperInstall:             true,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  false,
 				expectPanic:                  false,
 			},
@@ -5793,8 +5874,12 @@ Data.Sanitize() should work properly when:
 7. Install is emptily given.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5810,6 +5895,10 @@ Data.Sanitize() should work properly when:
 				useEmptyInstall:              true,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  true,
 				expectPanic:                  false,
 			},
@@ -5827,8 +5916,12 @@ Data.Sanitize() should work properly when:
 7. Install is given as nil.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5844,6 +5937,10 @@ Data.Sanitize() should work properly when:
 				useProperInstall:             false,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  true,
 				expectPanic:                  false,
 			},
@@ -5861,8 +5958,12 @@ Data.Sanitize() should work properly when:
 7. Install is properly given.
 8. Rules is badly given.
 9. Compat is properly given.
-10. error is expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5878,6 +5979,10 @@ Data.Sanitize() should work properly when:
 				useProperInstall:             true,
 				useProperRules:               false,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  true,
 				expectPanic:                  false,
 			},
@@ -5895,8 +6000,12 @@ Data.Sanitize() should work properly when:
 7. Install is properly given.
 8. Rules is properly given.
 9. Compat is badly given.
-10. error is expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5912,6 +6021,10 @@ Data.Sanitize() should work properly when:
 				useProperInstall:             true,
 				useProperRules:               true,
 				useProperCompat:              false,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  true,
 				expectPanic:                  false,
 			},
@@ -5929,8 +6042,12 @@ Data.Sanitize() should work properly when:
 7. Install is given with 3.7.0 checklist triggering data.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5946,6 +6063,10 @@ Data.Sanitize() should work properly when:
 				use3p7p0Install:              true,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  true,
 				expectPanic:                  false,
 			},
@@ -5963,8 +6084,12 @@ Data.Sanitize() should work properly when:
 7. Install is given with 4.6.0 checklist triggering data.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -5980,6 +6105,10 @@ Data.Sanitize() should work properly when:
 				use4p6p0Install:              true,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  true,
 				expectPanic:                  false,
 			},
@@ -5997,8 +6126,12 @@ Data.Sanitize() should work properly when:
 7. Install is given with 4.0.0 checklist triggering data.
 8. Rules is properly given.
 9. Compat is properly given.
-10. error is expected.
-11. panic is not expected.
+10. Build Source Flag is set to true.
+11. Source.local-options is properly given.
+12. Source.options is properly given.
+13. Changelog path is properly given.
+14. error is expected.
+15. panic is not expected.
 `,
 			Switches: map[string]bool{
 				useFaultyTestedDataControl:   false,
@@ -6014,8 +6147,1176 @@ Data.Sanitize() should work properly when:
 				use4p0p0Install:              true,
 				useProperRules:               true,
 				useProperCompat:              true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
 				expectError:                  true,
 				expectPanic:                  false,
+			},
+		}, {
+			UID:      183,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. error is not expected.
+16. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				useProperWorkDir:             true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
+				expectError:                  false,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      184,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is badly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. error is expected.
+16. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				useFaultyWorkDir:             true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      185,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is not given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. error is expected.
+16. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				useProperWorkDir:             false,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      186,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is given as nil.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. error is expected.
+16. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              true,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				useProperWorkDir:             true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      187,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to false.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. error is not expected.
+16. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				useProperWorkDir:             true,
+				useBuildSourceFlag:           false,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
+				expectError:                  false,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      188,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is not given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. error is not expected.
+16. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				useProperWorkDir:             true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  false,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
+				expectError:                  false,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      189,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is not given.
+14. Changelog path is properly given.
+15. error is not expected.
+16. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				useProperWorkDir:             true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       false,
+				useProperPath:                true,
+				expectError:                  false,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      190,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is not given.
+15. error is not expected.
+16. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				useProperWorkDir:             true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                false,
+				expectError:                  false,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      191,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has bad header.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				useProperWorkDir:             true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
+				createBadHeaderChangelogFile: true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      192,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has changes leading.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:     false,
+				useNilControl:                  false,
+				useFaultyTestedDataCopyright:   false,
+				useNilCopyright:                false,
+				useFaultyTestedDataChangelog:   false,
+				useNilChangelog:                false,
+				useFaultyTestedDataSource:      false,
+				useNilSource:                   false,
+				useProperManpage:               true,
+				useProperScripts:               true,
+				useProperInstall:               true,
+				useProperRules:                 true,
+				useProperCompat:                true,
+				useProperWorkDir:               true,
+				useBuildSourceFlag:             true,
+				useProperSourceLocalOptions:    true,
+				useProperSourceOptions:         true,
+				useProperPath:                  true,
+				createChangesLeadChangelogFile: true,
+				expectError:                    true,
+				expectPanic:                    false,
+			},
+		}, {
+			UID:      193,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has double header.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:      false,
+				useNilControl:                   false,
+				useFaultyTestedDataCopyright:    false,
+				useNilCopyright:                 false,
+				useFaultyTestedDataChangelog:    false,
+				useNilChangelog:                 false,
+				useFaultyTestedDataSource:       false,
+				useNilSource:                    false,
+				useProperManpage:                true,
+				useProperScripts:                true,
+				useProperInstall:                true,
+				useProperRules:                  true,
+				useProperCompat:                 true,
+				useProperWorkDir:                true,
+				useBuildSourceFlag:              true,
+				useProperSourceLocalOptions:     true,
+				useProperSourceOptions:          true,
+				useProperPath:                   true,
+				createDoubleHeaderChangelogFile: true,
+				expectError:                     true,
+				expectPanic:                     false,
+			},
+		}, {
+			UID:      194,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has signature leading.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				useProperWorkDir:             true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
+				createSigHeaderChangelogFile: true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      195,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file is not created.
+16. error is not expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				useProperWorkDir:             true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
+				createNoChangelogFile:        true,
+				expectError:                  false,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      196,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has tailing header.
+16. error is not expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:       false,
+				useNilControl:                    false,
+				useFaultyTestedDataCopyright:     false,
+				useNilCopyright:                  false,
+				useFaultyTestedDataChangelog:     false,
+				useNilChangelog:                  false,
+				useFaultyTestedDataSource:        false,
+				useNilSource:                     false,
+				useProperManpage:                 true,
+				useProperScripts:                 true,
+				useProperInstall:                 true,
+				useProperRules:                   true,
+				useProperCompat:                  true,
+				useProperWorkDir:                 true,
+				useBuildSourceFlag:               true,
+				useProperSourceLocalOptions:      true,
+				useProperSourceOptions:           true,
+				useProperPath:                    true,
+				createTailingHeaderChangelogFile: true,
+				expectError:                      false,
+				expectPanic:                      false,
+			},
+		}, {
+			UID:      197,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has tailing changes.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:        false,
+				useNilControl:                     false,
+				useFaultyTestedDataCopyright:      false,
+				useNilCopyright:                   false,
+				useFaultyTestedDataChangelog:      false,
+				useNilChangelog:                   false,
+				useFaultyTestedDataSource:         false,
+				useNilSource:                      false,
+				useProperManpage:                  true,
+				useProperScripts:                  true,
+				useProperInstall:                  true,
+				useProperRules:                    true,
+				useProperCompat:                   true,
+				useProperWorkDir:                  true,
+				useBuildSourceFlag:                true,
+				useProperSourceLocalOptions:       true,
+				useProperSourceOptions:            true,
+				useProperPath:                     true,
+				createTailingChangesChangelogFile: true,
+				expectError:                       true,
+				expectPanic:                       false,
+			},
+		}, {
+			UID:      198,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has tailing signature.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:    false,
+				useNilControl:                 false,
+				useFaultyTestedDataCopyright:  false,
+				useNilCopyright:               false,
+				useFaultyTestedDataChangelog:  false,
+				useNilChangelog:               false,
+				useFaultyTestedDataSource:     false,
+				useNilSource:                  false,
+				useProperManpage:              true,
+				useProperScripts:              true,
+				useProperInstall:              true,
+				useProperRules:                true,
+				useProperCompat:               true,
+				useProperWorkDir:              true,
+				useBuildSourceFlag:            true,
+				useProperSourceLocalOptions:   true,
+				useProperSourceOptions:        true,
+				useProperPath:                 true,
+				createTailingSigChangelogFile: true,
+				expectError:                   true,
+				expectPanic:                   false,
+			},
+		}, {
+			UID:      199,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has bad package header tag.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:          false,
+				useNilControl:                       false,
+				useFaultyTestedDataCopyright:        false,
+				useNilCopyright:                     false,
+				useFaultyTestedDataChangelog:        false,
+				useNilChangelog:                     false,
+				useFaultyTestedDataSource:           false,
+				useNilSource:                        false,
+				useProperManpage:                    true,
+				useProperScripts:                    true,
+				useProperInstall:                    true,
+				useProperRules:                      true,
+				useProperCompat:                     true,
+				useProperWorkDir:                    true,
+				useBuildSourceFlag:                  true,
+				useProperSourceLocalOptions:         true,
+				useProperSourceOptions:              true,
+				useProperPath:                       true,
+				createBadPackageHeaderChangelogFile: true,
+				expectError:                         true,
+				expectPanic:                         false,
+			},
+		}, {
+			UID:      200,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has bad version header tag.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:          false,
+				useNilControl:                       false,
+				useFaultyTestedDataCopyright:        false,
+				useNilCopyright:                     false,
+				useFaultyTestedDataChangelog:        false,
+				useNilChangelog:                     false,
+				useFaultyTestedDataSource:           false,
+				useNilSource:                        false,
+				useProperManpage:                    true,
+				useProperScripts:                    true,
+				useProperInstall:                    true,
+				useProperRules:                      true,
+				useProperCompat:                     true,
+				useProperWorkDir:                    true,
+				useBuildSourceFlag:                  true,
+				useProperSourceLocalOptions:         true,
+				useProperSourceOptions:              true,
+				useProperPath:                       true,
+				createBadVersionHeaderChangelogFile: true,
+				expectError:                         true,
+				expectPanic:                         false,
+			},
+		}, {
+			UID:      201,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has bad version epoch header tag.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:               false,
+				useNilControl:                            false,
+				useFaultyTestedDataCopyright:             false,
+				useNilCopyright:                          false,
+				useFaultyTestedDataChangelog:             false,
+				useNilChangelog:                          false,
+				useFaultyTestedDataSource:                false,
+				useNilSource:                             false,
+				useProperManpage:                         true,
+				useProperScripts:                         true,
+				useProperInstall:                         true,
+				useProperRules:                           true,
+				useProperCompat:                          true,
+				useProperWorkDir:                         true,
+				useBuildSourceFlag:                       true,
+				useProperSourceLocalOptions:              true,
+				useProperSourceOptions:                   true,
+				useProperPath:                            true,
+				createBadVersionEpochHeaderChangelogFile: true,
+				expectError:                              true,
+				expectPanic:                              false,
+			},
+		}, {
+			UID:      202,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has bad version upstream header tag.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:                  false,
+				useNilControl:                               false,
+				useFaultyTestedDataCopyright:                false,
+				useNilCopyright:                             false,
+				useFaultyTestedDataChangelog:                false,
+				useNilChangelog:                             false,
+				useFaultyTestedDataSource:                   false,
+				useNilSource:                                false,
+				useProperManpage:                            true,
+				useProperScripts:                            true,
+				useProperInstall:                            true,
+				useProperRules:                              true,
+				useProperCompat:                             true,
+				useProperWorkDir:                            true,
+				useBuildSourceFlag:                          true,
+				useProperSourceLocalOptions:                 true,
+				useProperSourceOptions:                      true,
+				useProperPath:                               true,
+				createBadVersionUpstreamHeaderChangelogFile: true,
+				expectError:                                 true,
+				expectPanic:                                 false,
+			},
+		}, {
+			UID:      203,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has bad distro header tag.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:             false,
+				useNilControl:                          false,
+				useFaultyTestedDataCopyright:           false,
+				useNilCopyright:                        false,
+				useFaultyTestedDataChangelog:           false,
+				useNilChangelog:                        false,
+				useFaultyTestedDataSource:              false,
+				useNilSource:                           false,
+				useProperManpage:                       true,
+				useProperScripts:                       true,
+				useProperInstall:                       true,
+				useProperRules:                         true,
+				useProperCompat:                        true,
+				useProperWorkDir:                       true,
+				useBuildSourceFlag:                     true,
+				useProperSourceLocalOptions:            true,
+				useProperSourceOptions:                 true,
+				useProperPath:                          true,
+				createMissingDistroHeaderChangelogFile: true,
+				expectError:                            true,
+				expectPanic:                            false,
+			},
+		}, {
+			UID:      204,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has bad name signature tag.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				useProperWorkDir:             true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
+				createBadNameChangelogFile:   true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      205,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has bad email signature tag.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:   false,
+				useNilControl:                false,
+				useFaultyTestedDataCopyright: false,
+				useNilCopyright:              false,
+				useFaultyTestedDataChangelog: false,
+				useNilChangelog:              false,
+				useFaultyTestedDataSource:    false,
+				useNilSource:                 false,
+				useProperManpage:             true,
+				useProperScripts:             true,
+				useProperInstall:             true,
+				useProperRules:               true,
+				useProperCompat:              true,
+				useProperWorkDir:             true,
+				useBuildSourceFlag:           true,
+				useProperSourceLocalOptions:  true,
+				useProperSourceOptions:       true,
+				useProperPath:                true,
+				createBadEmailChangelogFile:  true,
+				expectError:                  true,
+				expectPanic:                  false,
+			},
+		}, {
+			UID:      206,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has bad timestamp signature tag.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:      false,
+				useNilControl:                   false,
+				useFaultyTestedDataCopyright:    false,
+				useNilCopyright:                 false,
+				useFaultyTestedDataChangelog:    false,
+				useNilChangelog:                 false,
+				useFaultyTestedDataSource:       false,
+				useNilSource:                    false,
+				useProperManpage:                true,
+				useProperScripts:                true,
+				useProperInstall:                true,
+				useProperRules:                  true,
+				useProperCompat:                 true,
+				useProperWorkDir:                true,
+				useBuildSourceFlag:              true,
+				useProperSourceLocalOptions:     true,
+				useProperSourceOptions:          true,
+				useProperPath:                   true,
+				createBadTimestampChangelogFile: true,
+				expectError:                     true,
+				expectPanic:                     false,
+			},
+		}, {
+			UID:      207,
+			TestType: testDataGenerate,
+			Description: `
+Data.Generate() should work properly when:
+1. Control is properly given.
+2. Copyright is properly given.
+3. Changelog is properly given.
+4. Source is properly given.
+5. Manpage is properly given.
+6. Scripts is properly given.
+7. Install is properly given.
+8. Rules is properly given.
+9. Compat is properly given.
+10. Working Directory is properly given.
+11. Build Source Flag is set to true.
+12. Source.local-options is properly given.
+13. Source.options is properly given.
+14. Changelog path is properly given.
+15. Changelog file has bad email delimiter signature tag.
+16. error is expected.
+17. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useFaultyTestedDataControl:           false,
+				useNilControl:                        false,
+				useFaultyTestedDataCopyright:         false,
+				useNilCopyright:                      false,
+				useFaultyTestedDataChangelog:         false,
+				useNilChangelog:                      false,
+				useFaultyTestedDataSource:            false,
+				useNilSource:                         false,
+				useProperManpage:                     true,
+				useProperScripts:                     true,
+				useProperInstall:                     true,
+				useProperRules:                       true,
+				useProperCompat:                      true,
+				useProperWorkDir:                     true,
+				useBuildSourceFlag:                   true,
+				useProperSourceLocalOptions:          true,
+				useProperSourceOptions:               true,
+				useProperPath:                        true,
+				createBadEmailDelimiterChangelogFile: true,
+				expectError:                          true,
+				expectPanic:                          false,
+			},
+		}, {
+			UID:      208,
+			TestType: testChangelogParseForErrorPanic,
+			Description: `
+Changelog.Parse(...) should work properly when:
+1. Changelog data is properly given.
+2. parseStatus is set to completed.
+3. error is expected.
+4. panic is not expected.
+`,
+			Switches: map[string]bool{
+				useCompletedChangelogParseStatus: true,
+				expectError:                      true,
+				expectPanic:                      false,
+			},
+		}, {
+			UID:      209,
+			TestType: testChangelogParseForErrorPanic,
+			Description: `
+Changelog.Parse(...) should work properly when:
+1. Changelog data is properly given.
+2. parseStatus is set to unknown.
+3. error is not expected.
+4. panic is expected.
+`,
+			Switches: map[string]bool{
+				useUnknownChangelogParseStatus: true,
+				expectError:                    false,
+				expectPanic:                    true,
 			},
 		},
 	}

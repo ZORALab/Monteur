@@ -17,6 +17,7 @@ package deb
 
 import (
 	"fmt"
+	"net/mail"
 	"strconv"
 )
 
@@ -49,6 +50,11 @@ func (me *Entity) Sanitize() (err error) {
 	}
 
 	if me.Email == "" {
+		return fmt.Errorf("%s: ''", ERROR_ENTITY_EMAIL_BAD)
+	}
+
+	_, err = mail.ParseAddress(me.Email)
+	if err != nil {
 		return fmt.Errorf("%s: ''", ERROR_ENTITY_EMAIL_BAD)
 	}
 

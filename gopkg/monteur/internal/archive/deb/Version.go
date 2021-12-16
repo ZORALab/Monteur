@@ -68,19 +68,28 @@ func (me *Version) Sanitize() (err error) {
 	// check Upstream
 	filter = regexp.MustCompile(`^[A-Za-z0-9~.+-]*$`)
 	if !filter.MatchString(me.Upstream) {
-		return fmt.Errorf(ERROR_VERSION_UPSTREAM_ILLEGAL)
+		return fmt.Errorf("%s: '%v'",
+			ERROR_VERSION_UPSTREAM_ILLEGAL,
+			me.Upstream,
+		)
 	}
 
 	switch me.Upstream[0] {
 	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
 	default:
-		return fmt.Errorf(ERROR_VERSION_UPSTREAM_DIGIT_FIRST)
+		return fmt.Errorf("%s: '%v'",
+			ERROR_VERSION_UPSTREAM_DIGIT_FIRST,
+			me.Upstream,
+		)
 	}
 
 	if me.Revision == "" {
 		filter = regexp.MustCompile(`^[A-Za-z0-9~.+]*$`)
 		if !filter.MatchString(me.Upstream) {
-			return fmt.Errorf(ERROR_VERSION_UPSTREAM_NO_DASH)
+			return fmt.Errorf("%s: '%v'",
+				ERROR_VERSION_UPSTREAM_NO_DASH,
+				me.Upstream,
+			)
 		}
 
 		return nil
@@ -89,13 +98,19 @@ func (me *Version) Sanitize() (err error) {
 	// check Revision
 	filter = regexp.MustCompile(`^[A-Za-z0-9~.+]*$`)
 	if !filter.MatchString(me.Revision) {
-		return fmt.Errorf(ERROR_VERSION_REVISION_ILLEGAL)
+		return fmt.Errorf("%s: '%v'",
+			ERROR_VERSION_REVISION_ILLEGAL,
+			me.Revision,
+		)
 	}
 
 	switch me.Revision[0] {
 	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
 	default:
-		return fmt.Errorf(ERROR_VERSION_REVISION_DIGIT_FIRST)
+		return fmt.Errorf("%s: '%v'",
+			ERROR_VERSION_REVISION_DIGIT_FIRST,
+			me.Revision,
+		)
 	}
 
 	return nil

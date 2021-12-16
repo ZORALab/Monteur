@@ -17,9 +17,18 @@ package deb
 
 //nolint:lll
 const (
-	ERROR_CHANGELOG_BAD          = "bad debian/changelog file"
-	ERROR_CHANGELOG_ENTRY_BAD    = "bad debian/changelog entry"
-	ERROR_CHANGELOG_FILEPATH_BAD = "bad debian/changelog filepath"
+	ERROR_CHANGELOG_BAD                  = "bad debian/changelog file"
+	ERROR_CHANGELOG_ENTRY_BAD            = "bad debian/changelog entry"
+	ERROR_CHANGELOG_FILE_READ            = "error while reading changelog path"
+	ERROR_CHANGELOG_FILEPATH_BAD         = "bad debian/changelog filepath"
+	ERROR_CHANGELOG_NOT_A_FILE           = "given debian/changelog path is not a file"
+	ERROR_CHANGELOG_PARSE_BAD            = "bad debian/changelog path parsing"
+	ERROR_CHANGELOG_PARSE_COMPLETED      = "parse changelog entry work was completed"
+	ERROR_CHANGELOG_PARSE_DISTRO_FAILED  = "failed to parse changelog entry's Distribution"
+	ERROR_CHANGELOG_PARSE_PACKAGE_FAILED = "failed to parse changelog entry's Package"
+	ERROR_CHANGELOG_PARSE_URGENCY_FAILED = "failed to parse changelog entry's Urgency"
+	ERROR_CHANGELOG_PARSE_VERSION_FAILED = "failed to parse changelog entry's Version"
+	ERROR_CHANGELOG_PATH_BAD             = "bad changelog path for append"
 
 	ERROR_CHECKLIST_4_6_0_LIB64 = "Error Checklist 4.6.0: no package allowed to install files into /usr/lib64/"
 	ERROR_CHECKLIST_4_0_0_PATHS = "Error Checklist 4.0.0: same programs cannot be installed into both /path and /usr/path"
@@ -54,6 +63,13 @@ const (
 	ERROR_DEP_BAD        = "bad dependency status"
 	ERROR_DEP_NAME_BAD   = "bad dependency name"
 
+	ERROR_DIR_MISSING           = "directory is missing"
+	ERROR_DIR_CREATE_FAILED     = "failed to create directory"
+	ERROR_FILE_CHMOD_FAILED     = "failed to change file permission"
+	ERROR_FILE_OPEN_FAILED      = "failed to open file"
+	ERROR_FILE_WRITE_FAILED     = "failed to write file"
+	ERROR_FILE_OVERWRITE_FAILED = "failed to overwrite file"
+
 	ERROR_PACKAGE_LIST_BAD      = "bad package list"
 	ERROR_PACKAGE_LIST_NAME_BAD = "bad package list name"
 
@@ -61,6 +77,12 @@ const (
 	ERROR_PACKAGE_VER_BAD             = "bad dep-package VERControl"
 	ERROR_PACKAGE_VER_MISSING         = "missing dep-package VERControl"
 	ERROR_PACKAGE_VER_CONTROL_UNKNOWN = "unknown dep-package VERControl"
+
+	ERROR_PROCESSOR_DESTDIR_BAD        = "bad DestDir"
+	ERROR_PROCESSOR_DESTDIR_MISSING    = "missing DestDir"
+	ERROR_PROCESSOR_WORKINGDIR_BAD     = "bad WorkingDir"
+	ERROR_PROCESSOR_WORKINGDIR_MISSING = "missing WorkingDir"
+	ERROR_PROCESSOR_DEBIAN_MISSING     = "missing debian or DEBIAN directory"
 
 	ERROR_ENTITY_NAME_BAD  = "entity has bad name"
 	ERROR_ENTITY_EMAIL_BAD = "entity has bad email"

@@ -16,7 +16,12 @@
 package deb
 
 import (
+	"bufio"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -91,6 +96,390 @@ type Data struct {
 	//
 	// This field is **MANDATORY**.
 	Compat uint
+}
+
+//nolint:gocognit
+// Generate is to create all the debian / DEBIAN files and directories.
+func (me *Data) Generate(workingDir string) (err error) {
+	var path string
+
+	err = me.Sanitize()
+	if err != nil {
+		goto done
+	}
+
+	if workingDir == "" {
+		err = fmt.Errorf("%s: workingDir = ''", ERROR_DIR_MISSING)
+		goto done
+	}
+
+	// identify debian or DEBIAN directory by Control/BuildSource.
+	if me.Control.BuildSource {
+		path = filepath.Join(workingDir, "debian")
+	} else {
+		path = filepath.Join(workingDir, "DEBIAN")
+	}
+
+	err = me.createBaseDir(path)
+	if err != nil {
+		goto done
+	}
+
+	err = me.createControl(path)
+	if err != nil {
+		goto done
+	}
+
+	err = me.createCopyright(path)
+	if err != nil {
+		goto done
+	}
+
+	err = me.createChangelog(path)
+	if err != nil {
+		goto done
+	}
+
+	err = me.createSourceDir(path)
+	if err != nil {
+		goto done
+	}
+
+	err = me.createSourceFormat(path)
+	if err != nil {
+		goto done
+	}
+
+	err = me.createSourceLocalOptions(path)
+	if err != nil {
+		goto done
+	}
+
+	err = me.createSourceOptions(path)
+	if err != nil {
+		goto done
+	}
+
+	err = me.createManpages(path)
+	if err != nil {
+		goto done
+	}
+
+	err = me.createScripts(path)
+	if err != nil {
+		goto done
+	}
+
+	err = me.createRules(path)
+	if err != nil {
+		goto done
+	}
+
+	err = me.createCompat(path)
+	if err != nil {
+		goto done
+	}
+
+	err = me.createInstall(path)
+	if err != nil {
+		goto done
+	}
+
+done:
+	return err
+}
+
+func (me *Data) createInstall(path string) (err error) {
+	target := filepath.Join(path, "install")
+
+	s := ""
+	isFirst := true
+	for k, v := range me.Install {
+		if !isFirst {
+			s += "\n"
+		}
+
+		s += v + " " + k
+		isFirst = false
+	}
+
+	return me._writeFile(target, _PERMISSION_FILE, s)
+}
+
+func (me *Data) createCompat(path string) (err error) {
+	target := filepath.Join(path, "compat")
+
+	return me._writeFile(target,
+		_PERMISSION_FILE,
+		strconv.Itoa(int(me.Compat)))
+}
+
+func (me *Data) createRules(path string) (err error) {
+	target := filepath.Join(path, "rules")
+
+	return me._writeFile(target, _PERMISSION_EXEC, me.Rules)
+}
+
+func (me *Data) createManpages(path string) (err error) {
+	var manpages, name, fPath string
+	list := []string{}
+
+	for k, v := range me.Manpage {
+		// generate the manpage path
+		name = me.Control.Name + "." + k
+		fPath = filepath.Join(path, name)
+
+		// write to file
+		err = me._writeFile(fPath, _PERMISSION_FILE, v)
+		if err != nil {
+			return err
+		}
+
+		// add manpage into list of manpages
+		list = append(list, "debian/"+name)
+	}
+
+	// write the final debian/manpages
+	manpages = ""
+	for _, v := range list {
+		manpages += v + "\n"
+	}
+
+	fPath = filepath.Join(path, me.Control.Name+".manpages")
+	err = me._writeFile(fPath, _PERMISSION_FILE, manpages)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (me *Data) createScripts(path string) (err error) {
+	for k, v := range me.Scripts {
+		target := filepath.Join(path, string(k))
+
+		err = me._writeFile(target, _PERMISSION_EXEC, v)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (me *Data) createSourceOptions(path string) (err error) {
+	if me.Source.Options == "" {
+		return nil
+	}
+
+	target := filepath.Join(path, "source", "options")
+
+	return me._writeFile(target, _PERMISSION_FILE, me.Source.Options)
+}
+
+func (me *Data) createSourceLocalOptions(path string) (err error) {
+	if me.Source.LocalOptions == "" {
+		return nil
+	}
+
+	target := filepath.Join(path, "source", "local-options")
+
+	return me._writeFile(target, _PERMISSION_FILE, me.Source.LocalOptions)
+}
+
+func (me *Data) createSourceFormat(path string) (err error) {
+	target := filepath.Join(path, "source", "format")
+
+	return me._writeFile(target, _PERMISSION_FILE, string(me.Source.Format))
+}
+
+func (me *Data) createSourceDir(path string) (err error) {
+	target := filepath.Join(path, "source")
+
+	return me._createDir(target)
+}
+
+func (me *Data) createChangelog(path string) (err error) {
+	var info os.FileInfo
+
+	target := filepath.Join(path, "changelog")
+
+	// always write the latest changelog first
+	err = me._writeFile(target, _PERMISSION_FILE, me.Changelog.String())
+	if err != nil {
+		return err
+	}
+
+	// check path for preprend file
+	if me.Changelog.Path == "" {
+		goto end
+	}
+
+	// check if it's a regular file
+	info, err = os.Stat(me.Changelog.Path)
+	switch {
+	case os.IsNotExist(err):
+		goto updatePersistentFile
+	case err != nil:
+		return fmt.Errorf("%s: %s", ERROR_CHANGELOG_PATH_BAD, err)
+	case info != nil && info.Mode().IsRegular():
+		goto appendFile
+	default:
+		return fmt.Errorf(ERROR_CHANGELOG_NOT_A_FILE)
+	}
+
+appendFile:
+	err = me._appendChangelog(target, me.Changelog.Path)
+	if err != nil {
+		return err
+	}
+
+updatePersistentFile:
+	err = me._overwriteFile(me.Changelog.Path, target)
+	if err != nil {
+		return err
+	}
+
+end:
+	return nil
+}
+
+func (me *Data) _overwriteFile(out string, in string) (err error) {
+	var f, s *os.File
+
+	f, err = os.OpenFile(out, os.O_RDWR|os.O_CREATE, _PERMISSION_FILE)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", ERROR_FILE_OPEN_FAILED, err)
+		goto done
+	}
+
+	s, err = os.OpenFile(in, os.O_RDONLY, _PERMISSION_FILE)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", ERROR_FILE_OPEN_FAILED, err)
+		goto doneWriter
+	}
+
+	_, err = io.Copy(f, s)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", ERROR_FILE_OVERWRITE_FAILED, err)
+		goto doneReader
+	}
+
+doneReader:
+	s.Close()
+doneWriter:
+	_ = f.Sync()
+	f.Close()
+done:
+	return err
+}
+
+func (me *Data) _appendChangelog(target string, source string) (err error) {
+	var ok bool
+	var scanner *bufio.Scanner
+	var f, s *os.File
+	var entry *Changelog
+
+	// open changelog writer
+	f, err = os.OpenFile(target,
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
+		_PERMISSION_FILE,
+	)
+	if err != nil {
+		return fmt.Errorf("%s: %s", ERROR_FILE_OPEN_FAILED, err)
+	}
+
+	// open changelog reader
+	s, err = os.OpenFile(source, os.O_RDONLY, _PERMISSION_FILE)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", ERROR_FILE_OPEN_FAILED, err)
+		goto closeWriter
+	}
+	scanner = bufio.NewScanner(s)
+
+	// parse each entries
+	entry = &Changelog{}
+	for scanner.Scan() {
+		// parse the line
+		ok, err = entry.Parse(scanner.Text())
+		if err != nil {
+			goto closeReader
+		}
+
+		// append to changelog file
+		if ok {
+			_, err = f.WriteString("\n\n" + entry.String())
+			if err != nil {
+				err = fmt.Errorf("%s: %s",
+					ERROR_FILE_WRITE_FAILED,
+					err,
+				)
+				goto closeReader
+			}
+
+			entry = &Changelog{}
+		}
+	}
+
+closeReader:
+	s.Close()
+closeWriter:
+	_ = f.Sync()
+	f.Close()
+	return err
+}
+
+func (me *Data) createCopyright(path string) (err error) {
+	target := filepath.Join(path, "copyright")
+
+	return me._writeFile(target, _PERMISSION_FILE, me.Copyright.String())
+}
+
+func (me *Data) createControl(path string) (err error) {
+	target := filepath.Join(path, "control")
+
+	return me._writeFile(target, _PERMISSION_FILE, me.Control.String())
+}
+
+func (me *Data) createBaseDir(path string) (err error) {
+	return me._createDir(path)
+}
+
+func (me *Data) _createDir(path string) (err error) {
+	_ = os.RemoveAll(path)
+
+	err = os.MkdirAll(path, _PERMISSION_DIR)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", ERROR_DIR_CREATE_FAILED, err)
+	}
+
+	return err
+}
+
+func (me *Data) _writeFile(path string,
+	perm os.FileMode, data string) (err error) {
+	var f *os.File
+
+	f, err = os.OpenFile(path, os.O_RDWR|os.O_CREATE, _PERMISSION_FILE)
+	if err != nil {
+		return fmt.Errorf("%s: %s", ERROR_FILE_OPEN_FAILED, err)
+	}
+
+	_, err = f.WriteString(data)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", ERROR_FILE_WRITE_FAILED, err)
+		goto closeWriter
+	}
+
+	err = f.Chmod(perm)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", ERROR_FILE_CHMOD_FAILED, err)
+	}
+
+closeWriter:
+	_ = f.Sync()
+	f.Close()
+	return err
 }
 
 // Sanitize is to ensure all Data is complying to the .deb strict format.

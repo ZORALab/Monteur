@@ -1,26 +1,27 @@
 #####################
 # User defined
 #####################
-.tests
-*.log
-os/files/tests
-public/
-.bin/
-gh-pages/
-vendor/cerigo
-test/
-themes/
+gopkg/monteur/internal/archive/deb/testsuite
+gopkg/monteur/internal/archive/deb/restricted
+gopkg/monteur/internal/archive/deb/workDir
 
 #####################
 # Standard FHS
 #####################
-bin
-tmp
-release
+themes/
+*.log
+.bin/
+vendor/
+gh-pages/
+bin/
+tmp/
+release/
+test/
 
 #####################
 # Hugo
 #####################
+public/
 .hugo_build.lock
 
 #####################
