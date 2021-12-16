@@ -1,41 +1,71 @@
 [Metadata]
 Name = 'DEB'
 Description = """
-Package monteur into .deb package file.
+Package monteur into .deb package file using manual commands.
 """
-Type = 'deb'
+Type = 'deb-manual'
 
 [Variables]
+GPGID = 'hello@zoralab.com'
+GPGExistence = ''  # to be filled later for verifications
 
 [FMTVariables]
+Lintian = '{{- .DataDir -}}/deb/lintian'
+Profile = '{{- .DataDir -}}/deb/profiles'
 
 
 
 
 [[Dependencies]]
-Name = 'Go'
+Name = 'DEB Builder'
 Condition = 'all-all'
 Type = 'command'
-Command = 'go'
+Command = 'debuild'
+
+[[Dependencies]]
+Name = 'GPG Tool'
+Condition = 'all-all'
+Type = 'command'
+Command = 'gpg'
 
 
 
 
-[Package.linux-amd64]
-Source = '{{- .BuildDir -}}/linux-amd64'
-OS = 'linux'
-CPU = 'amd64'
+[Package.001]
+OS = [ 'linux' ]
+CPU = [ 'amd64' ]
+Departure = '{{- .BuildDir -}}'
+Arrival = '{{- .WorkingDir -}}/linux-amd64'
+Subjects = [ '{{- .BuildDir -}}/linux-amd64' ]
 
-[Package.linux-arm64]
-Source = '{{- .BuildDir -}}/linux-arm64'
-OS = 'linux'
-CPU = 'arm64'
+[Package.002]
+OS = [ 'linux' ]
+CPU = [ 'arm64' ]
+Departure = '{{- .BuildDir -}}'
+Arrival = '{{- .WorkingDir -}}/linux-amd64'
+Subjects = [ '{{- .BuildDir -}}/linux-arm64' ]
 
 
 
 
 [[CMD]]
-Name = "Placeholder"
+Name = "Get GPG Secret Key for Verifications"
 Type = 'command'
 Condition = [ 'all-all' ]
-Source = 'echo "just a command placeholder"'
+Source = 'gpg --list-secret-keys "{{- .GPGID }}"'
+Save = 'GPGExistence'
+
+[[CMD]]
+Name = "Verify GPG Secret Key Must Exists For Signing"
+Type = 'is-not-empty'
+Condition = [ 'all-all' ]
+Source = '{{- GPGExistence -}}'
+
+[[CMD]]
+Name = "Compile Deb Package"
+Type = 'command'
+Condition = [ 'all-all' ]
+Location = '{{- .Arrival -}}'
+Source = """debuild -k{{- .GPGID }} -S \
+--include-dir {{ .Lintian }} \
+--profile {{ .Profile }}"""
