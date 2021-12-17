@@ -115,6 +115,14 @@ type TOMLChecksum struct {
 	Value  string
 }
 
+type TOMLPackage struct {
+	OS        []string
+	CPU       []string
+	Departure string
+	Arrival   string
+	Subjects  []string
+}
+
 type TOMLSource struct {
 	Checksum *TOMLChecksum
 	Headers  map[string]string

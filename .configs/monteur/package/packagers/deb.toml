@@ -31,14 +31,14 @@ Command = 'gpg'
 
 
 
-[Package.001]
+[Packages.001]
 OS = [ 'linux' ]
 CPU = [ 'amd64' ]
 Departure = '{{- .BuildDir -}}'
 Arrival = '{{- .WorkingDir -}}/linux-amd64'
 Subjects = [ '{{- .BuildDir -}}/linux-amd64' ]
 
-[Package.002]
+[Packages.002]
 OS = [ 'linux' ]
 CPU = [ 'arm64' ]
 Departure = '{{- .BuildDir -}}'
@@ -59,7 +59,7 @@ Save = 'GPGExistence'
 Name = "Verify GPG Secret Key Must Exists For Signing"
 Type = 'is-not-empty'
 Condition = [ 'all-all' ]
-Source = '{{- GPGExistence -}}'
+Source = '{{- .GPGExistence -}}'
 
 [[CMD]]
 Name = "Compile Deb Package"

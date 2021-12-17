@@ -18,8 +18,7 @@ BuildPath = """
 
 
 
-# Build API Specific
-[[BuildDeps]]
+[[Dependencies]]
 Name = 'Go'
 Condition = 'all-all'
 Type = 'command'
@@ -28,13 +27,13 @@ Command = 'go'
 
 
 
-[[BuildCMD]]
+[[CMD]]
 Name = "Create Build Directory to House the Compiled Binary"
 Type = 'create-path'
 Condition = [ 'all-all' ]
 Source = '{{- .WorkingDir -}}'
 
-[[BuildCMD]]
+[[CMD]]
 Name = "Build the Go Binary"
 Type = 'command'
 Condition = [ 'all-all' ]

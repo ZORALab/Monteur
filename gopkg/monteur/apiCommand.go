@@ -100,7 +100,7 @@ func (api *apiCommand) _filter(path string, info os.FileInfo, err error) error {
 	api.logger.Info(libmonteur.LOG_SUCCESS)
 
 	api.logger.Info("Register task into job list...")
-	api.workers[s.Metadata.Name] = s
+	api.workers[s.Name()] = s
 	api.logger.Info(libmonteur.LOG_SUCCESS)
 
 	return nil

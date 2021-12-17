@@ -225,12 +225,12 @@ These variables are used across various build related CI Jobs like
 [Release API]({{< link "/ci-jobs/release/" "this" "url-only" />}}).
 
 
-#### `[[BuildDeps]]`
-The `[BuildDeps]` is an array of program data for checking all required
+#### `[[Dependencies]]`
+The `[Dependencies]` is an array of program data for checking all required
 programs only for this `Build` task. Therefore, it has extra square braces
 when defining its data.
 
-**DO NOT CONFUSE `[BuildDeps]` with your product's dependencies**. This
+**DO NOT CONFUSE `[Dependencies]` with your product's dependencies**. This
 design was meant for any external programs that has additional setup
 configurations (e.g. building from source codes requires a bunch of libraries
 and make programs available as commands and etc). Hence, it's entirely optional
@@ -239,7 +239,7 @@ to have this table.
 Here is an example for defining a list of dependencies:
 
 ```toml {linenos=table,hl_lines=[],linenostart=1}
-[[BuildDeps]]
+[[Dependencies]]
 Name = 'Go'
 Condition = 'all-all'
 Type = 'command'
@@ -263,15 +263,15 @@ Currently, Monteur supports the following `Type` values:
 * `command` - identify by terminal command (e.g. `hugo`, `git`, ...)
 
 
-#### `[[BuildCMD]]`
-`[BuildCMD]` is basically an array of instructions for building the software of
+#### `[[CMD]]`
+`[CMD]` is basically an array of instructions for building the software of
 a specific variant. Hence, this is why it has extra square braces.
 
 Its values are complying to Monteur's [Commands Execution Units]({{< link
 "/internals/commands/" "this" "url-only" />}}). Here is an example:
 
 ```toml {linenos=table,hl_lines=[],linenostart=1}
-[[BuildCMD]]
+[[CMD]]
 Name = "Execute Go Build"
 Type = 'command'
 Condition = 'all-all'
