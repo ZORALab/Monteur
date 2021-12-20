@@ -141,7 +141,7 @@ linters-settings:
   misspell:
     locale: US
   lll:
-    line-length: 80
+    line-length: 100
     tab-width: 8
   unused:
     check-exported: false
@@ -156,6 +156,22 @@ linters-settings:
   whitespace:
     multi-if: false
     multi-func: false
+  wrapcheck:
+    ignoreSigs:
+      - path/filepath.Walk(
+      - .Errorf(
+      - errors.New(
+      - errors.Unwrap(
+      - .Wrap(
+      - .Wrapf(
+      - .WithMessage(
+      - .WithMessagef(
+      - .WithStack(
+    ignoreSigRegexps:
+      - \.New.*Error\(
+    ignorePackageGlobs:
+      - encoding/*
+      - github.com/pkg/*
   wsl:
     allow-assign-and-call: true
     allow-cuddle-declarations: true
