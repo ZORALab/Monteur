@@ -47,6 +47,7 @@ type Pathing struct {
 	BinDir     string
 	BinCfgDir  string
 	LogDir     string
+	DataDir    string
 
 	// workspace Pathing
 	WorkspaceTOMLFile string
@@ -335,6 +336,11 @@ func (fp *Pathing) updateBasePaths(langCode string) (err error) {
 	}
 
 	err = fp._initDependentDir(&fp.LogDir, "LogDir")
+	if err != nil {
+		return err
+	}
+
+	err = fp._initDependentDir(&fp.DataDir, "DataDir")
 	if err != nil {
 		return err
 	}
