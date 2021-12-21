@@ -352,6 +352,7 @@ func (me *Workspace) processDataByJob() {
 	(*me.Variables)[libmonteur.VAR_SECRETS] = *(me).secrets
 	(*me.Variables)[libmonteur.VAR_TIMESTAMP] = me.Timestamp
 	(*me.Variables)[libmonteur.VAR_DATA] = me.Filesystem.DataDir
+	(*me.Variables)[libmonteur.VAR_RELEASE] = me.Filesystem.ReleaseDir
 
 	switch me.Job {
 	case libmonteur.JOB_SETUP:
@@ -459,6 +460,7 @@ func (me *Workspace) stringCILocation() (s string) {
 	s += styler.PortraitKV("Bin Directory", me.Filesystem.BinDir)
 	s += styler.PortraitKV("Log Directory", me.Filesystem.LogDir)
 	s += styler.PortraitKV("Data Directory", me.Filesystem.DataDir)
+	s += styler.PortraitKV("Release Directory", me.Filesystem.ReleaseDir)
 	s += styler.PortraitKV("App Config Directory",
 		me.Filesystem.AppConfigDir)
 

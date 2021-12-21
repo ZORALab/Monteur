@@ -52,6 +52,7 @@ const (
 	VAR_PACKAGE_ARCH      = "PkgArch"
 	VAR_PACKAGE_DEPARTURE = "PkgDeparture"
 	VAR_PACKAGE_ARRIVAL   = "PkgArrival"
+	VAR_RELEASE           = "ReleaseDir"
 	VAR_TIMESTAMP         = "Timestamp"
 )
 
