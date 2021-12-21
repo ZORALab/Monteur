@@ -130,15 +130,7 @@ func (me *Workspace) parseWorkspaceData() (err error) {
 
 	// init app
 	me.App = &libmonteur.Software{
-		Time: &libmonteur.Timestamp{
-			Year:   strconv.Itoa(me.Timestamp.Year()),
-			Month:  strconv.Itoa(int(me.Timestamp.Month())),
-			Day:    strconv.Itoa(me.Timestamp.Day()),
-			Hour:   strconv.Itoa(me.Timestamp.Hour()),
-			Minute: strconv.Itoa(me.Timestamp.Minute()),
-			Second: strconv.Itoa(me.Timestamp.Second()),
-			Zone:   "00:00",
-		},
+		Time: me.__createTimestamp(),
 	}
 	(*me.Variables)[libmonteur.VAR_APP] = me.App
 
@@ -350,8 +342,14 @@ func (me *Workspace) _parseAppSpec() (err error) {
 		)
 	}
 
-	// sanitize all important data
-	me.App.Time = &libmonteur.Timestamp{ // DISALLOWED USER OVERWRITE
+	// restore all default data to prevent user overwriting
+	me.App.Time = me.__createTimestamp()
+
+	return nil
+}
+
+func (me *Workspace) __createTimestamp() *libmonteur.Timestamp {
+	return &libmonteur.Timestamp{
 		Year:   strconv.Itoa(me.Timestamp.Year()),
 		Month:  strconv.Itoa(int(me.Timestamp.Month())),
 		Day:    strconv.Itoa(me.Timestamp.Day()),
@@ -360,8 +358,6 @@ func (me *Workspace) _parseAppSpec() (err error) {
 		Second: strconv.Itoa(me.Timestamp.Second()),
 		Zone:   "00:00",
 	}
-
-	return nil
 }
 
 func (me *Workspace) processSecrets() {
@@ -382,6 +378,7 @@ func (me *Workspace) processDataByJob() {
 	(*me.Variables)[libmonteur.VAR_BUILD] = me.Filesystem.BuildTMPDir
 	(*me.Variables)[libmonteur.VAR_DOC] = me.Filesystem.ComposeTMPDir
 	(*me.Variables)[libmonteur.VAR_SECRETS] = *(me).secrets
+	(*me.Variables)[libmonteur.VAR_TIMESTAMP] = me.Timestamp
 	(*me.Variables)[libmonteur.VAR_DATA] = me.Filesystem.DataDir
 
 	switch me.Job {

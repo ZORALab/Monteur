@@ -26,24 +26,7 @@ import (
 // It is used in every toml config file inside setup/program/ config directory
 // for placeholding variable elements in the fields' value.
 const (
-	VAR_ARCH    = "Arch"
-	VAR_ARCHIVE = "Archive"
-	VAR_APP     = "App"
-	VAR_BASE    = "BaseDir"
-	VAR_BUILD   = "BuildDir"
-	VAR_BIN     = "BinDir"
-	VAR_CFG     = "ConfigDir"
-	VAR_COMPUTE = "ComputeSystem"
-	VAR_DOC     = "DocsDir"
-	VAR_FORMAT  = "Format"
-	VAR_HOME    = "HomeDir"
-	VAR_LOG     = "LogDir"
-	VAR_METHOD  = "Method"
-	VAR_OS      = "OS"
-	VAR_ROOT    = "RootDir"
-	VAR_SECRETS = "Secrets"
-	VAR_TMP     = "WorkingDir"
-	VAR_URL     = "URL"
+	VAR_TIMESTAMP = "Timestamp"
 )
 
 func SanitizeVariables(list, fmtVar *map[string]interface{}) (err error) {
