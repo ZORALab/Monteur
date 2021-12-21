@@ -1,7 +1,16 @@
 [Copyright]
 Name = 'Apache 2.0'
 ID = 'Apache-2'
+Comment = ''
 Materials = [ '*' ]
+Holders = [
+	# A string with year, then name, then email with diamond braces. Ex.:
+	#
+	#   '2021 John S. Smith <john.s.smith@email.com>',
+	#
+	# If the list is empty, all maintainers, contributors, and sponsors
+	# shall be attached to it.
+]
 Notice = """
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

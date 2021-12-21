@@ -23,6 +23,19 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/templater"
 )
 
+func sanitizeChangelog(changelog *libmonteur.TOMLChangelog,
+	system string) (err error) {
+	// sanitize CMD
+	cmd := changelog.CMD
+	changelog.CMD = []*libmonteur.TOMLAction{}
+	err = sanitizeCMD(cmd, &changelog.CMD, system)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func sanitizeCMD(in []*libmonteur.TOMLAction,
 	out *[]*libmonteur.TOMLAction,
 	system string) (err error) {

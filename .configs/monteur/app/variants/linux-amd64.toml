@@ -43,5 +43,6 @@ GOOS="{{- .PlatformOS -}}" \
 GOARCH="{{- .PlatformCPU -}}" \
 go build -ldflags "-s -w" \
 -o "{{- .BuildPath -}}" \
+-buildmode=pie \
 "{{- .SrcPath -}}"
 """

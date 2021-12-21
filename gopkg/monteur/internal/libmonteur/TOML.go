@@ -25,6 +25,13 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
 )
 
+type TOMLChangelog struct {
+	Entries   []string
+	LineBreak string
+	Regex     string
+	CMD       []*TOMLAction
+}
+
 type TOMLMetadata struct {
 	Name        string
 	Description string
@@ -116,11 +123,12 @@ type TOMLChecksum struct {
 }
 
 type TOMLPackage struct {
-	OS        []string
-	CPU       []string
-	Departure string
-	Arrival   string
-	Subjects  []string
+	Files        map[string]string
+	Changelog    string
+	OS           []string
+	Arch         []string
+	Distribution []string
+	BuildSource  bool
 }
 
 type TOMLSource struct {

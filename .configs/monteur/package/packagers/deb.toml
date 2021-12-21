@@ -8,10 +8,12 @@ Type = 'deb-manual'
 [Variables]
 GPGID = 'hello@zoralab.com'
 GPGExistence = ''  # to be filled later for verifications
+ChangelogFrom = 'origin/staging'
+ChangelogTo = 'origin/main'
 
 [FMTVariables]
-Lintian = '{{- .DataDir -}}/deb/lintian'
-Profile = '{{- .DataDir -}}/deb/profiles'
+Lintian = '{{- .DataDir -}}/debian/lintian'
+Profile = '{{- .DataDir -}}/debian/profiles'
 
 
 
@@ -28,22 +30,55 @@ Condition = 'all-all'
 Type = 'command'
 Command = 'gpg'
 
+[[Dependencies]]
+Name = 'Git for Changelog Generation'
+Condition = 'all-all'
+Type = 'command'
+Command = 'git'
+
+
+
+
+[Changelog]
+LineBreak = "\n"
+Regex = ''
+
+[[Changelog.CMD]]
+Name = "Get GPG Secret Key for Verifications"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = """git --no-pager log \
+"{{- .ChangelogTo -}}..{{- .ChangelogFrom -}}" \
+--pretty="format:%h %s"
+"""
+Save = "ChangelogEntries"
+
 
 
 
 [Packages.001]
 OS = [ 'linux' ]
-CPU = [ 'amd64' ]
-Departure = '{{- .BuildDir -}}'
-Arrival = '{{- .WorkingDir -}}/linux-amd64'
-Subjects = [ '{{- .BuildDir -}}/linux-amd64' ]
+Arch = [ 'amd64' ]
+Changelog = '{{- .DataDir -}}/debian/changelog-amd64'
+Distribution = [
+	'stable',
+]
+BuildSource = false
 
-[Packages.002]
-OS = [ 'linux' ]
-CPU = [ 'arm64' ]
-Departure = '{{- .BuildDir -}}'
-Arrival = '{{- .WorkingDir -}}/linux-amd64'
-Subjects = [ '{{- .BuildDir -}}/linux-arm64' ]
+[Packages.001.Files]
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/linux-amd64'
+
+#[Packages.002]
+#OS = [ 'linux' ]
+#Arch = [ 'arm64' ]
+#Changelog = '{{- .DataDir -}}/debian/changelog-arm64'
+#Distribution = [
+#	'stable',
+#]
+#BuildSource = false
+#
+#[Packages.002.Files]
+#'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/linux-arm64'
 
 
 
@@ -65,7 +100,5 @@ Source = '{{- .GPGExistence -}}'
 Name = "Compile Deb Package"
 Type = 'command'
 Condition = [ 'all-all' ]
-Location = '{{- .Arrival -}}'
-Source = """debuild -k{{- .GPGID }} -S \
---include-dir {{ .Lintian }} \
---profile {{ .Profile }}"""
+Location = '{{- .PackageDir -}}'
+Source = 'debuild -b -k{{- .GPGID }} -a{{- index .PkgArch 0 }}'

@@ -22,7 +22,6 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/templater"
 )
 
 type executive struct {
@@ -43,23 +42,29 @@ func (me *executive) Exec() (err error) {
 		me.log.Info("Type: '%v'", cmd.Type)
 
 		me.log.Info("Formatting cmd.Location...")
-		err = me.processString(&cmd.Location, order.Location)
+		cmd.Location, err = libmonteur.ProcessString(order.Location,
+			me.variables,
+		)
 		if err != nil {
-			return err
+			return err //nolint:wrapcheck
 		}
 		me.log.Info("Got: '%s'", cmd.Location)
 
 		me.log.Info("Formatting cmd.Source...")
-		err = me.processString(&cmd.Source, order.Source)
+		cmd.Source, err = libmonteur.ProcessString(order.Source,
+			me.variables,
+		)
 		if err != nil {
-			return err
+			return err //nolint:wrapcheck
 		}
 		me.log.Info("Got: '%s'", cmd.Source)
 
 		me.log.Info("Formatting cmd.Target...")
-		err = me.processString(&cmd.Target, order.Target)
+		cmd.Target, err = libmonteur.ProcessString(order.Target,
+			me.variables,
+		)
 		if err != nil {
-			return err
+			return err //nolint:wrapcheck
 		}
 		me.log.Info("Got: '%s'", cmd.Target)
 
@@ -83,17 +88,21 @@ func (me *executive) Exec() (err error) {
 		}
 
 		me.log.Info("formatting ToSTDOUT...")
-		err = me.processString(&order.ToSTDOUT, order.ToSTDOUT)
+		order.ToSTDOUT, err = libmonteur.ProcessString(order.ToSTDOUT,
+			me.variables,
+		)
 		if err != nil {
-			return err
+			return err //nolint:wrapcheck
 		}
 		me.log.Info("Got: '%s'", order.ToSTDOUT)
 		me.report(me.fxSTDOUT, "STDOUT", order.ToSTDOUT)
 
 		me.log.Info("formatting ToSTDERR...")
-		err = me.processString(&order.ToSTDERR, order.ToSTDERR)
+		order.ToSTDERR, err = libmonteur.ProcessString(order.ToSTDERR,
+			me.variables,
+		)
 		if err != nil {
-			return err
+			return err //nolint:wrapcheck
 		}
 		me.log.Info("Got: '%s'", order.ToSTDERR)
 		me.report(me.fxSTDERR, "STDERR", order.ToSTDERR)
@@ -154,18 +163,6 @@ func (me *executive) processSave(cmd *commander.Action,
 
 	cmd.SaveFx = me.fxSave
 	cmd.SaveVar = order
-}
-
-func (me *executive) processString(target *string, in string) (err error) {
-	*target, err = templater.String(in, me.variables)
-	if err != nil {
-		return fmt.Errorf("%s: %s",
-			libmonteur.ERROR_COMMAND_FMT_BAD,
-			err,
-		)
-	}
-
-	return nil
 }
 
 func (me *executive) create(cmd *libmonteur.TOMLAction) *commander.Action {

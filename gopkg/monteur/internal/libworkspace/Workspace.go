@@ -235,8 +235,10 @@ func (me *Workspace) _parseAppDebian() (err error) {
 }
 
 func (me *Workspace) _parseAppHelp() (err error) {
+	var ret string
+
 	me.App.Help = &libmonteur.SoftwareHelp{
-		Manpage: &libmonteur.SoftwareManpage{},
+		Manpage: map[string]string{},
 	}
 
 	// parse workspace TOML data
@@ -274,44 +276,14 @@ func (me *Workspace) _parseAppHelp() (err error) {
 		return nil
 	}
 
-	err = me.__formatAppString(&me.App.Help.Manpage.Lv1)
-	if err != nil {
-		return err
-	}
+	for k, v := range me.App.Help.Manpage {
+		ret = v
+		err = me.__formatAppString(&ret)
+		if err != nil {
+			return err
+		}
 
-	err = me.__formatAppString(&me.App.Help.Manpage.Lv2)
-	if err != nil {
-		return err
-	}
-
-	err = me.__formatAppString(&me.App.Help.Manpage.Lv3)
-	if err != nil {
-		return err
-	}
-
-	err = me.__formatAppString(&me.App.Help.Manpage.Lv4)
-	if err != nil {
-		return err
-	}
-
-	err = me.__formatAppString(&me.App.Help.Manpage.Lv5)
-	if err != nil {
-		return err
-	}
-
-	err = me.__formatAppString(&me.App.Help.Manpage.Lv6)
-	if err != nil {
-		return err
-	}
-
-	err = me.__formatAppString(&me.App.Help.Manpage.Lv7)
-	if err != nil {
-		return err
-	}
-
-	err = me.__formatAppString(&me.App.Help.Manpage.Lv8)
-	if err != nil {
-		return err
+		me.App.Help.Manpage[k] = ret
 	}
 
 	return nil
@@ -416,7 +388,6 @@ func (me *Workspace) processDataByJob() {
 		)
 
 		// assign specific variables
-		//nolint:lll
 		(*me.Variables)[libmonteur.VAR_TMP] = me.Filesystem.PackageTMPDir
 	case libmonteur.JOB_RELEASE:
 	case libmonteur.JOB_COMPOSE:
@@ -429,7 +400,6 @@ func (me *Workspace) processDataByJob() {
 		)
 
 		// assign specific variables
-		//nolint:lll
 		(*me.Variables)[libmonteur.VAR_TMP] = me.Filesystem.ComposeTMPDir
 	case libmonteur.JOB_PUBLISH:
 		me.ConfigDir = me.Filesystem.PublishConfigDir
@@ -441,7 +411,6 @@ func (me *Workspace) processDataByJob() {
 		)
 
 		// assign specific variables
-		//nolint:lll
 		(*me.Variables)[libmonteur.VAR_TMP] = me.Filesystem.PublishTMPDir
 	default:
 		panic("Monteur DEV: what kind of CI Job is this? ➤ " + me.Job)

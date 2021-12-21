@@ -22,7 +22,7 @@ import (
 // SoftwareHelp is the help data for generating all help files.
 type SoftwareHelp struct {
 	// Manpage is the list of UNIX manual pages data.
-	Manpage *SoftwareManpage
+	Manpage map[string]string
 
 	// Command is the app program to call for help.
 	Command string
@@ -39,36 +39,13 @@ func (me *SoftwareHelp) String() (s string) {
 	s += styler.PortraitKV("Help.Description", me.Description)
 	s += styler.PortraitKV("Help.Resources", me.Resources)
 
-	if me.Manpage != nil {
-		s += me.Manpage.String()
+	if len(me.Manpage) == 0 {
+		s += styler.PortraitKV("Help.Manpage", "nil")
+	} else {
+		for k, v := range me.Manpage {
+			s += styler.PortraitKV("Help.Manpage."+k, v)
+		}
 	}
-
-	return s
-}
-
-// SoftwareManpage is the UNIX manual page document data.
-//
-// These pages' data will be formatted by the Software data.
-type SoftwareManpage struct {
-	Lv1 string // general commands
-	Lv2 string // system calls
-	Lv3 string // library functions
-	Lv4 string // special files (devices, drivers, etc)
-	Lv5 string // file formats and conventions
-	Lv6 string // games and screensavers
-	Lv7 string // michellaneous
-	Lv8 string // system admin commands and daemons
-}
-
-func (me *SoftwareManpage) String() (s string) {
-	s = styler.PortraitKV("Help.Manpage.Lv1", me.Lv1)
-	s += styler.PortraitKV("Help.Manpage.Lv2", me.Lv2)
-	s += styler.PortraitKV("Help.Manpage.Lv3", me.Lv3)
-	s += styler.PortraitKV("Help.Manpage.Lv4", me.Lv4)
-	s += styler.PortraitKV("Help.Manpage.Lv5", me.Lv5)
-	s += styler.PortraitKV("Help.Manpage.Lv6", me.Lv6)
-	s += styler.PortraitKV("Help.Manpage.Lv7", me.Lv7)
-	s += styler.PortraitKV("Help.Manpage.Lv8", me.Lv8)
 
 	return s
 }

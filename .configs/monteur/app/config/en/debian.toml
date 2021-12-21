@@ -1,24 +1,5 @@
 [DEB]
-Compat = 9
-Source = '3.0 (native)'
-
-[DEB.Control]
-Standards = '3.9.8'
-Section = 'devel'
-Priority = 'optional'
-
-[DEB.Depends]
-Build = [
-	'debhelper (>=9)',
-]
-Dependencies = [
-	'${misc:Depends}',
-]
-
-[DEB.Copyrights]
-Format = 'http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/'
-
-[DEB.Executions]
+Compat = 11
 Rules = """
 #!/usr/bin/make -f
 
@@ -31,6 +12,57 @@ Rules = """
 override_dh_auto_build:
 	echo "nothing to override"
 """
-Install = [
-	"monteur usr/share/monteur/bin",
+
+[DEB.Control]
+Essential = false
+PackageType = 'deb'
+Priority = 'optional'
+RulesRequiresRoot = 'binary-targets'
+Standards = '4.6.0'
+Section = 'devel'
+
+[DEB.Relationships]
+'Build-Depends' = [
+	'debhelper (>= 11)',
 ]
+'Depends' = [
+]
+
+# More Info:
+#  https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields
+[DEB.VCS]
+Type = 'Vcs-Git'
+URL = 'https://gitlab.com/zoralab/monteur'
+Branch = 'main'
+#Path = '.'
+
+[DEB.Testsuite]
+Paths = [
+	# 'relative/path/to/debTestScript',
+]
+
+[DEB.Copyright]
+Format = 'https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/'
+Disclaimer = ''
+Comment = ''
+
+[DEB.Changelog]
+Urgency = 'low'
+
+[DEB.Source]
+Format = '3.0 (native)'
+LocalOptions = """
+"""
+Options = """
+"""
+LintianOverrides = """
+# supply the license file in case OS did not supply one
+monteur: copyright-not-using-common-license-for-apache2
+monteur: copyright-file-contains-full-apache-2-license
+
+# we are go package so it is okay not to specify Depends:
+monteur: undeclared-elf-prerequisites
+"""
+
+[DEB.Install]
+'usr/bin' = 'monteur'

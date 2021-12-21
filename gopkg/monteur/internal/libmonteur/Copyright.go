@@ -33,14 +33,22 @@ type Copyright struct {
 	// Text is the full license body of the Copyright without holders.
 	Text string
 
+	// Comment is the commenting text for the Copyright/License.
+	Comment string
+
 	// Materials are the affected targets by the Copyright/License.
 	Materials []string
+
+	// Holders are the list of specific copyright holders
+	Holders []string
 }
 
 func (me *Copyright) String() (s string) {
 	s = styler.PortraitKV("Name", me.Name)
 	s += styler.PortraitKV("ID", me.ID)
+	s += styler.PortraitKV("Comment", me.Comment)
 	s += styler.PortraitKArray("Materials", me.Materials)
+	s += styler.PortraitKArray("Holders", me.Holders)
 	s += styler.PortraitKV("Notice", me.Notice)
 	s += styler.PortraitKV("Text", me.Text)
 

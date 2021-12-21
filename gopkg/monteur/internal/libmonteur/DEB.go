@@ -32,14 +32,29 @@ type DEB struct {
 	// Copyright are the data for DEBIAN/copyright
 	Copyright *DEBCopyrights
 
-	// Depends list all the dependencies across different lifecycles.
-	Depends *DEBDepends
+	// Relationships list all the dependent packages and their relation.
+	Relationships map[string][]string
 
-	// Executions list all the package execution works.
-	Executions *DEBExecutions
+	// VCS contains the debian/control VCS data.
+	VCS *DEBVCS
 
-	// Source is the deb file format saved in DEBIAN/source file.
-	Source string
+	// Testsuite is the debian/control Testsuite data.
+	Testsuite *DEBTestsuite
+
+	// Changelog is the debian/changelog data.
+	Changelog *DEBChangelog
+
+	// Source is the DEBIAN/source files data.
+	Source *DEBSource
+
+	// Scripts is the DEBIAN/{pre,post}{inst,rm} files data
+	Scripts map[string]string
+
+	// Install is the DEBIAN/install files data.
+	Install map[string]string
+
+	// Rules is the DEBIAN/rules file data.
+	Rules string
 
 	// Compat is the debhelper compatibility level.
 	Compat uint
@@ -58,20 +73,120 @@ func (me *DEB) String() (s string) {
 		s += me.Copyright.String()
 	}
 
-	if me.Depends == nil {
-		s += styler.PortraitKV("DEB.Depends", "nil")
+	if me.VCS == nil {
+		s += styler.PortraitKV("DEB.VCS", "nil")
 	} else {
-		s += me.Depends.String()
+		s += me.VCS.String()
 	}
 
-	if me.Executions == nil {
-		s += styler.PortraitKV("DEB.Executions", "nil")
+	if me.Testsuite == nil {
+		s += styler.PortraitKV("DEB.Testsuite", "nil")
 	} else {
-		s += me.Executions.String()
+		s += me.Testsuite.String()
 	}
 
-	s += styler.PortraitKV("DEB.Source", me.Source)
+	if me.Changelog == nil {
+		s += styler.PortraitKV("DEB.Changelog", "nil")
+	} else {
+		s += me.Changelog.String()
+	}
+
+	if me.Source == nil {
+		s += styler.PortraitKV("DEB.Source", "nil")
+	} else {
+		s += me.Source.String()
+	}
+
+	for k, v := range me.Relationships {
+		s += styler.PortraitKArray("DEB.Relationships."+k, v)
+	}
+
+	s += styler.PortraitKMap("DEB.Scripts", me.Scripts)
+	s += styler.PortraitKMap("DEB.Install", me.Install)
+	s += styler.PortraitKV("DEB.Rules", me.Rules)
 	s += styler.PortraitKV("DEB.Compat", strconv.Itoa(int(me.Compat)))
+
+	return s
+}
+
+// DEBSource is the Debian/source file data.
+//
+// This version was abstracted across libmonteur data structure for "Don't
+// Repeat Yourself" practice.
+type DEBSource struct {
+	// Format is the source format.
+	//
+	// Either `3.0 (native)` or `3.0 (quilt)`.
+	Format string
+
+	// LocalOptions is the debian/source/local-options file data.
+	LocalOptions string
+
+	// Options is the debian/source/options file data.
+	Options string
+
+	// LintianOverrides is the debian/source/lintian-overrides file data.
+	LintianOverrides string
+}
+
+func (me *DEBSource) String() (s string) {
+	s = styler.PortraitKV("DEB.Source.Format", me.Format)
+	s += styler.PortraitKV("DEB.Source.LocalOptions", me.LocalOptions)
+	s += styler.PortraitKV("DEB.Source.Options", me.Options)
+	s += styler.PortraitKV("DEB.Source.LintianOverrides",
+		me.LintianOverrides)
+
+	return s
+}
+
+// DEBChangelog is the Debian/control's Changelog data.
+//
+// This version was abstracted across libmonteur data structure for "Don't
+// Repeat Yourself" practice.
+type DEBChangelog struct {
+	// Urgency sets the current .deb debian/changelog entry's urgency.
+	Urgency string
+}
+
+func (me *DEBChangelog) String() (s string) {
+	s = styler.PortraitKV("DEB.Changelog.Urgency", me.Urgency)
+
+	return s
+}
+
+// DEBTestsuite is the Debian/control's Testsuite data.
+//
+// This version was abstracted across libmonteur data structure for "Don't
+// Repeat Yourself" practice.
+type DEBTestsuite struct {
+	Paths []string
+}
+
+func (me *DEBTestsuite) String() (s string) {
+	s = styler.PortraitKArray("DEB.Testsuite", me.Paths)
+
+	return s
+}
+
+// DEBVCS is the DEBIAN/control's VCS data.
+//
+// This version was abstracted across libmonteur data structure for "Don't
+// Repeat Yourself" practice.
+//
+// More info at:
+// https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields
+type DEBVCS struct {
+	Type   string
+	URL    string
+	Branch string
+	Path   string
+}
+
+func (me *DEBVCS) String() (s string) {
+	s = styler.PortraitKV("DEB.Control.VCS.Type", me.Type)
+	s += styler.PortraitKV("DEB.Control.VCS.URL", me.URL)
+	s += styler.PortraitKV("DEB.Control.VCS.Branch", me.Branch)
+	s += styler.PortraitKV("DEB.Control.VCS.Path", me.Path)
 
 	return s
 }
@@ -109,12 +224,32 @@ type DEBControl struct {
 	// More info:
 	//  1. https://www.debian.org/doc/debian-policy/ch-archive.html
 	Priority string
+
+	// RulesRequiresRoot is the deb root permission for installation.
+	RulesRequiresRoot string
+
+	// PackageType is the .deb package type.
+	//
+	// Either 'deb' or 'udeb'.
+	PackageType string
+
+	// Essential is to decide the .deb package is essential.
+	Essential bool
 }
 
 func (me *DEBControl) String() (s string) {
 	s = styler.PortraitKV("DEB.Control.Standards", me.Standards)
 	s += styler.PortraitKV("DEB.Control.Section", me.Section)
 	s += styler.PortraitKV("DEB.Control.Priority", me.Priority)
+	s += styler.PortraitKV("DEB.Control.RulesRequiresRoot",
+		me.RulesRequiresRoot)
+	s += styler.PortraitKV("DEB.Control.PackageType", me.PackageType)
+
+	if me.Essential {
+		s += styler.PortraitKV("DEB.Control.Essential", "true")
+	} else {
+		s += styler.PortraitKV("DEB.Control.Essential", "false")
+	}
 
 	return s
 }
@@ -125,40 +260,18 @@ type DEBCopyrights struct {
 	// More info:
 	//   1. https://www.debian.org/doc/debian-policy/ch-docs.html
 	Format string
+
+	// The Debian copyright disclaimer.
+	Disclaimer string
+
+	// The Debian copyright comment.
+	Comment string
 }
 
 func (me *DEBCopyrights) String() (s string) {
 	s = styler.PortraitKV("DEB.Copyrights.Format", me.Format)
-
-	return s
-}
-
-type DEBDepends struct {
-	// Build list all the dependencies needed for building the .deb package.
-	Build []string
-
-	// Dependencies list all the dependencies needed for the .deb package.
-	Dependencies []string
-}
-
-func (me *DEBDepends) String() (s string) {
-	s = styler.PortraitKArray("DEB.Depends.Build", me.Build)
-	s += styler.PortraitKArray("DEB.Depends.Dependencies", me.Dependencies)
-
-	return s
-}
-
-type DEBExecutions struct {
-	// Rules are the contents for DEBIAN/rules
-	Rules string
-
-	// Install are the list of files install paths for DEBIAN/install
-	Install []string
-}
-
-func (me *DEBExecutions) String() (s string) {
-	s = styler.PortraitKV("DEB.Rules", me.Rules)
-	s += styler.PortraitKArray("DEB.Install", me.Install)
+	s += styler.PortraitKV("DEB.Copyrights.Disclaimer", me.Disclaimer)
+	s += styler.PortraitKV("DEB.Copyrights.Comment", me.Comment)
 
 	return s
 }

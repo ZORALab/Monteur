@@ -15,17 +15,24 @@
 
 package libmonteur
 
-// Filesystem tags are common keys for setting various working directories
-// pathing.
-const (
-	BASEDIR_TAG     = "BaseDir"
-	WORKINGDIR_TAG  = "WorkingDir"
-	DATADIR_TAG     = "DataDir"
-	BUILDDIR_TAG    = "BuildDir"
-	SCRIPTDIR_TAG   = "ScriptDir"
-	BINDIR_TAG      = "BinDir"
-	BINCFG_TAG      = "BinCfgDir"
-	DOCDIR_TAG      = "DocsDir"
-	USERHOMEDIR_TAG = "HomeDir"
-	ROOTDIR_TAG     = "RootDir"
+import (
+	"fmt"
+
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/templater"
 )
+
+// ProcessString processes a given string with variables templating.
+//
+// It will return error if the templater fails.
+//
+// The generated output are not HTMLSafe.
+func ProcessString(given string, v map[string]interface{}) (out string,
+	err error) {
+	out, err = templater.String(given, v)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", ERROR_PACKAGER_FMT_BAD, err)
+		out = ""
+	}
+
+	return out, err
+}

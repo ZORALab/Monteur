@@ -52,6 +52,9 @@ type Software struct {
 	// Example: 'Microsoft Excel' belongs to 'Microsoft Office' Suite.
 	Suite string
 
+	// Website is the website URL of the software.
+	Website string
+
 	// Contact is the general contact channel.
 	Contact *Entity
 

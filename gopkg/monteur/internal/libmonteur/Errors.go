@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//nolint:lll
 package libmonteur
 
 const (
@@ -38,7 +37,15 @@ const (
 )
 
 const (
-	ERROR_APP_FMT_BAD = "bad app data formatting"
+	ERROR_APP_FMT_BAD   = "bad app data formatting"
+	ERROR_APP_DATA      = "error processing app data"
+	ERROR_APP_COPYRIGHT = "error processing app copyright data"
+)
+
+const (
+	ERROR_CHANGELOG_ENTIRES_MISSING    = "missing current changelog entries"
+	ERROR_CHANGELOG_LINE_BREAK_MISSING = "missing changelog entries' line break"
+	ERROR_CHANGELOG_REGEX_BAD          = "bad regex for changelog entries"
 )
 
 const (
@@ -72,6 +79,20 @@ const (
 	ERROR_LOG_PATH_EMPTY = "given path is empty"
 	ERROR_LOG_PREPARE    = "failed to open and prepare log file"
 	ERROR_LOG_UNHEALTHY  = "logger is unhealthy"
+)
+
+const (
+	ERROR_PACKAGER_APP_MISSING          = "missing app data for package"
+	ERROR_PACKAGER_ARCH_MISSING         = "missing package architecture(s) value"
+	ERROR_PACKAGER_DEB_BAD              = "bad deb data"
+	ERROR_PACKAGER_FMT_BAD              = "bad variable formatting"
+	ERROR_PACKAGER_FILES_COPY_FAILED    = "failed to copy package's file"
+	ERROR_PACKAGER_FILES_MISSING        = "missing package's Files"
+	ERROR_PACKAGER_OS_MISSING           = "missing package os(es) value"
+	ERROR_PACKAGER_PREPARE_FAILED       = "failed to prepare package"
+	ERROR_PACKAGER_RELATIONSHIPS        = "error parsing related dep packages"
+	ERROR_PACKAGER_TYPE_UNKNOWN         = "unknown package type (Metadata.Type)"
+	ERROR_PACKAGER_VERSION_INCOMPATIBLE = "incompatible package version data"
 )
 
 const (

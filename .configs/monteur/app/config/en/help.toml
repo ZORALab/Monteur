@@ -5,13 +5,12 @@ Resources = 'Visit https://monteur.zoralab.com for detailed documentations.'
 
 [Help.Manpage]
 Lv1 = """
-.\\" Lv1 - Manpage for {{ .App.Name -}}
+.\\" {{ .App.Name }} - Lv1 Manpage
 .\\" Contact {{ index .App.Contact.Email 0 }} for errors or typos.
 .TH man 1 "{{- .App.Time.Day }} {{ .App.Time.Month }} {{ .App.Time.Year -}}" "{{- .App.Version -}}" "{{- .App.ID }} man page"
 
 .SH NAME
-{{ .App.Name }}
-{{ .App.Abstract }}
+{{ .App.Name }} - {{ .App.Abstract }}
 
 .SH SYNOPSIS
 {{ .App.Help.Command }}
