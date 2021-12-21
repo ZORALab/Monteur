@@ -60,6 +60,29 @@ type PackageList struct {
 	Name PackageListType
 }
 
+// Parse is to parse a list of packages into its List.
+//
+// It returns error should any list becomes incomprehensible.
+func (me *PackageList) Parse(name string, packages []string) (err error) {
+	var pkg *PackageMeta
+
+	me.Name = PackageListType(name)
+	me.List = map[string]*PackageMeta{}
+
+	for _, meta := range packages {
+		pkg = &PackageMeta{}
+
+		err = pkg.Parse(meta)
+		if err != nil {
+			return err
+		}
+
+		me.List[pkg.Name] = pkg
+	}
+
+	return me.Sanitize()
+}
+
 // Sanitize is to check the PackageList is ready for use.
 func (me *PackageList) Sanitize() (err error) {
 	switch me.Name {

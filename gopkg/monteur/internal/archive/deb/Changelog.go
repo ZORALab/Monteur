@@ -502,6 +502,16 @@ func (me *Changelog) sanitizeChanges() (err error) {
 		)
 	}
 
+	for i, v := range me.Changes {
+		if len(v) > 80 {
+			return fmt.Errorf("%s (line %d): '%s'",
+				ERROR_CHANGELOG_ENTRY_TOO_LONG,
+				i+1,
+				v,
+			)
+		}
+	}
+
 	return nil
 }
 
@@ -568,6 +578,8 @@ func (me *Changelog) sanitizePackage() (err error) {
 			me.Package,
 		)
 	}
+
+	me.Package = strings.ToLower(me.Package)
 
 	return nil
 }

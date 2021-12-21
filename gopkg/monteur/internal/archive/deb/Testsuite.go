@@ -22,7 +22,6 @@ import (
 	"strings"
 )
 
-//nolint:lll
 // Testsuite is the DEBIAN/control Testsuite: field with strict format.
 //
 // More info:

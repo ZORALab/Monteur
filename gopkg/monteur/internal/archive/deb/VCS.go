@@ -33,7 +33,6 @@ const (
 	VCS_SUBVERSION VCSType = "Vcs-Svn"
 )
 
-//nolint:lll
 // VCS is the DEBIAN/control VCS field with strict format.
 //
 // More info:

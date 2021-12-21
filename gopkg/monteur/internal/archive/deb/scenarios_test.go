@@ -15,7 +15,6 @@
 
 package deb
 
-//nolint:lll
 func getTestScenarios() []testScenario {
 	return []testScenario{
 		{

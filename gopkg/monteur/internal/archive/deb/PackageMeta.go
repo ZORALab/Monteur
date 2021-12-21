@@ -58,6 +58,51 @@ type PackageMeta struct {
 	Architectures []string
 }
 
+// Parse is to process a given string and convert into its data structure.
+//
+// It shall return error if the input is incomprehensible.
+func (me *PackageMeta) Parse(in string) (err error) {
+	var list []string
+	var ret string
+
+	// parse Architectures first
+	list = strings.Split(in, " [")
+	switch len(list) {
+	case 1:
+		in = list[0]
+	case 2:
+		ret = strings.TrimRight(list[1], "]\r\n ")
+		me.Architectures = strings.Split(ret, " ")
+		in = list[0]
+	default:
+		return fmt.Errorf("%s: %s", ERROR_PACKAGE_PARSE_ARCH_BAD, in)
+	}
+
+	// parse Name
+	list = strings.Split(in, " (")
+	switch len(list) {
+	case 2:
+		in = list[1]
+		me.Name = strings.TrimLeft(list[0], " \r\n")
+	default:
+		return fmt.Errorf("%s: %s", ERROR_PACKAGE_PARSE_NAME_BAD, in)
+	}
+
+	// parse VERControl
+	list = strings.Split(in, " ")
+	switch len(list) {
+	case 2:
+		me.VERControl = VERControl(list[0])
+		in = strings.TrimRight(list[1], ") ")
+	default:
+		return fmt.Errorf("%s: %s", ERROR_PACKAGE_PARSE_VERCONTROL_BAD, in)
+	}
+
+	// parse Version
+	me.Version = &Version{}
+	return me.Version.Parse(in)
+}
+
 // Sanitize checks all the PackageMeta data are complying to .deb format.
 //
 // It shall return error if the data are not compliant.

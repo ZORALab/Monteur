@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 // Version is the DEBIAN/control Version field with strict format.
@@ -53,6 +54,52 @@ type Version struct {
 	//
 	// Default is `0` which is unset.
 	Epoch uint
+}
+
+// Parse is to convert a given string into Version's data structure.
+//
+// It shall returns error if the input is incomprehensible.
+func (me *Version) Parse(in string) (err error) {
+	var epoch int
+	var list []string
+
+	// trim whitespace
+	in = strings.TrimLeft(in, "\r\n\t ")
+	in = strings.TrimRight(in, "\r\n\t ")
+
+	// parse revision
+	list = strings.Split(in, "-")
+	switch len(list) {
+	case 0, 1:
+	default:
+		me.Revision = list[len(list)-1]
+		in = strings.TrimSuffix(in, "-"+me.Revision)
+	}
+
+	// parse epoch and upstream
+	list = strings.Split(in, ":")
+	switch len(list) {
+	case 1:
+		me.Upstream = list[0]
+	case 2:
+		epoch, err = strconv.Atoi(list[0])
+		if err != nil {
+			return fmt.Errorf("%s: %s",
+				ERROR_VERSION_PARSE_EPOCH_FAILED,
+				err,
+			)
+		}
+
+		me.Epoch = uint(epoch)
+		me.Upstream = list[1]
+	default:
+		return fmt.Errorf("%s: %s",
+			ERROR_VERSION_PARSE_EPOCH_UPSTREAM_FAILED,
+			err,
+		)
+	}
+
+	return me.Sanitize()
 }
 
 // Sanitize checks all the Version data are complying to the .deb format.

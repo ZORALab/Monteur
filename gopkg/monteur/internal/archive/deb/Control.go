@@ -51,7 +51,6 @@ const (
 	PRIORITY_OPTIONAL  Priority = "optional"
 )
 
-//nolint:lll
 // PackageType is the package type.
 //
 // More info:
@@ -63,7 +62,6 @@ const (
 	PACKAGE_TYPE_UDEB = "udeb"
 )
 
-//nolint:lll
 // Rules-Requires-Root values list are the prefixed value for that fields.
 //
 // More info:
@@ -73,7 +71,6 @@ const (
 	RULES_ROOT_BINARY_TARGETS = "binary-targets"
 )
 
-//nolint:lll
 // Control is the DEBIAN/control file data.
 type Control struct {
 	// Maintainer is the Entity who is responsible for this package.
@@ -96,6 +93,7 @@ type Control struct {
 	// Homepage is the website of the software.
 	Homepage *url.URL
 
+	//nolint:lll
 	// Description is the long description with the strict Synopsis.
 	//
 	// This field is **MANDATORY**.
@@ -213,6 +211,7 @@ func (me *Control) Sanitize() (warn string, err error) {
 	if me.Name == "" {
 		return warn, fmt.Errorf("%s: %s", ERROR_CONTROL_NAME_BAD, "''")
 	}
+	me.Name = strings.ToLower(me.Name)
 
 	err = me.sanitizeMaintainer()
 	if err != nil {
@@ -432,7 +431,7 @@ func (me *Control) sanitizePackages() (err error) {
 		if err != nil {
 			return fmt.Errorf("%s (%s): '%s'",
 				ERROR_CONTROL_PACKAGE_LIST_BAD,
-				name,
+				v.Name,
 				err,
 			)
 		}
@@ -550,10 +549,8 @@ func (me *Control) String() (s string) {
 	}
 
 	// generate control file
-	if me.BuildSource {
-		s += me.stringSourceParagraph()
-		s += "\n"
-	}
+	s += me.stringSourceParagraph()
+	s += "\n"
 	s += me.stringPackageParagraph()
 
 	// trim tailing whitespaces
@@ -653,8 +650,14 @@ func (me *Control) stringPackageParagraph() (s string) {
 
 	s += me.stringPackageList(PKG_LIST_BUILT_USING)
 
-	if me.BuildSource && me.PackageType != "" {
-		s += _FIELD_PACKAGE_TYPE + string(me.PackageType) + "\n"
+	if me.BuildSource {
+		switch me.PackageType {
+		case PACKAGE_TYPE_UDEB:
+			s += _FIELD_PACKAGE_TYPE + string(me.PackageType) + "\n"
+		case PACKAGE_TYPE_DEB:
+			// linter: explicit-default-in-package-type
+		default:
+		}
 	}
 
 	return s

@@ -47,7 +47,6 @@ const (
 	testVersionString               = "testVersionString"
 )
 
-//nolint:lll
 const (
 	expectError = "expectError"
 	expectPanic = "expectPanic"
@@ -234,7 +233,6 @@ const (
 	useBadYear                       = "useBadYear"
 )
 
-//nolint:lll
 const (
 	app               = "TestApp"
 	appControl        = "ControlApp"
@@ -389,10 +387,7 @@ func (s *testScenario) logFiles(th *thelper.THelper, err error) {
 	}
 
 	// build filepath
-	workPath := filepath.Join(workDir, "DEBIAN")
-	if s.Switches[useBuildSourceFlag] {
-		workPath = filepath.Join(workDir, "debian")
-	}
+	workPath := filepath.Join(workDir, "debian")
 
 	s._assertFile(th, filepath.Join(workPath, "control"))
 	s._assertFile(th, filepath.Join(workPath, "copyright"))
@@ -410,8 +405,10 @@ func (s *testScenario) logFiles(th *thelper.THelper, err error) {
 	}
 
 	if s.Switches[useProperManpage] {
-		s._assertFile(th, filepath.Join(workPath, app+".manpages"))
-		s._assertFile(th, filepath.Join(workPath, app+"."+manPageTag1))
+		s._assertFile(th, filepath.Join(workPath,
+			strings.ToLower(app)+".manpages"))
+		s._assertFile(th, filepath.Join(workPath,
+			strings.ToLower(app)+"."+manPageTag1))
 	}
 
 	if s.Switches[useProperScripts] {
@@ -475,7 +472,7 @@ func (s *testScenario) assertSource(th *thelper.THelper, err error) {
 	}
 }
 
-//nolint:lll,gocognit
+//nolint:gocognit
 func (s *testScenario) assertControl(th *thelper.THelper, str string) {
 	// assert all empty output and panics
 	switch {
@@ -579,7 +576,6 @@ func (s *testScenario) assertChangelog(th *thelper.THelper, str string) {
 		!s.Switches[useProperEmail],
 		!s.Switches[useProperEntity]:
 		if str != "" {
-			//nolint:lll
 			th.Errorf("Changelog entry generated despite bad Maintainer!")
 		}
 
@@ -592,49 +588,42 @@ func (s *testScenario) assertChangelog(th *thelper.THelper, str string) {
 		return
 	case !s.Switches[useProperVersionUpstream], s.Switches[useNilVersion]:
 		if str != "" {
-			//nolint:lll
 			th.Errorf("Changelog entry generated despite bad Version!")
 		}
 
 		return
 	case !s.Switches[useProperTimestamp]:
 		if str != "" {
-			//nolint:lll
 			th.Errorf("Changelog entry generated despite bad timestamp!")
 		}
 
 		return
 	case s.Switches[useEmptyTimestamp]:
 		if str != "" {
-			//nolint:lll
 			th.Errorf("Changelog entry generated despite empty timestamp!")
 		}
 
 		return
 	case !s.Switches[useProperDistro]:
 		if str != "" {
-			//nolint:lll
 			th.Errorf("Changelog entry generated despite bad distro!")
 		}
 
 		return
 	case !s.Switches[useProperChangelogChanges]:
 		if str != "" {
-			//nolint:lll
 			th.Errorf("Changelog entry generated despite bad changes!")
 		}
 
 		return
 	case s.Switches[useEmptyChangelogChanges]:
 		if str != "" {
-			//nolint:lll
 			th.Errorf("Changelog entry generated despite empty Version!")
 		}
 
 		return
 	case s.Switches[useChangelogUrgencyUnknown]:
 		if str != "" {
-			//nolint:lll
 			th.Errorf("Changelog entry generated despite unknown urgency!")
 		}
 
@@ -647,7 +636,6 @@ func (s *testScenario) assertChangelog(th *thelper.THelper, str string) {
 		return
 	case s.Switches[simulateStatFxError]:
 		if str != "" {
-			//nolint:lll
 			th.Errorf("Changelog generated despite path state error")
 		}
 
@@ -655,7 +643,9 @@ func (s *testScenario) assertChangelog(th *thelper.THelper, str string) {
 	}
 
 	// header line
-	expect := app + _FIELD_CHANGELOG_DELIMIT_PACKAGE + upstream
+	expect := strings.ToLower(app) +
+		_FIELD_CHANGELOG_DELIMIT_PACKAGE +
+		upstream
 	if s.Switches[useProperVersionRevision] {
 		expect += "-" + revision
 	}

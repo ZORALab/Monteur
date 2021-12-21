@@ -114,11 +114,7 @@ func (me *Data) Generate(workingDir string) (err error) {
 	}
 
 	// identify debian or DEBIAN directory by Control/BuildSource.
-	if me.Control.BuildSource {
-		path = filepath.Join(workingDir, "debian")
-	} else {
-		path = filepath.Join(workingDir, "DEBIAN")
-	}
+	path = filepath.Join(workingDir, "debian")
 
 	err = me.createBaseDir(path)
 	if err != nil {
@@ -156,6 +152,11 @@ func (me *Data) Generate(workingDir string) (err error) {
 	}
 
 	err = me.createSourceOptions(path)
+	if err != nil {
+		goto done
+	}
+
+	err = me.createSourceLintianOverrides(path)
 	if err != nil {
 		goto done
 	}
@@ -265,6 +266,25 @@ func (me *Data) createScripts(path string) (err error) {
 	}
 
 	return nil
+}
+
+func (me *Data) createSourceLintianOverrides(path string) (err error) {
+	var target string
+
+	if me.Source.LintianOverrides == "" {
+		return nil
+	}
+
+	target = filepath.Join(path, "source", "lintian-overrides")
+	err = me._writeFile(target, _PERMISSION_FILE,
+		me.Source.LintianOverrides)
+	if err != nil {
+		return err
+	}
+
+	target = filepath.Join(path, me.Control.Name+".lintian-overrides")
+	return me._writeFile(target, _PERMISSION_FILE,
+		me.Source.LintianOverrides)
 }
 
 func (me *Data) createSourceOptions(path string) (err error) {

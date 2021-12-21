@@ -27,7 +27,6 @@ const (
 	SOURCE_FORMAT_QUILT_3_0  SourceFormatType = "3.0 (quilt)"
 )
 
-//nolint:lll
 // Source are the data for debian/source directory.
 //
 // More info:
@@ -50,6 +49,11 @@ type Source struct {
 	//   https://www.debian.org/doc/manuals/maint-guide/dother.en.html
 	//   https://www.debian.org/doc/manuals/maint-guide/dreq.en.html#customrules
 	Options string
+
+	// LintianOverrides are the debian/source/lintian-overrides data.
+	//
+	// This field is used for overriding false-positive reports.
+	LintianOverrides string
 }
 
 // Sanitize is to check all Source data are compliant to .deb strict format.
