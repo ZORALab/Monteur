@@ -61,7 +61,7 @@ alternateText = "Monteur Compose CI Job"
 parent = "CI Jobs"
 name = "Compose"
 pre = "📝"
-weight = 10
+weight = 100
 identifier = "ci-jobs-compose"
 
 

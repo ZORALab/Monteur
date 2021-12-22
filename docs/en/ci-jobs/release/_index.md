@@ -61,7 +61,7 @@ alternateText = "Monteur Release CI Job"
 parent = "CI Jobs"
 name = "Release"
 pre = "🌾"
-weight = 7
+weight = 90
 identifier = "ci-jobs-release"
 
 

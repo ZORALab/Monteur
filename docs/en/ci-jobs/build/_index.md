@@ -61,7 +61,7 @@ alternateText = "Monteur Build CI Job"
 parent = "CI Jobs"
 name = "Build"
 pre = "🧰"
-weight = 6
+weight = 70
 identifier = "ci-jobs-build"
 
 

@@ -61,7 +61,7 @@ alternateText = "Monteur Package CI Job"
 parent = "CI Jobs"
 name = "Package"
 pre = "📦"
-weight = 7
+weight = 80
 identifier = "ci-jobs-package"
 
 

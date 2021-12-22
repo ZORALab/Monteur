@@ -61,7 +61,7 @@ alternateText = "Monteur Setup CI Job"
 parent = "CI Jobs"
 name = "Setup"
 pre = "🧩"
-weight = 5
+weight = 10
 identifier = "ci-jobs-setup"
 
 

@@ -60,7 +60,7 @@ alternateText = "Monteur Test CI Job"
 parent = "CI Jobs"
 name = "Test"
 pre = "⚗️"
-weight = 5
+weight = 60
 identifier = "ci-jobs-test"
 
 

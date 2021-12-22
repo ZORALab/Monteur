@@ -60,7 +60,7 @@ alternateText = "Monteur Clean CI Job"
 parent = "CI Jobs"
 name = "Clean"
 pre = "🧹"
-weight = 5
+weight = 20
 identifier = "ci-jobs-clean"
 
 

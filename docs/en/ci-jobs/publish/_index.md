@@ -61,7 +61,7 @@ alternateText = "Monteur Publish CI Job"
 parent = "CI Jobs"
 name = "Publish"
 pre = "📖"
-weight = 10
+weight = 110
 identifier = "ci-jobs-publish"
 
 
