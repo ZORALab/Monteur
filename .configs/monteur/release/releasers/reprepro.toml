@@ -11,9 +11,10 @@ Type = 'manual'
 [Variables]
 GPGID = 'hello@zoralab.com'
 GPGExistence = ''
+Distribution = '' # to be filled later
 
 [FMTVariables]
-
+DataPath = '{{- .DataDir -}}/debian/reprepro'
 
 
 
@@ -31,10 +32,11 @@ Command = 'gpg'
 
 
 
+[Releases]
+Target = '{{- .ReleaseDir -}}/deb'
 
-[Packages.001]
-Source = ''
-Target = ''
+[Releases.Packages.linux-amd64]
+Source = '"{{- .PackageDir -}}/monteur-linux-amd64/monteur_"*"_amd64.deb"'
 
 
 
@@ -53,7 +55,30 @@ Condition = [ 'all-all' ]
 Source = '{{- .GPGExistence -}}'
 
 [[CMD]]
-Name = "Release using repreppro"
+Name = "Create Necessary Conf Data Directory"
+Type = 'create-path'
+Condition = [ 'all-all' ]
+Source = '{{- .DataPath -}}/conf'
+
+[[CMD]]
+Name = 'Get Current Branch'
 Type = 'command'
 Condition = [ 'all-all' ]
-Source = 'echo placeholder'
+Source = 'git branch --show-current'
+Save = 'Distribution'
+
+[[CMD]]
+Name = "Verify Distribution is Not Empty"
+Type = 'is-not-empty'
+Condition = [ 'all-all' ]
+Source = '{{- .Distribution -}}'
+
+[[CMD]]
+Name = "Release Using Reprepro"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = """reprepro --basedir {{ .DataPath }} \
+--outdir {{ .Target }} \
+includedeb {{ .Distribution }} \
+{{ .Source }}
+"""

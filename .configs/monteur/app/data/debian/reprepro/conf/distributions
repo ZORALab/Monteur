@@ -1,0 +1,26 @@
+Origin: monteur.zoralab.com/releases/deb
+Label: ZORALab's Monteur Deb Package (Main)
+Codename: main
+Suite: stable
+Architectures: amd64
+Components: main
+Description: software manufacturing automation tool in one single app.
+SignWith: hello@zoralab.com
+
+Origin: monteur.zoralab.com/releases/deb
+Label: ZORALab's Monteur Deb Package (Staging)
+Codename: staging
+Suite: unstable
+Architectures: amd64
+Components: main
+Description: software manufacturing automation tool in one single app.
+SignWith: hello@zoralab.com
+
+Origin: monteur.zoralab.com/releases/deb
+Label: ZORALab's Monteur Deb Package (Next)
+Codename: next
+Suite: experimental
+Architectures: amd64
+Components: main
+Description: software manufacturing automation tool in one single app.
+SignWith: hello@zoralab.com

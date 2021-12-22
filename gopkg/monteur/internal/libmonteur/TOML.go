@@ -131,6 +131,16 @@ type TOMLPackage struct {
 	BuildSource  bool
 }
 
+type TOMLRelease struct {
+	Packages map[string]*TOMLReleasePackage
+	Target   string
+}
+
+type TOMLReleasePackage struct {
+	Source string
+	Target string
+}
+
 type TOMLSource struct {
 	Checksum *TOMLChecksum
 	Headers  map[string]string

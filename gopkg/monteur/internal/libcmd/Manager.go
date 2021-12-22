@@ -80,7 +80,7 @@ func (me *Manager) Parse(path string) (err error) {
 
 		me.task = subject
 	case libmonteur.JOB_RELEASE:
-		subject := &basicCMD{
+		subject := &releaser{
 			thisSystem: system,
 			variables:  me.Variables,
 		}

@@ -107,3 +107,41 @@ func sanitizeMetadata(meta *libmonteur.TOMLMetadata, path string) (err error) {
 
 	return nil
 }
+
+func sanitizeRelease(in *libmonteur.TOMLRelease,
+	out *libmonteur.TOMLRelease) (err error) {
+	var k string
+	var v *libmonteur.TOMLReleasePackage
+
+	// sanitize Target
+	out.Target = in.Target
+
+	// sanitize Packages
+	out.Packages = map[string]*libmonteur.TOMLReleasePackage{}
+	for k, v = range in.Packages {
+		if k == "" {
+			continue
+		}
+
+		// sanitize individual source
+		if v.Source == "" {
+			continue
+		}
+
+		// sanitize individual target
+		switch {
+		case v.Target != "":
+		case out.Target != "":
+			v.Target = out.Target
+		default:
+			return fmt.Errorf("%s: '%s'",
+				libmonteur.ERROR_RELEASER_TARGET_MISSING,
+				k,
+			)
+		}
+
+		out.Packages[k] = v
+	}
+
+	return nil
+}

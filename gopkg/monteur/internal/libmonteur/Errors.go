@@ -97,6 +97,11 @@ const (
 )
 
 const (
+	ERROR_RELEASER_TARGET_MISSING   = "Releases.Target directory path is missing"
+	ERROR_RELEASER_TYPE_UNSUPPORTED = "Metadata.Type is not supported"
+)
+
+const (
 	ERROR_PROGRAM_ARCHIVE_BAD            = "bad archived program's name"
 	ERROR_PROGRAM_ARCHIVE_FORMAT_BAD     = "bad archived program's format"
 	ERROR_PROGRAM_ARCHIVE_FORMAT_UNKNOWN = "unsupported archived program's format"
