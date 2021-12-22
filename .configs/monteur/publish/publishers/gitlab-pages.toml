@@ -5,7 +5,6 @@ Publish web documentations artifact into GitLab Pages.
 """
 
 [Variables]
-MainLang = 'en'
 PublishBranch = 'gh-pages'
 FirstCommitID = 'Will be overwritten by publish command sequences'
 
@@ -15,12 +14,6 @@ DestinationDir = '{{- .WorkingDir -}}/{{- .PublishBranch -}}'
 
 
 
-
-[[Dependencies]]
-Name = 'Hugo'
-Condition = 'all-all'
-Type = 'command'
-Command = 'hugo'
 
 [[Dependencies]]
 Name = 'Git'
