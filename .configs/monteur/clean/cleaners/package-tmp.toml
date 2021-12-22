@@ -16,7 +16,7 @@ Target = '{{- .RootDir -}}/{{- .MonteurPath -}}/tmp/{{- .Job -}}'
 
 [[CMD]]
 Name = "Remove Target Directory"
-Type = 'delete-recursive'
+Type = 'delete-recursive-quiet'
 Condition = [ 'all-all' ]
 Source = '{{- .Target -}}'
 
