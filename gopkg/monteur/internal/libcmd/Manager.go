@@ -79,6 +79,18 @@ func (me *Manager) Parse(path string) (err error) {
 		}
 
 		me.task = subject
+	case libmonteur.JOB_RELEASE:
+		subject := &basicCMD{
+			thisSystem: system,
+			variables:  me.Variables,
+		}
+
+		err = subject.Parse(path)
+		if err != nil {
+			return err
+		}
+
+		me.task = subject
 	case libmonteur.JOB_COMPOSE:
 		subject := &basicCMD{
 			thisSystem: system,

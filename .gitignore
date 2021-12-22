@@ -4,6 +4,7 @@
 gopkg/monteur/internal/archive/deb/testsuite
 gopkg/monteur/internal/archive/deb/restricted
 gopkg/monteur/internal/archive/deb/workDir
+ddocs/.static/releases/
 
 #####################
 # Standard FHS
@@ -15,7 +16,6 @@ vendor/
 gh-pages/
 bin/
 tmp/
-release/
 test/
 
 #####################

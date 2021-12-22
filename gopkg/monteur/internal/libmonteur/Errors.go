@@ -34,6 +34,7 @@ const (
 	ERROR_PACKAGE = "[ ERROR - Package ]"
 	ERROR_COMPOSE = "[ ERROR - Compose ]"
 	ERROR_PUBLISH = "[ ERROR - Publish ]"
+	ERROR_RELEASE = "[ ERROR - Release ]"
 )
 
 const (

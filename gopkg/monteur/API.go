@@ -66,8 +66,12 @@ func Clean() int {
 // numbers, build configurations as programmed for the next release. This
 // function should be done before building the next version release.
 func Release() int {
-	r := &releaser{}
-	return r.Run()
+	api := &apiCommand{
+		Job:      libmonteur.JOB_RELEASE,
+		ErrorTag: libmonteur.ERROR_RELEASE,
+	}
+
+	return api.Run()
 }
 
 // Build is the function to build the software with current configurations.

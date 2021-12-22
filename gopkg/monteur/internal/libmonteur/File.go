@@ -52,6 +52,9 @@ const (
 
 	DIRECTORY_PACKAGE  = "package"
 	DIRECTORY_PACKAGER = DIRECTORY_PACKAGE + "/packagers"
+
+	DIRECTORY_RELEASE  = "release"
+	DIRECTORY_RELEASER = DIRECTORY_RELEASE + "/releasers"
 )
 
 const (

@@ -1,0 +1,59 @@
+[Metadata]
+Name = 'Reprepro'
+Description = """
+Monteur's .deb packagers released to hosting repository via Reprepro.
+"""
+Type = 'manual'
+
+
+
+
+[Variables]
+GPGID = 'hello@zoralab.com'
+GPGExistence = ''
+
+[FMTVariables]
+
+
+
+
+[[Dependencies]]
+Name = 'Reprepro'
+Condition = 'all-all'
+Type = 'command'
+Command = 'reprepro'
+
+[[Dependencies]]
+Name = 'GPG Tool For Signing'
+Condition = 'all-all'
+Type = 'command'
+Command = 'gpg'
+
+
+
+
+[Packages.001]
+Source = ''
+Target = ''
+
+
+
+
+[[CMD]]
+Name = "Get GPG Secret Key for Verifications"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'gpg --list-secret-keys "{{- .GPGID }}"'
+Save = 'GPGExistence'
+
+[[CMD]]
+Name = "Verify GPG Secret Key Must Exists For Signing"
+Type = 'is-not-empty'
+Condition = [ 'all-all' ]
+Source = '{{- .GPGExistence -}}'
+
+[[CMD]]
+Name = "Release using repreppro"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'echo placeholder'

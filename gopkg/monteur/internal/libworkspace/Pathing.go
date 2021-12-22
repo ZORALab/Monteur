@@ -95,6 +95,11 @@ type Pathing struct {
 	PackageTMPDir    string
 	PackageTOMLFile  string
 
+	// sub-directories for release fx
+	ReleaseConfigDir string
+	ReleaseTMPDir    string
+	ReleaseTOMLFile  string
+
 	// user
 	User *UserPath
 
@@ -283,6 +288,11 @@ func (fp *Pathing) Update(langCode string) (err error) {
 	}
 
 	err = fp.updatePackagePaths()
+	if err != nil {
+		return err
+	}
+
+	err = fp.updateReleasePaths()
 	if err != nil {
 		return err
 	}
@@ -508,6 +518,30 @@ func (fp *Pathing) updatePackagePaths() (err error) {
 		libmonteur.FILE_TOML,
 	)
 	err = fp._initConfigSubPath(&fp.PackageTOMLFile, "PackageTOMLFile")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (fp *Pathing) updateReleasePaths() (err error) {
+	fp.ReleaseConfigDir = libmonteur.DIRECTORY_RELEASER
+	err = fp._initConfigSubPath(&fp.ReleaseConfigDir, "ReleaseConfigDir")
+	if err != nil {
+		return err
+	}
+
+	fp.ReleaseTMPDir = libmonteur.DIRECTORY_RELEASE
+	err = fp._initWorkingSubPath(&fp.ReleaseTMPDir, "ReleaseTMPDir")
+	if err != nil {
+		return err
+	}
+
+	fp.ReleaseTOMLFile = filepath.Join(libmonteur.DIRECTORY_PACKAGE,
+		libmonteur.FILE_TOML,
+	)
+	err = fp._initConfigSubPath(&fp.ReleaseTOMLFile, "ReleaseTOMLFile")
 	if err != nil {
 		return err
 	}
