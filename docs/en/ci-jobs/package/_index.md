@@ -182,7 +182,7 @@ the recipes. The currently supported modes are:
 
 * `deb-manual` - compile to `.deb` package but using manual commands instead.
   Useful for external compilers like `debuild`, `sbuild`, or `fpm`.
-* `manual` - compile package completely using manual commands. It is for those
+* `manual` - compile package completely manually using commands. It is for those
   who wants complete manual controls.
 
 
@@ -208,7 +208,7 @@ list.
 This table houses all [Formattable Variables Definition]({{< link
 "/internals/variables-processing/#formattable-variables-definition" "this"
 "url-only" />}}) (e.g. `{{- .Version -}}`) **specific to this packaging
-recipes**. It shall appears onto all listed packages. Example:
+recipe**. It shall appears onto all listed packages. Example:
 
 ```toml {linenos=table,hl_lines=[],linenostart=1}
 [FMTVariables]
@@ -340,7 +340,7 @@ above, including a now processed list of `ChangelogEntries` value (now a
 
 Depending on `Metadata.Type`, Monteur will execute a preparation executions
 before executing the `[CMD]` for a package. This reduces the need to build large
-`[CMD]` command list and promotes consistency.
+`[CMD]` commands list and promotes consistency.
 
 For `Metadata.Type` set to `manual`, to ensure you have complete control, this
 recipe type shall not execute the preparation sequences and all the packages are
