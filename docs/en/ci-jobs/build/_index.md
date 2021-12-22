@@ -72,9 +72,9 @@ selectType = "WebPage"
 # {{% param "title" %}}
 {{% param "description" %}}
 
-The objective of the job is simple: **to execute all the test suites easily
-and seamlessly whenever requested in a consistent manner with minimal to no
-further instructions**.
+The objective of the job is simple: **to execute all the build instructions
+easily and seamlessly whenever requested in a consistent manner with minimal to
+no further instructions**.
 
 
 
@@ -87,7 +87,7 @@ customizations.
 
 
 ### `[Variables]`
-To configure job-wide variables for all publishing tasks, you can include or
+To configure job-wide variables for all building tasks, you can include or
 modify the existing `[Variables]` table. Here is an example:
 
 ```toml {linenos=table,hl_lines=[],linenostart=1}
@@ -105,7 +105,7 @@ replacement in a variable formatting activities.
 
 
 ### `[FMTVariables]`
-To configure job-wide formattable variables for all composing tasks, you can
+To configure job-wide formattable variables for all building tasks, you can
 include or modify the existing `[FMTVariables]` table. Here is an example:
 
 ```toml {linenos=table,hl_lines=[],linenostart=1}
@@ -136,7 +136,7 @@ structure.
 
 
 ### Storing Location
-All test configuration files **SHALL** be stored inside
+All build configuration files **SHALL** be stored inside
 `.configs/monteur/app/variants/` directory.
 
 These config files are **also used across various build related CI Jobs** like
@@ -183,10 +183,6 @@ recommends **using [Platform ID]({{< link "/internals/platform-identification/"
 The `Description` is mainly for logging and the config file comprehension
 purposes. You can write a short description for it.
 
-These variables are used across various build related CI Jobs like
-[Package API]({{< link "/ci-jobs/package/" "this" "url-only" />}}) and
-[Release API]({{< link "/ci-jobs/release/" "this" "url-only" />}}).
-
 
 #### `[Variables]`
 This table houses all [Plain Variables Definition]({{< link
@@ -200,10 +196,6 @@ MainLang = 'en'
 
 All the variables are either `create` or `overwrite` to the existing variables
 list.
-
-These variables are used across various build related CI Jobs like
-[Package API]({{< link "/ci-jobs/package/" "this" "url-only" />}}) and
-[Release API]({{< link "/ci-jobs/release/" "this" "url-only" />}}).
 
 
 #### `[FMTVariables]`
@@ -219,10 +211,6 @@ DataDir = '{{- .RootDir -}}/data'
 
 All formatted variables are either `create` or `overwrite` to the existing
 variables list.
-
-These variables are used across various build related CI Jobs like
-[Package API]({{< link "/ci-jobs/package/" "this" "url-only" />}}) and
-[Release API]({{< link "/ci-jobs/release/" "this" "url-only" />}}).
 
 
 #### `[[Dependencies]]`
