@@ -18,7 +18,6 @@ package commander
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 )
 
 func cmdDelete(action *Action) (out interface{}, err error) {
@@ -26,12 +25,12 @@ func cmdDelete(action *Action) (out interface{}, err error) {
 		return nil, fmt.Errorf("source is empty")
 	}
 
-	err = _delete(action.Source)
+	err = os.Remove(action.Source)
 	if err != nil {
-		return nil, err
+		err = fmt.Errorf("%s: %s", "error removing source path", err)
 	}
 
-	return nil, nil
+	return nil, err
 }
 
 func cmdDeleteQuiet(action *Action) (out interface{}, err error) {
@@ -44,49 +43,15 @@ func cmdDeleteRecursive(action *Action) (out interface{}, err error) {
 		return nil, fmt.Errorf("source is empty")
 	}
 
-	return nil, _deleteDir(action.Source)
+	err = os.RemoveAll(action.Source)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", "error removing source path", err)
+	}
+
+	return nil, err
 }
 
 func cmdDeleteRecursiveQuiet(action *Action) (out interface{}, err error) {
 	out, _ = cmdDeleteRecursive(action)
 	return out, nil
-}
-
-func _deleteDir(src string) (err error) {
-	err = filepath.Walk(src, func(path string,
-		info os.FileInfo, err error) error {
-		// error obtaining file information
-		if err != nil {
-			return fmt.Errorf("%s: %s",
-				"error with source file",
-				err,
-			)
-		}
-
-		// take action according to the target nature
-		mode := info.Mode()
-		switch {
-		case mode.IsDir():
-			err = _deleteDir(path)
-		default:
-			err = _delete(path)
-		}
-
-		return err
-	})
-
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
-
-	return _delete(src)
-}
-
-func _delete(src string) (err error) {
-	err = os.Remove(src)
-	if err != nil {
-		err = fmt.Errorf("%s: %s", "failed to delete target", err)
-	}
-
-	return err
 }

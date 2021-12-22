@@ -115,6 +115,18 @@ func (me *Manager) Parse(path string) (err error) {
 		}
 
 		me.task = subject
+	case libmonteur.JOB_CLEAN:
+		subject := &basicCMD{
+			thisSystem: system,
+			variables:  me.Variables,
+		}
+
+		err = subject.Parse(path)
+		if err != nil {
+			return err
+		}
+
+		me.task = subject
 	default:
 		panic("MONTEUR DEV: What kind of job is this? ➤ " + me.Job)
 	}

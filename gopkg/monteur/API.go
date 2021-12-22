@@ -56,8 +56,12 @@ func Test() int {
 // fresh run on the next round. Unlike Purge() function, does not remove all the
 // downloaded dependencies done by Setup() function.
 func Clean() int {
-	c := &cleaner{}
-	return c.Run()
+	api := &apiCommand{
+		Job:      libmonteur.JOB_CLEAN,
+		ErrorTag: libmonteur.ERROR_CLEAN,
+	}
+
+	return api.Run()
 }
 
 // Release is the function to update repository for releasing a next version.

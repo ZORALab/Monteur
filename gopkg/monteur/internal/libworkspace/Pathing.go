@@ -100,6 +100,11 @@ type Pathing struct {
 	ReleaseTMPDir    string
 	ReleaseTOMLFile  string
 
+	// sub-directories for clean fx
+	CleanConfigDir string
+	CleanTMPDir    string
+	CleanTOMLFile  string
+
 	// user
 	User *UserPath
 
@@ -293,6 +298,11 @@ func (fp *Pathing) Update(langCode string) (err error) {
 	}
 
 	err = fp.updateReleasePaths()
+	if err != nil {
+		return err
+	}
+
+	err = fp.updateCleanPaths()
 	if err != nil {
 		return err
 	}
@@ -542,6 +552,30 @@ func (fp *Pathing) updateReleasePaths() (err error) {
 		libmonteur.FILE_TOML,
 	)
 	err = fp._initConfigSubPath(&fp.ReleaseTOMLFile, "ReleaseTOMLFile")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (fp *Pathing) updateCleanPaths() (err error) {
+	fp.CleanConfigDir = libmonteur.DIRECTORY_CLEANER
+	err = fp._initConfigSubPath(&fp.CleanConfigDir, "CleanConfigDir")
+	if err != nil {
+		return err
+	}
+
+	fp.CleanTMPDir = libmonteur.DIRECTORY_CLEAN
+	err = fp._initWorkingSubPath(&fp.CleanTMPDir, "CleanTMPDir")
+	if err != nil {
+		return err
+	}
+
+	fp.CleanTOMLFile = filepath.Join(libmonteur.DIRECTORY_CLEAN,
+		libmonteur.FILE_TOML,
+	)
+	err = fp._initConfigSubPath(&fp.CleanTOMLFile, "CleanTOMLFile")
 	if err != nil {
 		return err
 	}

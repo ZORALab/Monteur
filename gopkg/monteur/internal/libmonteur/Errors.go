@@ -35,6 +35,7 @@ const (
 	ERROR_COMPOSE = "[ ERROR - Compose ]"
 	ERROR_PUBLISH = "[ ERROR - Publish ]"
 	ERROR_RELEASE = "[ ERROR - Release ]"
+	ERROR_CLEAN   = "[ ERROR - Clean   ]"
 )
 
 const (
