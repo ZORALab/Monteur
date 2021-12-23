@@ -1,0 +1,20 @@
+Origin: monteur.zoralab.com/releases/deb
+Label: ZORALab's Monteur Deb Package (Main)
+Suite: stable
+Codename: main
+Date: Thu, 23 Dec 2021 17:26:42 UTC
+Architectures: amd64
+Components: main
+Description: software manufacturing automation tool in one single app.
+MD5Sum:
+ 54ae11098036c6edc06c573b0aa466ef 698 main/binary-amd64/Packages
+ 2d6d33992a540fc336de72d3696cd73c 488 main/binary-amd64/Packages.gz
+ 867b62c039868dc6f302deee194194a5 208 main/binary-amd64/Release
+SHA1:
+ 91748c3e7cbdd6e3676c9cd7096a8cd1f9e61252 698 main/binary-amd64/Packages
+ ff61522684647203115473a1993715c91f3454ce 488 main/binary-amd64/Packages.gz
+ 2d81b394a0b4c5c8411b70cc1f158bd5f0cbd488 208 main/binary-amd64/Release
+SHA256:
+ 1eede39ae00b9b5152b40a61e54f54874f965185447275ff4152156aabbbb83b 698 main/binary-amd64/Packages
+ 945c4f139ae56a66434b2ad8ed9f3947ef7d0ed5a9c2c1d36c60a793459a5ef7 488 main/binary-amd64/Packages.gz
+ b7b1780498e67a1e5e13a14d7360b5b2a0cfcbc7db3075512c45ce1a1842c371 208 main/binary-amd64/Release

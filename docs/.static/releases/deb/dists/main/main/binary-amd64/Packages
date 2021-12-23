@@ -1,0 +1,19 @@
+Package: monteur
+Version: 0.0.1
+Architecture: amd64
+Maintainer: ZORALab <hello@zoralab.com>
+Installed-Size: 7929
+Homepage: https://monteur.zoralab.com/
+Priority: optional
+Section: devel
+Filename: pool/main/m/monteur/monteur_0.0.1_amd64.deb
+Size: 2255144
+SHA256: 468d2982bf511c0a5c3d9e2fe42ebd07b3741b70244bc75ec265719449896966
+SHA1: a429f7d5e69f11109393ab05a200cbb46428e4d6
+MD5sum: 07ea969abf38579d522eba4f8cf83b59
+Description: software manufacturing automation tool in one single app.
+ Monteur focuses on keeping the software development repository's continuous
+ improvements execution seamlessly scalable with great consistency.
+ .
+ Monteur - Getting the job done locally and remotely at scale!
+
