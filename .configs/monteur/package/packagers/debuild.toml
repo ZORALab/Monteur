@@ -1,19 +1,17 @@
 [Metadata]
-Name = 'DEB'
+Name = 'Debuild'
 Description = """
-Package monteur into .deb package file using manual commands.
+Package application into .deb package file using manual commands.
 """
 Type = 'deb-manual'
 
 [Variables]
-GPGID = 'hello@zoralab.com'
-GPGExistence = ''  # to be filled later for verifications
 ChangelogFrom = 'origin/staging'
 ChangelogTo = 'origin/main'
+GPGID = 'hello@zoralab.com'
+GPGExistence = ''  # to be filled by [CMD]
 
 [FMTVariables]
-Lintian = '{{- .DataDir -}}/debian/lintian'
-Profile = '{{- .DataDir -}}/debian/profiles'
 
 
 
@@ -44,7 +42,7 @@ LineBreak = "\n"
 Regex = ''
 
 [[Changelog.CMD]]
-Name = "Get GPG Secret Key for Verifications"
+Name = "Get Changelog Data from Git Log Between Branches"
 Type = 'command'
 Condition = [ 'all-all' ]
 Source = """git --no-pager log \
@@ -76,7 +74,7 @@ BuildSource = false
 #	'stable',
 #]
 #BuildSource = false
-#
+
 #[Packages.002.Files]
 #'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/linux-arm64'
 
@@ -97,7 +95,7 @@ Condition = [ 'all-all' ]
 Source = '{{- .GPGExistence -}}'
 
 [[CMD]]
-Name = "Compile Deb Package"
+Name = "Compile Deb Package with Debuild"
 Type = 'command'
 Condition = [ 'all-all' ]
 Location = '{{- .PackageDir -}}'
