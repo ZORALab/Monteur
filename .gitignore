@@ -4,7 +4,8 @@
 gopkg/monteur/internal/archive/deb/testsuite
 gopkg/monteur/internal/archive/deb/restricted
 gopkg/monteur/internal/archive/deb/workDir
-ddocs/.static/releases/
+docs/.static/releases/
+.configs/monteur/secrets/
 
 #####################
 # Standard FHS
@@ -28,7 +29,6 @@ public/
 # Monteur
 #####################
 .monteurFS/
-.configs/monteur/secrets/
 
 #####################
 # LetsEncrypt
