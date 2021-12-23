@@ -4,6 +4,9 @@ Description = """
 Using Go test to test out all the Go codes in this repository.
 """
 
+
+
+
 [Variables]
 Timeout = '14400s'
 
@@ -11,7 +14,9 @@ Timeout = '14400s'
 ProfileFilepath = '{{- .WorkingDir -}}/go-profile.txt'
 CoverageFilepath = '{{- .WorkingDir -}}/go-coverage.html'
 TestPath = '{{- .BaseDir -}}/...'
-TestCoverage = 'Will be overwritten'
+TestCoverage = '' # will be overwritten by [CMD]
+TestVerdict = '' # will be overwritten by [CMD]
+
 
 
 
@@ -32,7 +37,7 @@ Source = '{{- .WorkingDir -}}'
 
 [[CMD]]
 Name = "Run Go Test Against Base Directory"
-Type = 'command'
+Type = 'command-quiet'
 Condition = [ 'all-all' ]
 Location = '{{- .BaseDir -}}'
 Source = """go test -timeout "{{ .Timeout }}" \
@@ -41,6 +46,8 @@ Source = """go test -timeout "{{ .Timeout }}" \
 -v \
 "{{- .TestPath -}}"
 """
+Save = 'TestVerdict'
+SaveRegex = '(FAIL)\s*$'
 
 [[CMD]]
 Name = "Process Go Test Coverage Profiles"
@@ -52,7 +59,7 @@ Source = """go tool cover -html="{{- .ProfileFilepath -}}" \
 """
 
 [[CMD]]
-Name = "Process Go Test Coverage Overall Percentage"
+Name = 'Process Go Test Coverage Overall Percentage'
 Type = 'command'
 Condition = [ 'all-all' ]
 Location = '{{- .BaseDir -}}'
@@ -60,3 +67,10 @@ Source = 'go tool cover -func "{{- .ProfileFilepath -}}"'
 Save = 'TestCoverage'
 SaveRegex = 'total:\s{1,}\(statements\)\s{1,}(\d+.\d+)%'
 ToSTDOUT = 'TOTAL TEST COVERAGE: {{ .TestCoverage -}}%%'
+
+[[CMD]]
+Name = 'Conclude The Test'
+Type = 'is-equal'
+Condition = [ 'all-all' ]
+Source = '{{- .TestVerdict -}}'
+Target = ''
