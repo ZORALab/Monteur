@@ -2,7 +2,7 @@
 [Metadata]
 Name = 'GolangCI-Lint'
 Description = """
-Go communities CI linter
+Setup GolangCI-Lint static analysis tool for Go Programming Language.
 """
 Type = 'https-download'
 
