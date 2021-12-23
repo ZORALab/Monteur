@@ -2,7 +2,7 @@
 [Metadata]
 Name = 'Go'
 Description = """
-Go programming language for compiling Go source codes.
+Setup Go programming language for compiling Go source codes.
 """
 Type = 'https-download'
 

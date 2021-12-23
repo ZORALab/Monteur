@@ -1,0 +1,152 @@
+# Information about the software to be downloaded
+[Metadata]
+Name = 'Go'
+Description = """
+Setup Go programming language for compiling Go source codes.
+"""
+Type = 'https-download'
+
+
+
+
+# Customization
+[Variables]
+Version = '1.17.3'
+BaseURL = 'https://golang.org/dl/'
+
+
+
+
+# Supported OS and CPU Architectures program sources. The Key for supported
+# OS and CPU complies to the format:
+#	[Sources.{GOOS}-{GOARCH}]
+# Only list out supported packages will do.
+[Sources.all-all]
+Format = 'tar.gz'
+URL = '{{- .BaseURL -}}{{- .Archive -}}'
+Method = 'GET'
+[Sources.all-all.Checksum]
+Type = 'sha256'
+Format = 'hex'
+
+[Sources.darwin-amd64]
+Archive = 'go{{- .Version -}}.darwin-amd64.{{- .Format -}}'
+[Sources.darwin-amd64.Checksum]
+Value = '765c021e372a87ce0bc58d3670ab143008dae9305a79e9fa83440425529bb636'
+
+[Sources.darwin-arm64]
+Archive = 'go{{- .Version -}}.darwin-arm64.{{- .Format -}}'
+[Sources.darwin-arm64.Checksum]
+Value = 'ffe45ef267271b9681ca96ca9b0eb9b8598dd82f7bb95b27af3eef2461dc3d2c'
+
+[Sources.linux-amd64]
+Archive = 'go{{- .Version -}}.linux-amd64.{{- .Format -}}'
+[Sources.linux-amd64.Checksum]
+Value = '550f9845451c0c94be679faf116291e7807a8d78b43149f9506c1b15eb89008c'
+
+[Sources.linux-386]
+Archive = 'go{{- .Version -}}.linux-386.{{- .Format -}}'
+[Sources.linux-386.Checksum]
+Value = '982487a0264626950c635c5e185df68ecaadcca1361956207578d661a7b03bee'
+
+[Sources.linux-arm64]
+Archive = 'go{{- .Version -}}.linux-arm64.{{- .Format -}}'
+[Sources.linux-arm64.Checksum]
+Value = '06f505c8d27203f78706ad04e47050b49092f1b06dc9ac4fbee4f0e4d015c8d4'
+
+[Sources.linux-armv6l]
+Archive = 'go{{- .Version -}}.linux-armv6l.{{- .Format -}}'
+[Sources.linux-armv6l.Checksum]
+Value = 'aa0d5516c8bd61654990916274d27491cfa229d322475502b247a8dc885adec5'
+
+[Sources.windows-386]
+Format = 'zip'
+Archive = 'go{{- .Version -}}.windows-386.{{- .Format -}}'
+[Sources.windows-386.Checksum]
+Value = 'cc7e7f7254f8cea95f6ea24dc723d231ade2de4d258e1fa80479f5ff74c38209'
+
+[Sources.windows-amd64]
+Format = 'zip'
+Archive = 'go{{- .Version -}}.windows-amd64.{{- .Format -}}'
+[Sources.windows-amd64.Checksum]
+Value = 'e78684b955742e215926204afc6ed62b9d165b509e25a687d62902516f08726b'
+
+[Sources.freebsd-386]
+Archive = 'go{{- .Version -}}.freebsd-386.{{- .Format -}}'
+[Sources.freebsd-386.Checksum]
+Value = 'f1359b53f99364e2907e0b0ee4a4f22dc53a8e26a2caa3bec86d6499b78f83eb'
+
+[Sources.freebsd-amd64]
+Archive = 'go{{- .Version -}}.freebsd-386.{{- .Format -}}'
+[Sources.freebsd-amd64.Checksum]
+Value = 'bfb6fb7752bfb2f88d7c0a0b4e4a950f88882bb22c24e2fd8b9018c2b1b167a1'
+
+[Sources.linux-ppc64le]
+Archive = 'go{{- .Version -}}.linux-ppc64le.{{- .Format -}}'
+[Sources.linux-ppc64le.Checksum]
+Value = 'b821ff58d088c61adc5d7376179a342f325d8715a06abdeb6974f6450663ee60'
+
+[Sources.linux-s390x]
+Archive = 'go{{- .Version -}}.linux-ppc64le.{{- .Format -}}'
+[Sources.linux-s390x.Checksum]
+Value = '7d1727e08fef295f48aed2b8124a07e3752e77aea747fcc7aeb8892b8e2f2ad2'
+
+[Sources.windows-arm64]
+Format = 'zip'
+Archive = 'go{{- .Version -}}.windows-arm64.{{- .Format -}}'
+[Sources.windows-arm64.Checksum]
+Value = '4e7f9a19af8a96e81b644846f27d739344375f9c69bad2e673406ab8e8a01101'
+
+
+
+
+# Setup the unpacked software directories/files into the local bin directory.
+#
+# NOTE: The key field is mainly for sorting purposes.
+[[Setup]]
+Name = 'Install Go Programming Language Entire Directory'
+Type = 'move'
+Condition = ['all-all']
+Source = '{{- .WorkingDir -}}/go'
+Target = '{{- .BinDir -}}/golang'
+
+
+
+
+# Config file for localized filesystem initialization.
+[Config]
+linux = """
+#!/bin/bash
+export LOCAL_BIN="${LOCAL_BIN:-{{- .BinDir -}}}"
+export GOROOT="${LOCAL_BIN}/golang"
+export GOPATH="${LOCAL_BIN}/gopath"
+export GOBIN="${GOPATH}/bin"
+export GOCACHE="${LOCAL_BIN}/gocache"
+export GOENV="${LOCAL_BIN}/goenv"
+
+stop_go() {
+	PATH=:${PATH}:
+	GOROOT="${GOROOT}/bin"
+	PATH=${PATH//:$GOROOT:/:}
+	PATH=${PATH//:$GOBIN:/:}
+	PATH=${PATH//:$GOPATH:/:}
+	PATH=${PATH%:}
+	unset GOROOT GOPATH GOBIN GOCACHE GOENV
+}
+
+case $1 in
+--stop)
+	stop_go
+	;;
+*)
+	export PATH="${PATH}:${GOROOT}/bin:${GOPATH}:${GOBIN}"
+
+	if [ ! -z "$(type -p go)" ] && [ ! -z "$(type -p gofmt)" ]; then
+		1>&2 printf "[ DONE  ] localized Go started.\\n"
+	else
+		1>&2 printf "[ ERROR ] localized Go failed to initalized.\\n"
+		stop_go
+	fi
+	;;
+esac
+"""
