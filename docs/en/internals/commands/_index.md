@@ -55,7 +55,7 @@ alternateText = "Monteur's Commands Execution Unit"
 
 
 [menu.main]
-parent = "Internals"
+parent = "CI Internals"
 name = "Commands Execution Units"
 pre = "🧑‍✈️"
 weight = 5

@@ -55,7 +55,7 @@ alternateText = "Monteur Internals - Variables Processing"
 
 
 [menu.main]
-parent = "Internals"
+parent = "CI Internals"
 name = "Variables Processing"
 pre = "🪢"
 weight = 5

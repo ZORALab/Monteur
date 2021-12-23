@@ -56,7 +56,7 @@ alternateText = "Monteur Internal Platform Identification"
 
 
 [menu.main]
-parent = "Internals"
+parent = "CI Internals"
 name = "Platform Identification"
 pre = "🧿"
 weight = 5
