@@ -161,8 +161,12 @@ func (action *Action) _initType() (err error) {
 		action.actionFx = cmdIsExists
 	case ACTION_IS_EMPTY:
 		action.actionFx = cmdIsEmpty
+	case ACTION_IS_EQUAL:
+		action.actionFx = cmdEqual
 	case ACTION_IS_NOT_EMPTY:
 		action.actionFx = cmdIsNotEmpty
+	case ACTION_IS_NOT_EQUAL:
+		action.actionFx = cmdNotEqual
 	case ACTION_MOVE:
 		action.actionFx = cmdMove
 	case ACTION_MOVE_QUIET:
