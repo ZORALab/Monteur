@@ -2,7 +2,7 @@
 [Metadata]
 Name = 'Hugo'
 Description = """
-Hugo static website generator for web publications
+Setup Hugo static website generator for web publications.
 """
 Type = 'https-download'
 
