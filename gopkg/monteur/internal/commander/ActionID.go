@@ -26,8 +26,6 @@ const (
 	ACTION_COMMAND                ActionID = "command"
 	ACTION_COMMAND_QUIET          ActionID = "command-quiet"
 	ACTION_COPY                   ActionID = "copy"
-	ACTION_COPY_RECURSIVE         ActionID = "copy-recursive"
-	ACTION_COPY_RECURSIVE_QUIET   ActionID = "copy-recursive-quiet"
 	ACTION_COPY_QUIET             ActionID = "copy-quiet"
 	ACTION_CREATE_DIR             ActionID = "create-dir"
 	ACTION_CREATE_PATH            ActionID = "create-path"

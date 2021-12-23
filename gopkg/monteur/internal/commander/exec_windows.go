@@ -19,8 +19,6 @@
 package commander
 
 import (
-	"fmt"
-
 	"gitlab.com/zoralab/cerigo/os/term"
 )
 

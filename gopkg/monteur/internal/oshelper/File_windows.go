@@ -23,6 +23,7 @@
 package oshelper
 
 import (
+	"fmt"
 	"os"
 	"syscall"
 	"time"
@@ -48,7 +49,7 @@ func FileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 
 	stat := fi.Sys().(*syscall.Win32FileAttributeData)
 
-	accessed = time.Unix(stat.Atim.Sec, stat.Atim.Nsec)
+	accessed = time.Unix(0, stat.LastAccessTime.Nanoseconds())
 	switch {
 	case accessed.Before(unixMinTime):
 		accessed = unixMinTime
@@ -56,7 +57,7 @@ func FileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 		accessed = unixMaxTime
 	}
 
-	changed = time.Unix(stat.Ctim.Sec, stat.Ctim.Nsec)
+	changed = time.Unix(0, stat.CreationTime.Nanoseconds())
 	switch {
 	case changed.Before(unixMinTime):
 		changed = unixMinTime
@@ -64,7 +65,7 @@ func FileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 		changed = unixMaxTime
 	}
 
-	modified = time.Unix(stat.Mtim.Sec, stat.Mtim.Nsec)
+	modified = time.Unix(0, stat.LastWriteTime.Nanoseconds())
 	switch {
 	case modified.Before(unixMinTime):
 		modified = unixMinTime
@@ -76,7 +77,10 @@ func FileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 }
 
 func FileSetPlatformTime(dest string, mTime time.Time) (err error) {
-	path, err = windows.UTFPtrFromString(dest)
+	var file windows.Handle
+	var path *uint16
+
+	path, err = windows.UTF16PtrFromString(dest)
 	if err != nil {
 		return fmt.Errorf("%s: %s", "error processing file", err)
 	}

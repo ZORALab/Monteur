@@ -62,6 +62,8 @@ func Copy(source string, dest string) (err error) {
 		err = copyDir(source, dest)
 	case mode&fs.ModeSymlink != 0:
 		err = copySymlink(source, dest, fi)
+	case mode&os.ModeSocket != 0:
+		fallthrough
 	case mode&fs.ModeNamedPipe != 0:
 		err = copyPipe(source, dest, fi)
 	default:
@@ -202,6 +204,8 @@ func copyDir(source string, dest string) (err error) {
 			}
 
 			err = copySymlink(path, destPath, info)
+		case mode&os.ModeSocket != 0:
+			fallthrough
 		case mode&fs.ModeNamedPipe != 0:
 			err = os.MkdirAll(filepath.Dir(destPath),
 				PERMISSION_DIR,

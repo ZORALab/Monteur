@@ -22,10 +22,34 @@ package oshelper
 
 import (
 	"fmt"
+	"os"
 	"syscall"
 
 	"golang.org/x/sys/unix"
 )
+
+// SymlinkTimestamps obtain the timestamp from the link itself and not the file.
+//
+// It shall return accessed time, changed time, and modified time.
+//
+// Should an error occurs, all timestamps are return as `nil`.
+func SymlinkTimestamps(fi os.FileInfo) (aTime, cTime, mTime *syscall.Timespec) {
+	defer func() {
+		if r := recover(); r != nil {
+			aTime = nil
+			cTime = nil
+			mTime = nil
+		}
+	}()
+
+	stat := fi.Sys().(*syscall.Stat_t)
+
+	aTime = &stat.Atim
+	cTime = &stat.Ctim
+	mTime = &stat.Mtim
+
+	return aTime, cTime, mTime
+}
 
 // SymlinkChTimes changes the timestamp on a symlink itself and not destination.
 //

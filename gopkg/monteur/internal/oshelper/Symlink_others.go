@@ -23,8 +23,13 @@
 package oshelper
 
 import (
+	"os"
 	"syscall"
 )
+
+func SymlinkTimestamps(fi os.FileInfo) (aTime, cTime, mTime *syscall.Timespec) {
+	return nil, nil, nil // not supported
+}
 
 func SymlinkChtimes(dest string,
 	aTime *syscall.Timespec, mTime *syscall.Timespec) (err error) {
