@@ -76,7 +76,9 @@ func FileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 
 	stat := fi.Sys().(*syscall.Stat_t)
 
-	accessed = time.Unix(stat.Atim.Sec, stat.Atim.Nsec)
+	// supporting 32-bits
+	//nolint:unconvert
+	accessed = time.Unix(int64(stat.Atim.Sec), int64(stat.Atim.Nsec))
 	switch {
 	case accessed.Before(unixMinTime):
 		accessed = unixMinTime
@@ -85,7 +87,9 @@ func FileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 	default:
 	}
 
-	changed = time.Unix(stat.Ctim.Sec, stat.Ctim.Nsec)
+	// supporting 32-bits
+	//nolint:unconvert
+	changed = time.Unix(int64(stat.Ctim.Sec), int64(stat.Ctim.Nsec))
 	switch {
 	case changed.Before(unixMinTime):
 		changed = unixMinTime
@@ -94,7 +98,9 @@ func FileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 	default:
 	}
 
-	modified = time.Unix(stat.Mtim.Sec, stat.Mtim.Nsec)
+	// supporting 32-bits
+	//nolint:unconvert
+	modified = time.Unix(int64(stat.Mtim.Sec), int64(stat.Mtim.Nsec))
 	switch {
 	case modified.Before(unixMinTime):
 		modified = unixMinTime

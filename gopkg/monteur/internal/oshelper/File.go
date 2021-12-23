@@ -16,6 +16,6 @@
 package oshelper
 
 const (
-	MAX_UID = 2147483648
-	MAX_GID = 2147483648
+	MAX_UID = int(^uint(0) >> 1)
+	MAX_GID = int(^uint(0) >> 1)
 )
