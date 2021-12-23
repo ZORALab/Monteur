@@ -10,18 +10,18 @@ MonteurPath = '.monteurFS'
 
 
 [FMTVariables]
-Target = '{{- .RootDir -}}/{{- .MonteurPath -}}/tmp/{{- .Job -}}'
+Path = '{{- .RootDir -}}/{{- .MonteurPath -}}/tmp/{{- .Job -}}'
 
 
 
 [[CMD]]
-Name = "Remove Target Directory"
+Name = "Remove Target Recursively"
 Type = 'delete-recursive-quiet'
 Condition = [ 'all-all' ]
-Source = '{{- .Target -}}'
+Source = '{{- .Path -}}'
 
 [[CMD]]
-Name = "Create Target Directory"
+Name = "Re-Create Target for Restoration"
 Type = 'create-path'
 Condition = [ 'all-all' ]
-Source = '{{- .Target -}}'
+Source = '{{- .Path -}}'
