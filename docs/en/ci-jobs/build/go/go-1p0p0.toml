@@ -1,0 +1,48 @@
+[Metadata]
+Name = '<OS>-<ARCH>'
+Description = """
+<APP> <OS> operating system with <CPU> CPU architecture.
+"""
+
+[Variables]
+PlatformOS = '<OS>'
+PlatformCPU = '<ARCH>'
+PlatformExt = ''
+BuildFlags = '-buildmode=pie -ldflags "-s -w"'
+
+[FMTVariables]
+SrcPath = '{{- .BaseDir -}}/path/to/main.go'
+BuildPath = """
+{{- .WorkingDir -}}/{{- .PlatformOS -}}-{{- .PlatformCPU -}}{{- .PlatformExt -}}
+"""
+
+
+
+
+[[Dependencies]]
+Name = 'Go'
+Condition = 'all-all'
+Type = 'command'
+Command = 'go'
+
+
+
+
+[[CMD]]
+Name = "Create Build Directory to House the Compiled Binary"
+Type = 'create-path'
+Condition = [ 'all-all' ]
+Source = '{{- .WorkingDir -}}'
+
+[[CMD]]
+Name = "Build the Go Binary"
+Type = 'command'
+Condition = [ 'all-all' ]
+Location = '{{- .BaseDir -}}'
+Source = """
+GOOS="{{- .PlatformOS -}}" \
+GOARCH="{{- .PlatformCPU -}}" \
+go build {{ .BuildFlags }}  \
+-o "{{- .BuildPath -}}" \
+"{{- .SrcPath -}}"
+"""

@@ -1,13 +1,14 @@
 [Metadata]
 Name = 'linux-arm64'
 Description = """
-Monteur for Linux OS with ARM64 CPU Architecture.
+Monteur Linux OS with ARM64 CPU Architecture.
 """
 
 [Variables]
 PlatformOS = 'linux'
 PlatformCPU = 'arm64'
 PlatformExt = ''
+BuildFlags = '-buildmode=pie -ldflags "-s -w"'
 
 [FMTVariables]
 SrcPath = '{{- .BaseDir -}}/app/monteur/main.go'
@@ -41,8 +42,7 @@ Location = '{{- .BaseDir -}}'
 Source = """
 GOOS="{{- .PlatformOS -}}" \
 GOARCH="{{- .PlatformCPU -}}" \
-go build -ldflags "-s -w" \
+go build {{ .BuildFlags }}  \
 -o "{{- .BuildPath -}}" \
--buildmode=pie \
 "{{- .SrcPath -}}"
 """
