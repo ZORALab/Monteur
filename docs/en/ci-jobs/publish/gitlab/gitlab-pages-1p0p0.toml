@@ -79,7 +79,7 @@ Source = 'git clean -fd'
 [[CMD]]
 Name = 'Copy All Publications to Publishing Directory'
 Condition = [ 'all-all' ]
-Type = 'copy-recursive'
+Type = 'copy'
 Source = '{{- .SourceDir -}}'
 Target = '{{- .DestinationDir -}}'
 
