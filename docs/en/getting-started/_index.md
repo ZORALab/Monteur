@@ -90,7 +90,7 @@ curl https://www.zoralab.com/pubkey.gpg \
 
 # write source list file (choose either 'stable', 'unstable', 'experimental')
 # Here, 'stable' was chosen.
-echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/zoralab-keyring.gpg] https://monteur.zoralab.com/releases/deb stable main' \
+echo 'deb [signed-by=/usr/share/keyrings/zoralab-keyring.gpg] https://monteur.zoralab.com/releases/deb stable main' \
 	| sudo tee /etc/apt/sources.list.d/zoralab-monteur.list
 
 # perform apt update
