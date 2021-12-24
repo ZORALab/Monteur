@@ -2,29 +2,29 @@
 Hash: SHA256
 
 Origin: monteur.zoralab.com/releases/deb
-Label: ZORALab's Monteur Deb Package (Main)
+Label: ZORALab's Monteur Deb Package (Stable Branch)
 Suite: stable
 Codename: main
-Date: Thu, 23 Dec 2021 17:26:42 UTC
+Date: Fri, 24 Dec 2021 00:17:30 UTC
 Architectures: amd64
-Components: main
+Components: stable
 Description: software manufacturing automation tool in one single app.
 MD5Sum:
- 54ae11098036c6edc06c573b0aa466ef 698 main/binary-amd64/Packages
- 2d6d33992a540fc336de72d3696cd73c 488 main/binary-amd64/Packages.gz
- 867b62c039868dc6f302deee194194a5 208 main/binary-amd64/Release
+ f1b8c33286e0a341149d9eec2b4b2ba8 700 stable/binary-amd64/Packages
+ c2cfb90fbd9f8273febfda2055538c39 489 stable/binary-amd64/Packages.gz
+ 9bac4f7f885ad2148be13139783a21cd 219 stable/binary-amd64/Release
 SHA1:
- 91748c3e7cbdd6e3676c9cd7096a8cd1f9e61252 698 main/binary-amd64/Packages
- ff61522684647203115473a1993715c91f3454ce 488 main/binary-amd64/Packages.gz
- 2d81b394a0b4c5c8411b70cc1f158bd5f0cbd488 208 main/binary-amd64/Release
+ 5cfe39648a89a659c551ae18451822bbc60972f7 700 stable/binary-amd64/Packages
+ cc001f467ab33b450572c5a10989ea02f4f4efd7 489 stable/binary-amd64/Packages.gz
+ da775d16c4eda4873f82dcc3711276c1b740ebae 219 stable/binary-amd64/Release
 SHA256:
- 1eede39ae00b9b5152b40a61e54f54874f965185447275ff4152156aabbbb83b 698 main/binary-amd64/Packages
- 945c4f139ae56a66434b2ad8ed9f3947ef7d0ed5a9c2c1d36c60a793459a5ef7 488 main/binary-amd64/Packages.gz
- b7b1780498e67a1e5e13a14d7360b5b2a0cfcbc7db3075512c45ce1a1842c371 208 main/binary-amd64/Release
+ ee2c5054c747e07d523c769d2fc2d66fcb5f300637ddb75f0f9949cc735f5194 700 stable/binary-amd64/Packages
+ 472411230a293d45b2e9217525bedd4d7f65c875aa4a88c7bc1c21efae73e194 489 stable/binary-amd64/Packages.gz
+ 37031745c25fa4c46c1c4c6b77f17964c4f0ea3b25a0b975606729b1551962e3 219 stable/binary-amd64/Release
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYIAB0WIQSDNpEip5JwdaeHnziv072ToixWlgUCYcSxUgAKCRCv072ToixW
-lt2OAQDFcVuI5lIjZuQzXDfTGNQfpGcr9GPQ5qxnUoTXG62T3AD/T9yOW3JDjcRS
-LEKGw/8WH88BQ6A8tn+oNXl3I5D5DQc=
-=aPIF
+iHUEARYIAB0WIQSDNpEip5JwdaeHnziv072ToixWlgUCYcURmwAKCRCv072ToixW
+lm2DAQCB3jhjeWZdFlIpoF4fdvPY4lZM7orFwad/Nv079UpCJAD/eGBt8xbRyIaD
+vAZOOrVVTPymC51ZHKzmoaMhzqsKVAA=
+=R1XH
 -----END PGP SIGNATURE-----

@@ -1,6 +1,6 @@
 Archive: stable
-Component: main
+Component: stable
 Origin: monteur.zoralab.com/releases/deb
-Label: ZORALab's Monteur Deb Package (Main)
+Label: ZORALab's Monteur Deb Package (Stable Branch)
 Architecture: amd64
 Description: software manufacturing automation tool in one single app.

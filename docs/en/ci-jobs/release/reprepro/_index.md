@@ -93,11 +93,11 @@ for reprepro. The content of the file are something as such:
 
 ```yaml {linenos=table,hl_lines=["1-8"],linenostart=1}
 Origin: monteur.zoralab.com/releases/deb
-Label: ZORALab's Monteur Deb Package (Main)
+Label: ZORALab's Monteur Deb Package (Main Branch)
 Codename: main
 Suite: stable
 Architectures: amd64
-Components: main
+Components: stable
 Description: software manufacturing automation tool in one single app.
 SignWith: hello@zoralab.com
 
@@ -106,7 +106,7 @@ Label: ZORALab's Monteur Deb Package (Staging)
 Codename: staging
 Suite: unstable
 Architectures: amd64
-Components: main
+Components: unstable
 Description: software manufacturing automation tool in one single app.
 SignWith: hello@zoralab.com
 
@@ -115,7 +115,7 @@ Label: ZORALab's Monteur Deb Package (Next)
 Codename: next
 Suite: experimental
 Architectures: amd64
-Components: main
+Components: experimental
 Description: software manufacturing automation tool in one single app.
 SignWith: hello@zoralab.com
 ```
@@ -128,12 +128,31 @@ SignWith: hello@zoralab.com
    if you release it to official OS, stick to their official release codenames.
 * `Architectures` - supported architectures separated by space (` `). (E.x:
   `amd64 arm64 i386`). You may update this field over-time as you scale.
-* `Components` - OS-specific definition. Keep it to `main` as specified by its
-   documentation.
+* `Components` - Distribution components. When in doubt, keep it to the same
+  as `Suite`.
 * `Description` - the abstract of the package. Keep it short and max 80
   characters.
 * `SignWith` - your GPG signing key ID.
 
+This will make user add your `sources.list` as:
+
+```
+deb https://{{- .Origin }} {{ .Codename }} {{ .Components }}
+
+# example above:
+deb https://monteur.zoralab.com/releases/deb main stable
+```
+
+And apt search will provide a pattern as:
+
+```
+{{ .AppName }}/{{- .Suite }} {{ .PkgVersion }} {{ .PkgArch }}
+  {{ .Description }}
+
+# Example
+monteur/stable 0.0.1 amd64
+  software manufacturing automation tool in one single app.
+```
 
 
 
