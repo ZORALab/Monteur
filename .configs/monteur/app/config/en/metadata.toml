@@ -2,7 +2,7 @@
 Name = 'Monteur'
 Command = 'monteur'
 ID = 'monteur'
-Version = 'v0.0.1'
+Version = 'v0.0.2'
 Category = 'devel'
 Suite = ''
 Abstract = 'software manufacturing automation tool in one single app.'

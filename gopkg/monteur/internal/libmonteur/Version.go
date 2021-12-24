@@ -17,5 +17,5 @@ package libmonteur
 
 // Monteur software metadata
 const (
-	VERSION = "v0.0.1"
+	VERSION = "v0.0.2"
 )
