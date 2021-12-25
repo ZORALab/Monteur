@@ -28,6 +28,7 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libdeb"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtargz"
 	"gitlab.com/zoralab/monteur/gopkg/oshelper"
 )
 
@@ -219,6 +220,15 @@ func (me *packager) _preparePackage(pkg *libmonteur.TOMLPackage,
 		me.log.Info("From: %s", v)
 		me.log.Info("To  : %s", k)
 
+		_, err = os.Stat(v)
+		if err != nil {
+			return fmt.Errorf("%s: %s",
+				libmonteur.ERROR_PACKAGER_FILE_MISSING,
+				v,
+			)
+		}
+
+		_ = os.MkdirAll(filepath.Dir(k), libmonteur.PERMISSION_DIRECTORY)
 		err = oshelper.CopyPath(v, k)
 		if err != nil {
 			return fmt.Errorf("%s: %s",
@@ -232,6 +242,8 @@ func (me *packager) _preparePackage(pkg *libmonteur.TOMLPackage,
 
 	// run the preparations
 	switch me.metadata.Type {
+	case libmonteur.PACKAGE_TARGZ:
+		err = libtargz.Package(pkg, variables)
 	case libmonteur.PACKAGE_DEB_MANUAL:
 		me.log.Info("Preparing %s packaging...",
 			libmonteur.PACKAGE_DEB_MANUAL,
@@ -319,7 +331,7 @@ func (me *packager) _processPackageVariables(pkg *libmonteur.TOMLPackage,
 		return fmt.Errorf("%s", libmonteur.ERROR_PACKAGER_APP_MISSING)
 	}
 
-	// clean up VAR_PACKAGE (PackageDir) base directory
+	// process VAR_PACKAGE (PackageDir) base directory
 	packagePath, ok = (*variables)[libmonteur.VAR_TMP].(string)
 	if !ok {
 		panic("MONTEUR DEV: why is libmonteur.VAR_TMP missing?")
@@ -327,13 +339,10 @@ func (me *packager) _processPackageVariables(pkg *libmonteur.TOMLPackage,
 	packagePath = filepath.Join(packagePath,
 		strings.ToLower(app.Name)+"-"+pkg.OS[0]+"-"+pkg.Arch[0],
 	)
-
-	_ = os.RemoveAll(packagePath)
-	_ = os.MkdirAll(packagePath, libmonteur.PERMISSION_DIRECTORY)
-
-	// process VAR_PACKAGE (PackageDir)
-	packagePath = filepath.Join(packagePath, "workspace")
 	(*variables)[libmonteur.VAR_PACKAGE] = packagePath
+
+	// clean up VAR_PACKAGE for new output
+	_ = os.RemoveAll(packagePath)
 
 	return nil
 }

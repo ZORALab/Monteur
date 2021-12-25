@@ -88,6 +88,7 @@ const (
 	ERROR_PACKAGER_ARCH_MISSING         = "missing package architecture(s) value"
 	ERROR_PACKAGER_DEB_BAD              = "bad deb data"
 	ERROR_PACKAGER_FMT_BAD              = "bad variable formatting"
+	ERROR_PACKAGER_FILE_MISSING         = "missing file for packaging"
 	ERROR_PACKAGER_FILES_COPY_FAILED    = "failed to copy package's file"
 	ERROR_PACKAGER_FILES_MISSING        = "missing package's Files"
 	ERROR_PACKAGER_OS_MISSING           = "missing package os(es) value"

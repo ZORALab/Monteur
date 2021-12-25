@@ -1,0 +1,84 @@
+[Metadata]
+Name = 'Tar Gunzip'
+Description = """
+Package application into .tar.gz package file.
+"""
+Type = 'targz'
+
+[Variables]
+ChangelogFrom = 'origin/staging'
+ChangelogTo = 'origin/main'
+
+[FMTVariables]
+
+
+
+
+[[Dependencies]]
+Name = 'Git for Changelog Generation'
+Condition = 'all-all'
+Type = 'command'
+Command = 'git'
+
+
+
+
+[Changelog]
+LineBreak = "\n"
+Regex = ''
+
+[[Changelog.CMD]]
+Name = "Fetch All Local Remote Branches To The Latest"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'git fetch --all'
+
+[[Changelog.CMD]]
+Name = "Get Changelog Data from Git Log Between Branches"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = """git --no-pager log \
+"{{- .ChangelogTo -}}..{{- .ChangelogFrom -}}" \
+--pretty="format:%h %s"
+"""
+Save = "ChangelogEntries"
+
+
+
+
+[Packages.001]
+Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+OS = [ 'linux' ]
+Arch = [ 'amd64' ]
+Changelog = '{{- .DataDir -}}/debian/changelog-amd64'
+Distribution = [
+	'stable',
+]
+BuildSource = false
+
+[Packages.001.Files]
+'{{- .PackageDir -}}/targz/monteur' = '{{- .BuildDir -}}/linux-amd64'
+'{{- .PackageDir -}}/targz/License.pdf' = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
+
+[Packages.002]
+Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+OS = [ 'linux' ]
+Arch = [ 'arm64' ]
+Changelog = '{{- .DataDir -}}/debian/changelog-arm64'
+Distribution = [
+	'stable',
+]
+BuildSource = false
+
+[Packages.002.Files]
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/linux-arm64'
+
+
+
+[[CMD]]
+Name = 'Placeholder For Any Post CMD Development'
+Type = 'placeholder'
+Condition = [ 'all-all' ]
+Location = ''
+Source = ''
+Target = ''

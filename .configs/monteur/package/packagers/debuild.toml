@@ -42,6 +42,12 @@ LineBreak = "\n"
 Regex = ''
 
 [[Changelog.CMD]]
+Name = "Fetch All Local Remote Branches To The Latest"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'git fetch --all'
+
+[[Changelog.CMD]]
 Name = "Get Changelog Data from Git Log Between Branches"
 Type = 'command'
 Condition = [ 'all-all' ]
@@ -64,7 +70,7 @@ Distribution = [
 BuildSource = false
 
 [Packages.001.Files]
-'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/linux-amd64'
+'{{- .PackageDir -}}/deb/monteur' = '{{- .BuildDir -}}/linux-amd64'
 
 #[Packages.002]
 #OS = [ 'linux' ]
@@ -76,7 +82,7 @@ BuildSource = false
 #BuildSource = false
 
 #[Packages.002.Files]
-#'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/linux-arm64'
+#'{{- .PackageDir -}}/deb/monteur' = '{{- .BuildDir -}}/linux-arm64'
 
 
 

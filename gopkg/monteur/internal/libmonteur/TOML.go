@@ -124,6 +124,7 @@ type TOMLChecksum struct {
 
 type TOMLPackage struct {
 	Files        map[string]string
+	Name         string
 	Changelog    string
 	OS           []string
 	Arch         []string

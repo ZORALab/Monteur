@@ -18,6 +18,8 @@ package libdeb
 import (
 	"fmt"
 	"net/url"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -28,8 +30,14 @@ import (
 
 func Prepare(pkg *libmonteur.TOMLPackage,
 	variables map[string]interface{}) (d *deb.Data, err error) {
-	app := variables[libmonteur.VAR_APP].(*libmonteur.Software)
+	// process deb-specific variables
 	packagePath := variables[libmonteur.VAR_PACKAGE].(string)
+	packagePath = filepath.Join(packagePath, "deb")
+	variables[libmonteur.VAR_PACKAGE] = packagePath
+	_ = os.MkdirAll(packagePath, libmonteur.PERMISSION_DIRECTORY)
+
+	// get app data as needed across multiple internal functions
+	app := variables[libmonteur.VAR_APP].(*libmonteur.Software)
 
 	d, err = createAppData(app, variables, pkg, packagePath)
 	if err != nil || d == nil {
