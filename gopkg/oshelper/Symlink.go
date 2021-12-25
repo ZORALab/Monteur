@@ -1,9 +1,5 @@
 // Copyright 2021 ZORALab Enterprise (hello@zoralab.com)
 // Copyright 2021 "Holloway" Chew, Kean Ho (hollowaykeanho@gmail.com)
-// Copyright 2021 Sebastiaan van Stijin (github@gone.nl)
-// Copyright 2018 Daniel Nephin (dnephin@gmail.com)
-// Copyright 2017 Christopher Jones (ophj@linux.vnet.ibm.com)
-// Copyright 2016 Stefan J. Wernli (swernli@microsoft.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,9 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build !(linux || freebsd)
-// +build !linux,!freebsd
-
 package oshelper
 
 import (
@@ -27,10 +20,19 @@ import (
 	"time"
 )
 
-func _symlinkTimestamps(fi os.FileInfo) (aTim, cTim, mTim time.Time) {
-	return time.Time{}, time.Time{}, time.Time{} // not supported
+// SymlinkTimestamps obtain the timestamp from the link itself and not the file.
+//
+// It shall return accessed time, changed time, and modified time.
+//
+// Should an error occurs, all timestamps are return as `nil`.
+func SymlinkTimestamps(fi os.FileInfo) (aTime, cTime, mTime time.Time) {
+	return _symlinkTimestamps(fi)
 }
 
-func _symlinkChtimes(dest string, aTim time.Time, mTim time.Time) (err error) {
-	return nil // not supported
+// SymlinkChTimes changes the timestamp on a symlink itself and not destination.
+//
+// It is only supported on FreeBSD and Linux operating systems. Other
+// unsupported OS shall return `nil`.
+func SymlinkChtimes(dest string, aTime time.Time, mTime time.Time) (err error) {
+	return _symlinkChtimes(dest, aTime, mTime)
 }

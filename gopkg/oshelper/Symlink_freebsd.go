@@ -28,34 +28,28 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-// SymlinkTimestamps obtain the timestamp from the link itself and not the file.
-//
-// It shall return accessed time, changed time, and modified time.
-//
-// Should an error occurs, all timestamps are return as `nil`.
-func SymlinkTimestamps(fi os.FileInfo) (aTime, cTime, mTime *syscall.Timespec) {
+func _symlinkTimestamps(fi os.FileInfo) (aTim, cTim, mTim time.Time) {
 	defer func() {
 		if r := recover(); r != nil {
-			aTime = nil
-			cTime = nil
-			mTime = nil
+			aTim = time.Time{}
+			cTim = time.Time{}
+			mTim = time.Time{}
 		}
 	}()
 
 	stat := fi.Sys().(*syscall.Stat_t)
 
-	aTime = &stat.Atim
-	cTime = &stat.Ctim
-	mTime = &stat.Mtim
+	aTim = time.Unix(stat.Atim.Sec, stat.Atim.Nsec)
+	cTim = time.Unix(stat.Ctim.Sec, stat.Ctim.Nsec)
+	mTim = time.Unix(stat.Mtim.Sec, stat.Mtim.Nsec)
 
-	return aTime, cTime, mTime
+	return aTim, cTim, mTim
 }
 
-func SymlinkChtimes(dest string,
-	aTime *syscall.Timespec, mTime *syscall.Timespec) (err error) {
+func _symlinkChtimes(dest string, aTim time.Time, mTim time.Time) (err error) {
 	uts := []unix.Timespec{
-		unix.NsecToTimespec(syscall.TimespecToNsec(*aTime)),
-		unix.NsecToTimespec(syscall.TimespecToNsec(*mTime)),
+		unix.NsecToTimespec(aTim.Unix()),
+		unix.NsecToTimespec(mTim.Unix()),
 	}
 
 	err = unix.UtimesNanoAt(unix.AT_FDCWD,
