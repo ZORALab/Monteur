@@ -4,6 +4,7 @@
 // Copyright 2018 Daniel Nephin (dnephin@gmail.com)
 // Copyright 2017 Christopher Jones (ophj@linux.vnet.ibm.com)
 // Copyright 2016 Stefan J. Wernli (swernli@microsoft.com)
+// Copyright 2015 Dustin H (https://github.com/djherbis)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,9 +17,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-//go:build windows
-// +build windows
 
 package oshelper
 
@@ -35,11 +33,11 @@ const (
 	newLine = "\r\n"
 )
 
-func FileOwners(fi os.FileInfo) (uid int, gid int) {
+func _fileOwners(fi os.FileInfo) (uid int, gid int) {
 	return MAX_UID, MAX_GID
 }
 
-func FileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
+func _fileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 	unixMinTime := time.Unix(0, 0)
 	unixMaxTime := unixMinTime.Add(1<<63 - 1)
 
@@ -80,7 +78,7 @@ func FileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 	return accessed, changed, modified
 }
 
-func FileSetPlatformTime(dest string, mTime time.Time) (err error) {
+func _fileSetPlatformTime(dest string, mTime time.Time) (err error) {
 	var file windows.Handle
 	var path *uint16
 

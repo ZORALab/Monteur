@@ -6,6 +6,7 @@
 // Copyright 2019 Tõnis Tiigi (tonistiigi@gmail.com)
 // Copyright 2018 Maxim Ivanov
 // Copyright 2017 Sargun Dhillon (sargun@sargun.me)
+// Copyright 2015 Dustin H (https://github.com/djherbis)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +20,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build darwin
-// +build darwin
+//go:build freebsd || netbsd || darwin
+// +build freebsd netbsd darwin
 
 package oshelper
 
@@ -34,12 +35,7 @@ const (
 	newLine = "\n"
 )
 
-// FileOwners get the UID and GID from a given FileInfo.
-//
-// Should an error is found, both UID and GID are set to MAX_UID and MAX_GID.
-//
-// For Windows, this function always return MAX_UID and MAX_GID.
-func FileOwners(fi os.FileInfo) (uid int, gid int) {
+func _fileOwners(fi os.FileInfo) (uid int, gid int) {
 	defer func() {
 		if r := recover(); r != nil {
 			uid = MAX_UID
@@ -55,18 +51,7 @@ func FileOwners(fi os.FileInfo) (uid int, gid int) {
 	return uid, gid
 }
 
-// FileTimestamps get the file timestamps from FileInfo.
-//
-// It gets:
-//   1. accessed time
-//   2. changed time
-//   3. modified time.
-//
-// Should any of the timestamp is invalid (outside of UNIX Epoch), the intital
-// UNIX timestamp Epoch is set to 0.
-//
-// Should an error is found, all timestamps are set to UNIX timestamp Epoch 0.
-func FileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
+func _fileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 	unixMinTime := time.Unix(0, 0)
 	unixMaxTime := unixMinTime.Add(1<<63 - 1)
 
@@ -110,10 +95,6 @@ func FileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 	return accessed, changed, modified
 }
 
-// FileSetPlatformTime is to set timestamp for platform file.
-//
-// This function is only supported on Windows operating system. It will return
-// `nil` for unsupported ones.
-func FileSetPlatformTime(dest string, mTime time.Time) (err error) {
+func _fileSetPlatformTime(dest string, mTime time.Time) (err error) {
 	return nil
 }

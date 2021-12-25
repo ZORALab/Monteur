@@ -20,8 +20,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build !(windows || darwin || freebsd || netbsd || js || plan9)
-// +build !windows,!darwin,!freebsd,!netbsd,!js,!plan9
+//go:build !(windows || darwin || freebsd || netbsd || js)
+// +build !windows,!darwin,!freebsd,!netbsd,!js
 
 package oshelper
 
@@ -67,7 +67,7 @@ func _fileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 
 	// supporting 32-bits
 	//nolint:unconvert
-	accessed = time.Unix(int64(stat.Atim.Sec), int64(stat.Atim.Nsec))
+	accessed = time.Unix(int64(stat.Atime), 0)
 	switch {
 	case accessed.Before(unixMinTime):
 		accessed = unixMinTime
@@ -78,7 +78,7 @@ func _fileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 
 	// supporting 32-bits
 	//nolint:unconvert
-	changed = time.Unix(int64(stat.Ctim.Sec), int64(stat.Ctim.Nsec))
+	changed = time.Unix(int64(stat.Mtime), 0)
 	switch {
 	case changed.Before(unixMinTime):
 		changed = unixMinTime
@@ -89,7 +89,7 @@ func _fileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 
 	// supporting 32-bits
 	//nolint:unconvert
-	modified = time.Unix(int64(stat.Mtim.Sec), int64(stat.Mtim.Nsec))
+	modified = time.Unix(int64(stat.Mtime), 0)
 	switch {
 	case modified.Before(unixMinTime):
 		modified = unixMinTime
