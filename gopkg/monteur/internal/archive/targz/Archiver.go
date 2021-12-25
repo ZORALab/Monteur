@@ -24,6 +24,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"gitlab.com/zoralab/monteur/gopkg/oshelper"
 )
 
 const (
@@ -71,6 +73,15 @@ type Archiver struct {
 	//
 	// Default is returning an error (`false`).
 	ReliefExtension bool
+
+	// FollowSymlink decides to resolve symlink and archive package file.
+	//
+	// When set to `true`, Archiver shall resolve the symlink recursively
+	// until the target file is saved.
+	//
+	// Default (`false`) is to save a relative symlink to the `Raw`
+	// directory.
+	FollowSymlink bool
 }
 
 // Sanitize initializes and check all input data are correct before executions.
@@ -78,7 +89,7 @@ type Archiver struct {
 // This function shall returns error if any data is not compliant.
 func (me *Archiver) Sanitize() (err error) {
 	var info os.FileInfo
-	var path, extension string
+	var path string
 
 	// sanitize empty Archive and Raw
 	if me.Archive == "" {
@@ -89,15 +100,15 @@ func (me *Archiver) Sanitize() (err error) {
 		return fmt.Errorf("%s: %s", ERROR_PATH_EMPTY, "Raw")
 	}
 
-	// sanitize Archive - extension
+	// sanitize Archive - absolute path
 	me.Archive, err = filepath.Abs(me.Archive)
 	if err != nil {
 		return fmt.Errorf("%s: %s", ERROR_PATH_ABS_FAILED, me.Archive)
 	}
 
-	extension = filepath.Base(me.Archive)
-	extension = filepath.Ext(extension)
-	if extension != EXTENSION && !me.ReliefExtension {
+	// sanitize Archive - extension
+	if !strings.HasSuffix(me.Archive, EXTENSION) &&
+		!me.ReliefExtension {
 		return fmt.Errorf("%s: %s", ERROR_EXTENSION_MISSING, me.Archive)
 	}
 
@@ -198,8 +209,7 @@ func (me *Archiver) Compress() (err error) {
 }
 
 func (me *Archiver) compress(path string, info os.FileInfo, err error) error {
-	var f *os.File
-	var header *tar.Header
+	var mode os.FileMode
 
 	if err != nil {
 		return fmt.Errorf("%s: (%s) %s",
@@ -209,13 +219,120 @@ func (me *Archiver) compress(path string, info os.FileInfo, err error) error {
 		)
 	}
 
+	mode = info.Mode()
+	switch {
+	case mode.IsRegular():
+		return me.compressRegular(path, info)
+	case mode.IsDir():
+		return me.compressDir(path, info)
+	case mode&os.ModeSymlink != 0:
+		return me.compressSymlink(path, info)
+	default:
+		return fmt.Errorf("%s: %s", ERROR_FILE_UNSUPPORTED, path)
+	}
+}
+
+func (me *Archiver) compressSymlink(path string, info os.FileInfo) (err error) {
+	var header *tar.Header
+	var targetInfo os.FileInfo
+	var target string
+
+	// evaluate target location
+	target, err = filepath.EvalSymlinks(path)
+	if err != nil {
+		return fmt.Errorf("%s: %s", ERROR_SYMLINK_READ_FAILED, path)
+	}
+
+	target, err = filepath.Abs(target)
+	if err != nil {
+		return fmt.Errorf("%s: %s", ERROR_PATH_ABS_FAILED, path)
+	}
+
+	// check symlink relative pathing
+	if !strings.HasPrefix(target, me.Raw) {
+		return fmt.Errorf("%s: %s", ERROR_SYMLINK_OUT_OF_BOUND, path)
+	}
+
+	// check follow decision
+	if me.FollowSymlink {
+		targetInfo, err = os.Stat(target)
+		if err != nil {
+			return fmt.Errorf("%s: %s",
+				ERROR_SYMLINK_UNRESOLVED,
+				path,
+			)
+		}
+
+		// resolve recursively
+		return me.compress(target, targetInfo, nil)
+	}
+
+	// create relative symlink
 	header, err = tar.FileInfoHeader(info, info.Name())
 	if err != nil {
 		return fmt.Errorf("%s: %s", ERROR_FILE_HEADER_READ_FAILED, path)
 	}
 
-	// restore Name to fullpath for preserving directory name
-	header.Name = path
+	// restore Name with relative pathing for preserving directory tree
+	header.Name, err = filepath.Rel(me.Raw, path)
+	if err != nil {
+		return fmt.Errorf("%s: %s", ERROR_PATH_REL_FAILED, path)
+	}
+
+	// perform write
+	err = me.writer.WriteHeader(header)
+	if err != nil {
+		return fmt.Errorf("%s: (%s) %s",
+			ERROR_FILE_HEADER_WRITE_FAILED,
+			path,
+			err,
+		)
+	}
+
+	return nil
+}
+
+func (me *Archiver) compressDir(path string, info os.FileInfo) (err error) {
+	var header *tar.Header
+
+	header, err = tar.FileInfoHeader(info, info.Name())
+	if err != nil {
+		return fmt.Errorf("%s: %s", ERROR_FILE_HEADER_READ_FAILED, path)
+	}
+
+	// restore Name with relative pathing for preserving directory tree
+	header.Name, err = filepath.Rel(me.Raw, path)
+	if err != nil {
+		return fmt.Errorf("%s: %s", ERROR_PATH_REL_FAILED, path)
+	}
+
+	// perform write
+	err = me.writer.WriteHeader(header)
+	if err != nil {
+		return fmt.Errorf("%s: (%s) %s",
+			ERROR_FILE_HEADER_WRITE_FAILED,
+			path,
+			err,
+		)
+	}
+
+	return nil
+}
+
+func (me *Archiver) compressRegular(path string, info os.FileInfo) (err error) {
+	var f *os.File
+	var header *tar.Header
+
+	header, err = tar.FileInfoHeader(info, info.Name())
+	if err != nil {
+		return fmt.Errorf("%s: %s", ERROR_FILE_HEADER_READ_FAILED, path)
+	}
+
+	// restore Name with relative pathing for preserving directory tree
+	header.Name, err = filepath.Rel(me.Raw, path)
+	if err != nil {
+		return fmt.Errorf("%s: %s", ERROR_PATH_REL_FAILED, path)
+	}
 
 	// perform write
 	err = me.writer.WriteHeader(header)
@@ -350,13 +467,32 @@ func (me *Archiver) extract() (err error) {
 			if err != nil {
 				return err
 			}
+		case tar.TypeSymlink:
+			err = me.extractSymlink(path, header, now)
+			if err != nil {
+				return err
+			}
 		}
 	}
 }
 
+func (me *Archiver) extractSymlink(path string,
+	header *tar.Header, now time.Time) (err error) {
+	err = os.Symlink(header.Linkname, path)
+	if err != nil {
+		return fmt.Errorf("%s (%s -> %s): %s",
+			ERROR_SYMLINK_CREATE_FAILED,
+			path,
+			header.Linkname,
+			err,
+		)
+	}
+
+	return me.restoreMetadata(path, header, PERMISSION_FILE, now)
+}
+
 func (me *Archiver) extractDirectory(path string,
 	header *tar.Header, now time.Time) (err error) {
-	// create directory
 	err = os.Mkdir(path, PERMISSION_DIR)
 	if err != nil {
 		return fmt.Errorf("%s: %s", ERROR_ARCHIVE_FILE_HEADER_FAILED,
@@ -433,7 +569,14 @@ func (me *Archiver) restoreMetadata(path string,
 		aTime = now
 	}
 
-	err = os.Chtimes(path, aTime, mTime)
+	switch header.Typeflag {
+	case tar.TypeSymlink:
+		err = oshelper.SymlinkChtimes(path, aTime, mTime)
+	default:
+
+		err = os.Chtimes(path, aTime, mTime)
+	}
+
 	if err != nil {
 		return fmt.Errorf("%s: %s",
 			ERROR_FILE_CHTIMES_FAILED,
