@@ -1,9 +1,11 @@
 // Copyright 2021 ZORALab Enterprise (hello@zoralab.com)
 // Copyright 2021 "Holloway" Chew, Kean Ho (hollowaykeanho@gmail.com)
-// Copyright 2021 Sebastiaan van Stijin (github@gone.nl)
-// Copyright 2018 Daniel Nephin (dnephin@gmail.com)
-// Copyright 2017 Christopher Jones (ophj@linux.vnet.ibm.com)
-// Copyright 2016 Stefan J. Wernli (swernli@microsoft.com)
+// Copyright 2020 Tobias Klauser (tklauser@distanz.ch)
+// Copyright 2019 Kir Kolyshkin (kolyshkin@gmail.com)
+// Copyright 2019 Dominic Yin (hi@ydcool.me)
+// Copyright 2019 Tõnis Tiigi (tonistiigi@gmail.com)
+// Copyright 2018 Maxim Ivanov
+// Copyright 2017 Sargun Dhillon (sargun@sargun.me)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,24 +19,53 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build windows
-// +build windows
+//go:build darwin
+// +build darwin
 
 package oshelper
 
 import (
-	"fmt"
 	"os"
 	"syscall"
 	"time"
-
-	"golang.org/x/sys/windows"
 )
 
+const (
+	newLine = "\n"
+)
+
+// FileOwners get the UID and GID from a given FileInfo.
+//
+// Should an error is found, both UID and GID are set to MAX_UID and MAX_GID.
+//
+// For Windows, this function always return MAX_UID and MAX_GID.
 func FileOwners(fi os.FileInfo) (uid int, gid int) {
-	return MAX_UID, MAX_GID
+	defer func() {
+		if r := recover(); r != nil {
+			uid = MAX_UID
+			gid = MAX_GID
+		}
+	}()
+
+	stat := fi.Sys().(*syscall.Stat_t)
+
+	uid = int(stat.Uid)
+	gid = int(stat.Gid)
+
+	return uid, gid
 }
 
+// FileTimestamps get the file timestamps from FileInfo.
+//
+// It gets:
+//   1. accessed time
+//   2. changed time
+//   3. modified time.
+//
+// Should any of the timestamp is invalid (outside of UNIX Epoch), the intital
+// UNIX timestamp Epoch is set to 0.
+//
+// Should an error is found, all timestamps are set to UNIX timestamp Epoch 0.
 func FileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 	unixMinTime := time.Unix(0, 0)
 	unixMaxTime := unixMinTime.Add(1<<63 - 1)
@@ -47,59 +78,42 @@ func FileTimestamps(fi os.FileInfo) (accessed, changed, modified time.Time) {
 		}
 	}()
 
-	stat := fi.Sys().(*syscall.Win32FileAttributeData)
+	stat := fi.Sys().(*syscall.Stat_t)
 
-	accessed = time.Unix(0, stat.LastAccessTime.Nanoseconds())
+	accessed = time.Unix(stat.Atimespec.Sec, stat.Atimespec.Nsec)
 	switch {
 	case accessed.Before(unixMinTime):
 		accessed = unixMinTime
 	case accessed.After(unixMaxTime):
 		accessed = unixMaxTime
+	default:
 	}
 
-	changed = time.Unix(0, stat.CreationTime.Nanoseconds())
+	changed = time.Unix(stat.Ctimespec.Sec, stat.Ctimespec.Nsec)
 	switch {
 	case changed.Before(unixMinTime):
 		changed = unixMinTime
 	case changed.After(unixMaxTime):
 		changed = unixMaxTime
+	default:
 	}
 
-	modified = time.Unix(0, stat.LastWriteTime.Nanoseconds())
+	modified = time.Unix(stat.Mtimespec.Sec, stat.Mtimespec.Nsec)
 	switch {
 	case modified.Before(unixMinTime):
 		modified = unixMinTime
 	case modified.After(unixMaxTime):
 		modified = unixMaxTime
+	default:
 	}
 
 	return accessed, changed, modified
 }
 
+// FileSetPlatformTime is to set timestamp for platform file.
+//
+// This function is only supported on Windows operating system. It will return
+// `nil` for unsupported ones.
 func FileSetPlatformTime(dest string, mTime time.Time) (err error) {
-	var file windows.Handle
-	var path *uint16
-
-	path, err = windows.UTF16PtrFromString(dest)
-	if err != nil {
-		return fmt.Errorf("%s: %s", "error processing file", err)
-	}
-
-	file, err = windows.CreateFile(path,
-		windows.FILE_WRITE_ATTRIBUTES,
-		windows.FILE_SHARE_WRITE,
-		nil,
-		windows.OPEN_EXISTING,
-		windows.FILE_FLAG_BACKUP_SEMANTICS,
-		0,
-	)
-	if err != nil {
-		return fmt.Errorf("%s: %s", "error creating platform file", err)
-	}
-	defer windows.Close(file)
-
-	timeSpec := windows.NsecToTimespec(mTime.UnixNano())
-	timestamp := windows.NsecToFiletime(windows.TimespecToNsec(timeSpec))
-
-	return windows.SetFileTime(file, &timestamp, nil, nil)
+	return nil
 }

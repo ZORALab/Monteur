@@ -28,7 +28,7 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libdeb"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/oshelper"
+	"gitlab.com/zoralab/monteur/gopkg/oshelper"
 )
 
 type packager struct {

@@ -13,40 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build !windows
-// +build !windows
+//go:build windows
+// +build windows
 
-package oshelper
+package commander
 
 import (
-	"fmt"
-	"os"
-	"syscall"
-
-	"golang.org/x/sys/unix"
+	"gitlab.com/zoralab/monteur/gopkg/oshelper"
 )
 
-func _copyPipe(source string, dest string, fi os.FileInfo) (err error) {
-	defer func() {
-		if r := recover(); r != nil {
-			err = fmt.Errorf("%s: '%v'", ERROR_FILE_STAT, fi)
-		}
-	}()
-
-	stat := fi.Sys().(*syscall.Stat_t)
-
-	// create pipe file
-	err = unix.Mkfifo(dest, stat.Mode)
-	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_PIPE_CREATE, err)
+func _createTerminal() *oshelper.Terminal {
+	return &oshelper.Terminal{
+		Type: oshelper.TERM_DOS,
 	}
-
-	// restore file permission
-	err = os.Chmod(dest, fi.Mode())
-	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_PIPE_PERM, err)
-	}
-
-	// restore timestamp
-	return _restoreTimestamp(dest, fi)
 }

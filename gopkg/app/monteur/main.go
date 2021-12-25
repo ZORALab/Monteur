@@ -24,15 +24,15 @@ import (
 	"fmt"
 	"os"
 
-	"gitlab.com/zoralab/cerigo/os/args"
 	"gitlab.com/zoralab/monteur/gopkg/monteur"
+	"gitlab.com/zoralab/monteur/gopkg/oshelper"
 )
 
 func main() {
 	action := ""
 
 	// setup CLI manager
-	m := args.NewManager()
+	m := oshelper.NewArgParser()
 	m.Name = "Monteur"
 	m.Description = `
 A software manufacturing automation and assembling tools in one app.
@@ -51,7 +51,7 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		`$ monteur publish`,
 	}
 
-	_ = m.Add(&args.Flag{
+	_ = m.Add(&oshelper.Argument{
 		Name:  "Help",
 		Label: []string{"help", "--help", "-h"},
 		Value: &action,
@@ -61,7 +61,7 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		},
 	})
 
-	_ = m.Add(&args.Flag{
+	_ = m.Add(&oshelper.Argument{
 		Name:  "Setup",
 		Label: []string{"setup"},
 		Value: &action,
@@ -71,7 +71,7 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		},
 	})
 
-	_ = m.Add(&args.Flag{
+	_ = m.Add(&oshelper.Argument{
 		Name:  "Test",
 		Label: []string{"test"},
 		Value: &action,
@@ -81,7 +81,7 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		},
 	})
 
-	_ = m.Add(&args.Flag{
+	_ = m.Add(&oshelper.Argument{
 		Name:  "Clean",
 		Label: []string{"clean"},
 		Value: &action,
@@ -91,7 +91,7 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		},
 	})
 
-	_ = m.Add(&args.Flag{
+	_ = m.Add(&oshelper.Argument{
 		Name:  "Release",
 		Label: []string{"release"},
 		Value: &action,
@@ -101,7 +101,7 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		},
 	})
 
-	_ = m.Add(&args.Flag{
+	_ = m.Add(&oshelper.Argument{
 		Name:  "Build",
 		Label: []string{"build"},
 		Value: &action,
@@ -111,7 +111,7 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		},
 	})
 
-	_ = m.Add(&args.Flag{
+	_ = m.Add(&oshelper.Argument{
 		Name:  "Package",
 		Label: []string{"package"},
 		Value: &action,
@@ -121,7 +121,7 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		},
 	})
 
-	_ = m.Add(&args.Flag{
+	_ = m.Add(&oshelper.Argument{
 		Name:  "Publish",
 		Label: []string{"publish"},
 		Value: &action,
@@ -131,7 +131,7 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		},
 	})
 
-	_ = m.Add(&args.Flag{
+	_ = m.Add(&oshelper.Argument{
 		Name:  "Compose",
 		Label: []string{"compose"},
 		Value: &action,

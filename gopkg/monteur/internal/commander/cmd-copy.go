@@ -24,7 +24,7 @@ package commander
 import (
 	"fmt"
 
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/oshelper"
+	"gitlab.com/zoralab/monteur/gopkg/oshelper"
 )
 
 func cmdCopy(action *Action) (out interface{}, err error) {

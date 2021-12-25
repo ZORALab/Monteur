@@ -19,8 +19,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build !windows
-// +build !windows
+//go:build !(windows || darwin)
+// +build !windows,!darwin
 
 package oshelper
 
@@ -28,6 +28,10 @@ import (
 	"os"
 	"syscall"
 	"time"
+)
+
+const (
+	newLine = "\n"
 )
 
 // FileOwners get the UID and GID from a given FileInfo.

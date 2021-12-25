@@ -6,8 +6,6 @@ github.com/pelletier/go-toml/v2/internal/danger
 github.com/pelletier/go-toml/v2/internal/tracker
 # gitlab.com/zoralab/cerigo v0.0.2
 ## explicit; go 1.13
-gitlab.com/zoralab/cerigo/os/args
-gitlab.com/zoralab/cerigo/os/term
 gitlab.com/zoralab/cerigo/strings/strhelper
 gitlab.com/zoralab/cerigo/testing/thelper
 # golang.org/x/sys v0.0.0-20211124211545-fe61309f8881

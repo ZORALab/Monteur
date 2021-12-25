@@ -13,15 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build windows
-// +build windows
+//go:build !windows
+// +build !windows
 
 package commander
 
 import (
-	"gitlab.com/zoralab/cerigo/os/term"
+	"gitlab.com/zoralab/monteur/gopkg/oshelper"
 )
 
-func _createTerminal() *term.Terminal {
-	return term.NewTerminal(term.DOSTerminal)
+func _createTerminal() *oshelper.Terminal {
+	return &oshelper.Terminal{
+		Type: oshelper.TERM_SH,
+	}
 }

@@ -13,44 +13,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package commander
+//go:build !(windows || darwin)
+// +build !windows,!darwin
+
+package oshelper
 
 import (
-	"bytes"
 	"fmt"
+	"os"
+	"syscall"
+
+	"golang.org/x/sys/unix"
 )
 
-type ExecOutput struct {
-	Stdout []byte
-	Stderr []byte
-}
+func _copyPipe(source string, dest string, fi os.FileInfo) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("%s: '%v'", ERROR_FILE_STAT, fi)
+		}
+	}()
 
-func cmdExec(action *Action) (out interface{}, err error) {
-	if action.Source == "" {
-		return nil, fmt.Errorf("source is empty")
-	}
+	stat := fi.Sys().(*syscall.Stat_t)
 
-	// construct all necessary data
-	t := _createTerminal()
-	stdout := &bytes.Buffer{}
-	stderr := &bytes.Buffer{}
-	t.Stdout = stdout
-	t.Stderr = stderr
-	x := &ExecOutput{}
-
-	err = t.Exec(action.Source, 0)
-
-	// process output
-	x.Stdout = stdout.Bytes()
-	x.Stderr = stderr.Bytes()
+	// create pipe file
+	err = unix.Mkfifo(dest, stat.Mode)
 	if err != nil {
-		err = fmt.Errorf("%s: %s", "failed to execute command", err)
+		return fmt.Errorf("%s: %s", ERROR_PIPE_CREATE, err)
 	}
 
-	return x, err
-}
+	// restore file permission
+	err = os.Chmod(dest, fi.Mode())
+	if err != nil {
+		return fmt.Errorf("%s: %s", ERROR_PIPE_PERM, err)
+	}
 
-func cmdExecQuiet(action *Action) (out interface{}, err error) {
-	out, _ = cmdExec(action)
-	return out, nil
+	// restore timestamp
+	return _restoreTimestamp(dest, fi)
 }
