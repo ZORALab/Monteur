@@ -22,10 +22,9 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
-	"gitlab.com/zoralab/monteur/gopkg/oshelper"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/archive"
 )
 
 const (
@@ -88,63 +87,20 @@ type Archiver struct {
 //
 // This function shall returns error if any data is not compliant.
 func (me *Archiver) Sanitize() (err error) {
-	var info os.FileInfo
-	var path string
+	var extension string
 
-	// sanitize empty Archive and Raw
-	if me.Archive == "" {
-		return fmt.Errorf("%s: %s", ERROR_PATH_EMPTY, "Archive")
+	if !me.ReliefExtension {
+		extension = EXTENSION
 	}
 
-	if me.Raw == "" {
-		return fmt.Errorf("%s: %s", ERROR_PATH_EMPTY, "Raw")
-	}
-
-	// sanitize Archive - absolute path
-	me.Archive, err = filepath.Abs(me.Archive)
+	me.Archive, err = archive.SanitizeArchive(me.Archive, extension)
 	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_PATH_ABS_FAILED, me.Archive)
+		return err //nolint:wrapcheck
 	}
 
-	// sanitize Archive - extension
-	if !strings.HasSuffix(me.Archive, EXTENSION) &&
-		!me.ReliefExtension {
-		return fmt.Errorf("%s: %s", ERROR_EXTENSION_MISSING, me.Archive)
-	}
-
-	// sanitize Archive - housing directory
-	path = filepath.Dir(me.Archive)
-	info, err = os.Stat(path)
-	switch {
-	case os.IsNotExist(err) && !me.CreateDirectory:
-		return fmt.Errorf("%s: %s", ERROR_PATH_DIR_MISSING, path)
-	case !info.IsDir():
-		return fmt.Errorf("%s: %s", ERROR_PATH_NOT_DIR, path)
-	}
-
-	// sanitize Archive - pathing
-	info, err = os.Stat(me.Archive)
-	switch {
-	case err == nil && !info.IsDir(), os.IsExist(err), os.IsNotExist(err):
-		// Compress() and Extract() shall check internally
-	case info.IsDir():
-		return fmt.Errorf("%s: %s", ERROR_PATH_IS_DIR, me.Archive)
-	default:
-		return fmt.Errorf("%s: %s", ERROR_PATH_ARCHIVE, err)
-	}
-
-	// sanitize Raw
-	me.Raw, err = filepath.Abs(me.Raw)
+	me.Raw, err = archive.SanitizeRaw(me.Raw)
 	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_PATH_ABS_FAILED, me.Raw)
-	}
-
-	info, err = os.Stat(me.Raw)
-	switch {
-	case os.IsNotExist(err):
-		return fmt.Errorf("%s: %s", ERROR_PATH_EMPTY, me.Raw)
-	case !info.IsDir():
-		return fmt.Errorf("%s: %s", ERROR_PATH_NOT_DIR, me.Raw)
+		return err //nolint:wrapcheck
 	}
 
 	return nil
@@ -162,40 +118,28 @@ func (me *Archiver) Compress() (err error) {
 		return err
 	}
 
-	// create base directory if requested
-	if me.CreateDirectory {
-		err = os.MkdirAll(filepath.Dir(me.Archive), PERMISSION_DIR)
-		if err != nil {
-			return fmt.Errorf("%s: %s",
-				ERROR_DEST_CREATE_FAILED,
-				me.Archive,
-			)
-		}
+	// check for overwrite
+	err = archive.Overwrite(me.Archive, me.Overwrite)
+	if err != nil {
+		return err //nolint:wrapcheck
 	}
 
-	// check for overwrite
-	_, err = os.Stat(me.Archive)
-	if err == nil { // file exists
-		if me.Overwrite {
-			return fmt.Errorf("%s: %s",
-				ERROR_DEST_EXISTS,
-				me.Archive,
-			)
-		}
-
-		err = os.RemoveAll(me.Archive)
-		if err != nil {
-			return fmt.Errorf("%s: %s",
-				ERROR_DEST_OVERWRITE_FAILED,
-				me.Archive,
-			)
-		}
+	// create base directory when requested
+	err = archive.MkdirAll(filepath.Dir(me.Archive),
+		archive.PERMISSION_DIR,
+		true,
+	)
+	if err != nil {
+		return err //nolint:wrapcheck
 	}
 
 	// begin archiving
 	f, err = os.Create(me.Archive)
 	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_DEST_CREATE_FAILED, me.Archive)
+		return fmt.Errorf("%s: %s",
+			archive.ERROR_ARCHIVE_CREATE,
+			me.Archive,
+		)
 	}
 	defer f.Close()
 
@@ -213,7 +157,7 @@ func (me *Archiver) compress(path string, info os.FileInfo, err error) error {
 
 	if err != nil {
 		return fmt.Errorf("%s: (%s) %s",
-			ERROR_FILE_READ_FAILED,
+			archive.ERROR_FILE_READ,
 			path,
 			err,
 		)
@@ -228,7 +172,10 @@ func (me *Archiver) compress(path string, info os.FileInfo, err error) error {
 	case mode&os.ModeSymlink != 0:
 		return me.compressSymlink(path, info)
 	default:
-		return fmt.Errorf("%s: %s", ERROR_FILE_UNSUPPORTED, path)
+		return fmt.Errorf("%s: %s",
+			archive.ERROR_FILE_UNSUPPORTED,
+			path,
+		)
 	}
 }
 
@@ -237,53 +184,38 @@ func (me *Archiver) compressSymlink(path string, info os.FileInfo) (err error) {
 	var targetInfo os.FileInfo
 	var target string
 
-	// evaluate target location
-	target, err = filepath.EvalSymlinks(path)
+	// ensure symlink is only targeting within data directory
+	target, targetInfo, err = archive.EvalSymlink(me.Raw, path)
 	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_SYMLINK_READ_FAILED, path)
+		return err //nolint:wrapcheck
 	}
 
-	target, err = filepath.Abs(target)
-	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_PATH_ABS_FAILED, path)
-	}
-
-	// check symlink relative pathing
-	if !strings.HasPrefix(target, me.Raw) {
-		return fmt.Errorf("%s: %s", ERROR_SYMLINK_OUT_OF_BOUND, path)
-	}
-
-	// check follow decision
+	// check follow decision and resolve recursively if set
 	if me.FollowSymlink {
-		targetInfo, err = os.Stat(target)
-		if err != nil {
-			return fmt.Errorf("%s: %s",
-				ERROR_SYMLINK_UNRESOLVED,
-				path,
-			)
-		}
-
-		// resolve recursively
 		return me.compress(target, targetInfo, nil)
 	}
 
-	// create relative symlink
+	// create header from info
 	header, err = tar.FileInfoHeader(info, info.Name())
 	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_FILE_HEADER_READ_FAILED, path)
+		return fmt.Errorf("%s (%s): %s",
+			archive.ERROR_HEADER_READ,
+			path,
+			err,
+		)
 	}
 
-	// restore Name with relative pathing for preserving directory tree
-	header.Name, err = filepath.Rel(me.Raw, path)
+	// configure pathing
+	header.Name, err = archive.RelPath(me.Raw, path)
 	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_PATH_REL_FAILED, path)
+		return err //nolint:wrapcheck
 	}
 
-	// perform write
+	// write symlink
 	err = me.writer.WriteHeader(header)
 	if err != nil {
-		return fmt.Errorf("%s: (%s) %s",
-			ERROR_FILE_HEADER_WRITE_FAILED,
+		return fmt.Errorf("%s (%s): %s",
+			archive.ERROR_HEADER_WRITE,
 			path,
 			err,
 		)
@@ -295,22 +227,27 @@ func (me *Archiver) compressSymlink(path string, info os.FileInfo) (err error) {
 func (me *Archiver) compressDir(path string, info os.FileInfo) (err error) {
 	var header *tar.Header
 
+	// create header from info
 	header, err = tar.FileInfoHeader(info, info.Name())
 	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_FILE_HEADER_READ_FAILED, path)
+		return fmt.Errorf("%s (%s): %s",
+			archive.ERROR_HEADER_READ,
+			path,
+			err,
+		)
 	}
 
-	// restore Name with relative pathing for preserving directory tree
-	header.Name, err = filepath.Rel(me.Raw, path)
+	// configure pathing
+	header.Name, err = archive.RelPath(me.Raw, path)
 	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_PATH_REL_FAILED, path)
+		return err //nolint:wrapcheck
 	}
 
-	// perform write
+	// write to archive
 	err = me.writer.WriteHeader(header)
 	if err != nil {
-		return fmt.Errorf("%s: (%s) %s",
-			ERROR_FILE_HEADER_WRITE_FAILED,
+		return fmt.Errorf("%s (%s): %s",
+			archive.ERROR_HEADER_WRITE,
 			path,
 			err,
 		)
@@ -323,43 +260,48 @@ func (me *Archiver) compressRegular(path string, info os.FileInfo) (err error) {
 	var f *os.File
 	var header *tar.Header
 
+	// create header from info
 	header, err = tar.FileInfoHeader(info, info.Name())
 	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_FILE_HEADER_READ_FAILED, path)
-	}
-
-	// restore Name with relative pathing for preserving directory tree
-	header.Name, err = filepath.Rel(me.Raw, path)
-	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_PATH_REL_FAILED, path)
-	}
-
-	// perform write
-	err = me.writer.WriteHeader(header)
-	if err != nil {
-		return fmt.Errorf("%s: (%s) %s",
-			ERROR_FILE_HEADER_WRITE_FAILED,
+		return fmt.Errorf("%s (%s): %s",
+			archive.ERROR_HEADER_READ,
 			path,
 			err,
 		)
 	}
 
+	// configure pathing
+	header.Name, err = archive.RelPath(me.Raw, path)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
 	// open file to read
 	f, err = os.Open(path)
 	if err != nil {
-		return fmt.Errorf("%s: (%s) %s",
-			ERROR_FILE_READ_FAILED,
+		return fmt.Errorf("%s (%s): %s",
+			archive.ERROR_FILE_WRITE,
 			path,
 			err,
 		)
 	}
 	defer f.Close()
 
+	// create writer from header
+	err = me.writer.WriteHeader(header)
+	if err != nil {
+		return fmt.Errorf("%s (%s): %s",
+			archive.ERROR_HEADER_WRITE,
+			path,
+			err,
+		)
+	}
+
 	// copy file data
 	_, err = io.Copy(me.writer, f)
 	if err != nil {
-		return fmt.Errorf("%s: (%s) %s",
-			ERROR_FILE_WRITE_FAILED,
+		return fmt.Errorf("%s (%s): %s",
+			archive.ERROR_FILE_WRITE,
 			path,
 			err,
 		)
@@ -381,37 +323,19 @@ func (me *Archiver) Extract() (err error) {
 	}
 
 	// create directory if requested
-	if me.CreateDirectory {
-		err = os.MkdirAll(filepath.Dir(me.Raw), PERMISSION_DIR)
-		if err != nil {
-			return fmt.Errorf("%s: %s",
-				ERROR_DEST_CREATE_FAILED,
-				me.Raw,
-			)
-		}
-	}
-
-	// overwrite Raw if requested
-	_, err = os.Stat(me.Raw)
-	if err == nil {
-		if me.Overwrite {
-			return fmt.Errorf("%s: %s", ERROR_DEST_EXISTS, me.Raw)
-		}
-
-		err = os.RemoveAll(me.Raw)
-		if err != nil {
-			return fmt.Errorf("%s: %s",
-				ERROR_DEST_OVERWRITE_FAILED,
-				me.Raw,
-			)
-		}
+	err = archive.MkdirAll(filepath.Dir(me.Raw),
+		archive.PERMISSION_DIR,
+		me.CreateDirectory,
+	)
+	if err != nil {
+		return err //nolint:wrapcheck
 	}
 
 	// open Archive for extractions
 	f, err = os.Open(me.Archive)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
-			ERROR_DEST_CREATE_FAILED,
+			archive.ERROR_ARCHIVE_READ,
 			me.Archive,
 		)
 	}
@@ -419,7 +343,10 @@ func (me *Archiver) Extract() (err error) {
 
 	gz, err = gzip.NewReader(f)
 	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_ARCHIVE_READ_FAILED, err)
+		return fmt.Errorf("%s: %s",
+			archive.ERROR_ARCHIVE_READ,
+			err,
+		)
 	}
 	defer gz.Close()
 
@@ -430,7 +357,6 @@ func (me *Archiver) Extract() (err error) {
 
 func (me *Archiver) extract() (err error) {
 	var path string
-	var ok bool
 	var header *tar.Header
 
 	now := time.Now()
@@ -443,122 +369,63 @@ func (me *Archiver) extract() (err error) {
 		case nil:
 		default:
 			return fmt.Errorf("%s: %s",
-				ERROR_ARCHIVE_FILE_HEADER_FAILED,
+				archive.ERROR_HEADER_READ,
 				err,
-			)
-		}
-
-		path, ok = me.sanitizeExtractedPath(me.Raw, header.Name)
-		if !ok {
-			return fmt.Errorf("%s: %s",
-				ERROR_ARCHIVE_TAINTED_HEADER_PATH,
-				header.Name,
 			)
 		}
 
 		switch header.Typeflag {
 		case tar.TypeDir:
 			err = me.extractDirectory(path, header, now)
-			if err != nil {
-				return err
-			}
 		case tar.TypeReg:
 			err = me.extractRegular(path, header, now)
-			if err != nil {
-				return err
-			}
 		case tar.TypeSymlink:
 			err = me.extractSymlink(path, header, now)
-			if err != nil {
-				return err
-			}
+		default:
+			err = fmt.Errorf("%s (%s): %s",
+				archive.ERROR_FILE_UNSUPPORTED,
+				path,
+				header.Name,
+			)
+		}
+
+		if err != nil {
+			return err
 		}
 	}
 }
 
 func (me *Archiver) extractSymlink(path string,
 	header *tar.Header, now time.Time) (err error) {
-	err = os.Symlink(header.Linkname, path)
-	if err != nil {
-		return fmt.Errorf("%s (%s -> %s): %s",
-			ERROR_SYMLINK_CREATE_FAILED,
-			path,
-			header.Linkname,
-			err,
-		)
-	}
-
-	return me.restoreMetadata(path, header, PERMISSION_FILE, now)
-}
-
-func (me *Archiver) extractDirectory(path string,
-	header *tar.Header, now time.Time) (err error) {
-	err = os.Mkdir(path, PERMISSION_DIR)
-	if err != nil {
-		return fmt.Errorf("%s: %s", ERROR_ARCHIVE_FILE_HEADER_FAILED,
-			err,
-		)
-	}
-
-	return me.restoreMetadata(path, header, PERMISSION_DIR, now)
-}
-
-func (me *Archiver) extractRegular(path string,
-	header *tar.Header, now time.Time) (err error) {
-	var f *os.File
-
-	err = os.MkdirAll(filepath.Dir(path), PERMISSION_DIR)
-	if err != nil {
-		return fmt.Errorf("%s (%s): %s",
-			ERROR_DEST_CREATE_FAILED,
-			path,
-			err,
-		)
-	}
-
-	f, err = os.Create(path)
-	if err != nil {
-		return fmt.Errorf("%s (%s): %s",
-			ERROR_DEST_CREATE_FAILED,
-			path,
-			err,
-		)
-	}
-
-	_, err = io.Copy(f, me.reader)
-	_ = f.Sync()
-	f.Close()
-	if err != nil {
-		return fmt.Errorf("%s (%s): %s",
-			ERROR_FILE_WRITE_FAILED,
-			path,
-			err,
-		)
-	}
-
-	return me.restoreMetadata(path, header, PERMISSION_FILE, now)
-}
-
-func (me *Archiver) restoreMetadata(path string,
-	header *tar.Header, backupMode os.FileMode, now time.Time) (err error) {
+	var mode os.FileMode
 	var aTime, mTime time.Time
+	var target string
 
-	// restore chmod
-	mode := os.FileMode(header.Mode)
-	if mode < 0000 || mode > 0777 {
-		mode = backupMode
-	}
-
-	err = os.Chmod(path, mode)
+	// create housing directory
+	err = archive.MkdirAll(filepath.Dir(path), archive.PERMISSION_DIR, true)
 	if err != nil {
-		return fmt.Errorf("%s (%s): %s",
-			ERROR_FILE_CHMOD_FAILED,
-			path,
-			err,
-		)
+		return err //nolint:wrapcheck
 	}
 
-	// restore timestamp
+	// overwrite Raw if requested
+	err = archive.Overwrite(path, me.Overwrite)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// check target path is valid
+	target, err = archive.SanitizeCompressionPath(me.Raw, header.Linkname)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// create symlink
+	err = archive.CreateSymlink(target, path)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// restore metadata
 	mTime = header.ModTime
 	if mTime.IsZero() {
 		mTime = now
@@ -569,30 +436,116 @@ func (me *Archiver) restoreMetadata(path string,
 		aTime = now
 	}
 
-	switch header.Typeflag {
-	case tar.TypeSymlink:
-		err = oshelper.SymlinkChtimes(path, aTime, mTime)
-	default:
-
-		err = os.Chtimes(path, aTime, mTime)
+	mode = os.FileMode(header.Mode)
+	if mode < 0000 || mode > 0777 {
+		mode = archive.PERMISSION_FILE
 	}
 
+	return archive.RestoreMetadata(path, //nolint:wrapcheck
+		aTime,
+		mTime,
+		mode,
+		true,
+	)
+}
+
+func (me *Archiver) extractDirectory(path string,
+	header *tar.Header, now time.Time) (err error) {
+	var mode os.FileMode
+	var aTime, mTime time.Time
+
+	// overwrite Raw if requested
+	err = archive.Overwrite(path, me.Overwrite)
 	if err != nil {
-		return fmt.Errorf("%s: %s",
-			ERROR_FILE_CHTIMES_FAILED,
+		return err //nolint:wrapcheck
+	}
+
+	// create target directory
+	err = archive.MkdirAll(path, archive.PERMISSION_DIR, true)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// restore metadata
+	mTime = header.ModTime
+	if mTime.IsZero() {
+		mTime = now
+	}
+
+	aTime = header.AccessTime
+	if aTime.IsZero() {
+		aTime = now
+	}
+
+	mode = os.FileMode(header.Mode)
+	if mode < 0000 || mode > 0777 {
+		mode = archive.PERMISSION_DIR
+	}
+
+	return archive.RestoreMetadata(path, //nolint:wrapcheck
+		aTime,
+		mTime,
+		mode,
+		true,
+	)
+}
+
+func (me *Archiver) extractRegular(path string,
+	header *tar.Header, now time.Time) (err error) {
+	var mode os.FileMode
+	var aTime, mTime time.Time
+	var f *os.File
+
+	// create housing directory
+	err = archive.MkdirAll(filepath.Dir(path), archive.PERMISSION_DIR, true)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// overwrite Raw if requested
+	err = archive.Overwrite(path, me.Overwrite)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// create destination for write
+	f, err = os.Create(path)
+	if err != nil {
+		return fmt.Errorf("%s (%s): %s",
+			archive.ERROR_FILE_WRITE,
+			path,
 			err,
 		)
 	}
 
-	return nil
-}
-
-func (me *Archiver) sanitizeExtractedPath(root, f string) (v string, ok bool) {
-	// G305: Zip Slip Vulnerability
-	v = filepath.Join(root, f)
-	if strings.HasPrefix(v, filepath.Clean(root)) {
-		return v, true
+	// perform file extraction
+	err = archive.ExtractCopy(f, me.reader, archive.COPY_SIZE, path)
+	_ = f.Sync()
+	f.Close()
+	if err != nil {
+		return err //nolint:wrapcheck
 	}
 
-	return "", false
+	// restore metadata
+	mTime = header.ModTime
+	if mTime.IsZero() {
+		mTime = now
+	}
+
+	aTime = header.AccessTime
+	if aTime.IsZero() {
+		aTime = now
+	}
+
+	mode = os.FileMode(header.Mode)
+	if mode < 0000 || mode > 0777 {
+		mode = archive.PERMISSION_FILE
+	}
+
+	return archive.RestoreMetadata(path, //nolint:wrapcheck
+		aTime,
+		mTime,
+		mode,
+		true,
+	)
 }
