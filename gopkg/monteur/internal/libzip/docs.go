@@ -13,12 +13,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package libmonteur
-
-// Package type
-const (
-	PACKAGE_DEB_MANUAL = "deb-manual"
-	PACKAGE_MANUAL     = "manual"
-	PACKAGE_TARGZ      = "targz"
-	PACKAGE_ZIP        = "zip"
-)
+package libzip

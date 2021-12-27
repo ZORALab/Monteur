@@ -63,6 +63,10 @@ func sanitizeDeps(in []*libmonteur.TOMLDependency,
 
 	// scan conditions for building commands list
 	for _, dep := range in {
+		if dep == nil {
+			continue
+		}
+
 		if !libmonteur.IsComputeSystemSupported(system,
 			[]string{dep.Condition}) {
 			continue

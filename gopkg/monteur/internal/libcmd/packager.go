@@ -29,6 +29,7 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtargz"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libzip"
 	"gitlab.com/zoralab/monteur/gopkg/oshelper"
 )
 
@@ -244,6 +245,8 @@ func (me *packager) _preparePackage(pkg *libmonteur.TOMLPackage,
 	switch me.metadata.Type {
 	case libmonteur.PACKAGE_TARGZ:
 		err = libtargz.Package(pkg, variables)
+	case libmonteur.PACKAGE_ZIP:
+		err = libzip.Package(pkg, variables)
 	case libmonteur.PACKAGE_DEB_MANUAL:
 		me.log.Info("Preparing %s packaging...",
 			libmonteur.PACKAGE_DEB_MANUAL,

@@ -13,14 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package libtargz
+package libzip
 
 import (
 	"fmt"
 	"os"
 	"path/filepath"
 
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/archive/targz"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/archive/zip"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 )
 
@@ -30,7 +30,7 @@ func Package(pkg *libmonteur.TOMLPackage,
 
 	// process targz-specific variables
 	packagePath := variables[libmonteur.VAR_PACKAGE].(string)
-	packagePath = filepath.Join(packagePath, libmonteur.PACKAGE_TARGZ)
+	packagePath = filepath.Join(packagePath, libmonteur.PACKAGE_ZIP)
 	variables[libmonteur.VAR_PACKAGE] = packagePath
 	_ = os.MkdirAll(packagePath, libmonteur.PERMISSION_DIRECTORY)
 
@@ -45,10 +45,10 @@ func Package(pkg *libmonteur.TOMLPackage,
 
 	packagePath = variables[libmonteur.VAR_PACKAGE].(string)
 	archivePath = filepath.Join(filepath.Dir(packagePath),
-		pkg.Name+targz.EXTENSION,
+		pkg.Name+zip.EXTENSION,
 	)
 
-	archiver := &targz.Archiver{
+	archiver := &zip.Archiver{
 		Archive:         archivePath,
 		Raw:             packagePath,
 		CreateDirectory: true,
@@ -58,7 +58,7 @@ func Package(pkg *libmonteur.TOMLPackage,
 	err = archiver.Compress()
 	if err != nil {
 		err = fmt.Errorf("%s (%s): %s",
-			"error packaging tar.gz package",
+			"error packaging zip package",
 			archivePath,
 			err,
 		)

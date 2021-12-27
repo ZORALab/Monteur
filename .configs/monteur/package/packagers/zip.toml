@@ -1,0 +1,87 @@
+[Metadata]
+Name = 'Zip'
+Description = """
+Package application into .zip package file.
+"""
+Type = 'zip'
+
+
+
+
+[Variables]
+ChangelogFrom = 'origin/staging'
+ChangelogTo = 'origin/main'
+
+[FMTVariables]
+
+
+
+
+[[Dependencies]]
+Name = 'Git for Changelog Generation'
+Condition = 'all-all'
+Type = 'command'
+Command = 'git'
+
+
+
+
+[Changelog]
+LineBreak = "\n"
+Regex = ''
+
+[[Changelog.CMD]]
+Name = "Fetch All Local Remote Branches To The Latest"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'git fetch --all'
+
+[[Changelog.CMD]]
+Name = "Get Changelog Data from Git Log Between Branches"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = """git --no-pager log \
+"{{- .ChangelogTo -}}..{{- .ChangelogFrom -}}" \
+--pretty="format:%h %s"
+"""
+Save = "ChangelogEntries"
+
+
+
+
+[Packages.001]
+Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+OS = [ 'windows' ]
+Arch = [ 'amd64' ]
+Distribution = [
+	'stable',
+]
+BuildSource = false
+
+[Packages.001.Files]
+'{{- .PackageDir -}}/zip/monteur' = '{{- .BuildDir -}}/windows-amd64.exe'
+'{{- .PackageDir -}}/zip/License.pdf' = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
+
+[Packages.002]
+Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+OS = [ 'windows' ]
+Arch = [ 'arm64' ]
+Distribution = [
+	'stable',
+]
+BuildSource = false
+
+[Packages.002.Files]
+'{{- .PackageDir -}}/zip/monteur' = '{{- .BuildDir -}}/windows-arm64.exe'
+'{{- .PackageDir -}}/zip/License.pdf' = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
+
+
+
+
+[[CMD]]
+Name = 'Placeholder For Any Post CMD Development'
+Type = 'placeholder'
+Condition = [ 'all-all' ]
+Location = ''
+Source = ''
+Target = ''
