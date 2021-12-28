@@ -95,6 +95,42 @@ The arrangement are the latest at the top or first.
 
 
 
+### Version 1.2.0
+Version 1.2.0 `go` Setup API is available for download here:
+{{< link "/ci-jobs/setup/go/go-1p2p0.toml" "this" "" "" "button"
+	"" "download" >}}
+go-1p2p0.toml
+{{< /link >}}
+
+| Min Requirements     | Values                           |
+|:---------------------|---------------------------------:|
+| Monteur Version      | `v0.0.2`                         |
+| Supported Platforms  | native to Monteur                |
+
+
+#### Installation Instructions
+1. You should download and place the recipe into your `<config>/setup/programs/`
+   directory with the name `go.toml`.
+2. That's all. Unless Go releases a new version, you will need to update:
+   1. `Variables.Version` - the new version number.
+   2. `Variables.BaseURL` - the base URL changes if Go development team decided
+      to change again.
+   2. `Sources.XXX.Checksum.Value` - update **each** checksum values to match
+      their respective package checksum values.
+
+For detailed information about each fields, visit:
+[Setup Specification Data Structure]({{< link
+"/ci-jobs/setup/#data-structure" "this" "url-only" />}}) for more info.
+
+
+#### Changes
+1. **Non-Backward Compatible** - Replace `[[Setup]]` into `[[CMD]]`.
+2. **Non-Backward Compatible** - Changed to use new Monteur setup alogrithms.
+3. *Backward Compatible* - supported continuous download between cancellations.
+4. *Backward Compatible* - delete target only when needed (right before copy).
+
+
+
 ### Version 1.1.0
 Version 1.1.0 `go` Setup API is available for download here:
 {{< link "/ci-jobs/setup/go/go-1p1p0.toml" "this" "" "" "button"

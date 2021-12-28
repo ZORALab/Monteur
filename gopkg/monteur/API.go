@@ -31,8 +31,12 @@ import (
 // configuration files inside a repository's ./.configs/monteur/setup/
 // directory.
 func Setup() (statusCode int) {
-	s := &setup{}
-	return s.Run()
+	api := &apiCommand{
+		Job:      libmonteur.JOB_SETUP,
+		ErrorTag: libmonteur.ERROR_SETUP,
+	}
+
+	return api.Run()
 }
 
 // Test is the function to execute the autonomous test job for the repository.
