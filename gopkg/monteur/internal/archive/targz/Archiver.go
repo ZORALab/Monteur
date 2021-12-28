@@ -496,7 +496,7 @@ func (me *Archiver) extractDirectory(path string,
 		aTime,
 		mTime,
 		mode,
-		true,
+		false,
 	)
 }
 
@@ -556,6 +556,6 @@ func (me *Archiver) extractRegular(path string,
 		aTime,
 		mTime,
 		mode,
-		true,
+		false,
 	)
 }
