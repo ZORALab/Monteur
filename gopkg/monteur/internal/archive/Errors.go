@@ -46,8 +46,7 @@ const (
 
 	ERROR_MKDIR_FAILED = "failed to make directory pathing"
 
-	ERROR_OVERWRITE_FAILED     = "error while overwriting"
-	ERROR_OVERWRITE_PATH_EMPTY = "given overwrite pathing is empty"
+	ERROR_OVERWRITE_FAILED = "error while overwriting"
 
 	ERROR_PATH_BASE_EMPTY   = "base path is empty"
 	ERROR_PATH_EMPTY        = "path is empty"

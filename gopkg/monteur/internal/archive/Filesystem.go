@@ -157,7 +157,7 @@ func RelPath(base string, path string) (out string, err error) {
 func Overwrite(path string, decision bool) (err error) {
 	// sanitize input
 	if path == "" {
-		return fmt.Errorf(ERROR_OVERWRITE_PATH_EMPTY)
+		return nil
 	}
 
 	// check target existence

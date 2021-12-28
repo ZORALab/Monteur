@@ -118,6 +118,11 @@ func (me *Archiver) Compress() (err error) {
 		return err
 	}
 
+	_, err = os.Stat(me.Raw)
+	if err != nil && os.IsNotExist(err) {
+		return fmt.Errorf(archive.ERROR_RAW_MISSING)
+	}
+
 	// check for overwrite
 	err = archive.Overwrite(me.Archive, me.Overwrite)
 	if err != nil {
@@ -372,6 +377,11 @@ func (me *Archiver) extract() (err error) {
 				archive.ERROR_HEADER_READ,
 				err,
 			)
+		}
+
+		path, err = archive.SanitizeCompressionPath(me.Raw, header.Name)
+		if err != nil {
+			return err //nolint:wrapcheck
 		}
 
 		switch header.Typeflag {

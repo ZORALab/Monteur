@@ -125,6 +125,11 @@ func (me *Archiver) Compress() (err error) {
 		return err
 	}
 
+	_, err = os.Stat(me.Raw)
+	if err != nil && os.IsNotExist(err) {
+		return fmt.Errorf(archive.ERROR_RAW_MISSING)
+	}
+
 	// check for overwrite
 	err = archive.Overwrite(me.Archive, me.Overwrite)
 	if err != nil {

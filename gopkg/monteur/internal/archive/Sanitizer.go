@@ -95,7 +95,7 @@ func SanitizeRaw(path string) (out string, err error) {
 		return "", fmt.Errorf("%s: %s", ERROR_RAW_ABS_FAILED, path)
 	}
 
-	// sanitize archive file
+	// sanitize raw directory
 	info, err = os.Stat(out)
 	switch {
 	case err == nil:
@@ -105,7 +105,7 @@ func SanitizeRaw(path string) (out string, err error) {
 
 		return "", fmt.Errorf("%s: %s", ERROR_RAW_NOT_DIR, out)
 	case os.IsNotExist(err):
-		return "", fmt.Errorf("%s: %s", ERROR_RAW_MISSING, out)
+		return out, nil // Compress() and Extract() will handle
 	default:
 		return "", fmt.Errorf("%s: %s", ERROR_RAW, err)
 	}
