@@ -26,6 +26,8 @@ const (
 	ERROR_ARCHIVE_NOT_DIR     = "archive pathing is not a directory"
 	ERROR_ARCHIVE_READ        = "error reading archive file"
 
+	ERROR_COMPRESSION_INVALID = "invalid compression level"
+
 	ERROR_DIR         = "error with directory"
 	ERROR_DIR_INVALID = "path is not a directory"
 

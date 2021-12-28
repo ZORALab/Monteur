@@ -31,8 +31,8 @@ import (
 type CompressionID uint16
 
 const (
-	COMPRESS_NONE    uint16 = 0
-	COMPRESS_DEFLATE uint16 = 8
+	COMPRESSION_NONE    CompressionID = 0
+	COMPRESSION_DEFLATE CompressionID = 8
 )
 
 const (

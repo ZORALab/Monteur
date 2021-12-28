@@ -53,6 +53,7 @@ func Package(pkg *libmonteur.TOMLPackage,
 		Raw:             packagePath,
 		CreateDirectory: true,
 		Overwrite:       true,
+		Compression:     zip.COMPRESSION_DEFLATE,
 	}
 
 	err = archiver.Compress()

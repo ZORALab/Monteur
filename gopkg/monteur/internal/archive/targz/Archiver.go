@@ -34,6 +34,14 @@ const (
 	PERMISSION_DIR  = 0755
 )
 
+const (
+	COMPRESSION_NONE             int = gzip.NoCompression
+	COMPRESSION_BEST_SPEED       int = gzip.BestSpeed
+	COMPRESSION_BEST_COMPRESSION int = gzip.BestCompression
+	COMPRESSION_DEFAULT          int = gzip.DefaultCompression
+	COMPRESSION_HUFFMAN_ONLY     int = gzip.HuffmanOnly
+)
+
 type Archiver struct {
 	reader *tar.Reader
 	writer *tar.Writer
@@ -50,9 +58,19 @@ type Archiver struct {
 	// compression or an empty directory for decompression.
 	Raw string
 
+	// Compression is the level of compression for gunzip (`.gz`).
+	//
+	// It is only used in `Compress()`.
+	//
+	// The value can be 1 (Best Speed) upto 9 (Best Compression).
+	// Compression constants are made available for references.
+	//
+	// Default is COMPRESSION_NONE (`0`).
+	Compression int
+
 	// CleanSlate wipes the entire Raw directory before extraction.
 	//
-	// It is only used in **Extract**.
+	// It is only used in `Extract()`.
 	//
 	// Setting this to `true` ensures a clean extraction without getting
 	// contaimnated with existing artifacts.
@@ -134,6 +152,14 @@ func (me *Archiver) Compress() (err error) {
 		return fmt.Errorf(archive.ERROR_RAW_MISSING)
 	}
 
+	if me.Compression < COMPRESSION_HUFFMAN_ONLY ||
+		me.Compression > COMPRESSION_BEST_COMPRESSION {
+		return fmt.Errorf("%s: '%d'",
+			archive.ERROR_COMPRESSION_INVALID,
+			me.Compression,
+		)
+	}
+
 	// check for overwrite
 	err = archive.Overwrite(me.Archive, me.Overwrite)
 	if err != nil {
@@ -159,8 +185,15 @@ func (me *Archiver) Compress() (err error) {
 	}
 	defer f.Close()
 
-	gz = gzip.NewWriter(f)
+	gz, err = gzip.NewWriterLevel(f, me.Compression)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			archive.ERROR_ARCHIVE_CREATE,
+			err,
+		)
+	}
 	defer gz.Close()
+
 	me.writer = tar.NewWriter(gz)
 	defer me.writer.Close()
 

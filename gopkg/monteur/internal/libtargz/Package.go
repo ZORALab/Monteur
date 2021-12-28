@@ -53,6 +53,7 @@ func Package(pkg *libmonteur.TOMLPackage,
 		Raw:             packagePath,
 		CreateDirectory: true,
 		Overwrite:       true,
+		Compression:     targz.COMPRESSION_BEST_COMPRESSION,
 	}
 
 	err = archiver.Compress()
