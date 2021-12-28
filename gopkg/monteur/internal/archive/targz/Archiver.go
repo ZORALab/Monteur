@@ -17,6 +17,7 @@ package targz
 
 import (
 	"archive/tar"
+	"bufio"
 	"compress/gzip"
 	"fmt"
 	"io"
@@ -48,6 +49,16 @@ type Archiver struct {
 	// The value **MUST** be a directory holding the archive content for
 	// compression or an empty directory for decompression.
 	Raw string
+
+	// CleanSlate wipes the entire Raw directory before extraction.
+	//
+	// It is only used in **Extract**.
+	//
+	// Setting this to `true` ensures a clean extraction without getting
+	// contaimnated with existing artifacts.
+	//
+	// Default is merge with existing (`false`).
+	CleanSlate bool
 
 	// CreateDirectory decides on creating missing directory for Archive.
 	//
@@ -321,16 +332,21 @@ func (me *Archiver) compressRegular(path string, info os.FileInfo) (err error) {
 func (me *Archiver) Extract() (err error) {
 	var f *os.File
 	var gz *gzip.Reader
+	var bufReader *bufio.Reader
 
 	err = me.Sanitize()
 	if err != nil {
 		return err
 	}
 
+	if me.CleanSlate {
+		_ = os.RemoveAll(me.Raw)
+	}
+
 	// create directory if requested
-	err = archive.MkdirAll(filepath.Dir(me.Raw),
+	err = archive.MkdirAll(me.Raw,
 		archive.PERMISSION_DIR,
-		me.CreateDirectory,
+		me.CleanSlate || me.CreateDirectory,
 	)
 	if err != nil {
 		return err //nolint:wrapcheck
@@ -346,7 +362,10 @@ func (me *Archiver) Extract() (err error) {
 	}
 	defer f.Close()
 
-	gz, err = gzip.NewReader(f)
+	// add read buffer to reduce io call swarm
+	bufReader = bufio.NewReaderSize(f, int(3*archive.COPY_SIZE))
+
+	gz, err = gzip.NewReader(bufReader)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
 			archive.ERROR_ARCHIVE_READ,
@@ -463,13 +482,6 @@ func (me *Archiver) extractDirectory(path string,
 	header *tar.Header, now time.Time) (err error) {
 	var mode os.FileMode
 	var aTime, mTime time.Time
-
-	// overwrite Raw if requested
-	err = archive.Overwrite(path, me.Overwrite)
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
-
 	// create target directory
 	err = archive.MkdirAll(path, archive.PERMISSION_DIR, true)
 	if err != nil {
@@ -505,6 +517,7 @@ func (me *Archiver) extractRegular(path string,
 	var mode os.FileMode
 	var aTime, mTime time.Time
 	var f *os.File
+	var bufWriter *bufio.Writer
 
 	// create housing directory
 	err = archive.MkdirAll(filepath.Dir(path), archive.PERMISSION_DIR, true)
@@ -519,7 +532,10 @@ func (me *Archiver) extractRegular(path string,
 	}
 
 	// create destination for write
-	f, err = os.Create(path)
+	f, err = os.OpenFile(path,
+		os.O_CREATE|os.O_TRUNC|os.O_WRONLY,
+		archive.PERMISSION_FILE,
+	)
 	if err != nil {
 		return fmt.Errorf("%s (%s): %s",
 			archive.ERROR_FILE_WRITE,
@@ -528,8 +544,12 @@ func (me *Archiver) extractRegular(path string,
 		)
 	}
 
+	// add buffer for write
+	bufWriter = bufio.NewWriterSize(f, int(2*archive.COPY_SIZE))
+
 	// perform file extraction
-	err = archive.ExtractCopy(f, me.reader, archive.COPY_SIZE, path)
+	err = archive.ExtractCopy(bufWriter, me.reader, archive.COPY_SIZE, path)
+	_ = bufWriter.Flush()
 	_ = f.Sync()
 	f.Close()
 	if err != nil {
