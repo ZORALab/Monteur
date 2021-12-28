@@ -165,7 +165,7 @@ func (me *setup) Run(ctx context.Context, ch chan conductor.Message) {
 		return
 	}
 
-	me.log.Info("executing unpack function now...")
+	me.log.Info("Executing unpack function now...")
 	if unpackFx != nil {
 		err = unpackFx(me.source, me.variables)
 		if err != nil {
@@ -173,9 +173,9 @@ func (me *setup) Run(ctx context.Context, ch chan conductor.Message) {
 			return
 		}
 	}
-	me.log.Info("Executing unpack function now ➤ DONE\n\n")
+	me.log.Info("Executing unpack function ➤ DONE\n\n")
 
-	me.log.Info("executing cmd now...")
+	me.log.Info("Executing cmd now...")
 	task = &executive{
 		log:       me.log,
 		variables: me.variables,
@@ -189,7 +189,7 @@ func (me *setup) Run(ctx context.Context, ch chan conductor.Message) {
 		me.reportError(err)
 		return
 	}
-	me.log.Info("Executing CMD now ➤ DONE\n\n")
+	me.log.Info("Executing CMD ➤ DONE\n\n")
 
 	me.log.Info("Executing config scripting now...")
 	err = me.processConfig()
@@ -197,52 +197,17 @@ func (me *setup) Run(ctx context.Context, ch chan conductor.Message) {
 		me.reportError(err)
 		return
 	}
+	me.log.Info("Executing config scripting ➤ DONE\n\n")
 
+	me.log.Info("Executing main config scripting now...")
 	err = me.createMainConfig()
 	if err != nil {
 		me.reportError(err)
 		return
 	}
-	me.log.Info("Executing config scripting now ➤ DONE\n\n")
+	me.log.Info("Executing main config scripting ➤ DONE\n\n")
 
 	me.reportDone()
-}
-
-func (me *setup) processConfig() (err error) {
-	var ok bool
-	var configPath, pathing string
-
-	// get config path
-	configPath, ok = me.variables[libmonteur.VAR_CFG].(string)
-	if !ok {
-		panic("MONTEUR_DEV: why is VAR_CFG missing?")
-	}
-
-	// process pathing
-	pathing = strings.ToLower(me.metadata.Name)
-	pathing = strings.ReplaceAll(pathing, " ", "-")
-	pathing = strings.ReplaceAll(pathing, "_", "-")
-	pathing = strings.ReplaceAll(pathing, "%", "-")
-	pathing = strings.ReplaceAll(pathing, "!", "-")
-	pathing = filepath.Join(configPath,
-		libmonteur.DIRECTORY_MONTEUR_CONFIG_D,
-		pathing,
-	)
-
-	// write into config directory
-	me.log.Info("Post-configuring into '%s'", pathing)
-	err = os.WriteFile(pathing,
-		[]byte(me.config),
-		libmonteur.PERMISSION_CONFIG,
-	)
-	if err != nil {
-		err = fmt.Errorf("%s: %s",
-			libmonteur.ERROR_PROGRAM_CONFIG_FAILED,
-			err,
-		)
-	}
-
-	return err
 }
 
 func (me *setup) createMainConfig() (err error) {
@@ -307,6 +272,7 @@ esac`)
 
 	// generate pathing
 	path = filepath.Join(configDir, libmonteur.FILENAME_BIN_CONFIG_MAIN)
+	me.log.Info("Post main-configuring into '%s'", path)
 
 	// remove previous file regardlessly
 	_ = os.RemoveAll(path)
@@ -321,6 +287,43 @@ esac`)
 	}
 
 	return nil
+}
+
+func (me *setup) processConfig() (err error) {
+	var ok bool
+	var configPath, pathing string
+
+	// get config path
+	configPath, ok = me.variables[libmonteur.VAR_CFG].(string)
+	if !ok {
+		panic("MONTEUR_DEV: why is VAR_CFG missing?")
+	}
+
+	// process pathing
+	pathing = strings.ToLower(me.metadata.Name)
+	pathing = strings.ReplaceAll(pathing, " ", "-")
+	pathing = strings.ReplaceAll(pathing, "_", "-")
+	pathing = strings.ReplaceAll(pathing, "%", "-")
+	pathing = strings.ReplaceAll(pathing, "!", "-")
+	pathing = filepath.Join(configPath,
+		libmonteur.DIRECTORY_MONTEUR_CONFIG_D,
+		pathing,
+	)
+
+	// write into config directory
+	me.log.Info("Post-configuring into '%s'", pathing)
+	err = os.WriteFile(pathing,
+		[]byte(me.config),
+		libmonteur.PERMISSION_CONFIG,
+	)
+	if err != nil {
+		err = fmt.Errorf("%s: %s",
+			libmonteur.ERROR_PROGRAM_CONFIG_FAILED,
+			err,
+		)
+	}
+
+	return err
 }
 
 func (me *setup) prepareSourceFx() (out func(context.Context,
