@@ -116,7 +116,7 @@ func (me *setup) Parse(path string) (err error) {
 		return err
 	}
 
-	err = sanitizeConfig(cfg, &me.config, me.thisSystem)
+	err = sanitizeSourceConfig(cfg, &me.config, me.variables)
 	if err != nil {
 		return err
 	}
@@ -218,7 +218,10 @@ func (me *setup) processConfig() (err error) {
 	pathing = strings.ReplaceAll(pathing, "_", "-")
 	pathing = strings.ReplaceAll(pathing, "%", "-")
 	pathing = strings.ReplaceAll(pathing, "!", "-")
-	pathing = filepath.Join(configPath, pathing)
+	pathing = filepath.Join(configPath,
+		libmonteur.DIRECTORY_MONTEUR_CONFIG_D,
+		pathing,
+	)
 
 	// write into config directory
 	me.log.Info("Post-configuring into '%s'", pathing)

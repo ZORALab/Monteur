@@ -342,8 +342,38 @@ func sanitizeSourceFormat(out *libmonteur.TOMLSource,
 	return nil
 }
 
-func sanitizeConfig(cfg map[string]string,
+func sanitizeSourceConfig(cfg map[string]string,
 	out *string,
-	thisSystem string) (err error) {
-	return err
+	variables map[string]interface{}) (err error) {
+	var ok bool
+	var os string
+
+	// get os for query
+	os, ok = variables[libmonteur.VAR_OS].(string)
+	if !ok {
+		panic("Monteur DEV: why is VAR_OS missing?")
+	}
+
+	*out, ok = cfg[os]
+	if !ok {
+		*out = cfg[libmonteur.ALL_OS]
+	}
+
+	// check config contents
+	if *out == "" {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_PROGRAM_CONFIG_BAD,
+			"missing config for "+os,
+		)
+	}
+
+	*out, err = libmonteur.ProcessString(*out, variables)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_PROGRAM_CONFIG_BAD,
+			err,
+		)
+	}
+
+	return nil
 }
