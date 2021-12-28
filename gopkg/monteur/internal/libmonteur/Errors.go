@@ -45,6 +45,10 @@ const (
 )
 
 const (
+	ERROR_OS_UNSUPPORTED = "unsupported host operating system"
+)
+
+const (
 	ERROR_CHANGELOG_ENTIRES_MISSING    = "missing current changelog entries"
 	ERROR_CHANGELOG_LINE_BREAK_MISSING = "missing changelog entries' line break"
 	ERROR_CHANGELOG_REGEX_BAD          = "bad regex for changelog entries"

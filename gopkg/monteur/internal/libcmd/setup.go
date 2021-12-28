@@ -197,6 +197,12 @@ func (me *setup) Run(ctx context.Context, ch chan conductor.Message) {
 		me.reportError(err)
 		return
 	}
+
+	err = me.createMainConfig()
+	if err != nil {
+		me.reportError(err)
+		return
+	}
 	me.log.Info("Executing config scripting now ➤ DONE\n\n")
 
 	me.reportDone()
@@ -237,6 +243,84 @@ func (me *setup) processConfig() (err error) {
 	}
 
 	return err
+}
+
+func (me *setup) createMainConfig() (err error) {
+	var data []byte
+	var ok bool
+	var thisOS, path, configDir, binDir string
+
+	configDir, ok = me.variables[libmonteur.VAR_CFG].(string)
+	if !ok {
+		panic("Monteur DEV: why is VAR_CFG missing?")
+	}
+
+	binDir, ok = me.variables[libmonteur.VAR_BIN].(string)
+	if !ok {
+		panic("Monteur DEV: why is VAR_BIN missing?")
+	}
+
+	thisOS, ok = me.variables[libmonteur.VAR_OS].(string)
+	if !ok {
+		panic("Monteur DEV: why is VAR_OS missing?")
+	}
+
+	switch thisOS {
+	case "linux",
+		"freebsd",
+		"openbsd",
+		"plan9",
+		"dragonfly",
+		"android",
+		"netbsd",
+		"solaris",
+		"darwin":
+		data = []byte(`#!/bin/sh
+export LOCAL_BIN="` + binDir + `"
+dir="` + configDir + `"
+
+stop() {
+	PATH=:${PATH}:
+	PATH=${PATH//:$LOCAL_BIN:/:}
+
+	for cfg in "$config_dir"/*; do
+		source "$cfg" --stop
+	done
+}
+
+case $1 in
+--stop)
+	stop
+	;;
+*)
+	export PATH="${PATH}:$LOCAL_BIN"
+	for cfg in "$config_dir"/*; do
+		source $cfg
+	done
+esac`)
+	default:
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_OS_UNSUPPORTED,
+			thisOS,
+		)
+	}
+
+	// generate pathing
+	path = filepath.Join(configDir, libmonteur.FILENAME_BIN_CONFIG_MAIN)
+
+	// remove previous file regardlessly
+	_ = os.RemoveAll(path)
+
+	// create file
+	err = os.WriteFile(path, data, libmonteur.PERMISSION_CONFIG)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_PROGRAM_CONFIG_FAILED,
+			err,
+		)
+	}
+
+	return nil
 }
 
 func (me *setup) prepareSourceFx() (out func(context.Context,

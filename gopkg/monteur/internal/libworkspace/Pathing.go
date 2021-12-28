@@ -61,10 +61,6 @@ type Pathing struct {
 	AppDebianTOMLFile string
 	AppCopyrightsDir  string
 
-	// bin
-	BinConfigdDir string
-	BinConfigFile string
-
 	// sub-directories for setup fx
 	SetupTMPDir    string
 	SetupConfigDir string
@@ -371,11 +367,6 @@ func (fp *Pathing) updateBasePaths(langCode string) (err error) {
 		return err
 	}
 
-	err = fp._initBinCfgDir()
-	if err != nil {
-		return err
-	}
-
 	fp.AppConfigDir = filepath.Join(libmonteur.DIRECTORY_APP_CONFIG,
 		langCode)
 	err = fp._initConfigSubPath(&fp.AppConfigDir, "AppConfigDir")
@@ -639,23 +630,6 @@ func (fp *Pathing) _initAppConfigPath(p *string, name string) (err error) {
 	}
 
 	*p = filepath.Join(fp.AppConfigDir, *p)
-
-	return nil
-}
-
-func (fp *Pathing) _initBinCfgDir() (err error) {
-	if fp.BinCfgDir == "" {
-		return fmt.Errorf("%s: %s",
-			libmonteur.ERROR_DIR_MISSING,
-			"BinCfgDir",
-		)
-	}
-
-	fp.BinConfigFile = filepath.Join(fp.BinCfgDir,
-		libmonteur.FILENAME_BIN_CONFIG_BASH)
-
-	fp.BinConfigdDir = filepath.Join(fp.BinCfgDir,
-		libmonteur.DIRECTORY_MONTEUR_CONFIG_D)
 
 	return nil
 }
