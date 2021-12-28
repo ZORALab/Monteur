@@ -143,12 +143,13 @@ type TOMLReleasePackage struct {
 }
 
 type TOMLSource struct {
-	Checksum *TOMLChecksum
-	Headers  map[string]string
-	Archive  string
-	Format   string
-	URL      string
-	Method   string
+	Checksum    *TOMLChecksum
+	Headers     map[string]string
+	Archive     string
+	Format      string
+	URL         string
+	Method      string
+	Destination string
 }
 
 func (base *TOMLSource) Merge(in *TOMLSource) {

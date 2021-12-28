@@ -55,6 +55,7 @@ const (
 	ERROR_CHECKSUM_BAD            = "bad checksum value"
 	ERROR_CHECKSUM_FORMAT_BAD     = "bad checksum format"
 	ERROR_CHECKSUM_FORMAT_UNKNOWN = "unsupported checksum format"
+	ERROR_CHECKSUM_TYPE_BAD       = "bad checksum type"
 )
 
 const (

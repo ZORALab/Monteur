@@ -356,6 +356,16 @@ func (me *Workspace) processDataByJob() {
 
 	switch me.Job {
 	case libmonteur.JOB_SETUP:
+		me.ConfigDir = me.Filesystem.SetupConfigDir
+		me.JobTOMLFile = me.Filesystem.SetupTOMLFile
+		me.Filesystem.WorkspaceLogDir = filepath.Join(
+			me.Filesystem.LogDir,
+			libmonteur.DIRECTORY_SETUP,
+			me.Filesystem.WorkspaceLogDir,
+		)
+
+		// assign specific variables
+		(*me.Variables)[libmonteur.VAR_TMP] = me.Filesystem.SetupTMPDir
 	case libmonteur.JOB_CLEAN:
 		me.ConfigDir = me.Filesystem.CleanConfigDir
 		me.JobTOMLFile = me.Filesystem.CleanTOMLFile
