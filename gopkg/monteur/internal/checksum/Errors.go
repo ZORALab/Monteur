@@ -19,8 +19,10 @@ package checksum
 const (
 	ERROR_ALGO_BAD      = "bad hashing algorithm"
 	ERROR_INIT_FAILED   = "failed to initialize checksum"
+	ERROR_INPUT_EMPTY   = "given input is empty"
 	ERROR_MISMATCHED    = "checksum mismatched"
 	ERROR_MISSING_VALUE = "missing checksum value"
 	ERROR_PARSE_BAD     = "bad value for parser"
 	ERROR_READ_FILE     = "failed to read file"
+	ERROR_VALUE_EMPTY   = "hash value is empty"
 )

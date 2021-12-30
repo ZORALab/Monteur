@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"hash"
 	"io"
+	"os"
 )
 
 // Hasher is the data structure to checksum a downloaded file.
@@ -37,6 +38,88 @@ type Hasher struct {
 	hash    hash.Hash
 	value   []byte
 	healthy bool
+}
+
+// Hash generates the hashing output with the given data bytes.
+//
+// This function will call `IsHealthy()` function if the latter function was not
+// executed beforehand. Should the `Hasher` is found not healthy, `Compare`
+// function shall return an error.
+//
+// For positive matching value, the `ok` is set to `true` with no error.
+//
+// For negative matching value, the `ok` is set to `false` with no error.
+//
+// Should there be any error, the `ok` is always `false`.
+func (hasher *Hasher) Hash(data *[]byte) (err error) {
+	// sanitize input
+	if data == nil {
+		return fmt.Errorf(ERROR_INPUT_EMPTY)
+	}
+
+	// ensure the hasher is healthy before use
+	if !hasher.healthy {
+		err = hasher.IsHealthy()
+		if err != nil {
+			return err
+		}
+	}
+
+	// consume the health status so that we do not re-use the same hasher
+	// by accident
+	hasher.healthy = false
+
+	// hash data
+	hasher.value = hasher.hash.Sum(*data)
+
+	return nil
+}
+
+// HashFile generates the hashing output from a given filepath.
+//
+// This function will call `IsHealthy()` function if the latter function was not
+// executed beforehand. Should the `Hasher` is found not healthy, `Compare`
+// function shall return an error.
+//
+// For positive matching value, the `ok` is set to `true` with no error.
+//
+// For negative matching value, the `ok` is set to `false` with no error.
+//
+// Should there be any error, the `ok` is always `false`.
+func (hasher *Hasher) HashFile(path string) (err error) {
+	// sanitize input
+	if path == "" {
+		return fmt.Errorf(ERROR_INPUT_EMPTY)
+	}
+
+	// ensure the hasher is healthy before use
+	if !hasher.healthy {
+		err = hasher.IsHealthy()
+		if err != nil {
+			return err
+		}
+	}
+
+	// consume the health status so that we do not re-use the same hasher
+	// by accident
+	hasher.healthy = false
+
+	// open file to read
+	f, err := os.Open(path)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// hash data
+	_, err = io.Copy(hasher.hash, f)
+	f.Close()
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	hasher.value = hasher.hash.Sum(nil)
+
+	return nil
 }
 
 // Compare is to use the `Hasher` and checksum with the parsed value.
@@ -57,6 +140,11 @@ func (hasher *Hasher) Compare(target io.Reader) (ok bool, err error) {
 		if err != nil {
 			return false, err
 		}
+	}
+
+	// verify user had assigned the checksum value
+	if len(hasher.value) == 0 && err == nil {
+		return false, fmt.Errorf(ERROR_MISSING_VALUE)
 	}
 
 	// consume the health status so that we do not re-use the same hasher
@@ -94,11 +182,6 @@ func (hasher *Hasher) IsHealthy() (err error) {
 	// try resetting the hasher
 	hasher.hash.Reset()
 
-	// verify user had assigned the checksum value
-	if len(hasher.value) == 0 && err == nil {
-		err = fmt.Errorf(ERROR_MISSING_VALUE)
-	}
-
 	if err == nil {
 		hasher.healthy = true
 	}
@@ -121,6 +204,18 @@ func (hasher *Hasher) ParseBase64(raw string) (err error) {
 	return fmt.Errorf(ERROR_PARSE_BAD)
 }
 
+// ToBase64 is to encode the hash value into Base64 output.
+//
+// It shall return error if the hasher does not contain any value. When error
+// occurs, the string output is always empty.
+func (hasher *Hasher) ToBase64() (out string, err error) {
+	if len(hasher.value) == 0 {
+		return "", fmt.Errorf(ERROR_VALUE_EMPTY)
+	}
+
+	return base64.StdEncoding.EncodeToString(hasher.value), nil
+}
+
 // ParseBase64URL is for parsing an URL-base64 encoded checksum `string` value.
 //
 // The difference from `ParseBase64` function is the checksum value has unpadded
@@ -139,6 +234,18 @@ func (hasher *Hasher) ParseBase64URL(raw string) (err error) {
 	return fmt.Errorf(ERROR_PARSE_BAD)
 }
 
+// ToBase64URL is to encode the hash value into Base64 URL-friendly output.
+//
+// It shall return error if the hasher does not contain any value. When error
+// occurs, the string output is always empty.
+func (hasher *Hasher) ToBase64URL() (out string, err error) {
+	if len(hasher.value) == 0 {
+		return "", fmt.Errorf(ERROR_VALUE_EMPTY)
+	}
+
+	return base64.URLEncoding.EncodeToString(hasher.value), nil
+}
+
 // ParseHex is for parsing a hexadecimal encoded checksum `string` value.
 //
 // It shall return error as value should there be any decoding problem occurs.
@@ -154,6 +261,18 @@ func (hasher *Hasher) ParseHex(raw string) (err error) {
 	return fmt.Errorf(ERROR_PARSE_BAD)
 }
 
+// ToHex is to encode the hash value into Hex format string output.
+//
+// It shall return error if the hasher does not contain any value. When error
+// occurs, the string output is always empty.
+func (hasher *Hasher) ToHex() (out string, err error) {
+	if len(hasher.value) == 0 {
+		return "", fmt.Errorf(ERROR_VALUE_EMPTY)
+	}
+
+	return hex.EncodeToString(hasher.value), nil
+}
+
 // ParseBytes is for parsing raw checksum value in `[]byte` data type.
 //
 // The data in the byte slice **SHALL be the RAW value** without any encoding
@@ -166,6 +285,22 @@ func (hasher *Hasher) ParseBytes(raw []byte) (err error) {
 	hasher.value = raw
 
 	return nil
+}
+
+// ToBytes is to return hasher's value plain byte data in []byte format.
+//
+// It shall return error if the hasher does not contain any value. When error
+// occurs, the output is always empty.
+func (hasher *Hasher) ToBytes() (out []byte, err error) {
+	out = []byte{}
+
+	if len(hasher.value) == 0 {
+		return out, fmt.Errorf(ERROR_VALUE_EMPTY)
+	}
+
+	copy(out, hasher.value)
+
+	return out, nil
 }
 
 // SetAlgo is to set the hasher algorithm based on supported list of HashType.
