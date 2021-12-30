@@ -42,123 +42,117 @@ type Hasher struct {
 
 // Hash generates the hashing output with the given data bytes.
 //
-// This function will call `IsHealthy()` function if the latter function was not
-// executed beforehand. Should the `Hasher` is found not healthy, `Compare`
-// function shall return an error.
+// This function will call `Reset()` function if the latter function was not
+// executed beforehand. Should the `Hasher` is found unhealthy, this function
+// shall return an error.
 //
-// For positive matching value, the `ok` is set to `true` with no error.
-//
-// For negative matching value, the `ok` is set to `false` with no error.
-//
-// Should there be any error, the `ok` is always `false`.
-func (hasher *Hasher) Hash(data *[]byte) (err error) {
+// This function shall return with error should there be problems with the
+// hashing operations.
+func (me *Hasher) Hash(data *[]byte) (err error) {
 	// sanitize input
 	if data == nil {
 		return fmt.Errorf(ERROR_INPUT_EMPTY)
 	}
 
-	// ensure the hasher is healthy before use
-	if !hasher.healthy {
-		err = hasher.IsHealthy()
+	// ensure the me is healthy before use
+	if !me.healthy {
+		err = me.Reset()
 		if err != nil {
 			return err
 		}
 	}
 
-	// consume the health status so that we do not re-use the same hasher
+	// consume the health status so that we do not re-use the same me
 	// by accident
-	hasher.healthy = false
+	me.healthy = false
 
 	// hash data
-	hasher.value = hasher.hash.Sum(*data)
+	me.value = me.hash.Sum(*data)
 
 	return nil
 }
 
 // HashFile generates the hashing output from a given filepath.
 //
-// This function will call `IsHealthy()` function if the latter function was not
-// executed beforehand. Should the `Hasher` is found not healthy, `Compare`
-// function shall return an error.
+// This function will call `Reset()` function if the latter function was not
+// executed beforehand. Should the `Hasher` is found unhealthy, this function
+// shall return an error.
 //
-// For positive matching value, the `ok` is set to `true` with no error.
-//
-// For negative matching value, the `ok` is set to `false` with no error.
-//
-// Should there be any error, the `ok` is always `false`.
-func (hasher *Hasher) HashFile(path string) (err error) {
+// This function shall return with error should there be problems with the
+// hashing operations.
+func (me *Hasher) HashFile(path string) (err error) {
 	// sanitize input
 	if path == "" {
 		return fmt.Errorf(ERROR_INPUT_EMPTY)
 	}
 
-	// ensure the hasher is healthy before use
-	if !hasher.healthy {
-		err = hasher.IsHealthy()
+	// ensure the me is healthy before use
+	if !me.healthy {
+		err = me.Reset()
 		if err != nil {
 			return err
 		}
 	}
 
-	// consume the health status so that we do not re-use the same hasher
+	// consume the health status so that we do not re-use the same me
 	// by accident
-	hasher.healthy = false
+	me.healthy = false
 
 	// open file to read
 	f, err := os.Open(path)
 	if err != nil {
-		return err //nolint:wrapcheck
+		return fmt.Errorf("%s: %s", ERROR_FILE_READ, err)
 	}
 
 	// hash data
-	_, err = io.Copy(hasher.hash, f)
+	_, err = io.Copy(me.hash, f)
 	f.Close()
 	if err != nil {
-		return err //nolint:wrapcheck
+		return fmt.Errorf("%s: %s", ERROR_FILE_HASH, err)
 	}
 
-	hasher.value = hasher.hash.Sum(nil)
+	me.value = me.hash.Sum(nil)
 
 	return nil
 }
 
 // Compare is to use the `Hasher` and checksum with the parsed value.
 //
-// This function will call `IsHealthy()` function if the latter function was not
-// executed beforehand. Should the `Hasher` is found not healthy, `Compare`
-// function shall return an error.
+// This function will call `Reset()` function if the latter function was not
+// executed beforehand. Should the `Hasher` is found unhealthy, this function
+// shall return an error.
 //
 // For positive matching value, the `ok` is set to `true` with no error.
 //
 // For negative matching value, the `ok` is set to `false` with no error.
 //
 // Should there be any error, the `ok` is always `false`.
-func (hasher *Hasher) Compare(target io.Reader) (ok bool, err error) {
-	// ensure the hasher is healthy before use
-	if !hasher.healthy {
-		err = hasher.IsHealthy()
+func (me *Hasher) Compare(target io.Reader) (ok bool, err error) {
+	// ensure the me is healthy before use
+	if !me.healthy {
+		err = me.Reset()
 		if err != nil {
 			return false, err
 		}
 	}
 
 	// verify user had assigned the checksum value
-	if len(hasher.value) == 0 && err == nil {
-		return false, fmt.Errorf(ERROR_MISSING_VALUE)
+	if len(me.value) == 0 && err == nil {
+		return false, fmt.Errorf(ERROR_VALUE_MISSING)
 	}
 
-	// consume the health status so that we do not re-use the same hasher
+	// consume the health status so that we do not re-use the same me
 	// by accident
-	hasher.healthy = false
+	me.healthy = false
 
 	// copy the reader
-	_, err = io.Copy(hasher.hash, target)
+	_, err = io.Copy(me.hash, target)
 	if err != nil {
-		return false, fmt.Errorf("%s: %s", ERROR_READ_FILE, err)
+		return false, fmt.Errorf("%s: %s", ERROR_FILE_READ, err)
 	}
 
 	// compare results and return nil if true
-	if bytes.Equal(hasher.value, hasher.hash.Sum(nil)) {
+	if bytes.Equal(me.value, me.hash.Sum(nil)) {
 		return true, nil
 	}
 
@@ -166,13 +160,11 @@ func (hasher *Hasher) Compare(target io.Reader) (ok bool, err error) {
 	return false, nil
 }
 
-// IsHealthy is a function to ensure the `Hasher` is ready for use.
+// Reset is to reset the Hasher and make it ready for next use.
 //
-// This function is designed for early checking and proper settings in certain
-// implementations like long/large download time. The use is to remove all
-// human and fixable error before sending it for the tough implementations which
-// can take time and resources.
-func (hasher *Hasher) IsHealthy() (err error) {
+// You should run `SetAlgo(...)` before calling this function; obviously before
+// using it to hash your target.
+func (me *Hasher) Reset() (err error) {
 	defer func() {
 		if recover() != nil {
 			err = fmt.Errorf(ERROR_INIT_FAILED)
@@ -180,10 +172,11 @@ func (hasher *Hasher) IsHealthy() (err error) {
 	}()
 
 	// try resetting the hasher
-	hasher.hash.Reset()
+	me.hash.Reset()
+	me.value = []byte{}
 
 	if err == nil {
-		hasher.healthy = true
+		me.healthy = true
 	}
 
 	return err
@@ -193,27 +186,27 @@ func (hasher *Hasher) IsHealthy() (err error) {
 //
 // It shall return error as value should there be any decoding problem occurs.
 // Otherwise, it will always be nil.
-func (hasher *Hasher) ParseBase64(raw string) (err error) {
-	hasher.value, err = base64.StdEncoding.DecodeString(raw)
+func (me *Hasher) ParseBase64(raw string) (err error) {
+	me.value, err = base64.StdEncoding.DecodeString(raw)
 	if err == nil {
 		return nil
 	}
 
-	hasher.value = nil
+	me.value = nil
 
 	return fmt.Errorf(ERROR_PARSE_BAD)
 }
 
 // ToBase64 is to encode the hash value into Base64 output.
 //
-// It shall return error if the hasher does not contain any value. When error
+// It shall return error if the me does not contain any value. When error
 // occurs, the string output is always empty.
-func (hasher *Hasher) ToBase64() (out string, err error) {
-	if len(hasher.value) == 0 {
+func (me *Hasher) ToBase64() (out string, err error) {
+	if len(me.value) == 0 {
 		return "", fmt.Errorf(ERROR_VALUE_EMPTY)
 	}
 
-	return base64.StdEncoding.EncodeToString(hasher.value), nil
+	return base64.StdEncoding.EncodeToString(me.value), nil
 }
 
 // ParseBase64URL is for parsing an URL-base64 encoded checksum `string` value.
@@ -223,97 +216,111 @@ func (hasher *Hasher) ToBase64() (out string, err error) {
 //
 // It shall return error as value should there be any decoding problem occurs.
 // Otherwise, it will always be nil.
-func (hasher *Hasher) ParseBase64URL(raw string) (err error) {
-	hasher.value, err = base64.URLEncoding.DecodeString(raw)
+func (me *Hasher) ParseBase64URL(raw string) (err error) {
+	me.value, err = base64.URLEncoding.DecodeString(raw)
 	if err == nil {
 		return nil
 	}
 
-	hasher.value = nil
+	me.value = nil
 
 	return fmt.Errorf(ERROR_PARSE_BAD)
 }
 
 // ToBase64URL is to encode the hash value into Base64 URL-friendly output.
 //
-// It shall return error if the hasher does not contain any value. When error
+// It shall return error if the me does not contain any value. When error
 // occurs, the string output is always empty.
-func (hasher *Hasher) ToBase64URL() (out string, err error) {
-	if len(hasher.value) == 0 {
+func (me *Hasher) ToBase64URL() (out string, err error) {
+	if len(me.value) == 0 {
 		return "", fmt.Errorf(ERROR_VALUE_EMPTY)
 	}
 
-	return base64.URLEncoding.EncodeToString(hasher.value), nil
+	return base64.URLEncoding.EncodeToString(me.value), nil
 }
 
 // ParseHex is for parsing a hexadecimal encoded checksum `string` value.
 //
 // It shall return error as value should there be any decoding problem occurs.
 // Otherwise, it will always be nil.
-func (hasher *Hasher) ParseHex(raw string) (err error) {
-	hasher.value, err = hex.DecodeString(raw)
+func (me *Hasher) ParseHex(raw string) (err error) {
+	me.value, err = hex.DecodeString(raw)
 	if err == nil {
 		return nil
 	}
 
-	hasher.value = nil
+	me.value = nil
 
 	return fmt.Errorf(ERROR_PARSE_BAD)
 }
 
 // ToHex is to encode the hash value into Hex format string output.
 //
-// It shall return error if the hasher does not contain any value. When error
+// It shall return error if the me does not contain any value. When error
 // occurs, the string output is always empty.
-func (hasher *Hasher) ToHex() (out string, err error) {
-	if len(hasher.value) == 0 {
+func (me *Hasher) ToHex() (out string, err error) {
+	if len(me.value) == 0 {
 		return "", fmt.Errorf(ERROR_VALUE_EMPTY)
 	}
 
-	return hex.EncodeToString(hasher.value), nil
+	return hex.EncodeToString(me.value), nil
 }
 
 // ParseBytes is for parsing raw checksum value in `[]byte` data type.
 //
 // The data in the byte slice **SHALL be the RAW value** without any encoding
 // like Base64 or hex.
-func (hasher *Hasher) ParseBytes(raw []byte) (err error) {
+func (me *Hasher) ParseBytes(raw []byte) (err error) {
 	if len(raw) == 0 {
 		return fmt.Errorf(ERROR_PARSE_BAD)
 	}
 
-	hasher.value = raw
+	me.value = raw
 
 	return nil
 }
 
-// ToBytes is to return hasher's value plain byte data in []byte format.
+// ToBytes is to return me's value plain byte data in []byte format.
 //
-// It shall return error if the hasher does not contain any value. When error
+// It shall return error if the me does not contain any value. When error
 // occurs, the output is always empty.
-func (hasher *Hasher) ToBytes() (out []byte, err error) {
+func (me *Hasher) ToBytes() (out []byte, err error) {
 	out = []byte{}
 
-	if len(hasher.value) == 0 {
+	if len(me.value) == 0 {
 		return out, fmt.Errorf(ERROR_VALUE_EMPTY)
 	}
 
-	copy(out, hasher.value)
+	copy(out, me.value)
 
 	return out, nil
 }
 
-// SetAlgo is to set the hasher algorithm based on supported list of HashType.
+// HashType is the ID number for hashing algorithm
+//
+// To ensure the values are specific to checksum package only, we declare a
+// new type over the intended `uint` data type.
+type HashType uint
+
+// Supported Hashing Algorithm is the list of constants ID for selecting algo.
+const (
+	HASHER_UNSET HashType = iota
+	HASHER_MD5
+	HASHER_SHA256
+	HASHER_SHA512
+)
+
+// SetAlgo is to set the me algorithm based on supported list of HashType.
 //
 // See "Supported Hashing Algorithms" Constants list for supported algorithms.
-func (hasher *Hasher) SetAlgo(label HashType) (err error) {
+func (me *Hasher) SetAlgo(label HashType) (err error) {
 	switch label {
 	case HASHER_MD5:
-		hasher.hash = md5.New() //nolint:gosec
+		me.hash = md5.New() //nolint:gosec
 	case HASHER_SHA256:
-		hasher.hash = sha256.New()
+		me.hash = sha256.New()
 	case HASHER_SHA512:
-		hasher.hash = sha512.New()
+		me.hash = sha512.New()
 	case HASHER_UNSET:
 		fallthrough
 	default:

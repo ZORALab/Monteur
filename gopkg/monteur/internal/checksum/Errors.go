@@ -21,8 +21,9 @@ const (
 	ERROR_INIT_FAILED   = "failed to initialize checksum"
 	ERROR_INPUT_EMPTY   = "given input is empty"
 	ERROR_MISMATCHED    = "checksum mismatched"
-	ERROR_MISSING_VALUE = "missing checksum value"
 	ERROR_PARSE_BAD     = "bad value for parser"
-	ERROR_READ_FILE     = "failed to read file"
+	ERROR_FILE_READ     = "error reading file"
+	ERROR_FILE_HASH     = "error hashing file"
 	ERROR_VALUE_EMPTY   = "hash value is empty"
+	ERROR_VALUE_MISSING = "missing checksum value"
 )
