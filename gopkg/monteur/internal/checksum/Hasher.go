@@ -17,7 +17,8 @@ package checksum
 
 import (
 	"bytes"
-	"crypto/md5" //nolint:gosec
+	"crypto/md5"  //nolint:gosec
+	"crypto/sha1" //nolint:gosec
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/base64"
@@ -303,11 +304,20 @@ func (me *Hasher) ToBytes() (out []byte, err error) {
 type HashType uint
 
 // Supported Hashing Algorithm is the list of constants ID for selecting algo.
+//
+// Obselete (made available **ONLY** for comparison, avoid hashing at all cost):
+//   1. MD5
+//   2. SHA1
 const (
 	HASHER_UNSET HashType = iota
 	HASHER_MD5
+	HASHER_SHA1
+	HASHER_SHA224
 	HASHER_SHA256
+	HASHER_SHA384
 	HASHER_SHA512
+	HASHER_SHA512_TO_SHA224
+	HASHER_SHA512_TO_SHA256
 )
 
 // SetAlgo is to set the me algorithm based on supported list of HashType.
@@ -317,10 +327,20 @@ func (me *Hasher) SetAlgo(label HashType) (err error) {
 	switch label {
 	case HASHER_MD5:
 		me.hash = md5.New() //nolint:gosec
+	case HASHER_SHA1:
+		me.hash = sha1.New() //nolint:gosec
+	case HASHER_SHA224:
+		me.hash = sha256.New224()
 	case HASHER_SHA256:
 		me.hash = sha256.New()
+	case HASHER_SHA384:
+		me.hash = sha512.New384()
 	case HASHER_SHA512:
 		me.hash = sha512.New()
+	case HASHER_SHA512_TO_SHA224:
+		me.hash = sha512.New512_224()
+	case HASHER_SHA512_TO_SHA256:
+		me.hash = sha512.New512_256()
 	case HASHER_UNSET:
 		fallthrough
 	default:
