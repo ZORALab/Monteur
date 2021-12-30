@@ -213,18 +213,27 @@ func (me *setup) Run(ctx context.Context, ch chan conductor.Message) {
 func (me *setup) createMainConfig() (err error) {
 	var data []byte
 	var ok bool
-	var thisOS, path, configDir, binDir string
+	var thisOS, configPath, configDir, binDir string
 
+	// process configDir
 	configDir, ok = me.variables[libmonteur.VAR_CFG].(string)
 	if !ok {
 		panic("Monteur DEV: why is VAR_CFG missing?")
 	}
+	configPath = filepath.Join(configDir,
+		libmonteur.FILENAME_BIN_CONFIG_MAIN,
+	)
+	configDir = filepath.Join(configDir,
+		libmonteur.DIRECTORY_MONTEUR_CONFIG_D,
+	)
 
+	// process binDir
 	binDir, ok = me.variables[libmonteur.VAR_BIN].(string)
 	if !ok {
 		panic("Monteur DEV: why is VAR_BIN missing?")
 	}
 
+	// process thisOS
 	thisOS, ok = me.variables[libmonteur.VAR_OS].(string)
 	if !ok {
 		panic("Monteur DEV: why is VAR_OS missing?")
@@ -242,7 +251,7 @@ func (me *setup) createMainConfig() (err error) {
 		"darwin":
 		data = []byte(`#!/bin/sh
 export LOCAL_BIN="` + binDir + `"
-dir="` + configDir + `"
+config_dir="` + configDir + `"
 
 stop() {
 	PATH=:${PATH}:
@@ -271,14 +280,13 @@ esac`)
 	}
 
 	// generate pathing
-	path = filepath.Join(configDir, libmonteur.FILENAME_BIN_CONFIG_MAIN)
-	me.log.Info("Post main-configuring into '%s'", path)
+	me.log.Info("Post main-configuring into '%s'", configPath)
 
 	// remove previous file regardlessly
-	_ = os.RemoveAll(path)
+	_ = os.RemoveAll(configPath)
 
 	// create file
-	err = os.WriteFile(path, data, libmonteur.PERMISSION_CONFIG)
+	err = os.WriteFile(configPath, data, libmonteur.PERMISSION_CONFIG)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
 			libmonteur.ERROR_PROGRAM_CONFIG_FAILED,
