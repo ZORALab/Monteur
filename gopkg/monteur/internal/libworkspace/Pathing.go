@@ -378,7 +378,9 @@ func (fp *Pathing) updateBasePaths(langCode string) (err error) {
 }
 
 func (fp *Pathing) updateSetupPaths() (err error) {
-	fp.SetupConfigDir = libmonteur.DIRECTORY_SETUP_PROGRAMS
+	fp.SetupConfigDir = filepath.Join(libmonteur.DIRECTORY_SETUP,
+		libmonteur.DIRECTORY_JOBS,
+	)
 	err = fp._initConfigSubPath(&fp.SetupConfigDir, "SetupConfigDir")
 	if err != nil {
 		return err
@@ -403,7 +405,9 @@ func (fp *Pathing) updateSetupPaths() (err error) {
 }
 
 func (fp *Pathing) updatePublishPaths() (err error) {
-	fp.PublishConfigDir = libmonteur.DIRECTORY_PUBLISHER
+	fp.PublishConfigDir = filepath.Join(libmonteur.DIRECTORY_PUBLISH,
+		libmonteur.DIRECTORY_JOBS,
+	)
 	err = fp._initConfigSubPath(&fp.PublishConfigDir, "PublishConfigDir")
 	if err != nil {
 		return err
@@ -428,7 +432,9 @@ func (fp *Pathing) updatePublishPaths() (err error) {
 }
 
 func (fp *Pathing) updateComposePaths() (err error) {
-	fp.ComposeConfigDir = libmonteur.DIRECTORY_COMPOSER
+	fp.ComposeConfigDir = filepath.Join(libmonteur.DIRECTORY_COMPOSE,
+		libmonteur.DIRECTORY_JOBS,
+	)
 	err = fp._initConfigSubPath(&fp.ComposeConfigDir, "ComposeConfigDir")
 	if err != nil {
 		return err
@@ -453,7 +459,9 @@ func (fp *Pathing) updateComposePaths() (err error) {
 }
 
 func (fp *Pathing) updateTestPaths() (err error) {
-	fp.TestConfigDir = libmonteur.DIRECTORY_TESTER
+	fp.TestConfigDir = filepath.Join(libmonteur.DIRECTORY_TEST,
+		libmonteur.DIRECTORY_JOBS,
+	)
 	err = fp._initConfigSubPath(&fp.TestConfigDir, "TestConfigDir")
 	if err != nil {
 		return err
@@ -479,7 +487,9 @@ func (fp *Pathing) updateTestPaths() (err error) {
 }
 
 func (fp *Pathing) updateBuildPaths() (err error) {
-	fp.BuildConfigDir = libmonteur.DIRECTORY_BUILDER
+	fp.BuildConfigDir = filepath.Join(libmonteur.DIRECTORY_BUILD,
+		libmonteur.DIRECTORY_JOBS,
+	)
 	err = fp._initConfigSubPath(&fp.BuildConfigDir, "BuildConfigDir")
 	if err != nil {
 		return err
@@ -503,7 +513,9 @@ func (fp *Pathing) updateBuildPaths() (err error) {
 }
 
 func (fp *Pathing) updatePackagePaths() (err error) {
-	fp.PackageConfigDir = libmonteur.DIRECTORY_PACKAGER
+	fp.PackageConfigDir = filepath.Join(libmonteur.DIRECTORY_PACKAGE,
+		libmonteur.DIRECTORY_JOBS,
+	)
 	err = fp._initConfigSubPath(&fp.PackageConfigDir, "PackageConfigDir")
 	if err != nil {
 		return err
@@ -527,7 +539,9 @@ func (fp *Pathing) updatePackagePaths() (err error) {
 }
 
 func (fp *Pathing) updateReleasePaths() (err error) {
-	fp.ReleaseConfigDir = libmonteur.DIRECTORY_RELEASER
+	fp.ReleaseConfigDir = filepath.Join(libmonteur.DIRECTORY_RELEASE,
+		libmonteur.DIRECTORY_JOBS,
+	)
 	err = fp._initConfigSubPath(&fp.ReleaseConfigDir, "ReleaseConfigDir")
 	if err != nil {
 		return err
@@ -551,7 +565,9 @@ func (fp *Pathing) updateReleasePaths() (err error) {
 }
 
 func (fp *Pathing) updateCleanPaths() (err error) {
-	fp.CleanConfigDir = libmonteur.DIRECTORY_CLEANER
+	fp.CleanConfigDir = filepath.Join(libmonteur.DIRECTORY_CLEAN,
+		libmonteur.DIRECTORY_JOBS,
+	)
 	err = fp._initConfigSubPath(&fp.CleanConfigDir, "CleanConfigDir")
 	if err != nil {
 		return err

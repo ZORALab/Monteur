@@ -36,34 +36,20 @@ const (
 	DIRECTORY_GIT              = ".git"
 	DIRECTORY_MONTEUR_CONFIG_D = "config.d"
 	DIRECTORY_MONTEUR_CONFIG   = ".configs/monteur"
+	DIRECTORY_JOBS             = "jobs"
 
 	DIRECTORY_APP           = "app"
 	DIRECTORY_APP_CONFIG    = DIRECTORY_APP + "/config"
 	DIRECTORY_APP_COPYRIGHT = "copyrights" // has lang prefix
 
-	DIRECTORY_PUBLISH   = "publish"
-	DIRECTORY_PUBLISHER = DIRECTORY_PUBLISH + "/publishers"
-
+	DIRECTORY_PUBLISH = "publish"
 	DIRECTORY_CLEAN   = "clean"
-	DIRECTORY_CLEANER = DIRECTORY_CLEAN + "/cleaners"
-
-	DIRECTORY_COMPOSE  = "compose"
-	DIRECTORY_COMPOSER = DIRECTORY_COMPOSE + "/composers"
-
-	DIRECTORY_SETUP          = "setup"
-	DIRECTORY_SETUP_PROGRAMS = DIRECTORY_SETUP + "/programs"
-
-	DIRECTORY_TEST   = "test"
-	DIRECTORY_TESTER = DIRECTORY_TEST + "/testers"
-
+	DIRECTORY_COMPOSE = "compose"
+	DIRECTORY_SETUP   = "setup"
+	DIRECTORY_TEST    = "test"
 	DIRECTORY_BUILD   = "build"
-	DIRECTORY_BUILDER = DIRECTORY_APP + "/variants"
-
-	DIRECTORY_PACKAGE  = "package"
-	DIRECTORY_PACKAGER = DIRECTORY_PACKAGE + "/packagers"
-
-	DIRECTORY_RELEASE  = "release"
-	DIRECTORY_RELEASER = DIRECTORY_RELEASE + "/releasers"
+	DIRECTORY_PACKAGE = "package"
+	DIRECTORY_RELEASE = "release"
 )
 
 const (
