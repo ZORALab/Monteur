@@ -16,6 +16,7 @@
 package libarchiver
 
 import (
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libchecksum"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/release/archiver"
@@ -50,15 +51,9 @@ func Init(logger *liblog.Logger,
 		out.Format = archiver.FORMAT_TXT
 	}
 
-	switch release.Checksum {
-	case libmonteur.CHECKSUM_ALGO_SHA512_TO_SHA256:
-		out.Checksum = archiver.CHECKSUM_SHA512_TO_256
-	case libmonteur.CHECKSUM_ALGO_SHA512:
-		out.Checksum = archiver.CHECKSUM_SHA512
-	case libmonteur.CHECKSUM_ALGO_SHA256:
-		fallthrough
-	default:
-		out.Checksum = archiver.CHECKSUM_SHA256
+	out.Checksum, err = libchecksum.ArchiverID(release.Checksum)
+	if err != nil {
+		out.Checksum, _ = libchecksum.ArchiverID(libmonteur.CHECKSUM_ALGO_SHA256)
 	}
 
 	return out, nil

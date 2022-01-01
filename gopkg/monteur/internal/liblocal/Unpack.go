@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"os/exec"
 
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/checksum"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libchecksum"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 )
@@ -29,7 +29,7 @@ func Source(ctx context.Context,
 	source *libmonteur.TOMLSource,
 	variables map[string]interface{},
 	log *liblog.Logger,
-	cs *checksum.Hasher) (err error) {
+	cs libchecksum.Hasher) (err error) {
 	log.Info("Sourcing %s locally...", source.URL)
 	_, err = exec.LookPath(source.URL)
 	if err != nil {

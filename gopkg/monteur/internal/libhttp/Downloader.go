@@ -20,8 +20,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/checksum"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/httpclient"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libchecksum"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 )
@@ -29,7 +29,7 @@ import (
 func Source(ctx context.Context, source *libmonteur.TOMLSource,
 	variables map[string]interface{},
 	log *liblog.Logger,
-	cs *checksum.Hasher) (err error) {
+	cs libchecksum.Hasher) (err error) {
 	var ok bool
 	var destination string
 

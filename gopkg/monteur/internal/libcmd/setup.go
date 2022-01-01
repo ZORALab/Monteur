@@ -22,10 +22,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/checksum"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/conductor"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libchecksum"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libhttp"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblocal"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
@@ -135,8 +135,8 @@ func (me *setup) Run(ctx context.Context, ch chan conductor.Message) {
 	var unpackFx func(*libmonteur.TOMLSource, map[string]interface{}) error
 	var sourceFx func(context.Context,
 		*libmonteur.TOMLSource,
-		map[string]interface{}, *liblog.Logger, *checksum.Hasher) error
-	var cs *checksum.Hasher
+		map[string]interface{}, *liblog.Logger, libchecksum.Hasher) error
+	var cs libchecksum.Hasher
 	var err error
 	var task *executive
 
@@ -336,7 +336,7 @@ func (me *setup) processConfig() (err error) {
 
 func (me *setup) prepareSourceFx() (out func(context.Context,
 	*libmonteur.TOMLSource,
-	map[string]interface{}, *liblog.Logger, *checksum.Hasher) error,
+	map[string]interface{}, *liblog.Logger, libchecksum.Hasher) error,
 	err error) {
 	switch strings.ToLower(me.metadata.Type) {
 	case libmonteur.PROGRAM_TYPE_HTTPS_DOWNLOAD:
@@ -353,12 +353,20 @@ func (me *setup) prepareSourceFx() (out func(context.Context,
 	return out, err
 }
 
-func (me *setup) prepareChecksumFx() (out *checksum.Hasher, err error) {
+func (me *setup) prepareChecksumFx() (out libchecksum.Hasher, err error) {
+	var csType string
+
 	if me.source.Checksum == nil {
 		return nil, nil
 	}
 
-	out = &checksum.Hasher{}
+	csType = strings.ToLower(me.source.Checksum.Type)
+	out, err = libchecksum.CreateChecksum(csType)
+	if err != nil {
+		return nil, err //nolint:wrapcheck
+	}
+
+	// parse checksum value
 	switch strings.ToLower(me.source.Checksum.Format) {
 	case libmonteur.CHECKSUM_FORMAT_BASE64:
 		err = out.ParseBase64(me.source.Checksum.Value)
@@ -377,20 +385,6 @@ func (me *setup) prepareChecksumFx() (out *checksum.Hasher, err error) {
 		return nil, fmt.Errorf("%s: %s",
 			libmonteur.ERROR_CHECKSUM_BAD,
 			err,
-		)
-	}
-
-	switch strings.ToLower(me.source.Checksum.Type) {
-	case libmonteur.CHECKSUM_ALGO_SHA512:
-		_ = out.SetAlgo(checksum.HASHER_SHA512)
-	case libmonteur.CHECKSUM_ALGO_SHA256:
-		_ = out.SetAlgo(checksum.HASHER_SHA256)
-	case libmonteur.CHECKSUM_ALGO_MD5:
-		_ = out.SetAlgo(checksum.HASHER_MD5)
-	default:
-		return nil, fmt.Errorf("%s: '%s'",
-			libmonteur.ERROR_CHECKSUM_ALGO_UNKNOWN,
-			me.source.Checksum.Type,
 		)
 	}
 
