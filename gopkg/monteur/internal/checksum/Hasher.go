@@ -29,6 +29,29 @@ import (
 	"os"
 )
 
+// HashType is the ID number for hashing algorithm
+//
+// To ensure the values are specific to checksum package only, we declare a
+// new type over the intended `uint` data type.
+type HashType uint
+
+// Supported Hashing Algorithm is the list of constants ID for selecting algo.
+//
+// Obselete (made available **ONLY** for comparison, avoid hashing at all cost):
+//   1. MD5
+//   2. SHA1
+const (
+	HASHER_UNSET HashType = iota
+	HASHER_MD5
+	HASHER_SHA1
+	HASHER_SHA224
+	HASHER_SHA256
+	HASHER_SHA384
+	HASHER_SHA512
+	HASHER_SHA512_TO_SHA224
+	HASHER_SHA512_TO_SHA256
+)
+
 // Hasher is the data structure to checksum a downloaded file.
 //
 // It is safe to create using the conventional `&checksum.Hasher{}` method.
@@ -183,6 +206,20 @@ func (me *Hasher) Reset() (err error) {
 	return err
 }
 
+// IsHealthy is to check the readiness of the Hasher.
+func (me *Hasher) IsHealthy() (err error) {
+	defer func() {
+		if recover() != nil {
+			err = fmt.Errorf(ERROR_INIT_FAILED)
+		}
+	}()
+
+	// try reading size of sum to check hasher's existence
+	_ = me.hash.Size()
+
+	return err
+}
+
 // ParseBase64 is for parsing a standard base64 string checksum value.
 //
 // It shall return error as value should there be any decoding problem occurs.
@@ -296,29 +333,6 @@ func (me *Hasher) ToBytes() (out []byte, err error) {
 
 	return out, nil
 }
-
-// HashType is the ID number for hashing algorithm
-//
-// To ensure the values are specific to checksum package only, we declare a
-// new type over the intended `uint` data type.
-type HashType uint
-
-// Supported Hashing Algorithm is the list of constants ID for selecting algo.
-//
-// Obselete (made available **ONLY** for comparison, avoid hashing at all cost):
-//   1. MD5
-//   2. SHA1
-const (
-	HASHER_UNSET HashType = iota
-	HASHER_MD5
-	HASHER_SHA1
-	HASHER_SHA224
-	HASHER_SHA256
-	HASHER_SHA384
-	HASHER_SHA512
-	HASHER_SHA512_TO_SHA224
-	HASHER_SHA512_TO_SHA256
-)
 
 // SetAlgo is to set the me algorithm based on supported list of HashType.
 //
