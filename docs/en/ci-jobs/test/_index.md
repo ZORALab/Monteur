@@ -135,7 +135,7 @@ asynchonously (e.g. `go-performance.toml`, `go-smoke.toml`, `go-crash.toml`,
 
 ### Storing Location
 All test configuration files **SHALL** be stored inside
-`.configs/monteur/test/testers/` directory.
+`.configs/monteur/test/jobs/` directory.
 
 
 

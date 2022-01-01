@@ -137,7 +137,7 @@ structure.
 
 ### Storing Location
 All releasing recipe configuration files **SHALL** be stored inside
-`.configs/monteur/release/releases/` directory.
+`.configs/monteur/release/jobs/` directory.
 
 
 
@@ -167,11 +167,11 @@ name, description, and how to source the program. Here is an example:
 
 ```toml {linenos=table,hl_lines=[],linenostart=1}
 [Metadata]
-Name = 'Reprepro'
+Name = 'Archives'
 Description = """
-Monteur's .deb packagers released to hosting repository via Reprepro.
+Monteur's .tar.gz and .zip packagers released to hosting repository.
 """
-Type = 'manual'
+Type = 'archive'
 ```
 
 The `Name` field will be used for various internal configurations for Monteur's
@@ -183,6 +183,8 @@ purposes. You can write a short description for it.
 The `Type` is the type of supported releasing modes for Monteur to execute the
 recipes. The current supported modes are:
 
+* `archive` - release all archived files (e.g. `tar.gz` and `zip`) natively.
+  Available since Monteur `v0.0.2`.
 * `manual` - release the packages completely manually using commands. It is for
   those who wants complete manual controls.
 
@@ -274,19 +276,43 @@ The code example is as follows:
 
 ```toml {linenos=table,hl_lines=[],linenostart=1}
 [Releases]
-Target = '{{- .ReleaseDir -}}/deb'
+Target = '{{- .ReleaseDir -}}/archives'
+Checksum = 'sha512'
+
+[Releases.Data]
+Path = '{{- .RootDir -}}/docs/.data/releases/archives'
+Format = 'toml'
 
 [Releases.Packages.linux-amd64]
-Source = '"{{- .PackageDir -}}/monteur-linux-amd64/monteur_"*"_amd64.deb"'
+Source = '{{- .PackageDir -}}/monteur-linux-amd64/monteur-{{- .PkgVersion -}}-linux-amd64.tar.gz'
 
 [Releases.Packages.linux-arm64]
-Source = '"{{- .PackageDir -}}/monteur-linux-arm64/monteur_"*"_arm64.deb"'
+Source = '{{- .PackageDir -}}/monteur-linux-arm64/monteur-{{- .PkgVersion -}}-linux-arm64.tar.gz'
+
+...
 ```
 
 * `[Releases]` - the table tag for the all the packages ready for release.
 * `Target` - the directory path for housing the released data. This is used by
   local repository releases such as `reprepro`. This value shall be applied to
   all `Releases.Packages` without their `Target` value set.
+* `Checksum` - the checksum value for applicable releaser. Available since
+  Monteur `v0.0.2`. Supported hashers are:
+  * `sha256` - default hasher.
+  * `sha512`
+  * `sha512->sha256` - `sha512` padded to `sha256` length.
+* `[Releases.Data]` - allows some releaser to spin data file for a release to
+  parse release data easily. Available since Monteur `v0.0.2`.
+* `Releases.Data.Format` - the data file format. Available since Monteur
+  `v0.0.2`. Supported formats are:
+  * `toml` - [TOML](https://github.com/toml-lang/toml) format.
+  * `txt` - basic text format with space (` `) as separator.
+  * `csv` - [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) format
+    without header.
+* `Releases.Data.Path` - the directory path for housing the release data file.
+  the filename will be a converted filepath friendly app version
+  (`App.Version`) value. For example, `v0.0.2` shall be converted into
+  `v0-0-2.txt` when set to be `txt` format.
 * `[Releases.Packages]` - the list of individual packages.
 * `[Releases.Packages.XXX]` - the package tag `XXX` can be anything as it only
   meant for identification and logging purposes in case there is an error.

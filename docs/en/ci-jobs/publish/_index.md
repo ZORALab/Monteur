@@ -135,7 +135,7 @@ configuration file shares the same file structure.
 
 ### Storing Location
 All program configuration files **SHALL** be stored inside
-`.configs/monteur/publish/publishers/` directory.
+`.configs/monteur/publish/jobs/` directory.
 
 
 

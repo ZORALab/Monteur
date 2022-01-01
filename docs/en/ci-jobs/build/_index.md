@@ -130,18 +130,13 @@ Monteur accepts one build configuration file per build variant (e.g. one
 `linux-amd64.toml` for `app on Linux Operating System with x86_64 CPU`).
 However, the internal operations allow many programs to build simultenously
 and asynchonously (e.g. `darwin-amd64.toml`, `linux-arm64.toml`,
-`linux-arm.toml`, ...). Each tester configuration file shares the same file
-structure.
+`linux-arm.toml`, ...). Each configuration file shares the same file structure.
 
 
 
 ### Storing Location
 All build configuration files **SHALL** be stored inside
-`.configs/monteur/app/variants/` directory.
-
-These config files are **also used across various build related CI Jobs** like
-[Package API]({{< link "/ci-jobs/package/" "this" "url-only" />}}) and
-[Release API]({{< link "/ci-jobs/release/" "this" "url-only" />}}).
+`.configs/monteur/build/jobs/` directory.
 
 
 
@@ -201,7 +196,7 @@ list.
 #### `[FMTVariables]`
 This table houses all [Formattable Variables Definition]({{< link
 "/internals/variables-processing/#formattable-variables-definition" "this"
-"url-only" />}}) (e.g. `{{- .Version -}}`) **specific to this variant build**.
+"url-only" />}}) (e.g. `{{- .Version -}}`) **specific to this build variant**.
 Example:
 
 ```toml {linenos=table,hl_lines=[],linenostart=1}

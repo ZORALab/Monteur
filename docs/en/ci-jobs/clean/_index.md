@@ -71,7 +71,7 @@ selectType = "WebPage"
 # {{% param "title" %}}
 {{% param "description" %}}
 
-The objective of the job is simple: **to clean the repository up from all the
+The objective of the job is simple: **to clean the repository up from
 development artifacts in a consistent manner with minimal to no further
 instructions**.
 
@@ -135,7 +135,7 @@ asynchonously (e.g. `build-tmp.toml`, `release-log.toml`, `release-tmp.toml`,
 
 ### Storing Location
 All cleaning configuration files **SHALL** be stored inside
-`.configs/monteur/clean/cleaners/` directory.
+`.configs/monteur/clean/jobs/` directory.
 
 
 

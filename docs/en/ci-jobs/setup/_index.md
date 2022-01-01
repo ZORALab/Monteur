@@ -73,7 +73,7 @@ selectType = "WebPage"
 {{% param "description" %}}
 
 The objective of the job is simple: **to setup the repository all the way for
-other jobs including development without minimal to no further instructions**.
+other CI jobs without minimal to no further instructions**.
 
 
 
@@ -97,21 +97,29 @@ Timeout = 120000000000 # nanosecond
 
 
 #### `Limit`
+{{< note "info" "For Your Info" >}}
+This feature is still pending for development.
+{{< /note >}}
+
 The `Limit` is to instruct Monteur to control the maximum number of download
 task at a time.
 
-The data type is `unsigned integer`.
+The data type is number above 0 (`unsigned integer`).
 
 Monteur executes download tasks asynchonously so it will cause a spike of
 download bandwidth should there be many downloads. Hence, the `Limit` is set in
 place to ensure Monteur does not cause a network distruption.
 
 #### `Timeout`
+{{< note "info" "For Your Info" >}}
+This feature is still pending for development.
+{{< /note >}}
+
 The `Timeout` is to instruct a sourcing task to stop and to report itself as
 error due to unknown long waiting time. The unit is `nanosecond` so 2 minutes
 is `120 * 1000 * 1000 * 1000`.
 
-The data type is positive `64-bit integer`.
+The data type is positive (above or equal to 0) `64-bit integer`.
 
 Setting the value to `0` will revert to default timeout which is `2 minutes`.
 
@@ -129,7 +137,7 @@ configuration file shares the same file structure.
 
 ### Storing Location
 All program configuration files **SHALL** be stored inside
-`.configs/monteur/setup/programs/` directory.
+`.configs/monteur/setup/jobs/` directory.
 
 
 
@@ -193,52 +201,17 @@ replacement in a variable formatting activities.
 
 
 #### `[FMTVariables]`
-This table houses all the data that are subjected to change overtime and
-containing formatting clause (e.g. `{{- .Version -}}`). These variables shall be
-processed after the `[Variables]` table and all clauses shall be replaced with
-the given variables. The processed output `key-value` data shall be backfilled
-or be overwritten back into `[Variables]` table.
-
-Example:
+This table houses all [Formattable Variables Definition]({{< link
+"/internals/variables-processing/#formattable-variables-definition" "this"
+"url-only" />}}) (e.g. `{{- .Version -}}`) **specific to this setup recipe**. It
+shall appears onto all listed packages. Example:
 
 ```toml {linenos=table,hl_lines=[],linenostart=1}
-[FMTVariables]
 SourceDir = '{{- .WorkingDir -}}/public'
 ```
 
-Will be processed and stored as:
-
-```go {linenos=table,hl_lines=[],linenostart=1}
-Variables["SourceDir"] ➤ "/home/u0/Documents/projects/tmp/setup/public"
-```
-
-The **arrangement of the elements does not dictates the order of processing**
-due to the `Key-Value` data nature. Hence, please be creative with the `Key`
-naming and **only creates `FMTVariable` independent of each other**.
-
-{{< note info "For Your Information" >}}
-The formatting clauses are strictly using Go's
-[text/template](https://pkg.go.dev/text/template) package where the `key` of the
-variable denotes the value replacement. Keep in mind that without the leading
-period (e.g. `{{ Version }}`), the clause is invalid.
-
-To fill in, simple append a period in front a desired key. Example, for
-`Version = '1.16.3'` variable, the clause can be any of the following:
-
-1. `{{ .Version }}.tar.gz` - direct replacement without any whitespace trimming
-2. `{{- .Version }}.tar.gz` - direct replacement and trim leading whitespace
-3. `{{ .Version -}}.tar.gz` - direct replacement and trim tailing whitespace
-4. `{{- .Version -}}.tar.gz` - direct replacement and trim leading and tailing
-   whitespaces
-
-All the above shall be formatted into: `1.16.3.tar.gz` as its final output
-and depending on your whitespace trimming request, can join into previous or
-after.
-{{< /note >}}
-
-Monteur does supply a number of default variables for formatting. See
-[Variables Processing]({{< link "/internals/variables-processing" "this"
-"url-only" />}}) section.
+All formatted variables are either `create` or `overwrite` to the existing
+variables list.
 
 
 #### `[[Dependencies]]`

@@ -136,7 +136,7 @@ simultenously and asynchonously (e.g. `deb.toml`, `appimage.toml`, `targz.toml`,
 
 ### Storing Location
 All packaging recipe configuration files **SHALL** be stored inside
-`.configs/monteur/package/packagers` directory.
+`.configs/monteur/package/jobs` directory.
 
 
 
@@ -189,8 +189,8 @@ the recipes. The currently supported modes are:
 #### `[Variables]`
 This table houses all [Plain Variables Definition]({{< link
 "/internals/variables-processing/#plain-variables-definition" "this"
-"url-only" />}}) **specific to this packing recipes**. It shall appears onto all
-listed packages. Example:
+"url-only" />}}) **specific to this packaging recipes**. It shall appears onto
+all listed packages. Example:
 
 ```toml {linenos=table,hl_lines=[],linenostart=1}
 [Variables]

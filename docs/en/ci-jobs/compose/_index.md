@@ -129,14 +129,14 @@ into `[Variables]` table depending on its `Key-Value` existence.
 Monteur accepts one composer configuration file per publishing channel (e.g.
 one `hugo.toml` for `Hugo`). However, the internal operations
 allow many programs to compose simultenously and asynchonously (e.g.
-`hugo.toml`, `doxygen.toml`, `jekyll.toml`, ...). Each composer
-configuration file shares the same file structure.
+`hugo.toml`, `doxygen.toml`, `jekyll.toml`, ...). Each configuration file shares
+the same file structure.
 
 
 
 ### Storing Location
 All program configuration files **SHALL** be stored inside
-`.configs/monteur/compose/composers/` directory.
+`.configs/monteur/compose/jobs/` directory.
 
 
 
