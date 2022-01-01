@@ -309,10 +309,7 @@ func (me *setup) processConfig() (err error) {
 
 	// process pathing
 	pathing = strings.ToLower(me.metadata.Name)
-	pathing = strings.ReplaceAll(pathing, " ", "-")
-	pathing = strings.ReplaceAll(pathing, "_", "-")
-	pathing = strings.ReplaceAll(pathing, "%", "-")
-	pathing = strings.ReplaceAll(pathing, "!", "-")
+	pathing = libmonteur.ProcessToFilepath(pathing)
 	pathing = filepath.Join(configPath,
 		libmonteur.DIRECTORY_MONTEUR_CONFIG_D,
 		pathing,
