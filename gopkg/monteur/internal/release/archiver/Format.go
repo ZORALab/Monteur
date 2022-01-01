@@ -26,18 +26,23 @@ const (
 )
 
 const (
-	_FILENAME_TOML = "checksum.toml"
-	_TEMPLATE_TOML = `["{{- .Filename -}}"]
+	_EXTENSION_TOML = ".toml"
+	_TEMPLATE_TOML  = `[{{- .Index -}}]
+Filename = '{{- .Filename -}}'
 Hash = '{{- .Hash -}}'
 Format = 'Hex'
 URL = '{{- .URL -}}'`
 )
 const (
-	_FILENAME_CSV = "checksum.csv"
-	_TEMPLATE_CSV = `{{- .Hash }},{{ .Format }},{{ .Filename }},{{ .URL }}`
+	_EXTENSION_CSV = ".csv"
+	_TEMPLATE_CSV  = `{{- .Hash }},{{ .Format }},{{ .Filename }},{{ .URL }}`
 )
 
 const (
-	_FILENAME_TXT = "checksum.txt"
-	_TEMPLATE_TXT = `{{- .Hash }} {{ .Format }} {{ .Filename }} {{ .URL }}`
+	_EXTENSION_TXT = ".txt"
+	_TEMPLATE_TXT  = `{{- .Hash }} {{ .Format }} {{ .Filename }} {{ .URL }}`
+)
+
+const (
+	_CHECKSUM_FILENAME = "checksum.txt"
 )

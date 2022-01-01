@@ -14,3 +14,10 @@
 // limitations under the License.
 
 package archiver
+
+type metadata struct {
+	Hash     string
+	Filename string
+	URL      string
+	Index    int
+}

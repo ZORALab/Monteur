@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 	"sync"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/checksum"
@@ -28,21 +27,15 @@ import (
 )
 
 const (
-	PERMISSION_FILE = 0655
+	PERMISSION_FILE = 0644
 	PERMISSION_DIR  = 0755
 )
 
-const (
-	CHECKSUM_SHA256        = checksum.HASHER_SHA256
-	CHECKSUM_SHA512        = checksum.HASHER_SHA512
-	CHECKSUM_SHA512_TO_256 = checksum.HASHER_SHA512_TO_SHA256
-)
-
 type Manager struct {
-	mutex        *sync.Mutex
-	jobs         map[string]conductor.Job
-	dataTemplate string
-	dataFilename string
+	mutex         *sync.Mutex
+	jobs          map[string]conductor.Job
+	dataTemplate  string
+	dataExtension string
 
 	// Log is the Input/Output processor interface.
 	//
@@ -164,13 +157,13 @@ func (me *Manager) sanitizeDataPath() (err error) {
 	case FORMAT_NONE:
 	case FORMAT_CSV:
 		me.dataTemplate = _TEMPLATE_CSV
-		me.dataFilename = _FILENAME_CSV
+		me.dataExtension = _EXTENSION_CSV
 	case FORMAT_TXT:
 		me.dataTemplate = _TEMPLATE_TXT
-		me.dataFilename = _FILENAME_TXT
+		me.dataExtension = _EXTENSION_TXT
 	case FORMAT_TOML:
 		me.dataTemplate = _TEMPLATE_TOML
-		me.dataFilename = _FILENAME_TOML
+		me.dataExtension = _EXTENSION_TOML
 	default:
 		return fmt.Errorf("%s: %d", ERROR_FORMAT_UNSUPPORTED, me.Format)
 	}
@@ -180,14 +173,11 @@ func (me *Manager) sanitizeDataPath() (err error) {
 
 func (me *Manager) sanitizeChecksum() (err error) {
 	switch me.Checksum {
-	case CHECKSUM_SHA256:
-	case CHECKSUM_SHA512:
-	case CHECKSUM_SHA512_TO_256:
+	case checksum.HASHER_SHA256:
+	case checksum.HASHER_SHA512:
+	case checksum.HASHER_SHA512_TO_SHA256:
 	default:
-		return fmt.Errorf("%s: %d",
-			ERROR_CHECKSUM_UNSUPPORTED,
-			me.Checksum,
-		)
+		return fmt.Errorf(ERROR_CHECKSUM_UNSUPPORTED)
 	}
 
 	return nil
@@ -292,7 +282,7 @@ func (me *Manager) Release() (err error) {
 	}
 
 	// write overall checksum text file
-	err = me.writeChecksumFile(strings.Join(logger.checksums, "\n"))
+	err = me.writeChecksumFile(logger.checksums)
 	if err != nil {
 		return err
 	}
@@ -306,11 +296,9 @@ func (me *Manager) Release() (err error) {
 	return nil
 }
 
-func (me *Manager) writeChecksumDataFile(data []string) (err error) {
+func (me *Manager) writeChecksumDataFile(data []*metadata) (err error) {
 	var f *os.File
-	var dataPath, url, out string
-	var list []string
-	var variables map[string]interface{}
+	var dataPath, out string
 
 	if me.DataPath == "" {
 		return nil
@@ -320,9 +308,12 @@ func (me *Manager) writeChecksumDataFile(data []string) (err error) {
 		return fmt.Errorf(ERROR_CHECKSUM_EMPTY)
 	}
 
-	url = filepath.Join(VersionToDir(me.Version), me.dataFilename)
-	dataPath = filepath.Join(me.DataPath, url)
+	// formulate pathing
+	dataPath = filepath.Join(me.DataPath,
+		VersionToDir(me.Version)+me.dataExtension,
+	)
 
+	// create housing directory to ensure data file is workable
 	err = os.MkdirAll(filepath.Dir(dataPath), PERMISSION_DIR)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
@@ -331,6 +322,10 @@ func (me *Manager) writeChecksumDataFile(data []string) (err error) {
 		)
 	}
 
+	// delete previous data file if exists
+	_ = os.RemoveAll(dataPath)
+
+	// open data file for write
 	f, err = os.OpenFile(dataPath,
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
 		PERMISSION_FILE,
@@ -338,24 +333,28 @@ func (me *Manager) writeChecksumDataFile(data []string) (err error) {
 	if err != nil {
 		return fmt.Errorf("%s: %s", ERROR_TARGET_CHECKSUM, err)
 	}
+	defer func() {
+		_ = f.Sync()
+		f.Close()
+	}()
 
-	for _, v := range data {
-		list = strings.Split(v, " ")
-
-		variables = map[string]interface{}{
-			"Filename": list[0],
-			"Hash":     list[1],
-			"URL":      url,
-		}
+	// write data into data file
+	for i, v := range data {
+		// insert index
+		v.Index = i
 
 		// template text
-		out, err = templater.String(me.dataTemplate, variables)
+		out, err = templater.String(me.dataTemplate, v)
 		if err != nil {
 			return fmt.Errorf("%s (%s): %s",
 				ERROR_TARGET_CHECKSUM,
-				list[0],
+				v.Filename,
 				err,
 			)
+		}
+
+		if i != 0 {
+			out = "\n\n\n\n\n" + out
 		}
 
 		// write into file
@@ -363,27 +362,41 @@ func (me *Manager) writeChecksumDataFile(data []string) (err error) {
 		if err != nil {
 			return fmt.Errorf("%s (%s): %s",
 				ERROR_TARGET_CHECKSUM,
-				list[0],
+				v.Filename,
 				err,
 			)
 		}
 	}
 
-	_ = f.Sync()
-	f.Close()
-
 	return nil
 }
 
-func (me *Manager) writeChecksumFile(data string) (err error) {
-	var path string
+func (me *Manager) writeChecksumFile(data []*metadata) (err error) {
+	var path, out string
 	var f *os.File
 
-	path = filepath.Join(me.Path,
-		VersionToDir(me.Version),
-		_FILENAME_TXT,
+	// sanitize input
+	if len(data) == 0 {
+		return fmt.Errorf("%s: missing data", ERROR_TARGET_CHECKSUM)
+	}
+
+	for i, v := range data {
+		if i != 0 {
+			out += "\n"
+		}
+
+		out += v.Hash + " " + v.Filename
+	}
+
+	// formulate checksum file pathing
+	path = filepath.Join(me.Path, VersionToDir(me.Version),
+		_CHECKSUM_FILENAME,
 	)
 
+	// delete checksum file
+	_ = os.RemoveAll(path)
+
+	// open checksum file
 	f, err = os.OpenFile(path,
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
 		PERMISSION_FILE,
@@ -392,7 +405,8 @@ func (me *Manager) writeChecksumFile(data string) (err error) {
 		return fmt.Errorf("%s: %s", ERROR_TARGET_CHECKSUM, err)
 	}
 
-	_, err = f.WriteString(data)
+	// write checksum data into file
+	_, err = f.WriteString(out)
 	if err != nil {
 		err = fmt.Errorf("%s: %s", ERROR_TARGET_CHECKSUM, err)
 		_ = f.Close()
@@ -400,6 +414,7 @@ func (me *Manager) writeChecksumFile(data string) (err error) {
 		return err
 	}
 
+	// sync and safe close
 	_ = f.Sync()
 	f.Close()
 
@@ -415,7 +430,10 @@ func (me *Manager) createLogger() (out *reporter) {
 		}
 	}()
 
-	out = &reporter{log: me.Log}
+	out = &reporter{
+		Log:      me.Log,
+		DestPath: me.Path,
+	}
 
 	err = out.IsHealthy()
 	if err != nil {

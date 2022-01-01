@@ -92,7 +92,7 @@ func (me *job) Run(ctx context.Context, ch chan conductor.Message) {
 	}
 
 	// report output
-	me.reportOutput("%s %s", out, me.Filename)
+	me.reportOutput("%s %s", out, destPath)
 
 	// report done
 	me.reportDone()

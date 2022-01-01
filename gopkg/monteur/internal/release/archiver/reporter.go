@@ -17,21 +17,24 @@ package archiver
 
 import (
 	"fmt"
+	"path/filepath"
+	"strings"
 	"sync"
 )
 
 type reporter struct {
 	// assign by manager
-	log Logger
+	Log      Logger
+	DestPath string
 
 	// internal usage
 	mutex     *sync.RWMutex
-	checksums []string
+	checksums []*metadata
 }
 
 func (me *reporter) Init() {
 	me.mutex = &sync.RWMutex{}
-	me.checksums = []string{}
+	me.checksums = []*metadata{}
 }
 
 func (me *reporter) Info(format string, args ...interface{}) {
@@ -41,10 +44,10 @@ func (me *reporter) Info(format string, args ...interface{}) {
 	me.mutex.Lock()
 	defer me.mutex.Unlock()
 
-	// log output
+	// Log output
 	err = me.IsHealthy()
 	if err == nil {
-		me.log.Info(format, args...)
+		me.Log.Info(format, args...)
 	}
 }
 
@@ -55,10 +58,10 @@ func (me *reporter) Success(format string, args ...interface{}) {
 	me.mutex.Lock()
 	defer me.mutex.Unlock()
 
-	// log output
+	// Log output
 	err = me.IsHealthy()
 	if err == nil {
-		me.log.Success(format, args...)
+		me.Log.Success(format, args...)
 	}
 }
 
@@ -69,10 +72,10 @@ func (me *reporter) Warning(format string, args ...interface{}) {
 	me.mutex.Lock()
 	defer me.mutex.Unlock()
 
-	// log output
+	// Log output
 	err = me.IsHealthy()
 	if err == nil {
-		me.log.Warning(format, args...)
+		me.Log.Warning(format, args...)
 	}
 }
 
@@ -83,41 +86,63 @@ func (me *reporter) Error(format string, args ...interface{}) {
 	me.mutex.Lock()
 	defer me.mutex.Unlock()
 
-	// log output
+	// Log output
 	err = me.IsHealthy()
 	if err == nil {
-		me.log.Error(format, args...)
+		me.Log.Error(format, args...)
 	}
 }
 
 func (me *reporter) Output(format string, args ...interface{}) {
+	var list []string
+	var out, filename, hash, url string
 	var err error
-
-	out := fmt.Sprintf(format, args...)
+	var meta *metadata
 
 	// acquire lock
 	me.mutex.Lock()
 	defer me.mutex.Unlock()
 
-	// log output
+	// Log output
 	err = me.IsHealthy()
 	if err == nil {
-		me.log.Output(format, args...)
+		me.Log.Output(format, args...)
 	}
 
-	// append to checksum
-	me.checksums = append(me.checksums, out)
+	// process output string
+	out = fmt.Sprintf(format, args...)
+	list = strings.Split(out, "➤ ")
+	out = list[len(list)-1]
+	out = strings.TrimRight(out, "\r\n ")
+	out = strings.TrimLeft(out, "\r\n ")
+	list = strings.Split(out, " ")
+	filename = list[1]
+	hash = list[0]
+
+	// process url
+	url, _ = filepath.Rel(me.DestPath, filename)
+	filename = filepath.Base(filename)
+
+	// construct metadata
+	meta = &metadata{
+		Filename: filename,
+		Hash:     hash,
+		URL:      url,
+	}
+
+	// append output to checksum
+	me.checksums = append(me.checksums, meta)
 }
 
 func (me *reporter) IsHealthy() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("logger is absent")
+			err = fmt.Errorf("Logger is absent")
 		}
 	}()
 
 	// test run IsHealthy()
-	err = me.log.IsHealthy()
+	err = me.Log.IsHealthy()
 
 	return err //nolint:wrapcheck
 }

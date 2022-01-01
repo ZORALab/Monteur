@@ -14,3 +14,13 @@
 // limitations under the License.
 
 package archiver
+
+import (
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/checksum"
+)
+
+const (
+	CHECKSUM_SHA256        = checksum.HASHER_SHA256
+	CHECKSUM_SHA512        = checksum.HASHER_SHA512
+	CHECKSUM_SHA512_TO_256 = checksum.HASHER_SHA512_TO_SHA256
+)
