@@ -15,9 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build linux && (amd64 || arm64 || mips64 || mips64le || ppc64 || ppc64le || riscv64 || s390x)
-// +build linux
-// +build amd64 arm64 mips64 mips64le ppc64 ppc64le riscv64 s390x
+//go:build linux && 386
+// +build linux,386
 
 package oshelper
 
@@ -41,9 +40,9 @@ func _symlinkTimestamps(fi os.FileInfo) (aTim, cTim, mTim time.Time) {
 
 	stat := fi.Sys().(*syscall.Stat_t)
 
-	aTim = time.Unix(stat.Atim.Sec, stat.Atim.Nsec)
-	cTim = time.Unix(stat.Ctim.Sec, stat.Ctim.Nsec)
-	mTim = time.Unix(stat.Mtim.Sec, stat.Mtim.Nsec)
+	aTim = time.Unix(int64(stat.Atim.Sec), int64(stat.Atim.Nsec))
+	cTim = time.Unix(int64(stat.Ctim.Sec), int64(stat.Ctim.Nsec))
+	mTim = time.Unix(int64(stat.Mtim.Sec), int64(stat.Mtim.Nsec))
 
 	return aTim, cTim, mTim
 }

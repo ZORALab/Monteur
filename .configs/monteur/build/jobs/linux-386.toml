@@ -1,0 +1,48 @@
+[Metadata]
+Name = 'linux-i386'
+Description = """
+Monteur Linux OS with 32-bit 386 CPU Architecture.
+"""
+
+[Variables]
+PlatformOS = 'linux'
+PlatformCPU = '386'
+PlatformExt = ''
+BuildFlags = '-ldflags "-s -w"'
+
+[FMTVariables]
+SrcPath = '{{- .BaseDir -}}/app/monteur/main.go'
+BuildPath = """
+{{- .WorkingDir -}}/{{- .PlatformOS -}}-{{- .PlatformCPU -}}{{- .PlatformExt -}}
+"""
+
+
+
+
+[[Dependencies]]
+Name = 'Go'
+Condition = 'all-all'
+Type = 'command'
+Command = 'go'
+
+
+
+
+[[CMD]]
+Name = "Create Build Directory to House the Compiled Binary"
+Type = 'create-path'
+Condition = [ 'all-all' ]
+Source = '{{- .WorkingDir -}}'
+
+[[CMD]]
+Name = "Build the Go Binary"
+Type = 'command'
+Condition = [ 'all-all' ]
+Location = '{{- .BaseDir -}}'
+Source = """
+GOOS="{{- .PlatformOS -}}" \
+GOARCH="{{- .PlatformCPU -}}" \
+go build {{ .BuildFlags }}  \
+-o "{{- .BuildPath -}}" \
+"{{- .SrcPath -}}"
+"""
