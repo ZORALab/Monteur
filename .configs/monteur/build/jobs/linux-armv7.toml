@@ -1,0 +1,57 @@
+[Metadata]
+Name = 'linux-armv7'
+Description = """
+Monteur Linux OS with 32-bit ARM version 7 CPU Architecture.
+"""
+
+[Variables]
+PlatformOS = 'linux'
+PlatformCPU = 'arm'
+PlatformExt = ''
+BuildFlags = '-buildmode=pie -ldflags "-s -w"'
+
+[FMTVariables]
+SrcPath = '{{- .BaseDir -}}/app/monteur/main.go'
+BuildPath = """
+{{- .WorkingDir -}}/{{- .PlatformOS -}}-{{- .PlatformCPU -}}{{- .PlatformExt -}}
+"""
+
+
+
+
+[[Dependencies]]
+Name = 'Go'
+Condition = 'all-all'
+Type = 'command'
+Command = 'go'
+
+[[Dependencies]]
+Name = 'Arm GNU GCC Compiler'
+Condition = 'all-all'
+Type = 'command'
+Command = 'arm-linux-gnueabi-gcc'
+
+
+
+
+[[CMD]]
+Name = "Create Build Directory to House the Compiled Binary"
+Type = 'create-path'
+Condition = [ 'all-all' ]
+Source = '{{- .WorkingDir -}}'
+
+[[CMD]]
+Name = "Build the Go Binary"
+Type = 'command'
+Condition = [ 'all-all' ]
+Location = '{{- .BaseDir -}}'
+Source = """
+CGO_ENABLED=0 \
+GOOS="{{- .PlatformOS -}}" \
+GOARCH="{{- .PlatformCPU -}}" \
+GOARM="7" \
+CC=arm-linux-gnueabi-gcc \
+go build {{ .BuildFlags }}  \
+-o "{{- .BuildPath -}}" \
+"{{- .SrcPath -}}"
+"""

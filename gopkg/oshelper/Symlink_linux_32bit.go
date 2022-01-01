@@ -15,8 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build linux && 386
-// +build linux,386
+//go:build linux && (386 || arm)
+// +build linux
+// +build 386 arm
 
 package oshelper
 
