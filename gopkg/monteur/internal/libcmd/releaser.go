@@ -234,10 +234,7 @@ func (me *releaser) processPackageVariables(pkg *libmonteur.TOMLReleasePackage,
 	}
 
 	me.log.Info("Processing PkgVersion...")
-	version, err = libmonteur.ProcessString(app.Version, *variables)
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
+	version = libmonteur.ProcessToFilepath(app.Version)
 	(*variables)[libmonteur.VAR_PACKAGE_VERSION] = version
 	me.log.Info("Got: '%s'", version)
 

@@ -43,6 +43,8 @@ func Package(pkg *libmonteur.TOMLPackage,
 		return err //nolint:wrapcheck
 	}
 
+	pkg.Name = libmonteur.ProcessToFilepath(pkg.Name)
+
 	packagePath = variables[libmonteur.VAR_PACKAGE].(string)
 	archivePath = filepath.Join(filepath.Dir(packagePath),
 		pkg.Name+zip.EXTENSION,

@@ -17,6 +17,7 @@ package libmonteur
 
 import (
 	"fmt"
+	"strings"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/templater"
 )
@@ -35,4 +36,27 @@ func ProcessString(given string, v map[string]interface{}) (out string,
 	}
 
 	return out, err
+}
+
+// ProcessToFilepath processes a given string to a filepath friendly output.
+//
+// It shall replaces the following symbols into dash (`-`):
+//   1. period (`.`)
+//   2. percent (`%`)
+//   3. dollar (`$`)
+//   4. forward slash (`/`)
+//   5. backslash(`\`)
+//   6. space (` `)
+//   7. underscore (`_`)
+func ProcessToFilepath(in string) (out string) {
+	out = strings.ToLower(in)
+	out = strings.ReplaceAll(out, ".", "-")
+	out = strings.ReplaceAll(out, "%", "-")
+	out = strings.ReplaceAll(out, "$", "-")
+	out = strings.ReplaceAll(out, "/", "-")
+	out = strings.ReplaceAll(out, "\\", "-")
+	out = strings.ReplaceAll(out, " ", "-")
+	out = strings.ReplaceAll(out, "_", "-")
+
+	return out
 }

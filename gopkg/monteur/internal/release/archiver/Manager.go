@@ -200,15 +200,19 @@ func (me *Manager) Add(target string) (err error) {
 
 	// sanitize input path
 	info, err = os.Stat(target)
-	mode = info.Mode()
-	switch {
-	case err == nil && mode.IsRegular():
-	case err == nil && !mode.IsRegular():
-		return fmt.Errorf(ERROR_TARGET_INVALID)
-	case os.IsNotExist(err):
+	if err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("%s: %s", ERROR_TARGET_MISSING, err)
-	default:
-		return fmt.Errorf(ERROR_PATH)
+	}
+
+	if err == nil {
+		mode = info.Mode()
+		switch {
+		case mode.IsRegular():
+		case !mode.IsRegular():
+			return fmt.Errorf(ERROR_TARGET_INVALID)
+		default:
+			return fmt.Errorf(ERROR_PATH)
+		}
 	}
 
 	// create target data structure
