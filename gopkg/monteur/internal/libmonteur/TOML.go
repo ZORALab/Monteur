@@ -133,8 +133,15 @@ type TOMLPackage struct {
 }
 
 type TOMLRelease struct {
+	Data     *TOMLReleaseData
 	Packages map[string]*TOMLReleasePackage
 	Target   string
+	Checksum string
+}
+
+type TOMLReleaseData struct {
+	Path   string
+	Format string
 }
 
 type TOMLReleasePackage struct {

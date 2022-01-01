@@ -23,7 +23,8 @@ const (
 	CHECKSUM_FORMAT_HEX        = "hex"
 	CHECKSUM_FORMAT_BASE64_URL = "base64-url"
 
-	CHECKSUM_ALGO_SHA512 = "sha512"
-	CHECKSUM_ALGO_SHA256 = "sha256"
-	CHECKSUM_ALGO_MD5    = "md5"
+	CHECKSUM_ALGO_SHA512_TO_SHA256 = "sha512->sha256"
+	CHECKSUM_ALGO_SHA512           = "sha512"
+	CHECKSUM_ALGO_SHA256           = "sha256"
+	CHECKSUM_ALGO_MD5              = "md5"
 )

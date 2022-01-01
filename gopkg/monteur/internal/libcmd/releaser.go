@@ -18,10 +18,12 @@ package libcmd
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/conductor"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libarchiver"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 )
@@ -43,15 +45,15 @@ func (me *releaser) Parse(path string) (err error) {
 	dep := []*libmonteur.TOMLDependency{}
 	fmtVar := map[string]interface{}{}
 	cmd := []*libmonteur.TOMLAction{}
-	rel := &libmonteur.TOMLRelease{
-		Packages: map[string]*libmonteur.TOMLReleasePackage{},
-	}
 
 	// init all important variables
 	me.metadata = &libmonteur.TOMLMetadata{}
 	me.dependencies = []*commander.Dependency{}
 	me.cmd = []*libmonteur.TOMLAction{}
-	me.releases = &libmonteur.TOMLRelease{}
+	me.releases = &libmonteur.TOMLRelease{
+		Data:     &libmonteur.TOMLReleaseData{},
+		Packages: map[string]*libmonteur.TOMLReleasePackage{},
+	}
 
 	// construct TOML file data structure
 	s := struct {
@@ -66,7 +68,7 @@ func (me *releaser) Parse(path string) (err error) {
 		Variables:    me.variables,
 		FMTVariables: &fmtVar,
 		Dependencies: &dep,
-		Releases:     rel,
+		Releases:     me.releases,
 		CMD:          &cmd,
 	}
 
@@ -95,7 +97,7 @@ func (me *releaser) Parse(path string) (err error) {
 		return err
 	}
 
-	err = sanitizeRelease(rel, me.releases)
+	err = sanitizeRelease(me.releases, me.variables)
 	if err != nil {
 		return err
 	}
@@ -111,13 +113,58 @@ func (me *releaser) Parse(path string) (err error) {
 
 // Run executes the full run-job.
 func (me *releaser) Run(ctx context.Context, ch chan conductor.Message) {
+	var init, releasePkg, conclude func()
 	var variables map[string]interface{}
+	var pkg *libmonteur.TOMLReleasePackage
+	var manager interface{}
 	var err error
 
 	me.log.Info("Run Task Now: " + libmonteur.LOG_SUCCESS + "\n")
 	me.reportUp = ch
 
-	for _, pkg := range me.releases.Packages {
+	switch me.metadata.Type {
+	case libmonteur.RELEASE_ARCHIVE:
+		init = func() {
+			manager, err = libarchiver.Init(me.log,
+				me.releases,
+				me.variables,
+			)
+		}
+
+		releasePkg = func() {
+			err = libarchiver.Release(pkg, manager, variables)
+		}
+
+		conclude = func() {
+			err = libarchiver.Conclude(manager)
+		}
+	case libmonteur.RELEASE_MANUAL:
+		init = nil
+
+		releasePkg = func() {
+			err = me.runManually(variables)
+		}
+
+		conclude = nil
+	default:
+		me.reportError(fmt.Errorf("%s: '%s'",
+			libmonteur.ERROR_RELEASER_TYPE_UNSUPPORTED,
+			me.metadata.Type,
+		))
+		return
+	}
+
+	me.log.Info("Executing release initialization function now...")
+	if init != nil {
+		init()
+		if err != nil {
+			me.reportError(err)
+			return
+		}
+	}
+	me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
+
+	for _, pkg = range me.releases.Packages {
 		// copy the original variables into the new variable list
 		variables = map[string]interface{}{}
 		for k, v := range me.variables {
@@ -131,24 +178,26 @@ func (me *releaser) Run(ctx context.Context, ch chan conductor.Message) {
 			return
 		}
 
-		// execute actual run based on type
-		switch me.metadata.Type {
-		case libmonteur.RELEASE_MANUAL:
-			err = me.runManually(variables)
+		me.log.Info("Executing release package function now...")
+		if releasePkg != nil {
+			releasePkg()
 			if err != nil {
 				me.reportError(err)
 				return
 			}
-		default:
-			err = fmt.Errorf("%s: '%s'",
-				libmonteur.ERROR_RELEASER_TYPE_UNSUPPORTED,
-				me.metadata.Type,
-			)
+		}
+		me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
+	}
 
+	me.log.Info("Executing release conclusion function now...")
+	if conclude != nil {
+		conclude()
+		if err != nil {
 			me.reportError(err)
 			return
 		}
 	}
+	me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
 
 	me.reportDone()
 }
@@ -174,7 +223,23 @@ func (me *releaser) runManually(variables map[string]interface{}) (err error) {
 
 func (me *releaser) processPackageVariables(pkg *libmonteur.TOMLReleasePackage,
 	variables *map[string]interface{}) (err error) {
+	var version string
+	var app *libmonteur.Software
+	var ok bool
+
 	me.log.Info("Executing Release Preparations now...")
+	app, ok = (*variables)[libmonteur.VAR_APP].(*libmonteur.Software)
+	if !ok {
+		panic("MONTEUR DEV: why is VAR_APP not assigned?")
+	}
+
+	me.log.Info("Processing PkgVersion...")
+	version, err = libmonteur.ProcessString(app.Version, *variables)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+	(*variables)[libmonteur.VAR_PACKAGE_VERSION] = version
+	me.log.Info("Got: '%s'", version)
 
 	me.log.Info("Processing ReleasePackage.Source...")
 	pkg.Source, err = libmonteur.ProcessString(pkg.Source, *variables)

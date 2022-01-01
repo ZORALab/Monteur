@@ -113,17 +113,36 @@ func sanitizeMetadata(meta *libmonteur.TOMLMetadata, path string) (err error) {
 	return nil
 }
 
-func sanitizeRelease(in *libmonteur.TOMLRelease,
-	out *libmonteur.TOMLRelease) (err error) {
+func sanitizeRelease(release *libmonteur.TOMLRelease,
+	variables map[string]interface{}) (err error) {
 	var k string
 	var v *libmonteur.TOMLReleasePackage
+	var packages map[string]*libmonteur.TOMLReleasePackage
 
 	// sanitize Target
-	out.Target = in.Target
+	release.Target, err = libmonteur.ProcessString(release.Target,
+		variables,
+	)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// sanitize Data
+	if release.Data == nil {
+		release.Data = &libmonteur.TOMLReleaseData{}
+	}
+
+	// sanitize Data.Path
+	release.Data.Path, err = libmonteur.ProcessString(release.Data.Path,
+		variables,
+	)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
 
 	// sanitize Packages
-	out.Packages = map[string]*libmonteur.TOMLReleasePackage{}
-	for k, v = range in.Packages {
+	packages = map[string]*libmonteur.TOMLReleasePackage{}
+	for k, v = range release.Packages {
 		if k == "" {
 			continue
 		}
@@ -136,8 +155,8 @@ func sanitizeRelease(in *libmonteur.TOMLRelease,
 		// sanitize individual target
 		switch {
 		case v.Target != "":
-		case out.Target != "":
-			v.Target = out.Target
+		case release.Target != "":
+			v.Target = release.Target
 		default:
 			return fmt.Errorf("%s: '%s'",
 				libmonteur.ERROR_RELEASER_TARGET_MISSING,
@@ -145,8 +164,9 @@ func sanitizeRelease(in *libmonteur.TOMLRelease,
 			)
 		}
 
-		out.Packages[k] = v
+		packages[k] = v
 	}
+	release.Packages = packages
 
 	return nil
 }

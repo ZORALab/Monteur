@@ -1,5 +1,5 @@
-// Copyright 2021 ZORALab Enterprise (hello@zoralab.com)
-// Copyright 2021 "Holloway" Chew, Kean Ho (hollowaykeanho@gmail.com)
+// Copyright 2022 ZORALab Enterprise (hello@zoralab.com)
+// Copyright 2022 "Holloway" Chew, Kean Ho (hollowaykeanho@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package libmonteur
-
-// Release type
-const (
-	RELEASE_ARCHIVE = "archive"
-	RELEASE_MANUAL  = "manual"
-)
+package libarchiver

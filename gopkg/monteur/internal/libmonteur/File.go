@@ -27,6 +27,12 @@ const (
 )
 
 const (
+	FORMAT_TOML = "toml"
+	FORMAT_CSV  = "csv"
+	FORMAT_TXT  = "txt"
+)
+
+const (
 	DIRECTORY_GIT              = ".git"
 	DIRECTORY_MONTEUR_CONFIG_D = "config.d"
 	DIRECTORY_MONTEUR_CONFIG   = ".configs/monteur"
