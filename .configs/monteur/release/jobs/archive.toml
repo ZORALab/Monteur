@@ -28,11 +28,23 @@ Checksum = 'sha512'
 Path = '{{- .RootDir -}}/docs/.data/releases/archives'
 Format = 'toml'
 
+[Releases.Packages.darwin-amd64]
+Source = '{{- .PackageDir -}}/monteur-darwin-amd64/monteur-{{- .PkgVersion -}}-darwin-amd64.tar.gz'
+
+[Releases.Packages.darwin-arm64]
+Source = '{{- .PackageDir -}}/monteur-darwin-arm64/monteur-{{- .PkgVersion -}}-darwin-arm64.tar.gz'
+
 [Releases.Packages.linux-amd64]
 Source = '{{- .PackageDir -}}/monteur-linux-amd64/monteur-{{- .PkgVersion -}}-linux-amd64.tar.gz'
 
 [Releases.Packages.linux-arm64]
 Source = '{{- .PackageDir -}}/monteur-linux-arm64/monteur-{{- .PkgVersion -}}-linux-arm64.tar.gz'
+
+[Releases.Packages.linux-386]
+Source = '{{- .PackageDir -}}/monteur-linux-386/monteur-{{- .PkgVersion -}}-linux-386.tar.gz'
+
+[Releases.Packages.linux-arm]
+Source = '{{- .PackageDir -}}/monteur-linux-arm/monteur-{{- .PkgVersion -}}-linux-arm.tar.gz'
 
 [Releases.Packages.windows-amd64]
 Source = '{{- .PackageDir -}}/monteur-windows-amd64/monteur-{{- .PkgVersion -}}-windows-amd64.zip'
