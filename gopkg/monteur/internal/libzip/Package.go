@@ -21,34 +21,38 @@ import (
 	"path/filepath"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/archive/zip"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 )
 
 func Package(pkg *libmonteur.TOMLPackage,
-	variables map[string]interface{}) (err error) {
-	var archivePath string
+	variables *map[string]interface{},
+	log *liblog.Logger) (err error) {
+	var archivePath, packagePath string
 
-	// process targz-specific variables
-	packagePath := variables[libmonteur.VAR_PACKAGE].(string)
-	packagePath = filepath.Join(packagePath, libmonteur.PACKAGE_ZIP)
-	variables[libmonteur.VAR_PACKAGE] = packagePath
-	_ = os.MkdirAll(packagePath, libmonteur.PERMISSION_DIRECTORY)
+	log.Info("Preparing %s packing ...", libmonteur.PACKAGE_ZIP)
 
-	// process necessary internal variables
-	variables[libmonteur.VAR_PACKAGE_OS] = pkg.OS[0]
-	variables[libmonteur.VAR_PACKAGE_ARCH] = pkg.Arch[0]
-
-	pkg.Name, err = libmonteur.ProcessString(pkg.Name, variables)
+	// process package pathing
+	packagePath, err = libmonteur.UpdatePackagePath(variables,
+		pkg,
+		libmonteur.PACKAGE_ZIP,
+		log.Info,
+	)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
 
-	pkg.Name = libmonteur.ProcessToFilepath(pkg.Name)
+	// copy all files into workspace
+	err = libmonteur.AssemblePackage(pkg, *variables, log.Info)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
 
-	packagePath = variables[libmonteur.VAR_PACKAGE].(string)
+	// begin archive
 	archivePath = filepath.Join(filepath.Dir(packagePath),
-		pkg.Name+zip.EXTENSION,
+		filepath.Base(packagePath)+zip.EXTENSION,
 	)
+	_ = os.RemoveAll(archivePath)
 
 	archiver := &zip.Archiver{
 		Archive:         archivePath,

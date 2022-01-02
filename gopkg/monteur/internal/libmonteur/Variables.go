@@ -49,11 +49,10 @@ const (
 	VAR_TARGET            = "Target"
 	VAR_TMP               = "WorkingDir"
 	VAR_URL               = "URL"
+	VAR_PACKAGE_NAME      = "PkgName"
 	VAR_PACKAGE_VERSION   = "PkgVersion"
 	VAR_PACKAGE_OS        = "PkgOS"
 	VAR_PACKAGE_ARCH      = "PkgArch"
-	VAR_PACKAGE_DEPARTURE = "PkgDeparture"
-	VAR_PACKAGE_ARRIVAL   = "PkgArrival"
 	VAR_RELEASE           = "ReleaseDir"
 	VAR_TIMESTAMP         = "Timestamp"
 )

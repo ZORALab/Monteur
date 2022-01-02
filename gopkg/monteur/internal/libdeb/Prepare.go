@@ -18,40 +18,59 @@ package libdeb
 import (
 	"fmt"
 	"net/url"
-	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/archive/deb"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 )
 
 func Prepare(pkg *libmonteur.TOMLPackage,
-	variables map[string]interface{}) (d *deb.Data, err error) {
-	// process deb-specific variables
-	packagePath := variables[libmonteur.VAR_PACKAGE].(string)
-	packagePath = filepath.Join(packagePath, "deb")
-	variables[libmonteur.VAR_PACKAGE] = packagePath
-	_ = os.MkdirAll(packagePath, libmonteur.PERMISSION_DIRECTORY)
+	variables *map[string]interface{},
+	log *liblog.Logger) (d *deb.Data, err error) {
+	var ok bool
+	var packagePath string
+	var app *libmonteur.Software
 
-	// get app data as needed across multiple internal functions
-	app := variables[libmonteur.VAR_APP].(*libmonteur.Software)
+	log.Info("Preparing %s packing ...", libmonteur.PACKAGE_DEB_MANUAL)
 
-	d, err = createAppData(app, variables, pkg, packagePath)
+	// process critical variables
+	app, ok = (*variables)[libmonteur.VAR_APP].(*libmonteur.Software)
+	if !ok {
+		panic("MONTEUR DEV: why is VAR_APP missing?")
+	}
+
+	// process package pathing
+	packagePath, err = libmonteur.UpdatePackagePath(variables,
+		pkg,
+		libmonteur.PACKAGE_DEB_MANUAL,
+		log.Info,
+	)
+	if err != nil {
+		return nil, err //nolint:wrapcheck
+	}
+
+	err = libmonteur.AssemblePackage(pkg, *variables, log.Info)
+	if err != nil {
+		return nil, err //nolint:wrapcheck
+	}
+
+	// begin archive
+	(*variables)[libmonteur.VAR_PACKAGE_OS] = pkg.OS
+	(*variables)[libmonteur.VAR_PACKAGE_ARCH] = pkg.Arch
+
+	d, err = createAppData(app, *variables, pkg, packagePath)
 	if err != nil || d == nil {
-		d = nil
-		goto done
+		return nil, err
 	}
 
 	err = prepareWorkspace(d, packagePath)
 	if err != nil {
-		d = nil
-		goto done
+		return nil, err
 	}
 
-done:
 	return d, err
 }
 

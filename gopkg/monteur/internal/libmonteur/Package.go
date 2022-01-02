@@ -15,6 +15,15 @@
 
 package libmonteur
 
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"gitlab.com/zoralab/monteur/gopkg/oshelper"
+)
+
 // Package type
 const (
 	PACKAGE_DEB_MANUAL = "deb-manual"
@@ -22,3 +31,74 @@ const (
 	PACKAGE_TARGZ      = "targz"
 	PACKAGE_ZIP        = "zip"
 )
+
+func UpdatePackagePath(variables *map[string]interface{},
+	pkg *TOMLPackage,
+	packagingType string,
+	log func(string, ...interface{})) (packagePath string, err error) {
+	var name string
+
+	// get package name and process it
+	name, err = ProcessString(pkg.Name, *variables)
+	if err != nil {
+		return "", err
+	}
+
+	log("Updating package path...")
+	packagePath = (*variables)[VAR_PACKAGE].(string)
+	packagePath = filepath.Join(packagePath, packagingType, name)
+	(*variables)[VAR_PACKAGE] = packagePath
+	log("➤ Got: '%s'", packagePath)
+
+	log("Creating package path %s ...", packagePath)
+	_ = os.RemoveAll(packagePath)
+	err = os.MkdirAll(packagePath, PERMISSION_DIRECTORY)
+	if err != nil {
+		return "", fmt.Errorf("%s: %s", ERROR_PACKAGER_MKDIR, err)
+	}
+	log(strings.TrimSuffix(LOG_SUCCESS, "\n"))
+
+	return packagePath, nil
+}
+
+func AssemblePackage(pkg *TOMLPackage,
+	variables map[string]interface{},
+	log func(string, ...interface{})) (err error) {
+	log("Assembling package contents now...")
+
+	for k, v := range pkg.Files {
+		k, err = ProcessString(k, variables)
+		if err != nil {
+			return err
+		}
+
+		v, err = ProcessString(v, variables)
+		if err != nil {
+			return err
+		}
+
+		log("Placing merchandise...")
+		log("From: %s", v)
+		log("To  : %s", k)
+
+		_, err = os.Stat(v)
+		if err != nil {
+			return fmt.Errorf("%s: %s",
+				ERROR_PACKAGER_FILE_MISSING,
+				v,
+			)
+		}
+
+		err = oshelper.CopyPath(v, k)
+		if err != nil {
+			return fmt.Errorf("%s: %s",
+				ERROR_PACKAGER_FILES_COPY_FAILED,
+				err,
+			)
+		}
+
+		log(strings.TrimSuffix(LOG_SUCCESS, "\n"))
+	}
+
+	return nil
+}

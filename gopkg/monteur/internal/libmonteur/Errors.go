@@ -96,6 +96,8 @@ const (
 	ERROR_PACKAGER_FILE_MISSING         = "missing file for packaging"
 	ERROR_PACKAGER_FILES_COPY_FAILED    = "failed to copy package's file"
 	ERROR_PACKAGER_FILES_MISSING        = "missing package's Files"
+	ERROR_PACKAGER_MKDIR                = "error making package directory"
+	ERROR_PACKAGER_REMOVE_ALL           = "error removing package directory"
 	ERROR_PACKAGER_OS_MISSING           = "missing package os(es) value"
 	ERROR_PACKAGER_PREPARE_FAILED       = "failed to prepare package"
 	ERROR_PACKAGER_RELATIONSHIPS        = "error parsing related dep packages"

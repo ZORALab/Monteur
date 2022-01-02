@@ -63,26 +63,15 @@ Save = "ChangelogEntries"
 [Packages.001]
 OS = [ 'linux' ]
 Arch = [ 'amd64' ]
-Changelog = '{{- .DataDir -}}/debian/changelog-amd64'
+Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
 Distribution = [
 	'stable',
 ]
 BuildSource = false
 
 [Packages.001.Files]
-'{{- .PackageDir -}}/deb/monteur' = '{{- .BuildDir -}}/linux-amd64'
-
-#[Packages.002]
-#OS = [ 'linux' ]
-#Arch = [ 'arm64' ]
-#Changelog = '{{- .DataDir -}}/debian/changelog-arm64'
-#Distribution = [
-#	'stable',
-#]
-#BuildSource = false
-
-#[Packages.002.Files]
-#'{{- .PackageDir -}}/deb/monteur' = '{{- .BuildDir -}}/linux-arm64'
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
 
 
 

@@ -10,7 +10,7 @@ ChangelogFrom = 'origin/staging'
 ChangelogTo = 'origin/main'
 
 [FMTVariables]
-
+LicensePath = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
 
 
 
@@ -49,91 +49,85 @@ Save = "ChangelogEntries"
 [Packages.001]
 OS = [ 'linux' ]
 Arch = [ 'amd64' ]
-Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
-Changelog = '{{- .DataDir -}}/debian/changelog-{{- index .PkgArch 0 -}}'
+Name = '{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
 Distribution = [
 	'stable',
 ]
 BuildSource = false
 
 [Packages.001.Files]
-'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- index .PkgOS 0 -}}-{{- index .PkgArch 0 -}}'
-'{{- .PackageDir -}}/targz/License.pdf' = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+'{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
 
 
 [Packages.002]
 OS = [ 'linux' ]
 Arch = [ 'arm64' ]
 Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
-Changelog = '{{- .DataDir -}}/debian/changelog-{{- index .PkgArch 0 -}}'
 Distribution = [
 	'stable',
 ]
 BuildSource = false
 
 [Packages.002.Files]
-'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- index .PkgOS 0 -}}-{{- index .PkgArch 0 -}}'
-'{{- .PackageDir -}}/targz/License.pdf' = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+'{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
 
 
 [Packages.003]
 OS = [ 'linux' ]
 Arch = [ 'arm' ]
 Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
-Changelog = '{{- .DataDir -}}/debian/changelog-{{- index .PkgArch 0 -}}'
 Distribution = [
 	'stable',
 ]
 BuildSource = false
 
 [Packages.003.Files]
-'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- index .PkgOS 0 -}}-{{- index .PkgArch 0 -}}'
-'{{- .PackageDir -}}/targz/License.pdf' = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+'{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
 
 
 [Packages.004]
 OS = [ 'linux' ]
 Arch = [ '386' ]
 Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
-Changelog = '{{- .DataDir -}}/debian/changelog-{{- index .PkgArch 0 -}}'
 Distribution = [
 	'stable',
 ]
 BuildSource = false
 
 [Packages.004.Files]
-'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- index .PkgOS 0 -}}-{{- index .PkgArch 0 -}}'
-'{{- .PackageDir -}}/targz/License.pdf' = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+'{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
 
 
 [Packages.005]
 OS = [ 'darwin' ]
 Arch = [ 'amd64' ]
 Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
-Changelog = '{{- .DataDir -}}/debian/changelog-{{- index .PkgArch 0 -}}'
 Distribution = [
 	'stable',
 ]
 BuildSource = false
 
 [Packages.005.Files]
-'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- index .PkgOS 0 -}}-{{- index .PkgArch 0 -}}'
-'{{- .PackageDir -}}/targz/License.pdf' = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+'{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
 
 
 [Packages.006]
 OS = [ 'darwin' ]
 Arch = [ 'arm64' ]
 Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
-Changelog = '{{- .DataDir -}}/debian/changelog-{{- index .PkgArch 0 -}}'
 Distribution = [
 	'stable',
 ]
 BuildSource = false
 
 [Packages.006.Files]
-'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- index .PkgOS 0 -}}-{{- index .PkgArch 0 -}}'
-'{{- .PackageDir -}}/targz/License.pdf' = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+'{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
 
 
 

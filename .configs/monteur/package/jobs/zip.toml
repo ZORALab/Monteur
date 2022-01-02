@@ -13,6 +13,7 @@ ChangelogFrom = 'origin/staging'
 ChangelogTo = 'origin/main'
 
 [FMTVariables]
+LicensePath = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
 
 
 
@@ -50,7 +51,7 @@ Save = "ChangelogEntries"
 
 
 [Packages.001]
-Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+Name = '{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
 OS = [ 'windows' ]
 Arch = [ 'amd64' ]
 Distribution = [
@@ -59,11 +60,11 @@ Distribution = [
 BuildSource = false
 
 [Packages.001.Files]
-'{{- .PackageDir -}}/zip/monteur' = '{{- .BuildDir -}}/windows-amd64.exe'
-'{{- .PackageDir -}}/zip/License.pdf' = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/windows-amd64.exe'
+'{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
 
 [Packages.002]
-Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+Name = '{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
 OS = [ 'windows' ]
 Arch = [ 'arm64' ]
 Distribution = [
@@ -72,8 +73,8 @@ Distribution = [
 BuildSource = false
 
 [Packages.002.Files]
-'{{- .PackageDir -}}/zip/monteur' = '{{- .BuildDir -}}/windows-arm64.exe'
-'{{- .PackageDir -}}/zip/License.pdf' = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/windows-arm64.exe'
+'{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
 
 
 

@@ -18,9 +18,6 @@ package libcmd
 import (
 	"context"
 	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/conductor"
@@ -30,7 +27,6 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtargz"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libzip"
-	"gitlab.com/zoralab/monteur/gopkg/oshelper"
 )
 
 type packager struct {
@@ -137,7 +133,11 @@ func (me *packager) Run(ctx context.Context, ch chan conductor.Message) {
 		return
 	}
 
-	me.runPackaging()
+	err = me.runPackaging()
+	if err != nil {
+		me.reportError(err)
+		return
+	}
 
 	me.reportDone()
 }
@@ -154,9 +154,7 @@ func (me *packager) runChangelogging() (err error) {
 	return x.Exec()
 }
 
-func (me *packager) runPackaging() {
-	var err error
-
+func (me *packager) runPackaging() (err error) {
 	for _, pkg := range me.packages {
 		// copy the original variables into the new variable list
 		variables := map[string]interface{}{}
@@ -166,35 +164,27 @@ func (me *packager) runPackaging() {
 
 		err = me._processPackageVariables(pkg, &variables)
 		if err != nil {
-			me.reportError(err)
-			return
-		}
-
-		// process key data
-		err = me._processPackageFields(pkg, &variables)
-		if err != nil {
-			me.reportError(err)
-			return
+			return err
 		}
 
 		// execute built-in package preprations
 		err = me._preparePackage(pkg, variables)
 		if err != nil {
-			me.reportError(err)
-			return
+			return err
 		}
 
 		// execute given commands
-		err = me._runPackage(variables)
+		err = me._runCMD(variables)
 		if err != nil {
-			me.reportError(err)
-			return
+			return err
 		}
 	}
+
+	return nil
 }
 
-func (me *packager) _runPackage(variables map[string]interface{}) (err error) {
-	me.log.Info("Executing Packaging Processing now...")
+func (me *packager) _runCMD(variables map[string]interface{}) (err error) {
+	me.log.Info("Executing Packaging CMD now...")
 	task := &executive{
 		log:       me.log,
 		variables: variables,
@@ -208,57 +198,22 @@ func (me *packager) _runPackage(variables map[string]interface{}) (err error) {
 		return err
 	}
 
-	me.log.Info("Executing Packaging Processing ➤ DONE\n\n")
+	me.log.Info("Executing Packaging CMD ➤ DONE\n\n")
 	return nil
 }
 
 func (me *packager) _preparePackage(pkg *libmonteur.TOMLPackage,
 	variables map[string]interface{}) (err error) {
 	me.log.Info("Executing Packaging Preparations now...")
-	// copy all files
-	for k, v := range pkg.Files {
-		me.log.Info("Placing merchandise...")
-		me.log.Info("From: %s", v)
-		me.log.Info("To  : %s", k)
 
-		_, err = os.Stat(v)
-		if err != nil {
-			return fmt.Errorf("%s: %s",
-				libmonteur.ERROR_PACKAGER_FILE_MISSING,
-				v,
-			)
-		}
-
-		_ = os.MkdirAll(filepath.Dir(k), libmonteur.PERMISSION_DIRECTORY)
-		err = oshelper.CopyPath(v, k)
-		if err != nil {
-			return fmt.Errorf("%s: %s",
-				libmonteur.ERROR_PACKAGER_FILES_COPY_FAILED,
-				err,
-			)
-		}
-
-		me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
-	}
-
-	// run the preparations
 	switch me.metadata.Type {
 	case libmonteur.PACKAGE_TARGZ:
-		err = libtargz.Package(pkg, variables)
+		err = libtargz.Package(pkg, &variables, me.log)
 	case libmonteur.PACKAGE_ZIP:
-		err = libzip.Package(pkg, variables)
+		err = libzip.Package(pkg, &variables, me.log)
 	case libmonteur.PACKAGE_DEB_MANUAL:
-		me.log.Info("Preparing %s packaging...",
-			libmonteur.PACKAGE_DEB_MANUAL,
-		)
-
-		_, err = libdeb.Prepare(pkg, variables)
+		_, err = libdeb.Prepare(pkg, &variables, me.log)
 	case libmonteur.PACKAGE_MANUAL:
-		me.log.Info("Preparing %s packaging...",
-			libmonteur.PACKAGE_MANUAL,
-		)
-
-		err = me.__prepareManualPackaging(pkg, variables)
 	default:
 		err = fmt.Errorf("%s: '%s'",
 			libmonteur.ERROR_PACKAGER_TYPE_UNKNOWN,
@@ -269,83 +224,50 @@ func (me *packager) _preparePackage(pkg *libmonteur.TOMLPackage,
 	if err != nil {
 		return err
 	}
-	me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
 
 	// end the preparations
 	me.log.Info("Executing Packaging Preparations ➤ DONE\n\n")
 	return nil
 }
 
-func (me *packager) __prepareManualPackaging(pkg *libmonteur.TOMLPackage,
-	variables map[string]interface{}) (err error) {
-	return nil
-}
-
-func (me *packager) _processPackageFields(pkg *libmonteur.TOMLPackage,
-	variables *map[string]interface{}) (err error) {
-	var key, value string
-
-	pkg.Changelog, err = libmonteur.ProcessString(pkg.Changelog,
-		*variables,
-	)
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
-
-	// process pkg.Files
-	if len(pkg.Files) == 0 {
-		return fmt.Errorf(libmonteur.ERROR_PACKAGER_FILES_MISSING)
-	}
-
-	list := map[string]string{}
-	for k, v := range pkg.Files {
-		key, err = libmonteur.ProcessString(k, *variables)
-		if err != nil {
-			return err //nolint:wrapcheck
-		}
-
-		value, err = libmonteur.ProcessString(v, *variables)
-		if err != nil {
-			return err //nolint:wrapcheck
-		}
-
-		list[key] = value
-	}
-	pkg.Files = list
-
-	return nil
-}
-
 func (me *packager) _processPackageVariables(pkg *libmonteur.TOMLPackage,
 	variables *map[string]interface{}) (err error) {
 	var ok bool
-	var app *libmonteur.Software
 	var packagePath string
+	var app *libmonteur.Software
 
-	// process operating system
-	(*variables)[libmonteur.VAR_PACKAGE_OS] = pkg.OS
-
-	// process architecture
-	(*variables)[libmonteur.VAR_PACKAGE_ARCH] = pkg.Arch
-
-	// extract app data from variable list
+	// process critical variables
 	app, ok = (*variables)[libmonteur.VAR_APP].(*libmonteur.Software)
 	if !ok {
-		return fmt.Errorf("%s", libmonteur.ERROR_PACKAGER_APP_MISSING)
+		panic("MONTEUR DEV: why is VAR_APP missing?")
 	}
+
+	(*variables)[libmonteur.VAR_PACKAGE_NAME] =
+		libmonteur.ProcessToFilepath(app.Name)
+	(*variables)[libmonteur.VAR_PACKAGE_VERSION] =
+		libmonteur.ProcessToFilepath(app.Version)
+	(*variables)[libmonteur.VAR_PACKAGE_OS] = pkg.OS[0]
+	(*variables)[libmonteur.VAR_PACKAGE_ARCH] = pkg.Arch[0]
 
 	// process VAR_PACKAGE (PackageDir) base directory
 	packagePath, ok = (*variables)[libmonteur.VAR_TMP].(string)
 	if !ok {
 		panic("MONTEUR DEV: why is libmonteur.VAR_TMP missing?")
 	}
-	packagePath = filepath.Join(packagePath,
-		strings.ToLower(app.Name)+"-"+pkg.OS[0]+"-"+pkg.Arch[0],
-	)
 	(*variables)[libmonteur.VAR_PACKAGE] = packagePath
 
-	// clean up VAR_PACKAGE for new output
-	_ = os.RemoveAll(packagePath)
+	// process pkg.Files
+	if len(pkg.Files) == 0 {
+		return fmt.Errorf(libmonteur.ERROR_PACKAGER_FILES_MISSING)
+	}
+
+	// process pkg.Changelog pathing
+	pkg.Changelog, err = libmonteur.ProcessString(pkg.Changelog,
+		*variables,
+	)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
 
 	return nil
 }
