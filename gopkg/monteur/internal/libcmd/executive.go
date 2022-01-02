@@ -35,9 +35,12 @@ type executive struct {
 // Exec instructs the executive to run all the given commands.
 func (me *executive) Exec() (err error) {
 	for i, order := range me.orders {
-		me.log.Info("Executing Command...")
-
 		cmd := me.create(order)
+		if cmd.Type == commander.ACTION_PLACEHOLDER {
+			continue
+		}
+
+		me.log.Info("Executing Command...")
 		me.log.Info("Name: '%s'", cmd.Name)
 		me.log.Info("Type: '%v'", cmd.Type)
 
