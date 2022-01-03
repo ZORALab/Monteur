@@ -270,68 +270,6 @@ Currently, Monteur supports the following `Type` values:
 * `command` - identify by terminal command (e.g. `hugo`, `git`, ...)
 
 
-#### `[Changelog]`
-The `[Changelog]` is the table for generating the current version's changelog
-entries. This `[Changelog]` shall be executed first before packaging executions.
-
-`[Changelog]` has its own set of important fields to process the generated
-outcomes. Here is the current supported fields:
-
-```toml {linenos=table,hl_lines=[],linenostart=1}
-[Changelog]
-LineBreak = "\n" # This field must be in double quote for special characters.
-Regex = ''
-```
-
-* `LineBreak` - the line-breaking character for breaking a long changelog string
-  into list of changelog entries string.
-* `Regex` - optional field designed for filtering each changelog entry line. The
-  opening and closing forward slashes (`/`) are not required.
-
-##### `[[Changelog.CMD]]`
-The list of instructions for sourcing the changelog. Hence, this is why it has
-extra square braces.
-
-Its values are complying to Monteur's [Commands Execution Units]({{< link
-"/internals/commands/" "this" "url-only" />}}). Here is an example:
-
-```toml {linenos=table,hl_lines=[9],linenostart=1}
-[[Changelog.CMD]]
-Name = "Get Changelog From Git Log Comparisons"
-Type = 'command'
-Condition = [ 'all-all' ]
-Source = """git --no-pager log \
-"{{- .ChangelogTo -}}..{{- .ChangelogFrom -}}" \
---pretty="format:%h %s"
-"""
-Save = "ChangelogEntries"
-```
-
-Regardless how long your instruction is, `[Changelog]` shall **ONLY** read the
-final output, a single long `string` from the `ChangelogEntries` variables.
-Hence, remember to indicate `Save =` field for the last instruction to output
-the changelog entries data.
-
-Note that you **DO NOT** need to manually split the entries. Monteur will
-split them natively using the `Changelog.LineBreak` symbol.
-
-##### Manually File Changelog Entries
-If, for some edge case reasons that you really need to fill in the changelog
-entries manually, simply create a `Entries` field with an array of strings.
-Example:
-
-```toml {linenos=table,hl_lines=[],linenostart=1}
-[Changelog]
-Entries = [
-	'changed feature A',
-	'changed feature B',
-	...,
-]
-```
-
-Only do this at the last resort since it involves a lot of manual labor-work.
-
-
 #### `[Packages.XXX]`
 `[Package]` are the list of packages to be packaged by the `[CMD]` table. All
 these packages shall be iterated with the `[CMD]` table with the given variables
