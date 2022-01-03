@@ -329,12 +329,19 @@ func (me *Data) createSourceDir(path string) (err error) {
 func (me *Data) CreateChangelog(path string) (err error) {
 	var info os.FileInfo
 
+	// formulate the filepath
 	target := filepath.Join(path, "changelog")
 
-	// always write the latest changelog first
-	err = me._writeFile(target, _PERMISSION_FILE, me.Changelog.String())
-	if err != nil {
-		return err
+	// write latest changes if available
+	if len(me.Changelog.Changes) > 0 {
+		err = me._writeFile(target,
+			_PERMISSION_FILE,
+			me.Changelog.String(),
+		)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	// check path for preprend file
@@ -342,26 +349,26 @@ func (me *Data) CreateChangelog(path string) (err error) {
 		goto end
 	}
 
-	// check if it's a regular file
 	info, err = os.Stat(me.Changelog.Path)
 	switch {
 	case os.IsNotExist(err):
-		goto updatePersistentFile
+		goto updatePersistentDataFile
 	case err != nil:
 		return fmt.Errorf("%s: %s", ERROR_CHANGELOG_PATH_BAD, err)
 	case info != nil && info.Mode().IsRegular():
-		goto appendFile
+		err = me._appendChangelog(target, me.Changelog.Path)
+		if err != nil {
+			return err
+		}
 	default:
 		return fmt.Errorf(ERROR_CHANGELOG_NOT_A_FILE)
 	}
 
-appendFile:
-	err = me._appendChangelog(target, me.Changelog.Path)
-	if err != nil {
-		return err
+updatePersistentDataFile:
+	if len(me.Changelog.Changes) == 0 {
+		goto end // data file was the updated version
 	}
 
-updatePersistentFile:
 	err = me._overwriteFile(me.Changelog.Path, target)
 	if err != nil {
 		return err
@@ -405,6 +412,8 @@ func (me *Data) _appendChangelog(target string, source string) (err error) {
 	var ok bool
 	var scanner *bufio.Scanner
 	var f, s *os.File
+	var out string
+	var notFirst bool
 	var entry *Changelog
 
 	// open changelog writer
@@ -426,6 +435,11 @@ func (me *Data) _appendChangelog(target string, source string) (err error) {
 
 	// parse each entries
 	entry = &Changelog{}
+
+	if len(me.Changelog.Changes) > 0 {
+		notFirst = true
+	}
+
 	for scanner.Scan() {
 		// parse the line
 		ok, err = entry.Parse(scanner.Text())
@@ -435,7 +449,13 @@ func (me *Data) _appendChangelog(target string, source string) (err error) {
 
 		// append to changelog file
 		if ok {
-			_, err = f.WriteString("\n\n" + entry.String())
+			out = entry.String()
+
+			if notFirst {
+				out = "\n\n" + out
+			}
+
+			_, err = f.WriteString(out)
 			if err != nil {
 				err = fmt.Errorf("%s: %s",
 					ERROR_FILE_WRITE_FAILED,
@@ -444,6 +464,7 @@ func (me *Data) _appendChangelog(target string, source string) (err error) {
 				goto closeReader
 			}
 
+			notFirst = true
 			entry = &Changelog{}
 		}
 	}
