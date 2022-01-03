@@ -15,10 +15,14 @@
 
 package monteur
 
+import (
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+)
+
 const (
 	// STATUS_OK is the program exit code for everything running smoothly
-	STATUS_OK = 0
+	STATUS_OK = libmonteur.STATUS_OK
 
 	// STATUS_ERROR is the program exit code for bumping into any error
-	STATUS_ERROR = 1
+	STATUS_ERROR = libmonteur.STATUS_ERROR
 )

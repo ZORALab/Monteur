@@ -25,6 +25,17 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 )
 
+// Init initializes the repository with Monteur configurations.
+//
+// This action is used to standardize Monteur repository setup while keeping
+// documentations sane. Upon completion, Monteur should be operable seamlessly
+// even with the absent of any jobs.
+func Init() (statusCode int) {
+	api := &libmonteur.Init{}
+
+	return api.Run()
+}
+
 // Setup is the function to download all dependencies as per configurations.
 //
 // The action shall download all the dependencies and setup the locally working

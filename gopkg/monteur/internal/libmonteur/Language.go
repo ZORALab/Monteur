@@ -15,6 +15,12 @@
 
 package libmonteur
 
+const (
+	LANG_NAME_DEFAULT = "English"
+
+	LANG_CODE_DEFAULT = "en"
+)
+
 // Language is the data structure for defining a language metadata.
 //
 // The fields are compliant to Schema.org definitions available at:

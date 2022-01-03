@@ -20,10 +20,11 @@ package libmonteur
 // These critical object names are mainly to locate root repository with Monteur
 // supports.
 const (
-	EXTENSION_LOG   = ".log"
-	EXTENSION_TOML  = ".toml"
-	EXTENSION_TARGZ = ".tar.gz"
-	EXTENSION_ZIP   = ".zip"
+	EXTENSION_LOG     = ".log"
+	EXTENSION_TOML    = ".toml"
+	EXTENSION_TARGZ   = ".tar.gz"
+	EXTENSION_ZIP     = ".zip"
+	EXTENSION_GITKEEP = ".gitkeep"
 )
 
 const (
