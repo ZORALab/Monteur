@@ -3007,7 +3007,7 @@ Changelog.String() should work properly when:
 11. Changelog changes is emptily given.
 12. Version is not set to nil.
 13. Path is properly given.
-14. Panic is expected.
+14. Panic is not expected.
 `,
 			Switches: map[string]bool{
 				useProperName:            true,
@@ -3023,7 +3023,7 @@ Changelog.String() should work properly when:
 				useEmptyChangelogChanges: true,
 				useNilVersion:            false,
 				useProperPath:            true,
-				expectPanic:              true,
+				expectPanic:              false,
 			},
 		}, {
 			UID:      114,
@@ -7316,6 +7316,42 @@ Changelog.Parse(...) should work properly when:
 				useUnknownChangelogParseStatus: true,
 				expectError:                    false,
 				expectPanic:                    true,
+			},
+		}, {
+			UID:      210,
+			TestType: testChangelogString,
+			Description: `
+Changelog.String() should work properly when:
+1. Entity Name is properly given.
+2. Entity Email is properly given.
+3. Entity Year is properly given.
+4. Maintainer Entity is properly given.
+5. App Name is properly given.
+6. Version upstream is properly given.
+7. Version revision is properly given.
+8. Timestamp is properly given.
+9. Changelog urgency is set to low.
+10. Changelog distribution is properly given.
+11. Changelog changes is emptily given.
+12. Version is not set to nil.
+13. Path is emptily given.
+14. Panic is not expected.
+`,
+			Switches: map[string]bool{
+				useProperName:            true,
+				useProperEmail:           true,
+				useProperYear:            false,
+				useProperEntity:          true,
+				useProperAppName:         true,
+				useProperVersionUpstream: true,
+				useProperVersionRevision: true,
+				useProperTimestamp:       true,
+				useChangelogUrgencyLow:   true,
+				useProperDistro:          true,
+				useEmptyChangelogChanges: true,
+				useNilVersion:            false,
+				useProperPath:            false,
+				expectPanic:              true,
 			},
 		},
 	}

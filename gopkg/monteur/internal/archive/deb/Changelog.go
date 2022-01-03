@@ -493,7 +493,7 @@ func (me *Changelog) sanitizeChanges() (err error) {
 		)
 	}
 
-	if len(me.Changes) == 0 {
+	if len(me.Changes) == 0 && me.Path == "" {
 		return fmt.Errorf("%s (%s): %s '%d'",
 			ERROR_CHANGELOG_ENTRY_BAD,
 			"Changes",
@@ -592,6 +592,10 @@ func (me *Changelog) String() (s string) {
 	err := me.Sanitize()
 	if err != nil {
 		panic(err)
+	}
+
+	if len(me.Changes) == 0 {
+		return ""
 	}
 
 	// header
