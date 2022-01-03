@@ -19,6 +19,7 @@ const (
 	JOB_SETUP   = "setup"
 	JOB_CLEAN   = "clean"
 	JOB_TEST    = "test"
+	JOB_PREPARE = "prepare"
 	JOB_BUILD   = "build"
 	JOB_PACKAGE = "package"
 	JOB_RELEASE = "release"

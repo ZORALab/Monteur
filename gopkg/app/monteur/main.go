@@ -44,6 +44,7 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		`$ monteur setup`,
 		`$ monteur test`,
 		`$ monteur clean`,
+		`$ monteur prepare`,
 		`$ monteur build`,
 		`$ monteur release`,
 		`$ monteur package`,
@@ -98,6 +99,16 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		Help:  "execute the release job",
 		HelpExamples: []string{
 			"$ monteur release",
+		},
+	})
+
+	_ = m.Add(&oshelper.Argument{
+		Name:  "Prepare",
+		Label: []string{"prepare"},
+		Value: &action,
+		Help:  "execute the prepare job",
+		HelpExamples: []string{
+			"$ monteur prepare",
 		},
 	})
 
@@ -157,6 +168,8 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		os.Exit(monteur.Clean())
 	case "release":
 		os.Exit(monteur.Release())
+	case "prepare":
+		os.Exit(monteur.Prepare())
 	case "build":
 		os.Exit(monteur.Build())
 	case "package":

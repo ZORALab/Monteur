@@ -82,6 +82,20 @@ func Release() int {
 	return api.Run()
 }
 
+// Prepare is the function to build the software with current configurations.
+//
+// This action is to prepare the repository for the next version's Build,
+// Package and Release API where its job are not suitable to be inside any of
+// them.
+func Prepare() int {
+	api := &apiCommand{
+		Job:      libmonteur.JOB_PREPARE,
+		ErrorTag: libmonteur.ERROR_PREPARE,
+	}
+
+	return api.Run()
+}
+
 // Build is the function to build the software with current configurations.
 //
 // This action is to build the release version software into many of its

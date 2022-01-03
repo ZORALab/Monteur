@@ -81,6 +81,11 @@ type Pathing struct {
 	TestTMPDir    string
 	TestTOMLFile  string
 
+	// sub-directories for prepare fx
+	PrepareConfigDir string
+	PrepareTMPDir    string
+	PrepareTOMLFile  string
+
 	// sub-directories for build fx
 	BuildConfigDir string
 	BuildTMPDir    string
@@ -299,6 +304,11 @@ func (fp *Pathing) Update(langCode string) (err error) {
 	}
 
 	err = fp.updateCleanPaths()
+	if err != nil {
+		return err
+	}
+
+	err = fp.updatePreparePaths()
 	if err != nil {
 		return err
 	}
@@ -613,6 +623,32 @@ func (fp *Pathing) updateAppPaths() (err error) {
 
 	fp.AppDebianTOMLFile = libmonteur.FILE_TOML_APP_DEBIAN
 	err = fp._initAppConfigPath(&fp.AppDebianTOMLFile, "AppDebianTOMLFile")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (fp *Pathing) updatePreparePaths() (err error) {
+	fp.PrepareConfigDir = filepath.Join(libmonteur.DIRECTORY_PREPARE,
+		libmonteur.DIRECTORY_JOBS,
+	)
+	err = fp._initConfigSubPath(&fp.PrepareConfigDir, "PrepareConfigDir")
+	if err != nil {
+		return err
+	}
+
+	fp.PrepareTMPDir = libmonteur.DIRECTORY_PREPARE
+	err = fp._initWorkingSubPath(&fp.PrepareTMPDir, "PrepareTMPDir")
+	if err != nil {
+		return err
+	}
+
+	fp.PrepareTOMLFile = filepath.Join(libmonteur.DIRECTORY_PREPARE,
+		libmonteur.FILE_TOML,
+	)
+	err = fp._initConfigSubPath(&fp.PrepareTOMLFile, "PrepareTOMLFile")
 	if err != nil {
 		return err
 	}

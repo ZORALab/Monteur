@@ -1,5 +1,5 @@
-// Copyright 2021 ZORALab Enterprise (hello@zoralab.com)
-// Copyright 2021 "Holloway" Chew, Kean Ho (hollowaykeanho@gmail.com)
+// Copyright 2022 ZORALab Enterprise (hello@zoralab.com)
+// Copyright 2022 "Holloway" Chew, Kean Ho (hollowaykeanho@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,11 +25,9 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libdeb"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtargz"
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libzip"
 )
 
-type packager struct {
+type preparer struct {
 	reportUp   chan conductor.Message
 	log        *liblog.Logger
 	thisSystem string
@@ -42,7 +40,7 @@ type packager struct {
 	cmd          []*libmonteur.TOMLAction
 }
 
-func (me *packager) Parse(path string) (err error) {
+func (me *preparer) Parse(path string) (err error) {
 	// init temporary raw input variables
 	dep := []*libmonteur.TOMLDependency{}
 	fmtVar := map[string]interface{}{}
@@ -101,12 +99,12 @@ func (me *packager) Parse(path string) (err error) {
 		return err
 	}
 
-	err = sanitizeCMD(cmd, &me.cmd, me.thisSystem)
+	err = sanitizeChangelog(me.changelog, me.thisSystem)
 	if err != nil {
 		return err
 	}
 
-	err = sanitizeChangelog(me.changelog, me.thisSystem)
+	err = sanitizeCMD(cmd, &me.cmd, me.thisSystem)
 	if err != nil {
 		return err
 	}
@@ -121,19 +119,19 @@ func (me *packager) Parse(path string) (err error) {
 }
 
 // Run executes the full run-job.
-func (me *packager) Run(ctx context.Context, ch chan conductor.Message) {
+func (me *preparer) Run(ctx context.Context, ch chan conductor.Message) {
 	var err error
 
 	me.log.Info("Run Task Now: " + libmonteur.LOG_SUCCESS + "\n")
 	me.reportUp = ch
 
-	err = me.runChangelogging()
+	err = me.sourceChangelogEntries()
 	if err != nil {
 		me.reportError(err)
 		return
 	}
 
-	err = me.runPackaging()
+	err = me.runUpdates()
 	if err != nil {
 		me.reportError(err)
 		return
@@ -142,19 +140,7 @@ func (me *packager) Run(ctx context.Context, ch chan conductor.Message) {
 	me.reportDone()
 }
 
-func (me *packager) runChangelogging() (err error) {
-	x := &changelog{
-		fxSTDOUT:  me.reportOutput,
-		fxSTDERR:  me.reportStatus,
-		variables: &me.variables,
-		changelog: me.changelog,
-		log:       me.log,
-	}
-
-	return x.Exec()
-}
-
-func (me *packager) runPackaging() (err error) {
+func (me *preparer) runUpdates() (err error) {
 	for _, pkg := range me.packages {
 		// copy the original variables into the new variable list
 		variables := map[string]interface{}{}
@@ -167,13 +153,8 @@ func (me *packager) runPackaging() (err error) {
 			return err
 		}
 
-		// ensure package has files
-		if len(pkg.Files) == 0 {
-			return fmt.Errorf(libmonteur.ERROR_PACKAGER_FILES_MISSING)
-		}
-
-		// execute built-in package preprations
-		err = me._preparePackage(pkg, variables)
+		// execute changelog update
+		err = me._updateChangelog(pkg, &variables)
 		if err != nil {
 			return err
 		}
@@ -188,8 +169,52 @@ func (me *packager) runPackaging() (err error) {
 	return nil
 }
 
-func (me *packager) _runCMD(variables map[string]interface{}) (err error) {
+func (me *preparer) sourceChangelogEntries() (err error) {
+	me.log.Info("Executing latest changelog entries sourcing now...")
+
+	task := &changelog{
+		fxSTDOUT:  me.reportOutput,
+		fxSTDERR:  me.reportStatus,
+		variables: &me.variables,
+		changelog: me.changelog,
+		log:       me.log,
+	}
+
+	err = task.Exec()
+	if err != nil {
+		return err
+	}
+
+	me.log.Info("Executing latest changelog entries sourcing ➤ DONE\n\n")
+	return nil
+}
+
+func (me *preparer) _updateChangelog(pkg *libmonteur.TOMLPackage,
+	variables *map[string]interface{}) (err error) {
+	me.log.Info("Executing changelog update now...")
+
+	switch me.metadata.Type {
+	case libmonteur.CHANGELOG_MARKDOWN:
+	case libmonteur.CHANGELOG_DEB:
+		err = libdeb.Changelog(pkg, variables, me.log)
+	default:
+		err = fmt.Errorf("%s: '%s'",
+			libmonteur.ERROR_PREPARER_TYPE_UNKNOWN,
+			me.metadata.Type,
+		)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	me.log.Info("Executing changelog update ➤ DONE\n\n")
+	return nil
+}
+
+func (me *preparer) _runCMD(variables map[string]interface{}) (err error) {
 	me.log.Info("Executing Packaging CMD now...")
+
 	task := &executive{
 		log:       me.log,
 		variables: variables,
@@ -207,51 +232,23 @@ func (me *packager) _runCMD(variables map[string]interface{}) (err error) {
 	return nil
 }
 
-func (me *packager) _preparePackage(pkg *libmonteur.TOMLPackage,
-	variables map[string]interface{}) (err error) {
-	me.log.Info("Executing Packaging Preparations now...")
-
-	switch me.metadata.Type {
-	case libmonteur.PACKAGE_TARGZ:
-		err = libtargz.Package(pkg, &variables, me.log)
-	case libmonteur.PACKAGE_ZIP:
-		err = libzip.Package(pkg, &variables, me.log)
-	case libmonteur.PACKAGE_DEB_MANUAL:
-		_, err = libdeb.Prepare(pkg, &variables, me.log)
-	case libmonteur.PACKAGE_MANUAL:
-	default:
-		err = fmt.Errorf("%s: '%s'",
-			libmonteur.ERROR_PACKAGER_TYPE_UNKNOWN,
-			me.metadata.Type,
-		)
-	}
-
-	if err != nil {
-		return err
-	}
-
-	// end the preparations
-	me.log.Info("Executing Packaging Preparations ➤ DONE\n\n")
-	return nil
-}
-
 // Name is to return the task name
-func (me *packager) Name() string {
+func (me *preparer) Name() string {
 	return me.metadata.Name
 }
 
-func (me *packager) reportStatus(format string, args ...interface{}) {
+func (me *preparer) reportStatus(format string, args ...interface{}) {
 	reportStatus(me.log, me.reportUp, me.metadata.Name, format, args...)
 }
 
-func (me *packager) reportError(err error) {
+func (me *preparer) reportError(err error) {
 	reportError(me.log, me.reportUp, me.metadata.Name, "%s", err)
 }
 
-func (me *packager) reportOutput(format string, args ...interface{}) {
+func (me *preparer) reportOutput(format string, args ...interface{}) {
 	reportOutput(me.log, me.reportUp, me.metadata.Name, format, args...)
 }
 
-func (me *packager) reportDone() {
+func (me *preparer) reportDone() {
 	reportDone(me.log, me.reportUp, me.metadata.Name)
 }

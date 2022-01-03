@@ -55,6 +55,18 @@ func (me *Manager) Parse(path string) (err error) {
 		}
 
 		me.task = subject
+	case libmonteur.JOB_PREPARE:
+		subject := &preparer{
+			thisSystem: system,
+			variables:  me.Variables,
+		}
+
+		err = subject.Parse(path)
+		if err != nil {
+			return err
+		}
+
+		me.task = subject
 	case libmonteur.JOB_BUILD:
 		subject := &basicCMD{
 			thisSystem: system,

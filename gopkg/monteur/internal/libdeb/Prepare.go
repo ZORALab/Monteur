@@ -71,6 +71,7 @@ func Prepare(pkg *libmonteur.TOMLPackage,
 		return nil, err
 	}
 
+	log.Info("Preparing %s packing ➤ OK", libmonteur.PACKAGE_DEB_MANUAL)
 	return d, err
 }
 

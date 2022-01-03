@@ -30,6 +30,7 @@ const (
 const (
 	ERROR_SETUP   = "[ ERROR - Setup   ]"
 	ERROR_TEST    = "[ ERROR - Test    ]"
+	ERROR_PREPARE = "[ ERROR - Prepare ]"
 	ERROR_BUILD   = "[ ERROR - Build   ]"
 	ERROR_PACKAGE = "[ ERROR - Package ]"
 	ERROR_COMPOSE = "[ ERROR - Compose ]"
@@ -49,6 +50,7 @@ const (
 )
 
 const (
+	ERROR_CHANGELOG                    = "error creating/updating changelog"
 	ERROR_CHANGELOG_ENTIRES_MISSING    = "missing current changelog entries"
 	ERROR_CHANGELOG_LINE_BREAK_MISSING = "missing changelog entries' line break"
 	ERROR_CHANGELOG_REGEX_BAD          = "bad regex for changelog entries"
@@ -103,6 +105,10 @@ const (
 	ERROR_PACKAGER_RELATIONSHIPS        = "error parsing related dep packages"
 	ERROR_PACKAGER_TYPE_UNKNOWN         = "unknown package type (Metadata.Type)"
 	ERROR_PACKAGER_VERSION_INCOMPATIBLE = "incompatible package version data"
+)
+
+const (
+	ERROR_PREPARER_TYPE_UNKNOWN = "unknown prepare job type"
 )
 
 const (
