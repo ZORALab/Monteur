@@ -73,42 +73,15 @@ selectType = "WebPage"
 
 
 
-## Installation
-To install Monteur into your operating system, please find your operating system
-guides and execute its instructions:
+## Install Monteur
+For starters, regardless on whether you're here to create a repository with
+Montuer supports OR being instructed to setup Monteur for an existing supported
+one, you need to install Monteur from our official download portals here
+(new windows/tab shall open):
 
-
-
-### Debian / Ubuntu
-A dedicated apt repository was setup for Debian-based operating system. While
-in `root` permission (as in `sudo` all the instructions here):
-
-```bash {linenos=table,hl_lines=[],linenostart=1}
-# get ZORALab public GPG Keys (skip if you done this before with other products)
-curl https://www.zoralab.com/pubkey.gpg \
-	| gpg --yes --dearmor --output /usr/share/keyrings/zoralab-keyring.gpg
-
-# write source list file (choose either 'stable', 'unstable', 'experimental')
-# Here, 'stable' was chosen.
-echo 'deb [signed-by=/usr/share/keyrings/zoralab-keyring.gpg] https://monteur.zoralab.com/releases/deb stable main' \
-	| sudo tee /etc/apt/sources.list.d/zoralab-monteur.list
-
-# perform apt update
-apt update -y
-
-# install monteur
-apt install montuer -y
-
-# exit root account (without 'sudo') and test out monteur
-monteur help
-```
-
-The `apt` repository is always packed with the latest versions. You can check
-them out in our
-[Releases Section]({{< link "/versions/" "this" "url-only" />}}). Should any
-later version is available, it will be rolled-out via the `apt update` and
-`apt upgrade`.
-
+{{< link "/versions" "this" "" "_blank" "button" >}}
+Download Monteur
+{{< /link >}}
 
 
 
