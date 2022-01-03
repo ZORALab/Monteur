@@ -32,23 +32,22 @@ type preparer struct {
 	log        *liblog.Logger
 	thisSystem string
 
-	variables    map[string]interface{}
-	metadata     *libmonteur.TOMLMetadata
-	dependencies []*commander.Dependency
-	changelog    *libmonteur.TOMLChangelog
-	packages     map[string]*libmonteur.TOMLPackage
-	cmd          []*libmonteur.TOMLAction
+	variables map[string]interface{}
+	metadata  *libmonteur.TOMLMetadata
+	changelog *libmonteur.TOMLChangelog
+	packages  map[string]*libmonteur.TOMLPackage
+	cmd       []*libmonteur.TOMLAction
 }
 
 func (me *preparer) Parse(path string) (err error) {
 	// init temporary raw input variables
+	dependencies := []*commander.Dependency{}
 	dep := []*libmonteur.TOMLDependency{}
 	fmtVar := map[string]interface{}{}
 	cmd := []*libmonteur.TOMLAction{}
 
 	// initialize all important variables
 	me.metadata = &libmonteur.TOMLMetadata{}
-	me.dependencies = []*commander.Dependency{}
 	me.changelog = &libmonteur.TOMLChangelog{
 		CMD: []*libmonteur.TOMLAction{},
 	}
@@ -94,7 +93,12 @@ func (me *preparer) Parse(path string) (err error) {
 		return err //nolint:wrapcheck
 	}
 
-	err = sanitizeDeps(dep, &me.dependencies, me.thisSystem, me.variables)
+	err = sanitizeDeps(dep, &dependencies, me.thisSystem, me.variables)
+	if err != nil {
+		return err
+	}
+
+	err = checkDependencies(&dependencies)
 	if err != nil {
 		return err
 	}

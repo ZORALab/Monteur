@@ -32,22 +32,21 @@ type releaser struct {
 	log        *liblog.Logger
 	thisSystem string
 
-	variables    map[string]interface{}
-	metadata     *libmonteur.TOMLMetadata
-	dependencies []*commander.Dependency
-	releases     *libmonteur.TOMLRelease
-	cmd          []*libmonteur.TOMLAction
+	variables map[string]interface{}
+	metadata  *libmonteur.TOMLMetadata
+	releases  *libmonteur.TOMLRelease
+	cmd       []*libmonteur.TOMLAction
 }
 
 func (me *releaser) Parse(path string) (err error) {
 	// init temporary raw input variables
+	dependencies := []*commander.Dependency{}
 	dep := []*libmonteur.TOMLDependency{}
 	fmtVar := map[string]interface{}{}
 	cmd := []*libmonteur.TOMLAction{}
 
 	// init all important variables
 	me.metadata = &libmonteur.TOMLMetadata{}
-	me.dependencies = []*commander.Dependency{}
 	me.cmd = []*libmonteur.TOMLAction{}
 	me.releases = &libmonteur.TOMLRelease{
 		Data:     &libmonteur.TOMLReleaseData{},
@@ -89,6 +88,16 @@ func (me *releaser) Parse(path string) (err error) {
 	err = libmonteur.SanitizeVariables(&me.variables, &fmtVar)
 	if err != nil {
 		return err //nolint:wrapcheck
+	}
+
+	err = sanitizeDeps(dep, &dependencies, me.thisSystem, me.variables)
+	if err != nil {
+		return err
+	}
+
+	err = checkDependencies(&dependencies)
+	if err != nil {
+		return err
 	}
 
 	err = sanitizeCMD(cmd, &me.cmd, me.thisSystem)

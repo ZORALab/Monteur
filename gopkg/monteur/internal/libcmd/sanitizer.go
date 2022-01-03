@@ -90,17 +90,6 @@ func sanitizeDeps(in []*libmonteur.TOMLDependency,
 		*out = append(*out, s)
 	}
 
-	// sanitize each commands for validity
-	for _, dep := range *out {
-		err = dep.Init()
-		if err != nil {
-			return fmt.Errorf("%s: %s",
-				libmonteur.ERROR_DEPENDENCY_BAD,
-				err,
-			)
-		}
-	}
-
 	return nil
 }
 

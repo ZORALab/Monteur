@@ -34,22 +34,21 @@ type basicCMD struct {
 	variables map[string]interface{}
 	metadata  *libmonteur.TOMLMetadata
 
-	log          *liblog.Logger
-	dependencies []*commander.Dependency
-	cmd          []*libmonteur.TOMLAction
+	log *liblog.Logger
+	cmd []*libmonteur.TOMLAction
 }
 
 // Parse is to parse the given data filepath into basicCMD data type.
 func (me *basicCMD) Parse(path string) (err error) {
-	// initialize all important variables
-	me.metadata = &libmonteur.TOMLMetadata{}
-	me.dependencies = []*commander.Dependency{}
-	me.cmd = []*libmonteur.TOMLAction{}
-
 	// initialize raw input variables
+	dependencies := []*commander.Dependency{}
 	dep := []*libmonteur.TOMLDependency{}
 	fmtVar := map[string]interface{}{}
 	cmd := []*libmonteur.TOMLAction{}
+
+	// initialize all important variables
+	me.metadata = &libmonteur.TOMLMetadata{}
+	me.cmd = []*libmonteur.TOMLAction{}
 
 	// construct TOML file data structure
 	s := struct {
@@ -86,7 +85,12 @@ func (me *basicCMD) Parse(path string) (err error) {
 		return err //nolint:wrapcheck
 	}
 
-	err = sanitizeDeps(dep, &me.dependencies, me.thisSystem, me.variables)
+	err = sanitizeDeps(dep, &dependencies, me.thisSystem, me.variables)
+	if err != nil {
+		return err
+	}
+
+	err = checkDependencies(&dependencies)
 	if err != nil {
 		return err
 	}
