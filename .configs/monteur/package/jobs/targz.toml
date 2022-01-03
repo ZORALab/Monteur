@@ -23,29 +23,6 @@ Command = 'git'
 
 
 
-[Changelog]
-LineBreak = "\n"
-Regex = ''
-
-[[Changelog.CMD]]
-Name = "Fetch All Local Remote Branches To The Latest"
-Type = 'command'
-Condition = [ 'all-all' ]
-Source = 'git fetch --all'
-
-[[Changelog.CMD]]
-Name = "Get Changelog Data from Git Log Between Branches"
-Type = 'command'
-Condition = [ 'all-all' ]
-Source = """git --no-pager log \
-"{{- .ChangelogTo -}}..{{- .ChangelogFrom -}}" \
---pretty="format:%h %s"
-"""
-Save = "ChangelogEntries"
-
-
-
-
 [Packages.001]
 OS = [ 'linux' ]
 Arch = [ 'amd64' ]

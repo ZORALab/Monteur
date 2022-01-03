@@ -37,7 +37,6 @@ type packager struct {
 	variables    map[string]interface{}
 	metadata     *libmonteur.TOMLMetadata
 	dependencies []*commander.Dependency
-	changelog    *libmonteur.TOMLChangelog
 	packages     map[string]*libmonteur.TOMLPackage
 	cmd          []*libmonteur.TOMLAction
 }
@@ -51,9 +50,6 @@ func (me *packager) Parse(path string) (err error) {
 	// initialize all important variables
 	me.metadata = &libmonteur.TOMLMetadata{}
 	me.dependencies = []*commander.Dependency{}
-	me.changelog = &libmonteur.TOMLChangelog{
-		CMD: []*libmonteur.TOMLAction{},
-	}
 	me.cmd = []*libmonteur.TOMLAction{}
 	me.packages = map[string]*libmonteur.TOMLPackage{}
 
@@ -63,7 +59,6 @@ func (me *packager) Parse(path string) (err error) {
 		Variables    map[string]interface{}
 		FMTVariables *map[string]interface{}
 		Dependencies *[]*libmonteur.TOMLDependency
-		Changelog    *libmonteur.TOMLChangelog
 		Packages     map[string]*libmonteur.TOMLPackage
 		CMD          *[]*libmonteur.TOMLAction
 	}{
@@ -71,7 +66,6 @@ func (me *packager) Parse(path string) (err error) {
 		Variables:    me.variables,
 		FMTVariables: &fmtVar,
 		Dependencies: &dep,
-		Changelog:    me.changelog,
 		Packages:     me.packages,
 		CMD:          &cmd,
 	}
@@ -106,11 +100,6 @@ func (me *packager) Parse(path string) (err error) {
 		return err
 	}
 
-	err = sanitizeChangelog(me.changelog, me.thisSystem)
-	if err != nil {
-		return err
-	}
-
 	// init
 	err = initializeLogger(&me.log, me.metadata.Name, me.variables)
 	if err != nil {
@@ -127,12 +116,6 @@ func (me *packager) Run(ctx context.Context, ch chan conductor.Message) {
 	me.log.Info("Run Task Now: " + libmonteur.LOG_SUCCESS + "\n")
 	me.reportUp = ch
 
-	err = me.runChangelogging()
-	if err != nil {
-		me.reportError(err)
-		return
-	}
-
 	err = me.runPackaging()
 	if err != nil {
 		me.reportError(err)
@@ -140,18 +123,6 @@ func (me *packager) Run(ctx context.Context, ch chan conductor.Message) {
 	}
 
 	me.reportDone()
-}
-
-func (me *packager) runChangelogging() (err error) {
-	x := &changelog{
-		fxSTDOUT:  me.reportOutput,
-		fxSTDERR:  me.reportStatus,
-		variables: &me.variables,
-		changelog: me.changelog,
-		log:       me.log,
-	}
-
-	return x.Exec()
 }
 
 func (me *packager) runPackaging() (err error) {
