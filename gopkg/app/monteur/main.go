@@ -35,19 +35,20 @@ func main() {
 	m := oshelper.NewArgParser()
 	m.Name = "Monteur"
 	m.Description = `
-A software manufacturing automation and assembling tools in one app.
-Das Monteur - Getting the job done locally and remotely at scale!
+A software manufacturing automation tool in one single app.
+
+Monteur - Getting the job done locally and remotely at scale!
 `
 	m.Version = monteur.VERSION
 	m.Examples = []string{
 		`$ monteur help`,
 		`$ monteur setup`,
-		`$ monteur test`,
 		`$ monteur clean`,
+		`$ monteur test`,
 		`$ monteur prepare`,
 		`$ monteur build`,
-		`$ monteur release`,
 		`$ monteur package`,
+		`$ monteur release`,
 		`$ monteur compose`,
 		`$ monteur publish`,
 	}
@@ -93,16 +94,6 @@ Das Monteur - Getting the job done locally and remotely at scale!
 	})
 
 	_ = m.Add(&oshelper.Argument{
-		Name:  "Release",
-		Label: []string{"release"},
-		Value: &action,
-		Help:  "execute the release job",
-		HelpExamples: []string{
-			"$ monteur release",
-		},
-	})
-
-	_ = m.Add(&oshelper.Argument{
 		Name:  "Prepare",
 		Label: []string{"prepare"},
 		Value: &action,
@@ -133,12 +124,12 @@ Das Monteur - Getting the job done locally and remotely at scale!
 	})
 
 	_ = m.Add(&oshelper.Argument{
-		Name:  "Publish",
-		Label: []string{"publish"},
+		Name:  "Release",
+		Label: []string{"release"},
 		Value: &action,
-		Help:  "execute the publish job",
+		Help:  "execute the release job",
 		HelpExamples: []string{
-			"$ monteur publish",
+			"$ monteur release",
 		},
 	})
 
@@ -152,6 +143,16 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		},
 	})
 
+	_ = m.Add(&oshelper.Argument{
+		Name:  "Publish",
+		Label: []string{"publish"},
+		Value: &action,
+		Help:  "execute the publish job",
+		HelpExamples: []string{
+			"$ monteur publish",
+		},
+	})
+
 	// parse the CLI arguments
 	m.Parse()
 
@@ -162,22 +163,22 @@ Das Monteur - Getting the job done locally and remotely at scale!
 		return
 	case "setup":
 		os.Exit(monteur.Setup())
-	case "test":
-		os.Exit(monteur.Test())
 	case "clean":
 		os.Exit(monteur.Clean())
-	case "release":
-		os.Exit(monteur.Release())
+	case "test":
+		os.Exit(monteur.Test())
 	case "prepare":
 		os.Exit(monteur.Prepare())
 	case "build":
 		os.Exit(monteur.Build())
 	case "package":
 		os.Exit(monteur.Package())
-	case "publish":
-		os.Exit(monteur.Publish())
+	case "release":
+		os.Exit(monteur.Release())
 	case "compose":
 		os.Exit(monteur.Compose())
+	case "publish":
+		os.Exit(monteur.Publish())
 	default:
 		fmt.Fprintf(os.Stderr,
 			"[ ERROR ] unknown action. Use 'help' to start.\n",
