@@ -57,10 +57,10 @@ alternateText = "Monteur Releases"
 
 [menu.main]
 parent = ""
-name = "Releases"
-pre = "🏅"
+name = "Downloads"
+pre = "📥"
 weight = 5
-identifier = "releases"
+identifier = "versions"
 
 
 [schema]
