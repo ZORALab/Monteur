@@ -1,5 +1,5 @@
-// Copyright 2021 ZORALab Enterprise (hello@zoralab.com)
-// Copyright 2021 "Holloway" Chew, Kean Ho (hollowaykeanho@gmail.com)
+// Copyright 2022 ZORALab Enterprise (hello@zoralab.com)
+// Copyright 2022 "Holloway" Chew, Kean Ho (hollowaykeanho@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,3 +14,12 @@
 // limitations under the License.
 
 package monteur
+
+import (
+	"strings"
+)
+
+// ErrorIs is for identifying a returned error object matching a given phrase.
+func ErrorIs(err error, phrase string) bool {
+	return strings.Contains(err.Error(), phrase)
+}

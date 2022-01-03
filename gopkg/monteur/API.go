@@ -27,13 +27,26 @@ import (
 
 // Setup is the function to download all dependencies as per configurations.
 //
-// The action shall download all the dependencies as stated by all the
-// configuration files inside a repository's ./.configs/monteur/setup/
-// directory.
+// The action shall download all the dependencies and setup the locally working
+// Monteur filesystem specified by the setup/jobs configuration files.
 func Setup() (statusCode int) {
 	api := &apiCommand{
 		Job:      libmonteur.JOB_SETUP,
 		ErrorTag: libmonteur.ERROR_SETUP,
+	}
+
+	return api.Run()
+}
+
+// Clean is the function to clear up the repository for the next run.
+//
+// This action is to clean up the repository from a previous run, allowing a
+// fresh run on the next round. The deepness and coverage area are specified by
+// the clean/jobs configuration files.
+func Clean() int {
+	api := &apiCommand{
+		Job:      libmonteur.JOB_CLEAN,
+		ErrorTag: libmonteur.ERROR_CLEAN,
 	}
 
 	return api.Run()
@@ -54,35 +67,7 @@ func Test() int {
 	return api.Run()
 }
 
-// Clean is the function to clear up the repository for the next run.
-//
-// This action is to clean up the repository from a previous run, allowing a
-// fresh run on the next round. Unlike Purge() function, does not remove all the
-// downloaded dependencies done by Setup() function.
-func Clean() int {
-	api := &apiCommand{
-		Job:      libmonteur.JOB_CLEAN,
-		ErrorTag: libmonteur.ERROR_CLEAN,
-	}
-
-	return api.Run()
-}
-
-// Release is the function to update repository for releasing a next version.
-//
-// This action is to update all necessary documents like changelog, version
-// numbers, build configurations as programmed for the next release. This
-// function should be done before building the next version release.
-func Release() int {
-	api := &apiCommand{
-		Job:      libmonteur.JOB_RELEASE,
-		ErrorTag: libmonteur.ERROR_RELEASE,
-	}
-
-	return api.Run()
-}
-
-// Prepare is the function to build the software with current configurations.
+// Prepare is the function to update dependent package configurations files.
 //
 // This action is to prepare the repository for the next version's Build,
 // Package and Release API where its job are not suitable to be inside any of
@@ -124,14 +109,15 @@ func Package() int {
 	return api.Run()
 }
 
-// Publish is the function to update and publish the documentations.
+// Release is the function to update repository for releasing a next version.
 //
-// this action generates the documentations artifact and publish it to its
-// reading channels such as web, file server for PDF files, and etc.
-func Publish() int {
+// This action is to update all necessary documents like changelog, version
+// numbers, build configurations as programmed for the next release. This
+// function should be done before building the next version release.
+func Release() int {
 	api := &apiCommand{
-		Job:      libmonteur.JOB_PUBLISH,
-		ErrorTag: libmonteur.ERROR_PUBLISH,
+		Job:      libmonteur.JOB_RELEASE,
+		ErrorTag: libmonteur.ERROR_RELEASE,
 	}
 
 	return api.Run()
@@ -145,6 +131,19 @@ func Compose() int {
 	api := &apiCommand{
 		Job:      libmonteur.JOB_COMPOSE,
 		ErrorTag: libmonteur.ERROR_COMPOSE,
+	}
+
+	return api.Run()
+}
+
+// Publish is the function to update and publish the documentations.
+//
+// this action generates the documentations artifact and publish it to its
+// reading channels such as web, file server for PDF files, and etc.
+func Publish() int {
+	api := &apiCommand{
+		Job:      libmonteur.JOB_PUBLISH,
+		ErrorTag: libmonteur.ERROR_PUBLISH,
 	}
 
 	return api.Run()
