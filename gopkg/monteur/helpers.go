@@ -35,7 +35,7 @@ func _logVariables(l *liblog.Logger, list *map[string]interface{}) {
 
 		l.Info("\"%s\": %#v", k, v)
 	}
-	l.Info(libmonteur.LOG_SUCCESS)
+	l.Info(libmonteur.LOG_SUCCESS + "\n")
 }
 
 func _initLogger(l **liblog.Logger, w *libworkspace.Workspace) (err error) {

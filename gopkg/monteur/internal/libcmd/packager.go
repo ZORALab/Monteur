@@ -113,7 +113,7 @@ func (me *packager) Parse(path string) (err error) {
 func (me *packager) Run(ctx context.Context, ch chan conductor.Message) {
 	var err error
 
-	me.log.Info("Run Task Now: " + libmonteur.LOG_SUCCESS + "\n")
+	me.log.Info(libmonteur.LOG_JOB_START + "\n\n")
 	me.reportUp = ch
 
 	err = me.runPackaging()

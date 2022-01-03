@@ -68,7 +68,7 @@ func reportStatus(log *liblog.Logger,
 
 func reportDone(log *liblog.Logger, ch chan conductor.Message, name string) {
 	if log != nil {
-		log.Success(libmonteur.LOG_SUCCESS)
+		log.Success(libmonteur.LOG_DONE + "\n")
 		log.Sync()
 		log.Close()
 	}

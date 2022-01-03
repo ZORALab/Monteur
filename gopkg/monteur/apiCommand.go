@@ -97,11 +97,11 @@ func (api *apiCommand) _filter(path string, info os.FileInfo, err error) error {
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
-	api.logger.Info(libmonteur.LOG_SUCCESS)
+	api.logger.Info(libmonteur.LOG_SUCCESS + "\n")
 
 	api.logger.Info("Register task into job list...")
 	api.workers[s.Name()] = s
-	api.logger.Info(libmonteur.LOG_SUCCESS)
+	api.logger.Info(libmonteur.LOG_SUCCESS + "\n")
 
 	return nil
 }
@@ -128,7 +128,7 @@ func (api *apiCommand) _init() (err error) {
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
-	api.logger.Info(libmonteur.LOG_SUCCESS)
+	api.logger.Info(libmonteur.LOG_SUCCESS + "\n")
 
 	return nil
 }

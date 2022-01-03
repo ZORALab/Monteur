@@ -18,7 +18,6 @@ package libcmd
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/conductor"
@@ -119,7 +118,7 @@ func (me *releaser) Run(ctx context.Context, ch chan conductor.Message) {
 	var manager interface{}
 	var err error
 
-	me.log.Info("Run Task Now: " + libmonteur.LOG_SUCCESS + "\n")
+	me.log.Info(libmonteur.LOG_JOB_START + "\n\n")
 	me.reportUp = ch
 
 	switch me.metadata.Type {
@@ -162,7 +161,7 @@ func (me *releaser) Run(ctx context.Context, ch chan conductor.Message) {
 			return
 		}
 	}
-	me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
+	me.log.Info(libmonteur.LOG_OK)
 
 	for _, pkg = range me.releases.Packages {
 		// copy the original variables into the new variable list
@@ -186,7 +185,7 @@ func (me *releaser) Run(ctx context.Context, ch chan conductor.Message) {
 				return
 			}
 		}
-		me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
+		me.log.Info(libmonteur.LOG_OK)
 	}
 
 	me.log.Info("Executing release conclusion function now...")
@@ -197,7 +196,7 @@ func (me *releaser) Run(ctx context.Context, ch chan conductor.Message) {
 			return
 		}
 	}
-	me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
+	me.log.Info(libmonteur.LOG_OK)
 
 	me.reportDone()
 }

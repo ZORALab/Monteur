@@ -20,10 +20,13 @@ package libmonteur
 // It is used in every toml config file inside setup/program/ config directory
 // for placeholding variable elements in the fields' value.
 const (
-	LOG_FORMAT_OUTPUT_LONG = "Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝"
-	LOG_FORMAT_REDACTED    = "!** REDACTED FOR PRIVACY **!"
+	LOG_FORMAT_OUTPUT   = "Got:\n╔═══ BEGIN ═══╗\n%v╚═══  END  ═══╝"
+	LOG_FORMAT_REDACTED = "!** REDACTED FOR PRIVACY **!"
 
 	LOG_JOB_INIT_SUCCESS = "Task initialized successfully. Standing By..."
+	LOG_JOB_START        = "Run Task Now: " + LOG_OK
 
-	LOG_SUCCESS = "➤ OK\n"
+	LOG_SUCCESS = "➤ SUCCESS"
+	LOG_OK      = "➤ OK"
+	LOG_DONE    = "➤ DONE"
 )

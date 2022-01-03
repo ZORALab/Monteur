@@ -17,7 +17,6 @@ package libcmd
 
 import (
 	"fmt"
-	"strings"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
@@ -82,7 +81,7 @@ func (me *executive) Exec() (err error) {
 		if err != nil {
 			return err
 		}
-		me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
+		me.log.Info(libmonteur.LOG_OK)
 
 		me.log.Info("Run cmd...")
 		err = me.exec(cmd, i+1)
@@ -128,8 +127,7 @@ func (me *executive) report(fx func(string, ...interface{}),
 		fx(data)
 	}
 
-	me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS,
-		"\n"))
+	me.log.Info(libmonteur.LOG_OK)
 }
 
 func (me *executive) exec(cmd *commander.Action, step int) (err error) {
@@ -202,9 +200,9 @@ func (me *executive) fxSave(key string, variable, output interface{}) {
 
 func (me *executive) _save(key string, v interface{}) {
 	if v == nil {
-		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, "nil\n")
+		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT, "nil\n")
 	} else {
-		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, v)
+		me.log.Info(libmonteur.LOG_FORMAT_OUTPUT, v)
 	}
 
 	if key == libmonteur.COMMAND_SAVE_NONE {
@@ -215,7 +213,7 @@ func (me *executive) _save(key string, v interface{}) {
 	me.variables[key] = v
 
 completed:
-	me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
+	me.log.Info(libmonteur.LOG_OK)
 }
 
 func (me *executive) _saveBool(key string, v bool) {
@@ -223,7 +221,7 @@ func (me *executive) _saveBool(key string, v bool) {
 	if v {
 		data = "true\n"
 	}
-	me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, data)
+	me.log.Info(libmonteur.LOG_FORMAT_OUTPUT, data)
 
 	if key == libmonteur.COMMAND_SAVE_NONE {
 		goto completed
@@ -233,12 +231,12 @@ func (me *executive) _saveBool(key string, v bool) {
 	me.variables[key] = v
 
 completed:
-	me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
+	me.log.Info(libmonteur.LOG_OK)
 }
 
 func (me *executive) _saveString(key string,
 	v string, cmd *libmonteur.TOMLAction) {
-	me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, v)
+	me.log.Info(libmonteur.LOG_FORMAT_OUTPUT, v)
 
 	if key == libmonteur.COMMAND_SAVE_NONE {
 		goto completed
@@ -250,7 +248,7 @@ func (me *executive) _saveString(key string,
 	me.variables[key] = v
 
 completed:
-	me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
+	me.log.Info(libmonteur.LOG_OK)
 }
 
 func (me *executive) _saveExecOutput(key string,
@@ -258,12 +256,12 @@ func (me *executive) _saveExecOutput(key string,
 	var val string
 
 	me.log.Info("Reading command.STDERR...")
-	me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stderr))
+	me.log.Info(libmonteur.LOG_FORMAT_OUTPUT, string(v.Stderr))
 	me.log.Info("Reading command.STDOUT...")
-	me.log.Info(libmonteur.LOG_FORMAT_OUTPUT_LONG, string(v.Stdout))
+	me.log.Info(libmonteur.LOG_FORMAT_OUTPUT, string(v.Stdout))
 
 	if key == libmonteur.COMMAND_SAVE_NONE {
-		me.log.Info(libmonteur.LOG_SUCCESS)
+		me.log.Info(libmonteur.LOG_OK + "\n")
 		goto completed
 	}
 
@@ -278,5 +276,5 @@ func (me *executive) _saveExecOutput(key string,
 	me.variables[key] = val
 
 completed:
-	me.log.Info(strings.TrimSuffix(libmonteur.LOG_SUCCESS, "\n"))
+	me.log.Info(libmonteur.LOG_OK)
 }

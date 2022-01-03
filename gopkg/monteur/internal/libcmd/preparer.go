@@ -122,7 +122,7 @@ func (me *preparer) Parse(path string) (err error) {
 func (me *preparer) Run(ctx context.Context, ch chan conductor.Message) {
 	var err error
 
-	me.log.Info("Run Task Now: " + libmonteur.LOG_SUCCESS + "\n")
+	me.log.Info(libmonteur.LOG_JOB_START + "\n\n")
 	me.reportUp = ch
 
 	err = me.sourceChangelogEntries()

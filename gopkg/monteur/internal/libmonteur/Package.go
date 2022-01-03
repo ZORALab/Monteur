@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"gitlab.com/zoralab/monteur/gopkg/oshelper"
 )
@@ -56,7 +55,7 @@ func UpdatePackagePath(variables *map[string]interface{},
 	if err != nil {
 		return "", fmt.Errorf("%s: %s", ERROR_PACKAGER_MKDIR, err)
 	}
-	log(strings.TrimSuffix(LOG_SUCCESS, "\n"))
+	log(LOG_OK)
 
 	return packagePath, nil
 }
@@ -97,7 +96,7 @@ func AssemblePackage(pkg *TOMLPackage,
 			)
 		}
 
-		log(strings.TrimSuffix(LOG_SUCCESS, "\n"))
+		log(LOG_OK)
 	}
 
 	return nil
