@@ -131,7 +131,7 @@ func (me *Data) Generate(workingDir string) (err error) {
 		goto done
 	}
 
-	err = me.createChangelog(path)
+	err = me.CreateChangelog(path)
 	if err != nil {
 		goto done
 	}
@@ -319,7 +319,14 @@ func (me *Data) createSourceDir(path string) (err error) {
 	return me._createDir(target)
 }
 
-func (me *Data) createChangelog(path string) (err error) {
+// CreateChangelog creates the changelog file into given directory path.
+//
+// The given path **MUST** be a directory path and the generated changelog file
+// is named `changelog` with no extension (same as `debian/changelog`).
+//
+// If the Changelog.Path is available, this function shall automatically update
+// the persistent Changelog data file in Changelog.Path.
+func (me *Data) CreateChangelog(path string) (err error) {
 	var info os.FileInfo
 
 	target := filepath.Join(path, "changelog")
