@@ -56,9 +56,9 @@ alternateText = "Monteur Codes of Conduct"
 
 
 [menu.main]
-parent = ""
+parent = "CI Internals"
 name = "Codes of Conduct"
-pre = "👨‍✈️"
+pre = "🧬"
 weight = 5
 
 
