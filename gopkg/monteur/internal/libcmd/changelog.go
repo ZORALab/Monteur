@@ -35,6 +35,14 @@ type changelog struct {
 // Exec instructs the changelog to run all the comamnds and generate its
 // entries.
 func (me *changelog) Exec() (err error) {
+	if len(me.changelog.Entries) == 0 && len(me.changelog.CMD) == 0 {
+		return nil
+	}
+
+	return me.exec()
+}
+
+func (me *changelog) exec() (err error) {
 	var task *executive
 	var r *regexp.Regexp
 	var entries, out, s, line string
