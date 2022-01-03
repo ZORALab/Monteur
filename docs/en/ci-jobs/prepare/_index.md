@@ -261,6 +261,9 @@ Currently, Monteur supports the following `Type` values:
 The `[Changelog]` is the table for generating the current version's changelog
 entries. This `[Changelog]` shall be executed first before packaging executions.
 
+Should its `Changelog.CMD` remains empty, this changelog update execution shall
+be skipped entirely.
+
 `[Changelog]` has its own set of important fields to process the generated
 outcomes. Here is the current supported fields:
 
@@ -275,6 +278,32 @@ Regex = ''
 * `Regex` - optional field designed for filtering each changelog entry line. The
   opening and closing forward slashes (`/`) are not required.
 
+##### `[[Changelog.CMD]]`
+The list of instructions for sourcing the changelog. Hence, this is why it has
+extra square braces.
+
+Its values are complying to Monteur's [Commands Execution Units]({{< link
+"/internals/commands/" "this" "url-only" />}}). Here is an example:
+
+```toml {linenos=table,hl_lines=[9],linenostart=1}
+[[Changelog.CMD]]
+Name = "Get Changelog From Git Log Comparisons"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = """git --no-pager log \
+"{{- .ChangelogTo -}}..{{- .ChangelogFrom -}}" \
+--pretty="format:%h %s"
+"""
+Save = "ChangelogEntries"
+```
+
+Regardless how long your instruction is, `[Changelog]` shall **ONLY** read the
+final output, a single long `string` from the `ChangelogEntries` variables.
+Hence, remember to indicate `Save =` field for the last instruction to output
+the changelog entries data.
+
+Note that you **DO NOT** need to manually split the entries. Monteur will
+split them natively using the `Changelog.LineBreak` symbol.
 
 ##### Manually File Changelog Entries
 If, for any edge case reason that you really need to fill in the changelog
@@ -359,31 +388,17 @@ BuildSource = false
 The list of instructions for sourcing the changelog. Hence, this is why it has
 extra square braces.
 
-Regardless how long your instruction is, `[Changelog]` shall **ONLY** read the
-final output, a single long `string` from the `ChangelogEntries` variables.
-Hence, remember to indicate `Save =` field for the last instruction to output
-the changelog entries data.
-
-Note that you **DO NOT** need to manually split the entries. Monteur will
-split them natively using the `Changelog.LineBreak` symbol.
-`[CMD]` is basically the array of packaging commands or instructions for
-executing the packaging algorithms across each listed packages. Hence, this is
-why it has extra square braces.
+The purpose is for anyone else to prepare anything else aside changelog.
 
 Its values are complying to Monteur's [Commands Execution Units]({{< link
 "/internals/commands/" "this" "url-only" />}}). Here is an example:
 
 ```toml {linenos=table,hl_lines=[],linenostart=1}
-...
-
-Name = "Get Changelog From Git Log Comparisons"
-Type = 'command'
+Name = 'Placeholder'
+Type = 'placeholder'
 Condition = [ 'all-all' ]
-Source = """git --no-pager log \
-"{{- .ChangelogTo -}}..{{- .ChangelogFrom -}}" \
---pretty="format:%h %s"
-"""
-Save = "ChangelogEntries"
+Source = ''
+Target = ''
 ```
 
 
