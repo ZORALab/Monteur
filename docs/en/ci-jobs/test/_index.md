@@ -209,11 +209,8 @@ The `[Dependencies]` is an array of program data for checking all required
 programs only for this `Test` task. Therefore, it has extra square braces
 when defining its data.
 
-**DO NOT CONFUSE `[Dependencies]` with your product's dependencies**. This
-design was meant for any external programs that has additional setup
-configurations (e.g. building from source codes requires a bunch of libraries
-and make programs available as commands and etc). Hence, it's entirely optional
-to have this table.
+It is compliant to Monteur's internal [Dependencies Checking]({{< link
+"/internals/dependencies-checking/" "this" "url-only" />}}) function.
 
 Here is an example for defining a list of dependencies:
 
@@ -230,22 +227,6 @@ Condition = 'all-all'
 Type = 'command'
 Command = 'git'
 ```
-
-For each dependency, the `Name` is mainly for logging and referencing purposes.
-The `Command` however, is the program's command name or library name depending
-on `Type`. On UNIX system, shell's `alias`es are not supported and will never be
-visible to Monteur.
-
-Example: for `Git Version Control Software`, the `Name` can be anything but the
-`Command` **SHALL ALWAYS** be the executable name: `git`.
-
-`Condition` is the Montuer's `OS-ARCH` platform identification ID. See
-[Platform Identification]({{< link "/internals/platform-identification" "this"
-"url-only" />}}) for more info about its value.
-
-Currently, Monteur supports the following `Type` values:
-
-* `command` - identify by terminal command (e.g. `hugo`, `git`, ...)
 
 
 #### `[[CMD]]`
