@@ -93,7 +93,7 @@ func (api *apiCommand) _filter(path string, info os.FileInfo, err error) error {
 	_logVariables(api.logger, &s.Variables)
 
 	api.logger.Info("Decode Task Data from config file...")
-	err = s.Parse(path)
+	err = s.Parse(path, api.workspace.Secrets)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}

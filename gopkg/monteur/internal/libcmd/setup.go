@@ -30,7 +30,9 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblocal"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsecrets"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtargz"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtemplater"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libzip"
 )
 
@@ -47,7 +49,7 @@ type setup struct {
 	cmd       []*libmonteur.TOMLAction
 }
 
-func (me *setup) Parse(path string) (err error) {
+func (me *setup) Parse(path string, secrets *libsecrets.Secrets) (err error) {
 	// init temporary raw input variables
 	dependencies := []*commander.Dependency{}
 	dep := []*libmonteur.TOMLDependency{}
@@ -95,7 +97,7 @@ func (me *setup) Parse(path string) (err error) {
 		return err
 	}
 
-	err = libmonteur.SanitizeVariables(&me.variables, &fmtVar)
+	err = libtemplater.TemplateVariables(&me.variables, &fmtVar)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
@@ -126,7 +128,7 @@ func (me *setup) Parse(path string) (err error) {
 	}
 
 	// init
-	err = initializeLogger(&me.log, me.metadata.Name, me.variables)
+	err = initializeLogger(&me.log, me.metadata.Name, me.variables, secrets)
 	if err != nil {
 		return err
 	}
@@ -313,7 +315,7 @@ func (me *setup) processConfig() (err error) {
 
 	// process pathing
 	pathing = strings.ToLower(me.metadata.Name)
-	pathing = libmonteur.ProcessToFilepath(pathing)
+	pathing = libtemplater.ToFilepath(pathing)
 	pathing = filepath.Join(configPath,
 		libmonteur.DIRECTORY_MONTEUR_CONFIG_D,
 		pathing,

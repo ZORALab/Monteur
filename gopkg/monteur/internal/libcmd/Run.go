@@ -20,6 +20,7 @@ import (
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtemplater"
 )
 
 type Run struct {
@@ -48,7 +49,7 @@ func (fx *Run) Parse(path string, varList *map[string]interface{}) (err error) {
 	}
 
 	// sanitize
-	err = libmonteur.SanitizeVariables(varList, fmtVar)
+	err = libtemplater.TemplateVariables(varList, fmtVar)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}

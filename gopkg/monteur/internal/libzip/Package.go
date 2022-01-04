@@ -23,6 +23,7 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/archive/zip"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libpackager"
 )
 
 func Package(pkg *libmonteur.TOMLPackage,
@@ -33,7 +34,7 @@ func Package(pkg *libmonteur.TOMLPackage,
 	log.Info("Preparing %s packing ...", libmonteur.PACKAGE_ZIP)
 
 	// process package pathing
-	packagePath, err = libmonteur.UpdatePackagePath(variables,
+	packagePath, err = libpackager.UpdatePackagePath(variables,
 		pkg,
 		libmonteur.PACKAGE_ZIP,
 		log.Info,
@@ -43,7 +44,7 @@ func Package(pkg *libmonteur.TOMLPackage,
 	}
 
 	// copy all files into workspace
-	err = libmonteur.AssemblePackage(pkg, *variables, log.Info)
+	err = libpackager.AssemblePackage(pkg, *variables, log.Info)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}

@@ -25,6 +25,8 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libdeb"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsecrets"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtemplater"
 )
 
 type preparer struct {
@@ -39,7 +41,8 @@ type preparer struct {
 	cmd       []*libmonteur.TOMLAction
 }
 
-func (me *preparer) Parse(path string) (err error) {
+func (me *preparer) Parse(path string,
+	secrets *libsecrets.Secrets) (err error) {
 	// init temporary raw input variables
 	dependencies := []*commander.Dependency{}
 	dep := []*libmonteur.TOMLDependency{}
@@ -88,7 +91,7 @@ func (me *preparer) Parse(path string) (err error) {
 		return err
 	}
 
-	err = libmonteur.SanitizeVariables(&me.variables, &fmtVar)
+	err = libtemplater.TemplateVariables(&me.variables, &fmtVar)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
@@ -114,7 +117,7 @@ func (me *preparer) Parse(path string) (err error) {
 	}
 
 	// init
-	err = initializeLogger(&me.log, me.metadata.Name, me.variables)
+	err = initializeLogger(&me.log, me.metadata.Name, me.variables, secrets)
 	if err != nil {
 		return err
 	}

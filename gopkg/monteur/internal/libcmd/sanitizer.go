@@ -21,7 +21,7 @@ import (
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/templater"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtemplater"
 )
 
 func sanitizeChangelog(changelog *libmonteur.TOMLChangelog,
@@ -73,7 +73,7 @@ func sanitizeDeps(in []*libmonteur.TOMLDependency,
 			continue
 		}
 
-		val, err = templater.String(dep.Command, variables)
+		val, err = libtemplater.Template(dep.Command, variables)
 		if err != nil {
 			return fmt.Errorf("%s: %s",
 				libmonteur.ERROR_COMMAND_DEPENDENCY_FMT_BAD,
@@ -109,7 +109,7 @@ func sanitizeRelease(release *libmonteur.TOMLRelease,
 	var packages map[string]*libmonteur.TOMLPackage
 
 	// sanitize Target
-	release.Target, err = libmonteur.ProcessString(release.Target,
+	release.Target, err = libtemplater.Template(release.Target,
 		variables,
 	)
 	if err != nil {
@@ -122,7 +122,7 @@ func sanitizeRelease(release *libmonteur.TOMLRelease,
 	}
 
 	// sanitize Data.Path
-	release.Data.Path, err = libmonteur.ProcessString(release.Data.Path,
+	release.Data.Path, err = libtemplater.Template(release.Data.Path,
 		variables,
 	)
 	if err != nil {
@@ -253,7 +253,7 @@ func sanitizeSourceHeaders(out *libmonteur.TOMLSource,
 	// loop through each of them and process accordingly
 	headers := map[string]string{}
 	for k, v := range out.Headers {
-		v, err = libmonteur.ProcessString(v, *variables)
+		v, err = libtemplater.Template(v, *variables)
 		if err != nil {
 			return fmt.Errorf("%s: %s",
 				libmonteur.ERROR_PROGRAM_HTTPS_HEADER_BAD,
@@ -271,7 +271,7 @@ func sanitizeSourceHeaders(out *libmonteur.TOMLSource,
 
 func sanitizeSourceURL(out *libmonteur.TOMLSource,
 	variables *map[string]interface{}) (err error) {
-	out.URL, err = libmonteur.ProcessString(out.URL, *variables)
+	out.URL, err = libtemplater.Template(out.URL, *variables)
 	if err != nil {
 		return fmt.Errorf("%s: URL error = %s",
 			libmonteur.ERROR_PROGRAM_ARCHIVE_BAD,
@@ -293,7 +293,7 @@ func sanitizeSourceURL(out *libmonteur.TOMLSource,
 
 func sanitizeSourceMethod(out *libmonteur.TOMLSource,
 	variables *map[string]interface{}) (err error) {
-	out.Method, err = libmonteur.ProcessString(out.Method, *variables)
+	out.Method, err = libtemplater.Template(out.Method, *variables)
 	if err != nil {
 		return fmt.Errorf("%s: Method error = %s",
 			libmonteur.ERROR_PROGRAM_ARCHIVE_BAD,
@@ -315,7 +315,7 @@ func sanitizeSourceMethod(out *libmonteur.TOMLSource,
 
 func sanitizeSourceArchive(out *libmonteur.TOMLSource,
 	variables *map[string]interface{}) (err error) {
-	out.Archive, err = libmonteur.ProcessString(out.Archive, *variables)
+	out.Archive, err = libtemplater.Template(out.Archive, *variables)
 	if err != nil {
 		return fmt.Errorf("%s: Archive error = %s",
 			libmonteur.ERROR_PROGRAM_ARCHIVE_BAD,
@@ -337,7 +337,7 @@ func sanitizeSourceArchive(out *libmonteur.TOMLSource,
 
 func sanitizeSourceFormat(out *libmonteur.TOMLSource,
 	variables *map[string]interface{}) (err error) {
-	out.Format, err = libmonteur.ProcessString(out.Format, *variables)
+	out.Format, err = libtemplater.Template(out.Format, *variables)
 	if err != nil {
 		return fmt.Errorf("%s: Format error = '%s'",
 			libmonteur.ERROR_PROGRAM_ARCHIVE_BAD,
@@ -376,7 +376,7 @@ func sanitizeSourceConfig(cfg map[string]string,
 		)
 	}
 
-	*out, err = libmonteur.ProcessString(*out, variables)
+	*out, err = libtemplater.Template(*out, variables)
 	if err != nil {
 		return fmt.Errorf("%s: %s",
 			libmonteur.ERROR_PROGRAM_CONFIG_BAD,

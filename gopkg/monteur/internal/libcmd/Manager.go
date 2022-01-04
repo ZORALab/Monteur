@@ -20,6 +20,7 @@ import (
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/conductor"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsecrets"
 )
 
 type Task interface {
@@ -35,7 +36,7 @@ type Manager struct {
 	Job       string
 }
 
-func (me *Manager) Parse(path string) (err error) {
+func (me *Manager) Parse(path string, secret *libsecrets.Secrets) (err error) {
 	system, ok := me.Variables[libmonteur.VAR_COMPUTE].(string)
 	if !ok {
 		panic("MONTEUR DEV: please assign VAR_COMPUTE before Parse()!")
@@ -49,7 +50,7 @@ func (me *Manager) Parse(path string) (err error) {
 			variables:  me.Variables,
 		}
 
-		err = subject.Parse(path)
+		err = subject.Parse(path, secret)
 		if err != nil {
 			return err
 		}
@@ -61,7 +62,7 @@ func (me *Manager) Parse(path string) (err error) {
 			variables:  me.Variables,
 		}
 
-		err = subject.Parse(path)
+		err = subject.Parse(path, secret)
 		if err != nil {
 			return err
 		}
@@ -73,7 +74,7 @@ func (me *Manager) Parse(path string) (err error) {
 			variables:  me.Variables,
 		}
 
-		err = subject.Parse(path)
+		err = subject.Parse(path, secret)
 		if err != nil {
 			return err
 		}
@@ -85,7 +86,7 @@ func (me *Manager) Parse(path string) (err error) {
 			variables:  me.Variables,
 		}
 
-		err = subject.Parse(path)
+		err = subject.Parse(path, secret)
 		if err != nil {
 			return err
 		}
@@ -97,7 +98,7 @@ func (me *Manager) Parse(path string) (err error) {
 			variables:  me.Variables,
 		}
 
-		err = subject.Parse(path)
+		err = subject.Parse(path, secret)
 		if err != nil {
 			return err
 		}
@@ -109,7 +110,7 @@ func (me *Manager) Parse(path string) (err error) {
 			variables:  me.Variables,
 		}
 
-		err = subject.Parse(path)
+		err = subject.Parse(path, secret)
 		if err != nil {
 			return err
 		}
@@ -121,7 +122,7 @@ func (me *Manager) Parse(path string) (err error) {
 			variables:  me.Variables,
 		}
 
-		err = subject.Parse(path)
+		err = subject.Parse(path, secret)
 		if err != nil {
 			return err
 		}
@@ -133,7 +134,7 @@ func (me *Manager) Parse(path string) (err error) {
 			variables:  me.Variables,
 		}
 
-		err = subject.Parse(path)
+		err = subject.Parse(path, secret)
 		if err != nil {
 			return err
 		}
@@ -145,7 +146,7 @@ func (me *Manager) Parse(path string) (err error) {
 			variables:  me.Variables,
 		}
 
-		err = subject.Parse(path)
+		err = subject.Parse(path, secret)
 		if err != nil {
 			return err
 		}

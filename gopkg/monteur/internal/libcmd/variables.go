@@ -17,6 +17,7 @@ package libcmd
 
 import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtemplater"
 )
 
 func processPackageVariables(pkg *libmonteur.TOMLPackage,
@@ -32,11 +33,11 @@ func processPackageVariables(pkg *libmonteur.TOMLPackage,
 	}
 
 	(*variables)[libmonteur.VAR_PACKAGE_NAME] =
-		libmonteur.ProcessToFilepath(app.Name)
+		libtemplater.ToFilepath(app.Name)
 	(*variables)[libmonteur.VAR_PACKAGE_VERSION] =
-		libmonteur.ProcessToFilepath(app.Version)
+		libtemplater.ToFilepath(app.Version)
 	(*variables)[libmonteur.VAR_PACKAGE_VERSION_DIGIT_LED] =
-		libmonteur.ProcessDigitLedVersion(app.Version)
+		libtemplater.ToDigitLedVersion(app.Version)
 	(*variables)[libmonteur.VAR_PACKAGE_OS] = pkg.OS[0]
 	(*variables)[libmonteur.VAR_PACKAGE_ARCH] = pkg.Arch[0]
 
@@ -51,7 +52,7 @@ func processPackageVariables(pkg *libmonteur.TOMLPackage,
 	(*variables)[libmonteur.VAR_PACKAGE] = packagePath
 
 	// process pkg.Changelog pathing
-	pkg.Changelog, err = libmonteur.ProcessString(pkg.Changelog,
+	pkg.Changelog, err = libtemplater.Template(pkg.Changelog,
 		*variables,
 	)
 	if err != nil {

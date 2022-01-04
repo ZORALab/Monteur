@@ -1,5 +1,5 @@
-// Copyright 2021 ZORALab Enterprise (hello@zoralab.com)
-// Copyright 2021 "Holloway" Chew, Kean Ho (hollowaykeanho@gmail.com)
+// Copyright 2022 ZORALab Enterprise (hello@zoralab.com)
+// Copyright 2022 "Holloway" Chew, Kean Ho (hollowaykeanho@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package libmonteur is the common library used across all Monteur packages.
+//
+// These constants are used across various packages, both external API accesible
+// and internal packages. These are controlled constant namespace and values
+// for consistancy purposes.
+//
+// This package shall always stay inside monteur/internal/ directory as it is
+// Monteur internal control facilities.
 package libmonteur
 
-// Package type
 const (
-	PACKAGE_DEB_MANUAL = "deb-manual"
-	PACKAGE_MANUAL     = "manual"
-	PACKAGE_TARGZ      = "targz"
-	PACKAGE_ZIP        = "zip"
+	SECRET_NO_DATA  = "<no data>"
+	SECRET_REDACTED = "<REDACTED>"
 )

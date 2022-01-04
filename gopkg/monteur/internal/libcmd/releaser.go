@@ -25,6 +25,8 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libarchiver"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsecrets"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtemplater"
 )
 
 type releaser struct {
@@ -38,7 +40,8 @@ type releaser struct {
 	cmd       []*libmonteur.TOMLAction
 }
 
-func (me *releaser) Parse(path string) (err error) {
+func (me *releaser) Parse(path string,
+	secrets *libsecrets.Secrets) (err error) {
 	// init temporary raw input variables
 	dependencies := []*commander.Dependency{}
 	dep := []*libmonteur.TOMLDependency{}
@@ -85,7 +88,7 @@ func (me *releaser) Parse(path string) (err error) {
 		return err
 	}
 
-	err = libmonteur.SanitizeVariables(&me.variables, &fmtVar)
+	err = libtemplater.TemplateVariables(&me.variables, &fmtVar)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
@@ -111,7 +114,7 @@ func (me *releaser) Parse(path string) (err error) {
 	}
 
 	// init
-	err = initializeLogger(&me.log, me.metadata.Name, me.variables)
+	err = initializeLogger(&me.log, me.metadata.Name, me.variables, secrets)
 	if err != nil {
 		return err
 	}
@@ -183,7 +186,7 @@ func (me *releaser) Run(ctx context.Context, ch chan conductor.Message) {
 		}
 
 		// process source
-		pkg.Source, err = libmonteur.ProcessString(pkg.Source,
+		pkg.Source, err = libtemplater.Template(pkg.Source,
 			variables,
 		)
 		if err != nil {
@@ -221,7 +224,7 @@ func (me *releaser) Run(ctx context.Context, ch chan conductor.Message) {
 
 func (me *releaser) processPkgTarget(in string,
 	def string, variables map[string]interface{}) (out string, err error) {
-	out, err = libmonteur.ProcessString(in, variables)
+	out, err = libtemplater.Template(in, variables)
 	if err != nil {
 		return "", err //nolint:wrapcheck
 	}
@@ -231,7 +234,7 @@ func (me *releaser) processPkgTarget(in string,
 	}
 
 	// use def as a replacement since out is empty
-	return libmonteur.ProcessString(def, variables) //nolint:wrapcheck
+	return libtemplater.Template(def, variables) //nolint:wrapcheck
 }
 
 func (me *releaser) runFx(fx func(), name string) {

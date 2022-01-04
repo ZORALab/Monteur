@@ -26,12 +26,14 @@ import (
 //
 // Only a no `error` situation (`nil`) shall the `out` value shall be the
 // processed version.
-func String(text string, variables interface{}) (out string, err error) {
+func String(text string,
+	variables interface{},
+	funcMap map[string]interface{}) (out string, err error) {
 	// initialize varibles
 	out = text
 
 	// initialize text template
-	t := textTemplate("Value")
+	t := textTemplate("Name", funcMap)
 
 	// parse the text input for processing
 	t, err = t.Parse(text)

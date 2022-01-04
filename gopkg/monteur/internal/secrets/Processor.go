@@ -104,8 +104,6 @@ func (unit *Processor) postProcessing(pre string, key string,
 		for k, val := range ivalue {
 			unit.postProcessing(key, k, val, d)
 		}
-	case string:
-		d[key] = []byte(ivalue)
 	default:
 		d[key] = ivalue
 	}

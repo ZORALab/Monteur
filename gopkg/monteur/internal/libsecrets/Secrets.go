@@ -16,21 +16,66 @@
 package libsecrets
 
 import (
+	"fmt"
+	"strings"
+	"sync"
+
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/secrets"
 )
 
-func GetSecrets(pathings []string) (sec map[string]interface{}) {
-	var err error
+type Secrets struct {
+	data  map[string]interface{}
+	mutex *sync.RWMutex
+}
 
-	sec = map[string]interface{}{}
+func (me *Secrets) Parse(pathings []string) (err error) {
+	me.data = map[string]interface{}{}
+	if me.mutex == nil {
+		me.mutex = &sync.RWMutex{}
+	}
+
+	me.mutex.Lock()
+	defer me.mutex.Unlock()
 
 	s := &secrets.Processor{DecodeFx: toml.SilentDecodeFile}
 
-	sec, err = s.DecodeMultiPath(sec, pathings, nil)
+	me.data, err = s.DecodeMultiPath(me.data, pathings, nil)
 	if err != nil {
-		return sec
+		err = fmt.Errorf("%s: %s",
+			libmonteur.ERROR_SECRET_PARSE,
+			err,
+		)
 	}
 
-	return sec
+	return err
+}
+
+func (me *Secrets) Filter(s string) string {
+	me.mutex.RLock()
+	defer me.mutex.RUnlock()
+
+	for _, v := range me.data {
+		s = strings.ReplaceAll(s,
+			fmt.Sprintf("%v", v),
+			libmonteur.SECRET_REDACTED,
+		)
+	}
+
+	return s
+}
+
+func (me *Secrets) Query(s string) (out interface{}) {
+	var ok bool
+
+	me.mutex.RLock()
+	defer me.mutex.RUnlock()
+
+	out, ok = me.data[s]
+	if !ok {
+		out = libmonteur.SECRET_NO_DATA
+	}
+
+	return out
 }

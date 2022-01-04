@@ -6,6 +6,7 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/archive/deb"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libpackager"
 )
 
 func Changelog(pkg *libmonteur.TOMLPackage,
@@ -25,7 +26,7 @@ func Changelog(pkg *libmonteur.TOMLPackage,
 	}
 
 	// process package pathing
-	packagePath, err = libmonteur.UpdatePackagePath(variables,
+	packagePath, err = libpackager.UpdatePackagePath(variables,
 		pkg,
 		libmonteur.CHANGELOG_DEB,
 		log.Info,

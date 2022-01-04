@@ -21,11 +21,13 @@ import (
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsecrets"
 )
 
 func initializeLogger(logger **liblog.Logger,
 	name string,
-	variables map[string]interface{}) (err error) {
+	variables map[string]interface{},
+	secrets *libsecrets.Secrets) (err error) {
 	var sRet string
 	var ok bool
 
@@ -44,7 +46,7 @@ func initializeLogger(logger **liblog.Logger,
 
 	// initialize logger
 	*logger = &liblog.Logger{}
-	(*logger).Init()
+	(*logger).Init(secrets)
 
 	err = (*logger).Add(liblog.TYPE_STATUS, filepath.Join(
 		sRet,

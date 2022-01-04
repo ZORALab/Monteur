@@ -21,6 +21,7 @@ import (
 	"path/filepath"
 
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsecrets"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/logger"
 )
 
@@ -33,16 +34,19 @@ type Logger struct {
 	executor      *logger.Logger
 	statusWriters map[string]*os.File
 	outputWriters map[string]*os.File
+	filter        func(string) string
 
 	ToTerminal bool
 	DebugMode  bool
 }
 
 // Init is to initialize the logger for use.
-func (log *Logger) Init() {
+func (log *Logger) Init(secrets *libsecrets.Secrets) {
 	log.executor = logger.New()
 	log.statusWriters = map[string]*os.File{}
 	log.outputWriters = map[string]*os.File{}
+
+	log.filter = secrets.Filter
 }
 
 // IsHealthy is to check the status of the logger.
@@ -118,51 +122,59 @@ func (log *Logger) Close() {
 
 // Error is to log an error statement straight to status and output types logs.
 func (log *Logger) Error(format string, a ...interface{}) {
-	format += "\n"
-	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_ERROR, format, a...)
-	log.executor.Logf(logger.TYPE_OUTPUT, logger.TAG_ERROR, format, a...)
+	out := fmt.Sprintf(format+"\n", a...)
+	out = log.filter(out)
+
+	log.executor.WriteString(logger.TYPE_STATUS, logger.TAG_ERROR, out)
+	log.executor.WriteString(logger.TYPE_OUTPUT, logger.TAG_ERROR, out)
 
 	if !log.ToTerminal {
 		return
 	}
 
-	fmt.Fprintf(os.Stdout, format, a...)
+	os.Stdout.WriteString(out)
 }
 
 // Warning is to log a warning statement straight to status type logs.
 func (log *Logger) Warning(format string, a ...interface{}) {
-	format += "\n"
-	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_WARNING, format, a...)
+	out := fmt.Sprintf(format+"\n", a...)
+	out = log.filter(out)
+
+	log.executor.WriteString(logger.TYPE_STATUS, logger.TAG_WARNING, out)
 
 	if !log.ToTerminal {
 		return
 	}
 
-	fmt.Fprintf(os.Stderr, format, a...)
+	os.Stderr.WriteString(out)
 }
 
 // Info is to log an info statement straight to status type logs.
 func (log *Logger) Info(format string, a ...interface{}) {
-	format += "\n"
-	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_INFO, format, a...)
+	out := fmt.Sprintf(format+"\n", a...)
+	out = log.filter(out)
+
+	log.executor.WriteString(logger.TYPE_STATUS, logger.TAG_INFO, out)
 
 	if !log.ToTerminal {
 		return
 	}
 
-	fmt.Fprintf(os.Stderr, format, a...)
+	os.Stderr.WriteString(out)
 }
 
 // Success is to log a success statement straight to status type logs.
 func (log *Logger) Success(format string, a ...interface{}) {
-	format += "\n"
-	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_SUCCESS, format, a...)
+	out := fmt.Sprintf(format+"\n", a...)
+	out = log.filter(out)
+
+	log.executor.WriteString(logger.TYPE_STATUS, logger.TAG_SUCCESS, out)
 
 	if !log.ToTerminal {
 		return
 	}
 
-	fmt.Fprintf(os.Stderr, format, a...)
+	os.Stderr.WriteString(out)
 }
 
 // Debug is to log a debug statement straight to status type logs.
@@ -171,42 +183,49 @@ func (log *Logger) Debug(format string, a ...interface{}) {
 		return
 	}
 
-	format += "\n"
-	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_DEBUG, format, a...)
+	out := fmt.Sprintf(format+"\n", a...)
+	out = log.filter(out)
+
+	log.executor.WriteString(logger.TYPE_STATUS, logger.TAG_DEBUG, out)
 
 	if !log.ToTerminal {
 		return
 	}
 
-	fmt.Fprintf(os.Stderr, format, a...)
+	os.Stderr.WriteString(out)
 }
 
 // Output is to log an output statements straight to status and output logs.
 func (log *Logger) Output(format string, a ...interface{}) {
-	format = "[ OUTPUT ] " + format + "\n"
-	log.executor.Logf(logger.TYPE_STATUS, logger.TAG_NO, format, a...)
-	log.executor.Logf(logger.TYPE_OUTPUT, logger.TAG_NO, format, a...)
+	out := fmt.Sprintf("[ OUTPUT ] "+format+"\n", a...)
+	out = log.filter(out)
+
+	log.executor.WriteString(logger.TYPE_STATUS, logger.TAG_NO, out)
+	log.executor.WriteString(logger.TYPE_OUTPUT, logger.TAG_NO, out)
 
 	if !log.ToTerminal {
 		return
 	}
 
-	fmt.Fprintf(os.Stdout, format, a...)
+	os.Stdout.WriteString(out)
 }
 
 // Logf is to log a raw statement straight to the selected logs' type.
 func (log *Logger) Logf(logType logger.StatusType,
 	format string, a ...interface{}) {
-	log.executor.Logf(logType, logger.TAG_NO, format, a...)
+	out := fmt.Sprintf(format, a...)
+	out = log.filter(out)
+
+	log.executor.WriteString(logType, logger.TAG_NO, out)
 
 	if !log.ToTerminal {
 		return
 	}
 
 	if logType == logger.TYPE_OUTPUT {
-		fmt.Fprintf(os.Stdout, format, a...)
+		os.Stdout.WriteString(out)
 		return
 	}
 
-	fmt.Fprintf(os.Stderr, format, a...)
+	os.Stderr.WriteString(out)
 }

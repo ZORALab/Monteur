@@ -1,5 +1,5 @@
-// Copyright 2021 ZORALab Enterprise (hello@zoralab.com)
-// Copyright 2021 "Holloway" Chew, Kean Ho (hollowaykeanho@gmail.com)
+// Copyright 2022 ZORALab Enterprise (hello@zoralab.com)
+// Copyright 2022 "Holloway" Chew, Kean Ho (hollowaykeanho@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package libmonteur
+package monteur
 
-// Package type
-const (
-	PACKAGE_DEB_MANUAL = "deb-manual"
-	PACKAGE_MANUAL     = "manual"
-	PACKAGE_TARGZ      = "targz"
-	PACKAGE_ZIP        = "zip"
+import (
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libinit"
 )
+
+func initMonteur() *libinit.Init {
+	return &libinit.Init{}
+}

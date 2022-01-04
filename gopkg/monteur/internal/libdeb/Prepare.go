@@ -25,6 +25,8 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/archive/deb"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libpackager"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtemplater"
 )
 
 func Prepare(pkg *libmonteur.TOMLPackage,
@@ -43,7 +45,7 @@ func Prepare(pkg *libmonteur.TOMLPackage,
 	}
 
 	// process package pathing
-	packagePath, err = libmonteur.UpdatePackagePath(variables,
+	packagePath, err = libpackager.UpdatePackagePath(variables,
 		pkg,
 		libmonteur.PACKAGE_DEB_MANUAL,
 		log.Info,
@@ -52,7 +54,7 @@ func Prepare(pkg *libmonteur.TOMLPackage,
 		return nil, err //nolint:wrapcheck
 	}
 
-	err = libmonteur.AssemblePackage(pkg, *variables, log.Info)
+	err = libpackager.AssemblePackage(pkg, *variables, log.Info)
 	if err != nil {
 		return nil, err //nolint:wrapcheck
 	}
@@ -241,8 +243,8 @@ func _createInstall(in map[string]string,
 	out = map[string]string{}
 
 	for k, v = range in {
-		target, _ = libmonteur.ProcessString(k, variables)
-		source, _ = libmonteur.ProcessString(v, variables)
+		target, _ = libtemplater.Template(k, variables)
+		source, _ = libtemplater.Template(v, variables)
 		out[target] = source
 	}
 

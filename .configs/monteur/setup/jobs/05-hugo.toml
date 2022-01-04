@@ -29,7 +29,6 @@ Method = 'GET'
 Type = 'sha256'
 Format = 'hex'
 [Sources.all-all.headers]
-'Authorization' = '{{- string (index .Secrets "Github.API_KEY") -}}'
 
 [Sources.dragonfly-amd64]
 Archive = 'hugo_{{- .Version -}}_DragonFlyBSD-64bit.{{- .Format -}}'

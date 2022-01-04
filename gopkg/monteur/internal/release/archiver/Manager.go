@@ -348,7 +348,9 @@ func (me *Manager) writeChecksumDataFile(data []*metadata) (err error) {
 		v.Index = i
 
 		// template text
-		out, err = templater.String(me.dataTemplate, v)
+		out, err = templater.String(me.dataTemplate,
+			v,
+			map[string]interface{}{})
 		if err != nil {
 			return fmt.Errorf("%s (%s): %s",
 				ERROR_TARGET_CHECKSUM,

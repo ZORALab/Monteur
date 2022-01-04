@@ -27,8 +27,8 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/endec/toml"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libsecrets"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtemplater"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/styler"
-	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/templater"
 )
 
 // Workspace is the Monteur continuous integration main data sructure.
@@ -40,7 +40,7 @@ type Workspace struct {
 	Language   *libmonteur.Language
 	App        *libmonteur.Software
 	Variables  *map[string]interface{}
-	secrets    *map[string]interface{}
+	Secrets    *libsecrets.Secrets
 
 	Job           string
 	Version       string
@@ -112,7 +112,7 @@ func (me *Workspace) parseWorkspaceData() (err error) {
 		)
 	}
 
-	err = libmonteur.SanitizeVariables(me.Variables, &fmtVar)
+	err = libtemplater.TemplateVariablesRaw(me.Variables, &fmtVar)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
@@ -290,7 +290,7 @@ func (me *Workspace) _parseAppHelp() (err error) {
 }
 
 func (me *Workspace) __formatAppString(s *string) (err error) {
-	*s, err = templater.String(*s, *me.Variables)
+	*s, err = libtemplater.TemplateRaw(*s, *me.Variables)
 	if err != nil {
 		return fmt.Errorf("%s: %s", libmonteur.ERROR_APP_FMT_BAD, err)
 	}
@@ -333,9 +333,8 @@ func (me *Workspace) __createTimestamp() *libmonteur.Timestamp {
 }
 
 func (me *Workspace) processSecrets() {
-	me.secrets = &map[string]interface{}{}
-
-	*(me).secrets = libsecrets.GetSecrets(me.Filesystem.SecretsDir)
+	me.Secrets = &libsecrets.Secrets{}
+	_ = me.Secrets.Parse(me.Filesystem.SecretsDir)
 }
 
 func (me *Workspace) processDataByJob() {
@@ -349,7 +348,7 @@ func (me *Workspace) processDataByJob() {
 	(*me.Variables)[libmonteur.VAR_BIN] = me.Filesystem.BinDir
 	(*me.Variables)[libmonteur.VAR_BUILD] = me.Filesystem.BuildTMPDir
 	(*me.Variables)[libmonteur.VAR_DOC] = me.Filesystem.ComposeTMPDir
-	(*me.Variables)[libmonteur.VAR_SECRETS] = *(me).secrets
+	(*me.Variables)[libmonteur.VAR_SECRETS] = me.Secrets
 	(*me.Variables)[libmonteur.VAR_TIMESTAMP] = me.Timestamp
 	(*me.Variables)[libmonteur.VAR_DATA] = me.Filesystem.DataDir
 	(*me.Variables)[libmonteur.VAR_RELEASE] = me.Filesystem.ReleaseDir

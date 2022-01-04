@@ -21,12 +21,14 @@ import (
 	txtTemplate "text/template"
 )
 
-func textTemplate(name string) *txtTemplate.Template {
+func textTemplate(name string,
+	funcMap map[string]interface{}) *txtTemplate.Template {
 	t := txtTemplate.New(name)
-	return t.Funcs(txtTemplate.FuncMap{
-		"string": stringify,
-		"printf": printf,
-	})
+
+	funcMap["string"] = stringify
+	funcMap["printf"] = printf
+
+	return t.Funcs(funcMap)
 }
 
 func stringify(input interface{}) string {

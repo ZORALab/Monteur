@@ -31,7 +31,7 @@ import (
 // documentations sane. Upon completion, Monteur should be operable seamlessly
 // even with the absent of any jobs.
 func Init() (statusCode int) {
-	api := &libmonteur.Init{}
+	api := initMonteur()
 
 	return api.Run()
 }

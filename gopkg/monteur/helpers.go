@@ -29,7 +29,7 @@ func _logVariables(l *liblog.Logger, list *map[string]interface{}) {
 	l.Info("Inserting Task Variables...")
 	for k, v := range *list {
 		if k == libmonteur.VAR_SECRETS {
-			l.Info("\"%s\": %v", k, libmonteur.LOG_FORMAT_REDACTED)
+			l.Info("\"%s\": %v", k, libmonteur.SECRET_REDACTED)
 			continue
 		}
 
@@ -40,7 +40,7 @@ func _logVariables(l *liblog.Logger, list *map[string]interface{}) {
 
 func _initLogger(l **liblog.Logger, w *libworkspace.Workspace) (err error) {
 	*l = &liblog.Logger{ToTerminal: true}
-	(*l).Init()
+	(*l).Init(w.Secrets)
 
 	err = (*l).Add(liblog.TYPE_STATUS, filepath.Join(
 		w.Filesystem.WorkspaceLogDir,

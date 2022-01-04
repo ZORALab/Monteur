@@ -150,3 +150,7 @@ const (
 const (
 	ERROR_PUBLISH_METADATA_MISSING = "missing metadata"
 )
+
+const (
+	ERROR_SECRET_PARSE = "error parsing secrecy file" //nolint:gosec
+)

@@ -21,6 +21,7 @@ import (
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/commander"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/liblog"
 	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtemplater"
 )
 
 type executive struct {
@@ -44,7 +45,7 @@ func (me *executive) Exec() (err error) {
 		me.log.Info("Type: '%v'", cmd.Type)
 
 		me.log.Info("Formatting cmd.Location...")
-		cmd.Location, err = libmonteur.ProcessString(order.Location,
+		cmd.Location, err = libtemplater.Template(order.Location,
 			me.variables,
 		)
 		if err != nil {
@@ -53,7 +54,7 @@ func (me *executive) Exec() (err error) {
 		me.log.Info("Got: '%s'", cmd.Location)
 
 		me.log.Info("Formatting cmd.Source...")
-		cmd.Source, err = libmonteur.ProcessString(order.Source,
+		cmd.Source, err = libtemplater.Template(order.Source,
 			me.variables,
 		)
 		if err != nil {
@@ -62,7 +63,7 @@ func (me *executive) Exec() (err error) {
 		me.log.Info("Got: '%s'", cmd.Source)
 
 		me.log.Info("Formatting cmd.Target...")
-		cmd.Target, err = libmonteur.ProcessString(order.Target,
+		cmd.Target, err = libtemplater.Template(order.Target,
 			me.variables,
 		)
 		if err != nil {
@@ -90,7 +91,7 @@ func (me *executive) Exec() (err error) {
 		}
 
 		me.log.Info("formatting ToSTDOUT...")
-		order.ToSTDOUT, err = libmonteur.ProcessString(order.ToSTDOUT,
+		order.ToSTDOUT, err = libtemplater.Template(order.ToSTDOUT,
 			me.variables,
 		)
 		if err != nil {
@@ -100,7 +101,7 @@ func (me *executive) Exec() (err error) {
 		me.report(me.fxSTDOUT, "STDOUT", order.ToSTDOUT)
 
 		me.log.Info("formatting ToSTDERR...")
-		order.ToSTDERR, err = libmonteur.ProcessString(order.ToSTDERR,
+		order.ToSTDERR, err = libtemplater.Template(order.ToSTDERR,
 			me.variables,
 		)
 		if err != nil {

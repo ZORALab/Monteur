@@ -30,7 +30,6 @@ Method = 'GET'
 Type = 'sha256'
 Format = 'hex'
 [Sources.all-all.headers]
-'Authorization' = '{{- string (index .Secrets "Github.API_KEY") -}}'
 
 [Sources.darwin-amd64.Checksum]
 Value = '5971ed73d25767b2b955a694e59c7381d56df46e3681a93e067c601d0d6cffad'

@@ -242,3 +242,37 @@ func (s *Logger) Logf(statusType StatusType,
 		}
 	}
 }
+
+// Logger is to write a string as it is without any formatting.
+func (s *Logger) WriteString(statusType StatusType,
+	level string,
+	output string) {
+	// lock to ensure there is no other transaction
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	// run preprocessor if available
+	if s.preprocessor != nil {
+		output = s.preprocessor(output)
+	}
+
+	// prepend standard level tag
+	if level != "" {
+		output = "[ " + strings.ToUpper(level) + " ] " + output
+	}
+
+	// prepend timestamp
+	output = time.Now().UTC().Format(s.timestampFormat) + " " + output
+
+	// add file into the list
+	switch {
+	case statusType == TYPE_OUTPUT:
+		for _, w := range s.outputWriters {
+			_, _ = io.WriteString(w, output)
+		}
+	default:
+		for _, w := range s.statusWriters {
+			_, _ = io.WriteString(w, output)
+		}
+	}
+}

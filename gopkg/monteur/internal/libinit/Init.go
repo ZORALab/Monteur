@@ -13,13 +13,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package libmonteur
+package libinit
 
 import (
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libmonteur"
+	"gitlab.com/zoralab/monteur/gopkg/monteur/internal/libtemplater"
 )
 
 // Init is for Init API to setup Monteur into a repository.
@@ -33,42 +36,49 @@ func (me *Init) Run() (out int) {
 	me.getPWD()
 
 	out = me.isWorkspaceExists()
-	if out != STATUS_OK {
+	if out != libmonteur.STATUS_OK {
 		return out
 	}
 
 	out = me.createWorkspaceTOML()
-	if out != STATUS_OK {
+	if out != libmonteur.STATUS_OK {
 		return out
 	}
 
 	out = me.createCIJobsConfigs()
-	if out != STATUS_OK {
+	if out != libmonteur.STATUS_OK {
 		return out
 	}
 
 	out = me.createAppMetadata()
-	if out != STATUS_OK {
+	if out != libmonteur.STATUS_OK {
 		return out
 	}
 
 	out = me.createAppHelp()
-	if out != STATUS_OK {
+	if out != libmonteur.STATUS_OK {
 		return out
 	}
 
 	out = me.createAppDebian()
-	if out != STATUS_OK {
+	if out != libmonteur.STATUS_OK {
 		return out
 	}
 
 	out = me.createAppCopyright()
-	if out != STATUS_OK {
+	if out != libmonteur.STATUS_OK {
 		return out
 	}
 
-	me.reportStatus("Initializing repo with Monteur " + LOG_SUCCESS + "\n")
-	return STATUS_OK
+	me.reportStatus(`NOTE:
+1. Remember to add all your secrets directories pathing into your .gitignore.
+`)
+
+	me.reportStatus("Initializing repo with Monteur " +
+		libmonteur.LOG_SUCCESS +
+		"\n",
+	)
+	return libmonteur.STATUS_OK
 }
 
 func (me *Init) createAppCopyright() int {
@@ -76,11 +86,11 @@ func (me *Init) createAppCopyright() int {
 	var err error
 
 	path = filepath.Join(me.pwd,
-		DIRECTORY_MONTEUR_CONFIG,
-		DIRECTORY_APP_CONFIG,
-		LANG_CODE_DEFAULT,
-		DIRECTORY_APP_COPYRIGHT,
-		FILE_TOML_APP_COPYRIGHT,
+		libmonteur.DIRECTORY_MONTEUR_CONFIG,
+		libmonteur.DIRECTORY_APP_CONFIG,
+		libmonteur.LANG_CODE_DEFAULT,
+		libmonteur.DIRECTORY_APP_COPYRIGHT,
+		libmonteur.FILE_TOML_APP_COPYRIGHT,
 	)
 	me.reportStatus("Creating: '%s'\n", path)
 
@@ -106,11 +116,11 @@ Full license text body.
 `)
 	if err != nil {
 		me.reportError("Error creating file: %s\n", err)
-		return STATUS_ERROR
+		return libmonteur.STATUS_ERROR
 	}
 
-	me.reportStatus(LOG_OK + "\n")
-	return STATUS_OK
+	me.reportStatus(libmonteur.LOG_OK + "\n")
+	return libmonteur.STATUS_OK
 }
 
 func (me *Init) createAppDebian() int {
@@ -118,10 +128,10 @@ func (me *Init) createAppDebian() int {
 	var err error
 
 	path = filepath.Join(me.pwd,
-		DIRECTORY_MONTEUR_CONFIG,
-		DIRECTORY_APP_CONFIG,
-		LANG_CODE_DEFAULT,
-		FILE_TOML_APP_DEBIAN,
+		libmonteur.DIRECTORY_MONTEUR_CONFIG,
+		libmonteur.DIRECTORY_APP_CONFIG,
+		libmonteur.LANG_CODE_DEFAULT,
+		libmonteur.FILE_TOML_APP_DEBIAN,
 	)
 	me.reportStatus("Creating: '%s'\n", path)
 
@@ -191,11 +201,11 @@ LintianOverrides = """
 [DEB.Install]`)
 	if err != nil {
 		me.reportError("Error creating file: %s\n", err)
-		return STATUS_ERROR
+		return libmonteur.STATUS_ERROR
 	}
 
-	me.reportStatus(LOG_OK + "\n")
-	return STATUS_OK
+	me.reportStatus(libmonteur.LOG_OK + "\n")
+	return libmonteur.STATUS_OK
 }
 
 func (me *Init) createAppHelp() int {
@@ -203,10 +213,10 @@ func (me *Init) createAppHelp() int {
 	var err error
 
 	path = filepath.Join(me.pwd,
-		DIRECTORY_MONTEUR_CONFIG,
-		DIRECTORY_APP_CONFIG,
-		LANG_CODE_DEFAULT,
-		FILE_TOML_APP_HELP,
+		libmonteur.DIRECTORY_MONTEUR_CONFIG,
+		libmonteur.DIRECTORY_APP_CONFIG,
+		libmonteur.LANG_CODE_DEFAULT,
+		libmonteur.FILE_TOML_APP_HELP,
 	)
 	me.reportStatus("Creating: '%s'\n", path)
 
@@ -244,11 +254,11 @@ Lv1 = """
 """`)
 	if err != nil {
 		me.reportError("Error creating file: %s\n", err)
-		return STATUS_ERROR
+		return libmonteur.STATUS_ERROR
 	}
 
-	me.reportStatus(LOG_OK + "\n")
-	return STATUS_OK
+	me.reportStatus(libmonteur.LOG_OK + "\n")
+	return libmonteur.STATUS_OK
 }
 
 func (me *Init) createAppMetadata() int {
@@ -258,17 +268,17 @@ func (me *Init) createAppMetadata() int {
 	appName = filepath.Base(me.pwd)
 
 	path = filepath.Join(me.pwd,
-		DIRECTORY_MONTEUR_CONFIG,
-		DIRECTORY_APP_CONFIG,
-		LANG_CODE_DEFAULT,
-		FILE_TOML_APP_METADATA,
+		libmonteur.DIRECTORY_MONTEUR_CONFIG,
+		libmonteur.DIRECTORY_APP_CONFIG,
+		libmonteur.LANG_CODE_DEFAULT,
+		libmonteur.FILE_TOML_APP_METADATA,
 	)
 	me.reportStatus("Creating: '%s'\n", path)
 
 	err = me._createFile(path, `[Software]
 Name = '`+strings.Title(appName)+`'
-Command = '`+ProcessToFilepath(appName)+`'
-ID = '`+ProcessToFilepath(appName)+`'
+Command = '`+libtemplater.ToFilepath(appName)+`'
+ID = '`+libtemplater.ToFilepath(appName)+`'
 Version = 'v0.0.1' # version number
 Category = 'devel' # software category
 Suite = ''         # software suite (e.g. MSFT Office for MSFT Word)
@@ -312,11 +322,11 @@ Year = '2021'
 `)
 	if err != nil {
 		me.reportError("Error creating file: %s\n", err)
-		return STATUS_ERROR
+		return libmonteur.STATUS_ERROR
 	}
 
-	me.reportStatus(LOG_OK + "\n")
-	return STATUS_OK
+	me.reportStatus(libmonteur.LOG_OK + "\n")
+	return libmonteur.STATUS_OK
 }
 
 func (me *Init) createCIJobsConfigs() int {
@@ -325,23 +335,23 @@ func (me *Init) createCIJobsConfigs() int {
 	var err error
 
 	jobs = []string{
-		DIRECTORY_SETUP,
-		DIRECTORY_CLEAN,
-		DIRECTORY_TEST,
-		DIRECTORY_PREPARE,
-		DIRECTORY_BUILD,
-		DIRECTORY_PACKAGE,
-		DIRECTORY_RELEASE,
-		DIRECTORY_COMPOSE,
-		DIRECTORY_PUBLISH,
+		libmonteur.DIRECTORY_SETUP,
+		libmonteur.DIRECTORY_CLEAN,
+		libmonteur.DIRECTORY_TEST,
+		libmonteur.DIRECTORY_PREPARE,
+		libmonteur.DIRECTORY_BUILD,
+		libmonteur.DIRECTORY_PACKAGE,
+		libmonteur.DIRECTORY_RELEASE,
+		libmonteur.DIRECTORY_COMPOSE,
+		libmonteur.DIRECTORY_PUBLISH,
 	}
 
 	for _, job := range jobs {
 		// [1] create job-wide config file
 		path = filepath.Join(me.pwd,
-			DIRECTORY_MONTEUR_CONFIG,
+			libmonteur.DIRECTORY_MONTEUR_CONFIG,
 			job,
-			FILE_TOML,
+			libmonteur.FILE_TOML,
 		)
 		me.reportStatus("Creating: '%s'\n", path)
 
@@ -350,28 +360,28 @@ func (me *Init) createCIJobsConfigs() int {
 [FMTVariables]`)
 		if err != nil {
 			me.reportError("Error creating file: %s\n", err)
-			return STATUS_ERROR
+			return libmonteur.STATUS_ERROR
 		}
-		me.reportStatus(LOG_OK + "\n")
+		me.reportStatus(libmonteur.LOG_OK + "\n")
 
 		// [2] create job directory
 		path = filepath.Join(me.pwd,
-			DIRECTORY_MONTEUR_CONFIG,
+			libmonteur.DIRECTORY_MONTEUR_CONFIG,
 			job,
-			DIRECTORY_JOBS,
-			EXTENSION_GITKEEP,
+			libmonteur.DIRECTORY_JOBS,
+			libmonteur.EXTENSION_GITKEEP,
 		)
 		me.reportStatus("Creating: '%s'\n", path)
 
 		err = me._touch(path)
 		if err != nil {
 			me.reportError("Error creating file: %s\n", err)
-			return STATUS_ERROR
+			return libmonteur.STATUS_ERROR
 		}
-		me.reportStatus(LOG_OK + "\n")
+		me.reportStatus(libmonteur.LOG_OK + "\n")
 	}
 
-	return STATUS_OK
+	return libmonteur.STATUS_OK
 }
 
 func (me *Init) createWorkspaceTOML() int {
@@ -379,8 +389,8 @@ func (me *Init) createWorkspaceTOML() int {
 	var err error
 
 	path = filepath.Join(me.pwd,
-		DIRECTORY_MONTEUR_CONFIG,
-		FILE_TOML_WORKSPACE,
+		libmonteur.DIRECTORY_MONTEUR_CONFIG,
+		libmonteur.FILE_TOML_WORKSPACE,
 	)
 	me.reportStatus("Creating: '%s'\n", path)
 
@@ -400,8 +410,8 @@ SecretsDir = [
 ]
 
 [Language]
-Name = '`+LANG_NAME_DEFAULT+`'
-Code = '`+LANG_CODE_DEFAULT+`'
+Name = '`+libmonteur.LANG_NAME_DEFAULT+`'
+Code = '`+libmonteur.LANG_CODE_DEFAULT+`'
 
 [Variables]
 
@@ -410,11 +420,11 @@ Code = '`+LANG_CODE_DEFAULT+`'
 	if err != nil {
 		// report error
 		me.reportError("error creating file: %s\n", err)
-		return STATUS_ERROR
+		return libmonteur.STATUS_ERROR
 	}
 
-	me.reportStatus(LOG_OK + "\n")
-	return STATUS_OK
+	me.reportStatus(libmonteur.LOG_OK + "\n")
+	return libmonteur.STATUS_OK
 }
 
 func (me *Init) isWorkspaceExists() int {
@@ -428,39 +438,42 @@ func (me *Init) isWorkspaceExists() int {
 		}
 
 		path = filepath.Join(pwd,
-			DIRECTORY_MONTEUR_CONFIG,
-			FILE_TOML_WORKSPACE,
+			libmonteur.DIRECTORY_MONTEUR_CONFIG,
+			libmonteur.FILE_TOML_WORKSPACE,
 		)
 		me.reportStatus("Checking existing Monteur at '%s'\n", path)
 
 		_, err = os.Stat(path)
 		if err != nil {
 			if os.IsNotExist(err) {
-				me.reportStatus(LOG_OK + "\n")
+				me.reportStatus(libmonteur.LOG_OK + "\n")
 				pwd = filepath.Dir(pwd)
 				continue
 			}
 
 			me.reportError("error locating Monteur: %s\n", err)
-			return STATUS_ERROR
+			return libmonteur.STATUS_ERROR
 		}
 
 		me.reportError("Existing Monteur detected!\n")
-		return STATUS_ERROR
+		return libmonteur.STATUS_ERROR
 	}
 
-	return STATUS_OK
+	return libmonteur.STATUS_OK
 }
 
 func (me *Init) _createFile(path string, data string) (err error) {
 	var f *os.File
 
-	err = os.MkdirAll(filepath.Dir(path), PERMISSION_DIRECTORY)
+	err = os.MkdirAll(filepath.Dir(path), libmonteur.PERMISSION_DIRECTORY)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
 
-	f, err = os.OpenFile(path, os.O_CREATE|os.O_WRONLY, PERMISSION_FILE)
+	f, err = os.OpenFile(path,
+		os.O_CREATE|os.O_WRONLY,
+		libmonteur.PERMISSION_FILE,
+	)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
@@ -475,12 +488,17 @@ func (me *Init) _createFile(path string, data string) (err error) {
 func (me *Init) _touch(path string) (err error) {
 	var f *os.File
 
-	err = os.MkdirAll(filepath.Dir(path), PERMISSION_DIRECTORY)
+	err = os.MkdirAll(filepath.Dir(path),
+		libmonteur.PERMISSION_DIRECTORY,
+	)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
 
-	f, err = os.OpenFile(path, os.O_CREATE|os.O_WRONLY, PERMISSION_FILE)
+	f, err = os.OpenFile(path,
+		os.O_CREATE|os.O_WRONLY,
+		libmonteur.PERMISSION_FILE,
+	)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
