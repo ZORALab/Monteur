@@ -143,6 +143,9 @@ Currently, Monteur deploys this package data to the following CI Jobs:
    packaging your app.
 2. [Release]({{< link "/ci-jobs/release/" "this" "url-only" />}}) - for
    releasing same type packages under a single release channel.
+3. [Prepare]({{< link "/ci-jobs/prepare/" "this" "url-only" />}}) - for
+   releasing same type packages under a single release channel.
+   1. Available since Monteur `v0.0.2`.
 
 
 

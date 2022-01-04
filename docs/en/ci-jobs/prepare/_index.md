@@ -241,9 +241,8 @@ Command = 'git'
 #### `[Changelog]`
 The `[Changelog]` is the table for generating the current version's changelog
 entries. This `[Changelog]` shall be executed first before packaging executions.
-
-Should its `Changelog.CMD` remains empty, this changelog update execution shall
-be skipped entirely.
+Should its `Changelog.CMD` remains empty or absent, this changelog update
+execution shall be skipped entirely.
 
 `[Changelog]` has its own set of important fields to process the generated
 outcomes. Here is the current supported fields:
@@ -321,48 +320,28 @@ The code example is as follows:
 [Packages.001]
 OS = [ 'linux' ]
 Arch = [ 'amd64' ]
-Changelog = '{{- .DataDir -}}/debian/changelog-amd64'
 Distribution = [
         'stable',
 ]
-BuildSource = false
-
-[Packages.001.Files]
-'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/linux-amd64'
-
-[Packages.002]
-OS = [ 'linux' ]
-Arch = [ 'arm64' ]
-Changelog = '{{- .DataDir -}}/debian/changelog-arm64'
-Distribution = [
-       'stable',
-]
-BuildSource = false
-
-[Packages.002.Files]
-'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/linux-arm64'
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
 ```
 
-* `[Package.XXX]` - the package tag. `XXX` can be anything since it is only used
-  to populate the list.
-* `OS` - the list of supported operating system. The **first (1st)** shall be
-  used for primary filling (e.g. only 1 OS from the list).
-* `Arch` - the list of supported CPU architecture. The **first (1st)** shall be
-  used for primary filling (e.g. only 1 Architecture from the list).
-* `Changelog` - the filepath location for prepending new changelog entries data.
-    * Formattable variables are available for dynamic formatting.
-* `Distribution` - the supported distributions of the operating system (E.g.
-  `stable`, `unstable`, `experimental`, `debian`, `ubuntu`, ...). When in
-  doubts, sticks to `stable`, `unstable`, or `experimental`.
-* `BuildSource` - the decision to build source packge instead of binary package
-  for supported types of packaging recipe types (e.g. `.deb` package).
-* `[Package.XXX.Files]` - the list of files to be copied over during
-  package preparations stage (right before executing `[CMD]`). The `Key` is the
-  destination while the `Value` is the source of the file. If we follows the
-  example above, `{{- .BuildDir -}}/linux-amd64` shall be copied to
-  `{{- .PackageDir -}}/monteur`.
-    * Formattable variables are available for dynamic formatting for both `key`
-      and `value`.
+The fields' specifications are documented in the [Package Meta]({{< link
+"/internals/package/meta/" "this" "url-only" />}}) section. For package API,
+you need the following fields (**COMPULSORY**):
+
+* `[Package.XXX]` - the package tag for organization purposes. **Minimum 1**.
+* `OS` - supported operating system. **Minimum 1**.
+   * In case where you're preparing things unrelated to changelog, set it to
+     `all`.
+* `Arch` - supported CPU architecture. **Minimum 1**.
+   * In case where you're preparing things unrelated to changelog, set it to
+     `all`.
+* `Distribution` - supported distributions of the operating system.
+   **Minimum 1**.
+* `Changelog` - the persistent changelog filepath for certain packager. Optional
+   for `Metadata.Type` equals to:
+     * `manual`
 
 
 #### `[[CMD]]`
