@@ -265,54 +265,52 @@ For `Metadata.Type` set to `manual`, to ensure you have complete control, this
 recipe type shall not execute the preparation sequences and all the packages are
 directly and completely controlled by `[CMD]`.
 
-The code example is as follows:
+The required fields are shown as follows:
 
-```toml {linenos=table,hl_lines=["1-11"],linenostart=1}
+```toml {linenos=table,hl_lines=["1-13"],linenostart=1}
 [Packages.001]
 OS = [ 'linux' ]
 Arch = [ 'amd64' ]
-Changelog = '{{- .DataDir -}}/debian/changelog-amd64'
+Name = '{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+Changelog = '{{- .DataDir -}}/changelog-{{- .PkgArch -}}'
 Distribution = [
         'stable',
 ]
 BuildSource = false
 
 [Packages.001.Files]
-'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/linux-amd64'
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+'{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
+
 
 [Packages.002]
 OS = [ 'linux' ]
 Arch = [ 'arm64' ]
-Changelog = '{{- .DataDir -}}/debian/changelog-arm64'
+Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+Changelog = '{{- .DataDir -}}/changelog-{{- .PkgArch -}}'
 Distribution = [
-       'stable',
+        'stable',
 ]
 BuildSource = false
 
 [Packages.002.Files]
-'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/linux-arm64'
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+'{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
 ```
 
-* `[Package.XXX]` - the package tag. `XXX` can be anything since it is only used
-  to populate the list.
-* `OS` - the list of supported operating system. The **first (1st)** shall be
-  used for primary filling (e.g. only 1 OS from the list).
-* `Arch` - the list of supported CPU architecture. The **first (1st)** shall be
-  used for primary filling (e.g. only 1 Architecture from the list).
-* `Changelog` - the filepath location for prepending new changelog entries data.
-    * Formattable variables are available for dynamic formatting.
-* `Distribution` - the supported distributions of the operating system (E.g.
-  `stable`, `unstable`, `experimental`, `debian`, `ubuntu`, ...). When in
-  doubts, sticks to `stable`, `unstable`, or `experimental`.
-* `BuildSource` - the decision to build source packge instead of binary package
-  for supported types of packaging recipe types (e.g. `.deb` package).
-* `[Package.XXX.Files]` - the list of files to be copied over during
-  package preparations stage (right before executing `[CMD]`). The `Key` is the
-  destination while the `Value` is the source of the file. If we follows the
-  example above, `{{- .BuildDir -}}/linux-amd64` shall be copied to
-  `{{- .PackageDir -}}/monteur`.
-    * Formattable variables are available for dynamic formatting for both `key`
-      and `value`.
+The fields' specifications are documented in the [Package Meta]({{< link
+"/internals/package/meta/" "this" "url-only" />}}) section. For package API,
+you need the following fields (**COMPULSORY**):
+
+* `[Package.XXX]` - the package tag for organization purposes.
+* `OS` - supported operating system. **Minimum 1**.
+* `Arch` - supported CPU architecture. **Minimum 1**.
+* `Name` - the package name.
+* `Changelog` - the persistent changelog filepath for certain packager.
+* `Distribution` - supported distributions of the operating system.
+   **Minimum 1**.
+* `BuildSource` - decision to build source-code package or otherwise.
+* `[Package.XXX.Files]` - the list of files for packaging.
 
 
 #### `[[CMD]]`

@@ -264,11 +264,10 @@ Checksum = 'sha512'
 Path = '{{- .RootDir -}}/docs/.data/releases/archives'
 Format = 'toml'
 
-[Releases.Packages.linux-amd64]
-Source = '{{- .PackageDir -}}/monteur-linux-amd64/monteur-{{- .PkgVersion -}}-linux-amd64.tar.gz'
-
-[Releases.Packages.linux-arm64]
-Source = '{{- .PackageDir -}}/monteur-linux-arm64/monteur-{{- .PkgVersion -}}-linux-arm64.tar.gz'
+[Releases.Packages.darwin-amd64]
+OS = [ "darwin" ]
+Arch = [ "amd64" ]
+Source = '{{- .PackageDir -}}/targz/{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}.tar.gz'
 
 ...
 ```
@@ -294,14 +293,16 @@ Source = '{{- .PackageDir -}}/monteur-linux-arm64/monteur-{{- .PkgVersion -}}-li
   the filename will be a converted filepath friendly app version
   (`App.Version`) value. For example, `v0.0.2` shall be converted into
   `v0-0-2.txt` when set to be `txt` format.
-* `[Releases.Packages]` - the list of individual packages.
-* `[Releases.Packages.XXX]` - the package tag `XXX` can be anything as it only
-  meant for identification and logging purposes in case there is an error.
-* `Releases.Packages.XXX.Source` - the filepath / directory path for the
-  packaged file.
-* `Releases.Packages.XXX.Target` - the release destination of filepath /
-  directory path for the packaged file. If this is not set, the `Target` in
-  `[Releases]` table shall fill in automatically.
+* `[Releases.Packages]` - the list of individual packages. The fields'
+  specifications are documented in the [Package Meta]({{< link
+  "/internals/package/meta/" "this" "url-only" />}}) section. For package API,
+  you need the following fields (**COMPULSORY**):
+  * `[Releases.Packages.XXX]` - the package tag for labelling usage.
+  * `Releases.Packaages.XXX.OS` - list of supported OS. **Minimum 1**.
+  * `Releases.Packaages.XXX.Arch` - list of supported Arch. **Minimum 1**.
+  * `Releases.Packages.XXX.Source` - the packaged file's filepath.
+  * `Releases.Packages.XXX.Target` - the release destination directory path. If
+    unset, the `Target` in `[Releases]` table shall be used instead.
 
 
 #### `[[CMD]]`
