@@ -126,6 +126,8 @@ type TOMLPackage struct {
 	Files        map[string]string
 	Name         string
 	Changelog    string
+	Source       string
+	Target       string
 	OS           []string
 	Arch         []string
 	Distribution []string
@@ -134,7 +136,7 @@ type TOMLPackage struct {
 
 type TOMLRelease struct {
 	Data     *TOMLReleaseData
-	Packages map[string]*TOMLReleasePackage
+	Packages map[string]*TOMLPackage
 	Target   string
 	Checksum string
 }
@@ -142,11 +144,6 @@ type TOMLRelease struct {
 type TOMLReleaseData struct {
 	Path   string
 	Format string
-}
-
-type TOMLReleasePackage struct {
-	Source string
-	Target string
 }
 
 type TOMLSource struct {

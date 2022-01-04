@@ -9,6 +9,7 @@ Type = 'manual'
 
 
 [Variables]
+PackageType = 'deb-manual'
 GPGID = 'hello@zoralab.com'
 GPGExistence = ''
 Distribution = '' # to be filled later
@@ -36,7 +37,9 @@ Command = 'gpg'
 Target = '{{- .ReleaseDir -}}/deb'
 
 [Releases.Packages.linux-amd64]
-Source = '"{{- .PackageDir -}}/monteur-linux-amd64/monteur_"*"_amd64.deb"'
+OS = [ "linux" ]
+Arch = [ "amd64" ]
+Source = '{{- .PackageDir -}}/{{- .PackageType -}}/{{- .PkgName -}}_{{- .PkgVersionDigitLed -}}_{{- .PkgArch -}}.deb'
 
 
 

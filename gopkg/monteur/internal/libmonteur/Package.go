@@ -37,13 +37,12 @@ func UpdatePackagePath(variables *map[string]interface{},
 	log func(string, ...interface{})) (packagePath string, err error) {
 	var name string
 
-	// get package name and process it
-	name, err = ProcessString(pkg.Name, *variables)
-	if err != nil {
-		return "", err
-	}
-
 	log("Updating package path...")
+	name = (*variables)[VAR_PACKAGE_NAME].(string)
+	name += "-" + (*variables)[VAR_PACKAGE_VERSION].(string)
+	name += "-" + (*variables)[VAR_PACKAGE_OS].(string)
+	name += "-" + (*variables)[VAR_PACKAGE_ARCH].(string)
+
 	packagePath = (*variables)[VAR_PACKAGE].(string)
 	packagePath = filepath.Join(packagePath, packagingType, name)
 	(*variables)[VAR_PACKAGE] = packagePath

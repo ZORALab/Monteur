@@ -50,7 +50,7 @@ func (me *releaser) Parse(path string) (err error) {
 	me.cmd = []*libmonteur.TOMLAction{}
 	me.releases = &libmonteur.TOMLRelease{
 		Data:     &libmonteur.TOMLReleaseData{},
-		Packages: map[string]*libmonteur.TOMLReleasePackage{},
+		Packages: map[string]*libmonteur.TOMLPackage{},
 	}
 
 	// construct TOML file data structure
@@ -123,7 +123,7 @@ func (me *releaser) Parse(path string) (err error) {
 func (me *releaser) Run(ctx context.Context, ch chan conductor.Message) {
 	var init, releasePkg, conclude func()
 	var variables map[string]interface{}
-	var pkg *libmonteur.TOMLReleasePackage
+	var pkg *libmonteur.TOMLPackage
 	var manager interface{}
 	var err error
 
@@ -162,15 +162,11 @@ func (me *releaser) Run(ctx context.Context, ch chan conductor.Message) {
 		return
 	}
 
-	me.log.Info("Executing release initialization function now...")
-	if init != nil {
-		init()
-		if err != nil {
-			me.reportError(err)
-			return
-		}
+	me.runFx(init, "Executing release initialization function now...")
+	if err != nil {
+		me.reportError(err)
+		return
 	}
-	me.log.Info(libmonteur.LOG_OK)
 
 	for _, pkg = range me.releases.Packages {
 		// copy the original variables into the new variable list
@@ -180,34 +176,72 @@ func (me *releaser) Run(ctx context.Context, ch chan conductor.Message) {
 		}
 
 		// process package variables
-		err = me.processPackageVariables(pkg, &variables)
+		err = processPackageVariables(pkg, &variables)
 		if err != nil {
 			me.reportError(err)
 			return
 		}
 
-		me.log.Info("Executing release package function now...")
-		if releasePkg != nil {
-			releasePkg()
-			if err != nil {
-				me.reportError(err)
-				return
-			}
+		// process source
+		pkg.Source, err = libmonteur.ProcessString(pkg.Source,
+			variables,
+		)
+		if err != nil {
+			me.reportError(err)
+			return
 		}
-		me.log.Info(libmonteur.LOG_OK)
-	}
+		variables[libmonteur.VAR_SOURCE] = pkg.Source
 
-	me.log.Info("Executing release conclusion function now...")
-	if conclude != nil {
-		conclude()
+		// process target
+		pkg.Target, err = me.processPkgTarget(pkg.Target,
+			me.releases.Target,
+			variables,
+		)
+		if err != nil {
+			me.reportError(err)
+			return
+		}
+		variables[libmonteur.VAR_TARGET] = pkg.Target
+
+		me.runFx(releasePkg, "Executing release package function now...")
 		if err != nil {
 			me.reportError(err)
 			return
 		}
 	}
-	me.log.Info(libmonteur.LOG_OK)
+
+	me.runFx(conclude, "Executing release conclusion function now...")
+	if err != nil {
+		me.reportError(err)
+		return
+	}
 
 	me.reportDone()
+}
+
+func (me *releaser) processPkgTarget(in string,
+	def string, variables map[string]interface{}) (out string, err error) {
+	out, err = libmonteur.ProcessString(in, variables)
+	if err != nil {
+		return "", err //nolint:wrapcheck
+	}
+
+	if out != "" {
+		return out, nil
+	}
+
+	// use def as a replacement since out is empty
+	return libmonteur.ProcessString(def, variables) //nolint:wrapcheck
+}
+
+func (me *releaser) runFx(fx func(), name string) {
+	if fx == nil {
+		return
+	}
+
+	me.log.Info(name)
+	fx()
+	me.log.Info(libmonteur.LOG_OK)
 }
 
 func (me *releaser) runManually(variables map[string]interface{}) (err error) {
@@ -226,43 +260,6 @@ func (me *releaser) runManually(variables map[string]interface{}) (err error) {
 	}
 
 	me.log.Info("Executing Manual Release Commands ➤ DONE\n\n")
-	return nil
-}
-
-func (me *releaser) processPackageVariables(pkg *libmonteur.TOMLReleasePackage,
-	variables *map[string]interface{}) (err error) {
-	var version string
-	var app *libmonteur.Software
-	var ok bool
-
-	me.log.Info("Executing Release Preparations now...")
-	app, ok = (*variables)[libmonteur.VAR_APP].(*libmonteur.Software)
-	if !ok {
-		panic("MONTEUR DEV: why is VAR_APP not assigned?")
-	}
-
-	me.log.Info("Processing PkgVersion...")
-	version = libmonteur.ProcessToFilepath(app.Version)
-	(*variables)[libmonteur.VAR_PACKAGE_VERSION] = version
-	me.log.Info("Got: '%s'", version)
-
-	me.log.Info("Processing ReleasePackage.Source...")
-	pkg.Source, err = libmonteur.ProcessString(pkg.Source, *variables)
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
-	(*variables)[libmonteur.VAR_SOURCE] = pkg.Source
-	me.log.Info("Got: '%s'", pkg.Source)
-
-	me.log.Info("Processing ReleasePackage.Target...")
-	pkg.Target, err = libmonteur.ProcessString(pkg.Target, *variables)
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
-	(*variables)[libmonteur.VAR_TARGET] = pkg.Target
-	me.log.Info("Got: '%s'", pkg.Target)
-
-	me.log.Info("Executing Release Preparations ➤ DONE\n\n")
 	return nil
 }
 

@@ -29,28 +29,44 @@ Path = '{{- .RootDir -}}/docs/.data/releases/archives'
 Format = 'toml'
 
 [Releases.Packages.darwin-amd64]
-Source = '{{- .PackageDir -}}/monteur-darwin-amd64/monteur-{{- .PkgVersion -}}-darwin-amd64.tar.gz'
+OS = [ "darwin" ]
+Arch = [ "amd64" ]
+Source = '{{- .PackageDir -}}/targz/{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}.tar.gz'
 
 [Releases.Packages.darwin-arm64]
-Source = '{{- .PackageDir -}}/monteur-darwin-arm64/monteur-{{- .PkgVersion -}}-darwin-arm64.tar.gz'
+OS = [ "darwin" ]
+Arch = [ "arm64" ]
+Source = '{{- .PackageDir -}}/targz/{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}.tar.gz'
 
 [Releases.Packages.linux-amd64]
-Source = '{{- .PackageDir -}}/monteur-linux-amd64/monteur-{{- .PkgVersion -}}-linux-amd64.tar.gz'
+OS = [ "linux" ]
+Arch = [ "amd64" ]
+Source = '{{- .PackageDir -}}/targz/{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}.tar.gz'
 
 [Releases.Packages.linux-arm64]
-Source = '{{- .PackageDir -}}/monteur-linux-arm64/monteur-{{- .PkgVersion -}}-linux-arm64.tar.gz'
+OS = [ "linux" ]
+Arch = [ "arm64" ]
+Source = '{{- .PackageDir -}}/targz/{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}.tar.gz'
 
 [Releases.Packages.linux-386]
-Source = '{{- .PackageDir -}}/monteur-linux-386/monteur-{{- .PkgVersion -}}-linux-386.tar.gz'
+OS = [ "linux" ]
+Arch = [ "386" ]
+Source = '{{- .PackageDir -}}/targz/{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}.tar.gz'
 
 [Releases.Packages.linux-arm]
-Source = '{{- .PackageDir -}}/monteur-linux-arm/monteur-{{- .PkgVersion -}}-linux-arm.tar.gz'
+OS = [ "linux" ]
+Arch = [ "arm" ]
+Source = '{{- .PackageDir -}}/targz/{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}.tar.gz'
 
 [Releases.Packages.windows-amd64]
-Source = '{{- .PackageDir -}}/monteur-windows-amd64/monteur-{{- .PkgVersion -}}-windows-amd64.zip'
+OS = [ "windows" ]
+Arch = [ "amd64" ]
+Source = '{{- .PackageDir -}}/zip/{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}.zip'
 
 [Releases.Packages.windows-arm64]
-Source = '{{- .PackageDir -}}/monteur-windows-arm64/monteur-{{- .PkgVersion -}}-windows-arm64.zip'
+OS = [ "windows" ]
+Arch = [ "arm64" ]
+Source = '{{- .PackageDir -}}/zip/{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}.zip'
 
 
 

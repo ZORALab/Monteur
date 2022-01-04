@@ -60,3 +60,22 @@ func ProcessToFilepath(in string) (out string) {
 
 	return out
 }
+
+// ProcessDigitLedVersion processes given version to digit-led string.
+//
+// If the given string is already digit-led, the function shall return the
+// version string as it is.
+func ProcessDigitLedVersion(in string) string {
+	for i, c := range in {
+		switch c {
+		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+			if i == 0 {
+				return in
+			}
+
+			return in[i:]
+		}
+	}
+
+	return in
+}

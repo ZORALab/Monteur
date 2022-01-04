@@ -105,8 +105,8 @@ func sanitizeMetadata(meta *libmonteur.TOMLMetadata, path string) (err error) {
 func sanitizeRelease(release *libmonteur.TOMLRelease,
 	variables map[string]interface{}) (err error) {
 	var k string
-	var v *libmonteur.TOMLReleasePackage
-	var packages map[string]*libmonteur.TOMLReleasePackage
+	var v *libmonteur.TOMLPackage
+	var packages map[string]*libmonteur.TOMLPackage
 
 	// sanitize Target
 	release.Target, err = libmonteur.ProcessString(release.Target,
@@ -130,7 +130,7 @@ func sanitizeRelease(release *libmonteur.TOMLRelease,
 	}
 
 	// sanitize Packages
-	packages = map[string]*libmonteur.TOMLReleasePackage{}
+	packages = map[string]*libmonteur.TOMLPackage{}
 	for k, v = range release.Packages {
 		if k == "" {
 			continue

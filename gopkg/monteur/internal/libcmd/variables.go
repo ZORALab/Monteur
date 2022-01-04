@@ -35,13 +35,18 @@ func processPackageVariables(pkg *libmonteur.TOMLPackage,
 		libmonteur.ProcessToFilepath(app.Name)
 	(*variables)[libmonteur.VAR_PACKAGE_VERSION] =
 		libmonteur.ProcessToFilepath(app.Version)
+	(*variables)[libmonteur.VAR_PACKAGE_VERSION_DIGIT_LED] =
+		libmonteur.ProcessDigitLedVersion(app.Version)
 	(*variables)[libmonteur.VAR_PACKAGE_OS] = pkg.OS[0]
 	(*variables)[libmonteur.VAR_PACKAGE_ARCH] = pkg.Arch[0]
 
 	// process VAR_PACKAGE (PackageDir) base directory
-	packagePath, ok = (*variables)[libmonteur.VAR_TMP].(string)
+	packagePath, ok = (*variables)[libmonteur.VAR_PACKAGE].(string)
 	if !ok {
-		panic("MONTEUR DEV: why is libmonteur.VAR_TMP missing?")
+		packagePath, ok = (*variables)[libmonteur.VAR_TMP].(string)
+		if !ok {
+			panic("MONTEUR DEV: why is libmonteur.VAR_TMP missing?")
+		}
 	}
 	(*variables)[libmonteur.VAR_PACKAGE] = packagePath
 

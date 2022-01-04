@@ -59,7 +59,7 @@ func Init(logger *liblog.Logger,
 	return out, nil
 }
 
-func Release(pkg *libmonteur.TOMLReleasePackage,
+func Release(pkg *libmonteur.TOMLPackage,
 	controller interface{},
 	variables map[string]interface{}) (err error) {
 	var ok bool
