@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // Init is for Init API to setup Monteur into a repository.
@@ -158,7 +159,7 @@ Section = 'devel'
 #  https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields
 [DEB.VCS]
 Type = 'Vcs-Git'
-URL = 'https://gitlab.com/zoralab/monteur'
+URL = 'https://example.com/git'
 Branch = 'main'
 #Path = '.'
 
@@ -251,8 +252,10 @@ Lv1 = """
 }
 
 func (me *Init) createAppMetadata() int {
-	var path string
+	var appName, path string
 	var err error
+
+	appName = filepath.Base(me.pwd)
 
 	path = filepath.Join(me.pwd,
 		DIRECTORY_MONTEUR_CONFIG,
@@ -263,10 +266,10 @@ func (me *Init) createAppMetadata() int {
 	me.reportStatus("Creating: '%s'\n", path)
 
 	err = me._createFile(path, `[Software]
-Name = 'App Name Here'
-Command = 'app'    # the command to call the app
-ID = 'monteur'     # unique marketing ID (lowercase, digit and dash only)
-Version = 'v0.0.2' # version number
+Name = '`+strings.Title(appName)+`'
+Command = '`+ProcessToFilepath(appName)+`'
+ID = '`+ProcessToFilepath(appName)+`'
+Version = 'v0.0.1' # version number
 Category = 'devel' # software category
 Suite = ''         # software suite (e.g. MSFT Office for MSFT Word)
 Abstract = 'software XYZ tool in one single app.'
@@ -275,8 +278,6 @@ Describe your software as much as you want. Please make sure you end it with
 its unique selling pitch.
 """
 Website = 'https://example.com/'
-
-
 
 [Software.Contact]
 Name = 'ACME Entity'
