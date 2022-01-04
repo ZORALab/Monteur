@@ -1,6 +1,6 @@
 [Copyright]
 Name = 'Apache 2.0'
-ID = 'Apache-2'
+ID = 'Apache-2.0'
 Comment = ''
 Materials = [ '*' ]
 Holders = [
