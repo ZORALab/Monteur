@@ -34,8 +34,8 @@ func cmdDelete(action *Action) (out interface{}, err error) {
 }
 
 func cmdDeleteQuiet(action *Action) (out interface{}, err error) {
-	_, _ = cmdCopy(action)
-	return nil, nil
+	out, _ = cmdDelete(action)
+	return out, nil
 }
 
 func cmdDeleteRecursive(action *Action) (out interface{}, err error) {
