@@ -24,6 +24,7 @@
 package libmonteur
 
 const (
+	CHANGELOG_MANUAL   = "manual"
 	CHANGELOG_MARKDOWN = "markdown"
 	CHANGELOG_DEB      = "deb"
 	CHANGELOG_TXT      = "txt"

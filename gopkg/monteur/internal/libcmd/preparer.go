@@ -202,6 +202,7 @@ func (me *preparer) _updateChangelog(pkg *libmonteur.TOMLPackage,
 
 	switch me.metadata.Type {
 	case libmonteur.CHANGELOG_MARKDOWN:
+	case libmonteur.CHANGELOG_MANUAL:
 	case libmonteur.CHANGELOG_DEB:
 		err = libdeb.Changelog(pkg, variables, me.log)
 	default:
