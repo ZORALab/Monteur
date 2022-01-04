@@ -1,0 +1,77 @@
+[Metadata]
+Name = 'Script Monteur Version Go Code'
+Description = """
+Generating the Monteur Version number source code.
+"""
+Type = 'manual'
+
+[Variables]
+ChangelogFrom = 'origin/staging'
+ChangelogTo = 'origin/main'
+
+[FMTVariables]
+CodeFilepath = '{{- .RootDir -}}/gopkg/monteur/internal/libmonteur/Version.go'
+
+
+
+[[Dependencies]]
+Name = 'Git for Changelog Generation'
+Condition = 'all-all'
+Type = 'command'
+Command = 'git'
+
+
+
+
+[Changelog]
+LineBreak = "\n"
+Regex = ''
+
+
+
+
+[Packages.001]
+OS = [ 'all' ]
+Arch = [ 'all' ]
+Distribution = [
+	'stable',
+]
+
+
+
+
+[[CMD]]
+Name = 'Delete Existing Version Codes'
+Type = 'delete-quiet'
+Condition = [ 'all-all' ]
+Source = '{{- .CodeFilepath -}}'
+
+[[CMD]]
+Name = 'Script Go Codes'
+Type = 'script'
+Condition = [ 'all-all' ]
+Source = """
+// Copyright {{ .App.Time.Year }} ZORALab Enterprise (hello@zoralab.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// **WARNING**: auto-generated file. Please alter at:
+//              .configs/monteur/app/config/en/metadata.toml
+
+package libmonteur
+
+const (
+	VERSION = "{{- .App.Version -}}"
+)
+"""
+Target = '{{- .CodeFilepath -}}'

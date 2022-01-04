@@ -1,5 +1,4 @@
-// Copyright 2021 ZORALab Enterprise (hello@zoralab.com)
-// Copyright 2021 "Holloway" Chew, Kean Ho (hollowaykeanho@gmail.com)
+// Copyright 2022 ZORALab Enterprise (hello@zoralab.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// **WARNING**: auto-generated file. Please alter at:
+//              .configs/monteur/app/config/en/metadata.toml
+
 package libmonteur
 
-// Monteur software metadata
 const (
 	VERSION = "v0.0.2"
 )
