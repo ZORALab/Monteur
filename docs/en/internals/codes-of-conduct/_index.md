@@ -36,19 +36,19 @@ extensions = [
 
 
 [thumbnails.0]
-url = "/en/codes-of-conduct/default-1200x628.png"
+url = "/en/internals/codes-of-conduct/default-1200x628.png"
 width = "1200"
 height = "628"
 alternateText = "Monteur Codes of Conduct"
 
 [thumbnails.1]
-url = "/en/codes-of-conduct/default-1200x1200.png"
+url = "/en/internals/codes-of-conduct/default-1200x1200.png"
 width = "1200"
 height = "1200"
 alternateText = "Monteur Codes of Conduct"
 
 [thumbnails.2]
-url = "/en/codes-of-conduct/default-480x480.png"
+url = "/en/internals/codes-of-conduct/default-480x480.png"
 type = "image/png"
 width = "480"
 height = "480"
