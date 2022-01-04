@@ -6,8 +6,6 @@ Generating the git repository version file.
 Type = 'manual'
 
 [Variables]
-ChangelogFrom = 'origin/staging'
-ChangelogTo = 'origin/main'
 
 [FMTVariables]
 CodeFilepath = '{{- .RootDir -}}/VERSION'
@@ -15,10 +13,6 @@ CodeFilepath = '{{- .RootDir -}}/VERSION'
 
 
 [[Dependencies]]
-Name = 'Git for Changelog Generation'
-Condition = 'all-all'
-Type = 'command'
-Command = 'git'
 
 
 

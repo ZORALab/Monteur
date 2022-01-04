@@ -1,0 +1,48 @@
+[Metadata]
+Name = 'Script Repository Version File'
+Description = """
+Generating the git repository version file.
+"""
+Type = 'manual'
+
+[Variables]
+
+[FMTVariables]
+CodeFilepath = '{{- .RootDir -}}/VERSION'
+
+
+
+[[Dependencies]]
+
+
+
+
+[Changelog]
+LineBreak = "\n"
+Regex = ''
+
+
+
+
+[Packages.001]
+OS = [ 'all' ]
+Arch = [ 'all' ]
+Distribution = [
+	'stable',
+]
+
+
+
+
+[[CMD]]
+Name = 'Delete Existing Version Codes'
+Type = 'delete-quiet'
+Condition = [ 'all-all' ]
+Source = '{{- .CodeFilepath -}}'
+
+[[CMD]]
+Name = 'Script Go Codes'
+Type = 'script'
+Condition = [ 'all-all' ]
+Source = '{{- .App.Version -}}'
+Target = '{{- .CodeFilepath -}}'
