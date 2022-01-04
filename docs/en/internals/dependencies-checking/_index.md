@@ -55,7 +55,7 @@ alternateText = "Monteur Dependencies Checking Function"
 
 
 [menu.main]
-parent = "CI Internals"
+parent = "Z) Monteur Internals"
 name = "Dependencies Checking"
 pre = "🧮"
 weight = 5

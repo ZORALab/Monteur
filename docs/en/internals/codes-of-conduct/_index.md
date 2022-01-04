@@ -56,10 +56,11 @@ alternateText = "Monteur Codes of Conduct"
 
 
 [menu.main]
-parent = "CI Internals"
+parent = "Z) Monteur Internals"
 name = "Codes of Conduct"
 pre = "🧬"
 weight = 5
+identifier = 'internals-coc'
 
 
 [schema]

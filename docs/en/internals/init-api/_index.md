@@ -56,7 +56,7 @@ alternateText = "Monteur Init API"
 
 
 [menu.main]
-parent = "CI Internals"
+parent = "Z) Monteur Internals"
 name = "Init API"
 pre = "🛫"
 weight = 5
