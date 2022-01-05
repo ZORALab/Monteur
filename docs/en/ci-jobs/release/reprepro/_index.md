@@ -164,11 +164,52 @@ and how to customize and used them.
 The arrangement are the latest at the top or first.
 
 
+### Version 2.0.0
+Version 2.0.0 Reprepro API is available for download here:
+{{< link "/ci-jobs/release/reprepro/reprepro-v2p0p0.toml" "this" "" ""
+"button" "" "download" >}}
+reprepro-v2p0p0.toml
+{{< /link >}}
+
+| Min Requirements     | Values                          |
+|:---------------------|--------------------------------:|
+| Monteur Version      | `v0.0.2`                        |
+| Supported Platforms  | follows Reprepro's availability |
+
+
+#### Installation Instructions
+1. You should download and place the recipe into your
+   `<config>/release/jobs/` directory with the name `reprepro.toml`.
+2. Once done, edit the configuration file for:
+   1. `Variables.GPGID` - your GPG release singing key where private key is
+      available.
+   2. `FMTVariables.DataPath` - your reprepro data path. Make sure it has
+      visibility to the `conf/distributions` file setup earlier.
+   3. `Releases.Target` - your reprepro output directory.
+   4. `Releases.Packages.XXX` - list of `.deb` packages. Duplicate the table
+   with different label (`XXX`) if there are more `.deb` package variants to be
+   released in the same repository.
+   4. `Releases.Packages.XXX.OS` - the compatible target operating system.
+   5. `Releases.Packages.XXX.Arch` - the compatible target cpu architecture.
+   4. `Releases.Packages.XXX.Source` - the location of your `.deb` package file.
+3. Add any additional `[[Dependencies]]` if you're customizing the default
+  `[[CMD]]` commands list accordingly.
+4. Customize `[[CMD]]` commands list as per your need.
+
+
+#### Changes
+1. **Non-Backward Compatible** - Formatted `Releases.Packages.XXX.Source` to use
+   new variables for matching `debuild` overwritten package filename.
+2. **Non-Backward Compatible** - Added `Releases.Packages.XXX.OS` and
+   `Releases.Packages.XXX.Arch` as required by Monteur `v0.0.2` package meta.
+
+
+
 ### Version 1.0.0
 Version 1.0.0 Reprepro API is available for download here:
-{{< link "/ci-jobs/release/reprepro/reprepro-1p0p0.toml" "this" "" "" "button"
-	"" "download" >}}
-reprepro-1p0p0.toml
+{{< link "/ci-jobs/release/reprepro/reprepro-v1p0p0.toml" "this" "" ""
+"button" "" "download" >}}
+reprepro-v1p0p0.toml
 {{< /link >}}
 
 | Min Requirements     | Values                          |
@@ -186,7 +227,7 @@ reprepro-1p0p0.toml
    2. `FMTVariables.DataPath` - your reprepro data path. Make sure it has
       visibility to the `conf/distributions` file setup earlier.
    3. `Releases.Target` - your reprepro output directory.
-   4. `Releases.Packages.XXX.Source - the location of your `.deb` package file.
+   4. `Releases.Packages.XXX.Source` - the location of your `.deb` package file.
 3. Add any additional `[[Dependencies]]` if you're customizing the default
   `[[CMD]]` commands list accordingly.
 4. Customize `[[CMD]]` commands list as per your need.
