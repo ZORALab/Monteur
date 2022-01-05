@@ -5,26 +5,26 @@ Origin: monteur.zoralab.com/releases/deb
 Label: ZORALab's Monteur Deb Package (Stable Branch)
 Suite: stable
 Codename: main
-Date: Fri, 24 Dec 2021 00:17:30 UTC
+Date: Wed, 05 Jan 2022 13:18:31 UTC
 Architectures: amd64
 Components: stable
 Description: software manufacturing automation tool in one single app.
 MD5Sum:
- f1b8c33286e0a341149d9eec2b4b2ba8 700 stable/binary-amd64/Packages
- c2cfb90fbd9f8273febfda2055538c39 489 stable/binary-amd64/Packages.gz
+ 2d7b2bf0f0758205e42628c4dad01547 711 stable/binary-amd64/Packages
+ f9211a7d0d9fded5eca72be910811c50 495 stable/binary-amd64/Packages.gz
  9bac4f7f885ad2148be13139783a21cd 219 stable/binary-amd64/Release
 SHA1:
- 5cfe39648a89a659c551ae18451822bbc60972f7 700 stable/binary-amd64/Packages
- cc001f467ab33b450572c5a10989ea02f4f4efd7 489 stable/binary-amd64/Packages.gz
+ 2423a8d48888c1badade63042efcb2f381d8f278 711 stable/binary-amd64/Packages
+ 1ad63c1c6d88e4aeace7b6dc295f55018ec05676 495 stable/binary-amd64/Packages.gz
  da775d16c4eda4873f82dcc3711276c1b740ebae 219 stable/binary-amd64/Release
 SHA256:
- ee2c5054c747e07d523c769d2fc2d66fcb5f300637ddb75f0f9949cc735f5194 700 stable/binary-amd64/Packages
- 472411230a293d45b2e9217525bedd4d7f65c875aa4a88c7bc1c21efae73e194 489 stable/binary-amd64/Packages.gz
+ 19af622d5c7eba777b524a7fe042fbc0ed576dc4e59a85b2e8c8f39f670af93a 711 stable/binary-amd64/Packages
+ 22a296cfac00a181a8205956a118245d8ece013b3f803217592f963d772b03f0 495 stable/binary-amd64/Packages.gz
  37031745c25fa4c46c1c4c6b77f17964c4f0ea3b25a0b975606729b1551962e3 219 stable/binary-amd64/Release
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYIAB0WIQSDNpEip5JwdaeHnziv072ToixWlgUCYcURmwAKCRCv072ToixW
-lm2DAQCB3jhjeWZdFlIpoF4fdvPY4lZM7orFwad/Nv079UpCJAD/eGBt8xbRyIaD
-vAZOOrVVTPymC51ZHKzmoaMhzqsKVAA=
-=R1XH
+iHUEARYIAB0WIQSQXrg+vMxMexWuHBAQ2ZQWKbSjQgUCYdWaqAAKCRAQ2ZQWKbSj
+QsG5AQDh3lSW6CWKcIVILMPQni7dXaHmnhfqRO4gfkv3QejMJAD/S2hzB69mErPR
+LMXMnHlzDGKlKG/uu2ZIubqAdjbrTAw=
+=w+3V
 -----END PGP SIGNATURE-----

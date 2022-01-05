@@ -1,0 +1,59 @@
+[0]
+Filename = 'monteur-v0-0-2-linux-arm.tar.gz'
+Hash = 'd330d8eb0c862d62c310709b43a79511aa589302452a43e4c67195b38c328f1183578ea04910d9e0d4bf4f3987324f94c95dcc540f8f97d4dcfa5d2dd332c7e4'
+Format = 'Hex'
+URL = 'v0-0-2/monteur-v0-0-2-linux-arm.tar.gz'
+
+
+
+
+[1]
+Filename = 'monteur-v0-0-2-windows-arm64.zip'
+Hash = '8e3cee97b72c96e3bdfad03ec41f5ddea54572b74f81ea0dbb3f4cf21e20f1f031fe17f9b06937bfb0d52c873640e7a0c4a50730d3f6f15ddc27646c54d4f134'
+Format = 'Hex'
+URL = 'v0-0-2/monteur-v0-0-2-windows-arm64.zip'
+
+
+
+
+[2]
+Filename = 'monteur-v0-0-2-darwin-arm64.tar.gz'
+Hash = 'd7fa5c8ece56dc59cbddc5e59f51ed3757f425fe3305a7633e31783631e3354ce015892e567388146a748f5012541d46198e1887ae190aaeb87737aa13ef670a'
+Format = 'Hex'
+URL = 'v0-0-2/monteur-v0-0-2-darwin-arm64.tar.gz'
+
+
+
+
+[3]
+Filename = 'monteur-v0-0-2-darwin-amd64.tar.gz'
+Hash = '05632d9b0898e776b318234ac68906509017b7fe03539468c9c269cec118abf70a797090e916660ee7263424977d02b962b7355b5898ce199e196ec2e55f4fc7'
+Format = 'Hex'
+URL = 'v0-0-2/monteur-v0-0-2-darwin-amd64.tar.gz'
+
+
+
+
+[4]
+Filename = 'monteur-v0-0-2-linux-arm64.tar.gz'
+Hash = 'f26abd6f95eb928a66ef35d910b87e771ac81d333cf6c0196f82cd82bf24418d4a0b1ab27830ee026b22fa15324f7c14080e96fd5e3d060a706f8062b73f4707'
+Format = 'Hex'
+URL = 'v0-0-2/monteur-v0-0-2-linux-arm64.tar.gz'
+
+
+
+
+[5]
+Filename = 'monteur-v0-0-2-windows-amd64.zip'
+Hash = 'a20701f2f771d3b34c290dd670048886f9899bc9fd2a756a94adf08e3ec78eadfde21969c5f28bc4bb66777d789b611b42f43b606cea2d509d8a9e3192b7bec2'
+Format = 'Hex'
+URL = 'v0-0-2/monteur-v0-0-2-windows-amd64.zip'
+
+
+
+
+[6]
+Filename = 'monteur-v0-0-2-linux-amd64.tar.gz'
+Hash = '610decc4bc5f6bf9ad469a1902d5e374353d812776f437bf5c6ebc69be8a78284173d931dd901bb4705587efd2e21c7715768feb8e798d8c6425d2a3b207d808'
+Format = 'Hex'
+URL = 'v0-0-2/monteur-v0-0-2-linux-amd64.tar.gz'
