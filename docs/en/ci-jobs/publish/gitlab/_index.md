@@ -123,9 +123,9 @@ The arrangement are the latest at the top or first.
 
 ### Version 1.0.0
 Version 1.0.0 GitLab Pages API is available for download here:
-{{< link "/ci-jobs/publish/gitlab/gitlab-pages-1p0p0.toml" "this" "" "" "button"
-	"" "download" >}}
-gitlab-pages-1p0p0.toml
+{{< link "/ci-jobs/publish/gitlab/gitlab-pages-v1p0p0.toml" "this" "" ""
+"button" "" "download" >}}
+gitlab-pages-v1p0p0.toml
 {{< /link >}}
 
 | Min Requirements     | Values                      |
@@ -136,7 +136,7 @@ gitlab-pages-1p0p0.toml
 
 #### Installation Instructions
 1. You should download and place the recipe into your
-   `<config>/publish/publishers/` directory as `gitlab-pages.toml`.
+   `<config>/publish/jobs/` directory as `gitlab-pages.toml`.
 2. Once done, verify that:
    1. `FMTVariables.SourceDir` is the directory holding the website artifact
        (e.g. `public/` directory).

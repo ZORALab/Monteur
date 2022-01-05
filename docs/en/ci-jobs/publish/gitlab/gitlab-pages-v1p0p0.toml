@@ -4,6 +4,9 @@ Description = """
 Publish web documentations artifact into GitLab Pages.
 """
 
+
+
+
 [Variables]
 PublishBranch = 'gh-pages'
 FirstCommitID = 'Will be overwritten by CMD'
