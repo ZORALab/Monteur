@@ -1,0 +1,7 @@
+{{- $dataList := dict "context" . -}}
+{{- $dataList = merge $dataList (dict "Content" .Inner) -}}
+
+{{- $outputFormat := .Site.Data.bissetii.mediaTypes.AMP.Name -}}
+{{- $dataList = merge $dataList (dict "OutputFormat" $outputFormat) -}}
+
+{{- partial "shortcodes/_release.html" $dataList -}}

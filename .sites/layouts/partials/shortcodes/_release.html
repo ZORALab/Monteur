@@ -1,0 +1,32 @@
+{{- /* .context              = Page data for processing        */ -}}
+{{- /* .Content              = Content of the link             */ -}}
+{{- /* .OutputFormat         = Selected link output format     */ -}}
+
+{{- $URLPrefix := "releases/archives" -}}
+{{- $data := index .context.Params 0 -}}
+{{- $data = index .context.Site.Data.releases.archives $data -}}
+
+
+<table>
+	<thead>
+		<tr>
+			<th>Products</th>
+			<th>SHA512 Checksum (Hex Format)</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{- range $product := $data }}
+		{{- $url := printf "/%s/%s" $URLPrefix $product.URL -}}
+		<tr>
+			<th>
+				<a href="{{- safeHTMLAttr $url -}}" donwload>
+				{{- safeHTML $product.Filename -}}
+				</a>
+			</th>
+			<th>
+				{{- safeHTML $product.Hash -}}
+			</th>
+		</tr>
+		{{- end }}
+	</tbody>
+</table>
