@@ -95,11 +95,59 @@ required, and how to customize and used them.
 The arrangement are the latest at the top or first.
 
 
+
+### Version 2.0.0
+Version 2.0.0 `debuild` Package API is available for download here:
+{{< link "/ci-jobs/package/debuild/debuild-v2p0p0.toml" "this" "" "" "button"
+	"" "download" >}}
+debuild-v2p0p0.toml
+{{< /link >}}
+
+| Min Requirements     | Values                           |
+|:---------------------|---------------------------------:|
+| Monteur Version      | `v0.0.2`                         |
+| Supported Platforms  | follows `debuild`'s availability |
+
+
+#### Installation Instructions
+1. You should download and place the recipe into your
+   `<config>/package/jobs/` directory with the name `debuild.toml`.
+2. Once done, edit the configuration file for:
+   1. `Variables.GPGID` - your GPG release singing key where private key is
+      available.
+   2. `Packages.XXX` - your .deb packages list item. Duplicate if there are more
+      build variants.
+   3. `Packages.XXX.OS` - list of supported operating system for this `.deb`
+      package.
+   4. `Packages.XXX.Arch` - list of supported CPU architecture for this `.deb`
+      package.
+   5. `Packages.XXX.Changelog` - the filepath for sourcing changelog data.
+   6. `Packages.XXX.Distribution` - an array of supported distributions.
+   7. `Packages.XXX.BuildSource` - instruct Monteur to package a source code
+       pack or a binary pack (not both). If both are needed, duplicate
+       the recipe since they are essentially 2 different packages.
+   8. `[Packages.XXX.Files]` - the list of files to be assembled by Monteur
+       for packaging.
+
+For detailed information about each fields, visit:
+[Package Specification Data Structure]({{< link
+"/ci-jobs/package/#data-structure" "this" "url-only" />}}) for more info.
+
+
+#### Changes
+1. **Non-Backward Compatible** - Removed `[Changelog]` as Monteur `v0.0.2` now
+   ports it to [DEB Changelog Prepare API]({{< link
+   "/ci-jobs/prepare/changelog-deb/" "this" "url-only" />}}).
+2. *Backward Compatible* - Applied FMTVariables to many Packages fields instead
+   of hardcoding to specific ones.
+
+
+
 ### Version 1.0.0
 Version 1.0.0 `debuild` Package API is available for download here:
-{{< link "/ci-jobs/package/debuild/debuild-1p0p0.toml" "this" "" "" "button"
+{{< link "/ci-jobs/package/debuild/debuild-v1p0p0.toml" "this" "" "" "button"
 	"" "download" >}}
-debuild-1p0p0.toml
+debuild-v1p0p0.toml
 {{< /link >}}
 
 | Min Requirements     | Values                           |

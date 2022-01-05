@@ -6,7 +6,7 @@ Package application into .deb package file using manual commands.
 Type = 'deb-manual'
 
 [Variables]
-GPGID = 'hello@zoralab.com'
+GPGID = 'name@email.com'
 GPGExistence = ''  # to be filled by [CMD]
 
 [FMTVariables]
