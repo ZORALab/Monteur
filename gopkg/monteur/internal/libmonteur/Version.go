@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // **WARNING**: auto-generated file. Please alter at:
-//              .configs/monteur/app/config/en/metadata.toml
+// .configs/monteur/app/config/en/metadata.toml
 
 package libmonteur
 
