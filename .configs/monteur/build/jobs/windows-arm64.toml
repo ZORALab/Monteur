@@ -1,14 +1,23 @@
 [Metadata]
 Name = 'windows-arm64'
 Description = """
-Monteur Windows OS with ARM64 CPU Architecture.
+monteur windows operating system with arm64 CPU architecture.
 """
+
+
+
 
 [Variables]
 PlatformOS = 'windows'
 PlatformCPU = 'arm64'
-PlatformExt = '.exe'
-BuildFlags = '-ldflags "-s -w"'
+PlatformExt = ''
+BuildConditions = 'CGO_ENABLED=0'
+BuildFlags = """\
+-ldflags "-s -w" \
+-trimpath \
+-gcflags "-trimpath=${GOPATH}" \
+-asmflags "-trimpath=${GOPATH}" \
+"""
 
 [FMTVariables]
 SrcPath = '{{- .BaseDir -}}/app/monteur/main.go'
@@ -40,6 +49,7 @@ Type = 'command'
 Condition = [ 'all-all' ]
 Location = '{{- .BaseDir -}}'
 Source = """
+{{- .BuildConditions }} \
 GOOS="{{- .PlatformOS -}}" \
 GOARCH="{{- .PlatformCPU -}}" \
 go build {{ .BuildFlags }}  \

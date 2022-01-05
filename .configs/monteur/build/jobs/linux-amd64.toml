@@ -1,14 +1,24 @@
 [Metadata]
 Name = 'linux-amd64'
 Description = """
-Monteur Linux OS with AMD64 CPU Architecture.
+monteur linux operating system with amd64 CPU architecture.
 """
+
+
+
 
 [Variables]
 PlatformOS = 'linux'
 PlatformCPU = 'amd64'
 PlatformExt = ''
-BuildFlags = '-buildmode=pie -ldflags "-s -w"'
+BuildConditions = 'CGO_ENABLED=0'
+BuildFlags = """\
+-buildmode=pie \
+-ldflags "-s -w" \
+-trimpath \
+-gcflags "-trimpath=${GOPATH}" \
+-asmflags "-trimpath=${GOPATH}" \
+"""
 
 [FMTVariables]
 SrcPath = '{{- .BaseDir -}}/app/monteur/main.go'
@@ -40,6 +50,7 @@ Type = 'command'
 Condition = [ 'all-all' ]
 Location = '{{- .BaseDir -}}'
 Source = """
+{{- .BuildConditions }} \
 GOOS="{{- .PlatformOS -}}" \
 GOARCH="{{- .PlatformCPU -}}" \
 go build {{ .BuildFlags }}  \

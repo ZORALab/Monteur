@@ -1,15 +1,15 @@
 [Metadata]
-Name = 'linux-arm'
+Name = '<OS>-<ARCH>'
 Description = """
-monteur linux operating system with arm CPU architecture.
+<APP> <OS> operating system with <CPU> CPU architecture.
 """
 
 
 
 
 [Variables]
-PlatformOS = 'linux'
-PlatformCPU = 'arm'
+PlatformOS = '<OS>'
+PlatformCPU = '<ARCH>'
 PlatformExt = ''
 BuildConditions = 'CGO_ENABLED=0 CC=arm-linux-gnueabi-gcc GOARM=7'
 BuildFlags = """\
@@ -21,7 +21,7 @@ BuildFlags = """\
 """
 
 [FMTVariables]
-SrcPath = '{{- .BaseDir -}}/app/monteur/main.go'
+SrcPath = '{{- .BaseDir -}}/path/to/main.go'
 BuildPath = """
 {{- .WorkingDir -}}/{{- .PlatformOS -}}-{{- .PlatformCPU -}}{{- .PlatformExt -}}
 """

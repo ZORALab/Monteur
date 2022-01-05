@@ -1,14 +1,24 @@
 [Metadata]
 Name = 'darwin-arm64'
 Description = """
-Monteur Darwin OS with ARM64 CPU Architecture.
+Monteur Darwin operating system with arm64 CPU architecture.
 """
+
+
+
 
 [Variables]
 PlatformOS = 'darwin'
 PlatformCPU = 'arm64'
 PlatformExt = ''
-BuildFlags = '-buildmode=pie -ldflags "-s -w"'
+BuildConditions = 'CGO_ENABLED=0'
+BuildFlags = """\
+-buildmode=pie \
+-ldflags "-s -w" \
+-trimpath \
+-gcflags "-trimpath=${GOPATH}" \
+-asmflags "-trimpath=${GOPATH}" \
+"""
 
 [FMTVariables]
 SrcPath = '{{- .BaseDir -}}/app/monteur/main.go'
@@ -40,6 +50,7 @@ Type = 'command'
 Condition = [ 'all-all' ]
 Location = '{{- .BaseDir -}}'
 Source = """
+{{- .BuildConditions }} \
 GOOS="{{- .PlatformOS -}}" \
 GOARCH="{{- .PlatformCPU -}}" \
 go build {{ .BuildFlags }}  \

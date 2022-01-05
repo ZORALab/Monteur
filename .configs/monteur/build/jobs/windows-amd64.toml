@@ -1,14 +1,24 @@
 [Metadata]
 Name = 'windows-amd64'
 Description = """
-Monteur Windows OS with AMD64 CPU Architecture.
+monteur windows operating system with amd64 CPU architecture.
 """
+
+
+
 
 [Variables]
 PlatformOS = 'windows'
 PlatformCPU = 'amd64'
-PlatformExt = '.exe'
-BuildFlags = '-buildmode=pie -ldflags "-s -w"'
+PlatformExt = ''
+BuildConditions = 'CGO_ENABLED=0'
+BuildFlags = """\
+-buildmode=pie \
+-ldflags "-s -w" \
+-trimpath \
+-gcflags "-trimpath=${GOPATH}" \
+-asmflags "-trimpath=${GOPATH}" \
+"""
 
 [FMTVariables]
 SrcPath = '{{- .BaseDir -}}/app/monteur/main.go'
@@ -40,6 +50,7 @@ Type = 'command'
 Condition = [ 'all-all' ]
 Location = '{{- .BaseDir -}}'
 Source = """
+{{- .BuildConditions }} \
 GOOS="{{- .PlatformOS -}}" \
 GOARCH="{{- .PlatformCPU -}}" \
 go build {{ .BuildFlags }}  \

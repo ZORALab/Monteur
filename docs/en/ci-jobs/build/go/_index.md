@@ -71,9 +71,9 @@ selectType = "WebPage"
 # {{% param "title" %}}
 {{% param "description" %}}
 
-The objective of distributing the recipe is simple: **to make building `.deb`
-packages painlessly in a consistent manner with minimal to no further
-instructions**.
+The objective of distributing the recipe is simple: **to build a Go application
+for a compute system variant painlessly in a consistent manner with minimal to
+no further instructions**.
 
 Go is available at:
 https://go.dev/
@@ -87,18 +87,77 @@ to suit your CI needs.
 
 
 ## Recipe Versions
-Here are the available Build API recipe for `go` integrations. Please
-read through your selected version's details on what has changed, what is
-required, and how to customize and used them.
+Here are the available Build API recipe for `go` integrations. Please read
+through your selected version's details on what has changed, what is required,
+and how to customize and used them.
 
 The arrangement are the latest at the top or first.
 
 
+
+### Version 2.0.0
+Version 2.0.0 `go` Build API is available for download here:
+{{< link "/ci-jobs/build/go/go-v2p0p0.toml" "this" "" "" "button"
+	"" "download" >}}
+go-v2p0p0.toml
+{{< /link >}}
+
+| Min Requirements     | Values                           |
+|:---------------------|---------------------------------:|
+| Monteur Version      | `v0.0.2`                         |
+| Supported Platforms  | follows `go`'s availability      |
+
+
+#### Installation Instructions
+1. You should download and place the recipe into your
+   `<config>/build/jobs` directory with the name pattern `OS-ARCH.toml` like
+   `linux-amd64.toml` for `amd64` CPU architecture `linux` operating system.
+2. Once done, edit the configuration file for:
+   1. `Metadata.Name` - rename the name accordingly. Recommended `<OS>-<ARCH>`
+      like `linux-amd64`.
+   2. `Metadata.Description` - update accordingly by replacing the `<APP>`,
+      `<OS>`, `<CPU>` to the appropriate values.
+   3. `Variables.PlatformOS` - update the value accordingly to the target OS
+      (e.g. `linux`).
+   4. `Variables.PlatformCPU` - update the value accordingly to the target CPU
+      architecture (e.g. `amd64`).
+   5. `Variables.PlatformExt` - update the file extension if needed (e.g.
+      `.exe`). Otherwise, leave it blank.
+   6. `Variables.BuildFlags` - your build arguments matching the current
+       variant. Please remove any non-applicable argument when needed. The
+       default are designed for consumer-ready build configurations.
+   7. `Variables.BuildConditions` - the build conditions of the `go build`. The
+       default includes everything sensible. Please remove any non-applicable
+       conditions when needed (like `CC=arm-linux-gnueabi-gcc`, `GOARM=7` for
+       non-`arm` build).
+       1. Keep `CGO_ENABLED=0` as minimum value even when you do not use `cgo`
+          at all.
+   8. `FMTVariables.SrcPath` - filepath to your `main.go`.
+   9. `Dependencies` - remove non-applicable dependencies (e.g.
+      `arm-linux-gnueabi-gcc` for non-`arm` build.
+
+For detailed information about each fields, visit:
+[Build Specification Data Structure]({{< link
+"/ci-jobs/build/#data-structure" "this" "url-only" />}}) for more info.
+
+
+#### Changes
+1. *Backward Compatible* - Added `arm` build with their specific dependencies
+   and build conditions.
+2. *Backward Compatible* - Added `-trimpath` and its other variants into
+   `Variables.BuildFlags`.
+3. *Backward Compatible* - Added `Variables.BuildConditions` to enable
+   CGO and arm configurable settings.
+4. *Backward Compatible* - Added `CGO_ENABLED=0` to explictly instruct Go not to
+   use `cgo`.
+
+
+
 ### Version 1.0.0
 Version 1.0.0 `go` Build API is available for download here:
-{{< link "/ci-jobs/build/go/go-1p0p0.toml" "this" "" "" "button"
+{{< link "/ci-jobs/build/go/go-v1p0p0.toml" "this" "" "" "button"
 	"" "download" >}}
-go-1p0p0.toml
+go-v1p0p0.toml
 {{< /link >}}
 
 | Min Requirements     | Values                           |

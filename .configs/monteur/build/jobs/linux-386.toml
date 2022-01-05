@@ -1,14 +1,23 @@
 [Metadata]
-Name = 'linux-i386'
+Name = 'linux-386'
 Description = """
-Monteur Linux OS with 32-bit 386 CPU Architecture.
+monteur linux operating system with 386 CPU architecture.
 """
+
+
+
 
 [Variables]
 PlatformOS = 'linux'
 PlatformCPU = '386'
 PlatformExt = ''
-BuildFlags = '-ldflags "-s -w"'
+BuildConditions = 'CGO_ENABLED=0'
+BuildFlags = """\
+-ldflags "-s -w" \
+-trimpath \
+-gcflags "-trimpath=${GOPATH}" \
+-asmflags "-trimpath=${GOPATH}" \
+"""
 
 [FMTVariables]
 SrcPath = '{{- .BaseDir -}}/app/monteur/main.go'
@@ -40,6 +49,7 @@ Type = 'command'
 Condition = [ 'all-all' ]
 Location = '{{- .BaseDir -}}'
 Source = """
+{{- .BuildConditions }} \
 GOOS="{{- .PlatformOS -}}" \
 GOARCH="{{- .PlatformCPU -}}" \
 go build {{ .BuildFlags }}  \
