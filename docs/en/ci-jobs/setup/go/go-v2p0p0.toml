@@ -28,6 +28,7 @@ Method = 'GET'
 [Sources.all-all.Checksum]
 Type = 'sha256'
 Format = 'hex'
+[Sources.all-all.headers]
 
 [Sources.darwin-amd64]
 Archive = 'go{{- .Version -}}.darwin-amd64.{{- .Format -}}'

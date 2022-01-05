@@ -95,11 +95,11 @@ The arrangement are the latest at the top or first.
 
 
 
-### Version 1.2.0
-Version 1.2.0 `go` Setup API is available for download here:
-{{< link "/ci-jobs/setup/go/go-1p2p0.toml" "this" "" "" "button"
+### Version 2.0.0
+Version 2.0.0 `go` Setup API is available for download here:
+{{< link "/ci-jobs/setup/go/go-v2p0p0.toml" "this" "" "" "button"
 	"" "download" >}}
-go-1p2p0.toml
+go-v2p0p0.toml
 {{< /link >}}
 
 | Min Requirements     | Values                           |
@@ -109,7 +109,7 @@ go-1p2p0.toml
 
 
 #### Installation Instructions
-1. You should download and place the recipe into your `<config>/setup/programs/`
+1. You should download and place the recipe into your `<config>/setup/jobs/`
    directory with the name `go.toml`.
 2. That's all. Unless Go releases a new version, you will need to update:
    1. `Variables.Version` - the new version number.
@@ -128,14 +128,16 @@ For detailed information about each fields, visit:
 2. **Non-Backward Compatible** - Changed to use new Monteur setup alogrithms.
 3. *Backward Compatible* - supported continuous download between cancellations.
 4. *Backward Compatible* - delete target only when needed (right before copy).
+5. *Backward Compatible* - Added HTTPS headers table
+   (`[Sources.all-all.headers]`) just in case of a needs.
 
 
 
 ### Version 1.1.0
 Version 1.1.0 `go` Setup API is available for download here:
-{{< link "/ci-jobs/setup/go/go-1p1p0.toml" "this" "" "" "button"
+{{< link "/ci-jobs/setup/go/go-v1p1p0.toml" "this" "" "" "button"
 	"" "download" >}}
-go-1p1p0.toml
+go-v1p1p0.toml
 {{< /link >}}
 
 | Min Requirements     | Values                           |
@@ -167,9 +169,9 @@ For detailed information about each fields, visit:
 
 ### Version 1.0.0
 Version 1.0.0 `go` Setup API is available for download here:
-{{< link "/ci-jobs/setup/go/go-1p0p0.toml" "this" "" "" "button"
+{{< link "/ci-jobs/setup/go/go-v1p0p0.toml" "this" "" "" "button"
 	"" "download" >}}
-go-1p0p0.toml
+go-v1p0p0.toml
 {{< /link >}}
 
 | Min Requirements     | Values                           |
@@ -197,6 +199,7 @@ For detailed information about each fields, visit:
 1. *Backward Compatible* - Created the base TOML configuration recipe.
 2. *Backward Compatible* - Integrated with GitLab CI.
 3. *Backward Compatible* - Updated to Go version `1.17.3`.
+
 
 
 
