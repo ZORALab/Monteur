@@ -9,8 +9,6 @@ Type = 'zip'
 
 
 [Variables]
-ChangelogFrom = 'origin/staging'
-ChangelogTo = 'origin/main'
 
 [FMTVariables]
 LicensePath = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
@@ -19,18 +17,14 @@ LicensePath = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
 
 
 [[Dependencies]]
-Name = 'Git for Changelog Generation'
-Condition = 'all-all'
-Type = 'command'
-Command = 'git'
 
 
 
 
 [Packages.001]
-Name = '{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
 OS = [ 'windows' ]
 Arch = [ 'amd64' ]
+Name = '{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
 Distribution = [
 	'stable',
 ]
@@ -41,9 +35,9 @@ BuildSource = false
 '{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
 
 [Packages.002]
-Name = '{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
 OS = [ 'windows' ]
 Arch = [ 'arm64' ]
+Name = '{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
 Distribution = [
 	'stable',
 ]
