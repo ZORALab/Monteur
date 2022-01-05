@@ -95,11 +95,11 @@ The arrangement are the latest at the top or first.
 
 
 
-### Version 1.2.0
-Version 1.2.0 `golangci-lint` Setup API is available for download here:
-{{< link "/ci-jobs/setup/golangci-lint/golangci-lint-1p2p0.toml" "this" "" ""
+### Version 2.0.0
+Version 2.0.0 `golangci-lint` Setup API is available for download here:
+{{< link "/ci-jobs/setup/golangci-lint/golangci-lint-v2p0p0.toml" "this" "" ""
 	"button" "" "download" >}}
-golangci-lint-1p2p0.toml
+golangci-lint-v2p0p0.toml
 {{< /link >}}
 
 | Min Requirements     | Values                           |
@@ -109,7 +109,7 @@ golangci-lint-1p2p0.toml
 
 
 #### Installation Instructions
-1. You should download and place the recipe into your `<config>/setup/programs/`
+1. You should download and place the recipe into your `<config>/setup/jobs/`
    directory with the name `golangci-lint.toml`.
 2. That's all. Unless `golangci-lint` releases a new version, you will need to
    update:
@@ -126,14 +126,16 @@ golangci-lint-1p2p0.toml
 2. **Non-Backward Compatible** - Changed to use new Monteur setup alogrithms.
 3. *Backward Compatible* - supported continuous download between cancellations.
 4. *Backward Compatible* - delete target only when needed (right before copy).
+5. *Backward Compatible* - Added HTTPS headers table
+   (`[Sources.all-all.headers]`) just in case of a needs.
 
 
 
 ### Version 1.0.0
 Version 1.0.0 `golangci-lint` Setup API is available for download here:
-{{< link "/ci-jobs/setup/golangci-lint/golangci-lint-1p0p0.toml" "this" "" ""
+{{< link "/ci-jobs/setup/golangci-lint/golangci-lint-v1p0p0.toml" "this" "" ""
 	"button" "" "download" >}}
-golangci-lint-1p0p0.toml
+golangci-lint-v1p0p0.toml
 {{< /link >}}
 
 | Min Requirements     | Values                           |
