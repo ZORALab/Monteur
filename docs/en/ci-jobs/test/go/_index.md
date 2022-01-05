@@ -97,9 +97,9 @@ The arrangement are the latest at the top or first.
 
 ### Version 1.0.0
 Version 1.0.0 `go` Test API is available for download here:
-{{< link "/ci-jobs/test/go/go-1p0p0.toml" "this" "" "" "button"
+{{< link "/ci-jobs/test/go/go-v1p0p0.toml" "this" "" "" "button"
 	"" "download" >}}
-go-1p0p0.toml
+go-v1p0p0.toml
 {{< /link >}}
 
 | Min Requirements     | Values                           |
@@ -109,7 +109,7 @@ go-1p0p0.toml
 
 
 #### Installation Instructions
-1. You should download and place the recipe into your `<config>/test/testers/`
+1. You should download and place the recipe into your `<config>/test/jobs/`
    directory with the name `go.toml`.
 2. Once done, edit the configuration file for:
    1. `Variables.Timeout` - alter yout timeout timing. Default is `14400s`.
