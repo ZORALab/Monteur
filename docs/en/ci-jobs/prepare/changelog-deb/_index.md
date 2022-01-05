@@ -58,7 +58,7 @@ alternateText = "Monteur Prepare with deb Changelog"
 
 
 [menu.main]
-parent = "Native - Package DEB"
+parent = "Native - Monteur"
 name = "Prepare (DEB Changelog)"
 pre = "🧶"
 weight = 65
