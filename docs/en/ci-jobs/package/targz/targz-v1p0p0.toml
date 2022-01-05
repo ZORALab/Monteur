@@ -1,0 +1,44 @@
+[Metadata]
+Name = 'Tar Gunzip'
+Description = """
+Package application into a single .tar.gz package.
+"""
+Type = 'targz'
+
+
+
+
+[Variables]
+
+[FMTVariables]
+
+
+
+
+[[Dependencies]]
+
+
+
+
+[Packages.001]
+OS = [ 'linux' ]
+Arch = [ 'amd64' ]
+Name = '{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+Distribution = [
+	'stable',
+]
+BuildSource = false
+
+[Packages.001.Files]
+'{{- .PackageDir -}}/app' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+
+
+
+
+[[CMD]]
+Name = 'Placeholder For Any Post CMD Development'
+Type = 'placeholder'
+Condition = [ 'all-all' ]
+Location = ''
+Source = ''
+Target = ''
