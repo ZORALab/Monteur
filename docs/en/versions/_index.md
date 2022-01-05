@@ -99,7 +99,10 @@ apt update -y
 # install monteur
 apt install montuer -y
 
-# exit root account (without 'sudo') and test out monteur
+# exit root account (For sudoer, please skip this step)
+exit
+
+# test out monteur
 monteur help
 ```
 
@@ -108,6 +111,32 @@ them out in our
 [Releases Section]({{< link "/versions/" "this" "url-only" />}}). Should any
 later version is available, it will be rolled-out via the `apt update` and
 `apt upgrade`.
+
+
+
+### Go
+Monteur is completely available for `go get`. Simple issue the following command
+against the branch you want it to be installed:
+
+```bash {linenos=table,hl_lines=[],linenostart=1}
+go install gitlab.com/zoralab/monteur/gopkg/app/monteur@main
+```
+
+`main` - stable and current branch
+`staging` - next stable branch that is under testing.
+`next` - bleeding edge branch (unstable due to development).
+
+
+
+### Source Codes
+Monteur source codes are publicly available at:
+https://gitlab.com/zoralab/monteur and are continuously improved from time to
+time. We do not package the source codes since Monteur is built entirely using
+Go programming language.
+
+Hence it's better to stick to Go standards. You will need
+[Git](https://git-scm.com/) software to clone the repository down to your local
+system.
 
 
 
