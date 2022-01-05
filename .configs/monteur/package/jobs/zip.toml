@@ -37,7 +37,7 @@ Distribution = [
 BuildSource = false
 
 [Packages.001.Files]
-'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/windows-amd64.exe'
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/windows-amd64'
 '{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
 
 [Packages.002]
@@ -50,7 +50,7 @@ Distribution = [
 BuildSource = false
 
 [Packages.002.Files]
-'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/windows-arm64.exe'
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/windows-arm64'
 '{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
 
 

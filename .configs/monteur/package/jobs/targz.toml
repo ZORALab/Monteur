@@ -66,8 +66,8 @@ BuildSource = false
 
 
 [Packages.004]
-OS = [ 'linux' ]
-Arch = [ '386' ]
+OS = [ 'darwin' ]
+Arch = [ 'amd64' ]
 Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
 Distribution = [
 	'stable',
@@ -81,20 +81,6 @@ BuildSource = false
 
 [Packages.005]
 OS = [ 'darwin' ]
-Arch = [ 'amd64' ]
-Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
-Distribution = [
-	'stable',
-]
-BuildSource = false
-
-[Packages.005.Files]
-'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
-'{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
-
-
-[Packages.006]
-OS = [ 'darwin' ]
 Arch = [ 'arm64' ]
 Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
 Distribution = [
@@ -102,7 +88,7 @@ Distribution = [
 ]
 BuildSource = false
 
-[Packages.006.Files]
+[Packages.005.Files]
 '{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
 '{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
 

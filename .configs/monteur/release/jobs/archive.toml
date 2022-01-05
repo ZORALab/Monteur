@@ -48,11 +48,6 @@ OS = [ "linux" ]
 Arch = [ "arm64" ]
 Source = '{{- .PackageDir -}}/targz/{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}.tar.gz'
 
-[Releases.Packages.linux-386]
-OS = [ "linux" ]
-Arch = [ "386" ]
-Source = '{{- .PackageDir -}}/targz/{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}.tar.gz'
-
 [Releases.Packages.linux-arm]
 OS = [ "linux" ]
 Arch = [ "arm" ]
