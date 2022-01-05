@@ -71,9 +71,8 @@ selectType = "WebPage"
 # {{% param "title" %}}
 {{% param "description" %}}
 
-The objective of distributing the recipe is simple: **to make composing Hugo
-website artifact in a consistent manner with minimal to no further
-instructions**.
+The objective of distributing the recipe is simple: **to compose Hugo website
+artifact in a consistent manner with minimal to no further instructions**.
 
 Hugo software is available at https://gohugo.io/ and you can reach their
 communities out at https://discourse.gohugo.io/.
@@ -96,9 +95,9 @@ The arrangement are the latest at the top or first.
 
 ### Version 1.0.0
 Version 1.0.0 Hugo Compose API is available for download here:
-{{< link "/ci-jobs/compose/hugo/hugo-1p0p0.toml" "this" "" "" "button" ""
+{{< link "/ci-jobs/compose/hugo/hugo-v1p0p0.toml" "this" "" "" "button" ""
 	"download" >}}
-hugo-1p0p0.toml
+hugo-v1p0p0.toml
 {{< /link >}}
 
 | Min Requirements     | Values                      |
@@ -109,7 +108,7 @@ hugo-1p0p0.toml
 
 #### Installation Instructions
 1. You should download and place the recipe into your
-   `<config>/compose/composers/` directory.
+   `<config>/compose/jobs/` directory.
 2. Once done, verify that:
    1. `Variables.MainLang` is your selected main language. Default is `en`.
    2. `FMTVariables.SourceDir` is the directory to execute `hugo` command.
@@ -122,7 +121,7 @@ hugo-1p0p0.toml
    1. the `Hugo Workaround with 404` command.
    2. the `MainLang` variable.
 6. If you are not on GitLab Pages:
-   1. Please remove the Copy GitLab CI if available` command as it is meant for
+   1. Please remove the `Copy GitLab CI if available` command as it is meant for
       double safety ensuring GitLab CI actually publishes the artifacts for
       `gh-pages` branch.
 
@@ -132,7 +131,8 @@ hugo-1p0p0.toml
 3. *Backward Compatible* - Uses `gh-pages` for compatibility across
    [Github Pages](https://pages.github.com/) and
    [GitLab pages](https://docs.gitlab.com/ee/user/project/pages/).
-
+4. *Backward Compatible* - Added Hugo's `404.html` workaround by default for
+   poly-lingual website.
 
 
 
