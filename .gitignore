@@ -16,7 +16,6 @@ vendor/
 gh-pages/
 bin/
 tmp/
-test/
 
 #####################
 # Hugo
