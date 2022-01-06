@@ -32,10 +32,11 @@ const (
 )
 
 type Manager struct {
-	mutex         *sync.Mutex
-	jobs          map[string]conductor.Job
-	dataTemplate  string
-	dataExtension string
+	mutex            *sync.Mutex
+	jobs             map[string]conductor.Job
+	dataTemplate     string
+	dataExtension    string
+	checksumFilename string
 
 	// Log is the Input/Output processor interface.
 	//
@@ -172,15 +173,20 @@ func (me *Manager) sanitizeDataPath() (err error) {
 }
 
 func (me *Manager) sanitizeChecksum() (err error) {
+	me.checksumFilename = _CHECKSUM_FILENAME
 	switch me.Checksum {
 	case checksum.HASHER_SHA256:
+		me.checksumFilename += "-sha256"
 	case checksum.HASHER_SHA512:
+		me.checksumFilename += "-sha512"
 	case checksum.HASHER_SHA512_TO_SHA256:
+		me.checksumFilename += "-sha512to256"
 	default:
-		return fmt.Errorf(ERROR_CHECKSUM_UNSUPPORTED)
+		err = fmt.Errorf(ERROR_CHECKSUM_UNSUPPORTED)
 	}
 
-	return nil
+	me.checksumFilename += _CHECKSUM_EXTENSION
+	return err
 }
 
 // Add stages a given package filepath into the release jobs list.
@@ -396,7 +402,7 @@ func (me *Manager) writeChecksumFile(data []*metadata) (err error) {
 
 	// formulate checksum file pathing
 	path = filepath.Join(me.Path, VersionToDir(me.Version),
-		_CHECKSUM_FILENAME,
+		me.checksumFilename,
 	)
 
 	// delete checksum file

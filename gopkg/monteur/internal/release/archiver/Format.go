@@ -44,5 +44,6 @@ const (
 )
 
 const (
-	_CHECKSUM_FILENAME = "checksum.txt"
+	_CHECKSUM_FILENAME  = "checksum"
+	_CHECKSUM_EXTENSION = ".txt"
 )
