@@ -9,28 +9,25 @@ variables:
     TERM: "xterm"
     GITLAB_CI: "true"
 
-before_script:
-    - apt-get update -y
-    - apt-get install bash -y
-
 test:
     stage: test
     tags:
         - linux
+    environment:
+        name: production
     except:
         refs:
             - gh-pages
-    environment:
-        name: production
     coverage: '/total:\s{1,}\(statements\)\s{1,}(\d+.\d+%)/'
     script:
-        - apt-get install git gcc graphviz -y
         - echo "pending test"
 
 build:
     stage: build
     tags:
         - linux
+    environment:
+        name: production
     except:
         refs:
             - gh-pages
@@ -52,24 +49,7 @@ compose:
         refs:
             - schedules
     script:
-        - apt-get install git -y
-        - >-
-          if [ -z "$GITLAB_USER_NAME" ]
-            1>&2 printf "[ ERROR ] Missing GITLAB_USER_NAME\n"
-          fi
-        - >-
-          if [ -z "$GITLAB_USER_EMAIL" ]
-            1>&2 printf "[ ERROR ] Missing GITLAB_USER_EMAIL\n"
-          fi
-        - >-
-          if [ -z "$GITLAB_USER_TOKEN" ]
-            1>&2 printf "[ ERROR ] Missing GITLAB_USER_TOKEN\n"
-          fi
-        - git config --global user.name "$GITLAB_USER_NAME"
-        - git config --global user.email "$GITLAB_USER_EMAIL"
-        - URI_PATH="${GITLAB_USER_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}"
-        - git remote set-url origin "https://gitlab-ci-token:${URI_PATH}.git"
-        - echo "pending publish-build"
+        - echo "pending compose"
 
 pages:
     stage: docs
@@ -83,8 +63,7 @@ pages:
     artifacts:
         paths:
             - public
-    before_script:
-        - echo "publishing to GitLab Pages"
+        expire_in: 1 day
     script:
         - mkdir -p public
         - shopt -s extglob
