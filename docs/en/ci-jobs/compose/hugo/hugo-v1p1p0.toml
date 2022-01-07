@@ -30,21 +30,8 @@ Condition = 'all-all'
 Type = 'command'
 Command = 'git'
 
-[[Dependencies]]
-Name = 'Bissetii'
-Condition = 'all-all'
-Type = 'command'
-Command = 'bissetii'
 
 
-
-
-[[CMD]]
-Name = "Bissetii get latest theme modules"
-Type = 'command'
-Condition = [ 'all-all' ]
-Location = '{{- .RootDir -}}'
-Source = 'bissetii --get'
 
 [[CMD]]
 Name = "Delete Destination Directory for Clean Build"

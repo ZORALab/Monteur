@@ -93,6 +93,45 @@ and how to customize and used them.
 The arrangement are the latest at the top or first.
 
 
+
+### Version 1.1.0
+Version 1.1.0 Hugo Compose API is available for download here:
+{{< link "/ci-jobs/compose/hugo/hugo-v1p1p0.toml" "this" "" "" "button" ""
+	"download" >}}
+hugo-v1p1p0.toml
+{{< /link >}}
+
+| Min Requirements     | Values                      |
+|:---------------------|----------------------------:|
+| Monteur Version      | `v0.0.1`                    |
+| Supported Platforms  | follows Hugo's availability |
+
+
+#### Installation Instructions
+1. You should download and place the recipe into your
+   `<config>/compose/jobs/` directory.
+2. Once done, verify that:
+   1. `Variables.MainLang` is your selected main language. Default is `en`.
+   2. `FMTVariables.SourceDir` is the directory to execute `hugo` command.
+   3. `FMTVariables.DestinationDir` is the directory path to export the website
+      artifacts.
+3. Add any additional `[[Dependencies]]` if you're customizing the default
+  `[[CMD]]` commands list accordingly.
+4. Customize `[[CMD]]` commands list as per your need.
+5. If you're not building poly-lingual website, you have to remove:
+   1. the `Hugo Workaround with 404` command.
+   2. the `MainLang` variable.
+6. If you are not on GitLab Pages:
+   1. Please remove the `Copy GitLab CI if available` command as it is meant for
+      double safety ensuring GitLab CI actually publishes the artifacts for
+      `gh-pages` branch.
+
+#### Changes
+1. *Backward Compatible* - Added quietly delete command before generation.
+2. *Backward Compatible* - Make `404.html` workaround to be quiet.
+
+
+
 ### Version 1.0.0
 Version 1.0.0 Hugo Compose API is available for download here:
 {{< link "/ci-jobs/compose/hugo/hugo-v1p0p0.toml" "this" "" "" "button" ""
