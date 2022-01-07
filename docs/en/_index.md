@@ -112,7 +112,7 @@ Monteur is deployed in various projects. Take a look over its portfolios!
 Monteur is developed by a team of contributors.
 
 {{< cards "en.cards.monteur.contributors"
-	"--grid-column-max-width:max-content;--grid-justify-content:center;" >}}
+	"text-align:center;--grid-column-max-width:max-content;--grid-justify-content:center;" >}}
 
 
 
@@ -121,10 +121,17 @@ Love those photography, arts, and media works found in this project? Special
 thanks to all the artists here:
 
 {{< cards "en.cards.monteur.artists"
-	"--grid-column-max-width:max-content;--grid-justify-content:center;" >}}
+	"text-align:center;--grid-column-max-width:max-content;--grid-justify-content:center;" >}}
+
 
 
 
 ## Try Monteur!
 Monteur is readily available. Please give it a try or learn more about its
 origin story. Monteur — work more, less noise, continuously with improvements!
+
+{{< align center middle >}}
+{{< link "/getting-started" "this" "" "" "button outline" >}}
+Let's Get Started
+{{< /link >}}
+{{< /align >}}
