@@ -29,7 +29,7 @@ Command = 'gpg'
 
 
 
-[Packages.001]
+[Packages.linux-amd64]
 OS = [ 'linux' ]
 Arch = [ 'amd64' ]
 Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
@@ -39,8 +39,22 @@ Distribution = [
 ]
 BuildSource = false
 
-[Packages.001.Files]
+[Packages.linux-amd64.Files]
 '{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+
+
+[Packages.linux-armhf]
+OS = [ 'linux' ]
+Arch = [ 'armhf' ]
+Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
+Distribution = [
+	'stable',
+]
+BuildSource = false
+
+[Packages.linux-armhf.Files]
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-arm'
 
 
 

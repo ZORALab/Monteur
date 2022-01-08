@@ -10,7 +10,9 @@ Rules = """
 	dh $@
 
 override_dh_auto_build:
-	echo "nothing to override"
+	echo "nothing to build"
+override_dh_shlibdeps:
+	echo "nothing to depend on"
 """
 
 [DEB.Control]

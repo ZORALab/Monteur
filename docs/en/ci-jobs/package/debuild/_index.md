@@ -87,6 +87,56 @@ to suit your CI needs.
 
 
 
+## One Time Setup
+There are a number of operating system setup based on your host Debian operating
+system for cross-packaging.
+
+
+
+### Cross-Build Tools
+Starting from Debian Strecth onwards, you need to install your cross-build
+essential packages to perform cross-compile and cross-packaging. These
+cross-build packages are architecture specifics:
+
+```bash {linenos=table,hl_lines=[],linenostart=1}
+apt install crossbuild-essential-armhf
+apt install crossbuild-essential-aarch64
+...
+```
+
+
+
+### Overrides `dh_auto_build` and `dh_shlibdeps` When Applicable
+In most cases where Monteur built the binary and its dependency upfront for
+packaging, you might need to override `dh_auto_build` and `dh_shlibdeps`
+sequences depending on what you're building. The overrides is available under
+`<config>/monteur/app/config/<LANG>/debian.toml` field `DEB.Rules`.
+
+Example: for a Go binary application which is a single static binary file
+packaged into binary `.deb` package, you need to set the `DEB.Rules` to:
+
+```toml {linenos=table,hl_lines=[],linenostart=1}
+[DEB]
+Compat = 11
+Rules = """
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+        dh $@
+
+override_dh_auto_build:
+        echo "nothing to build"
+override_dh_shlibdeps:
+        echo "nothing to depend on"
+"""
+```
+
+
+
+
 ## Recipe Versions
 Here are the available Package API recipe for `debuild` integrations. Please
 read through your selected version's details on what has changed, what is

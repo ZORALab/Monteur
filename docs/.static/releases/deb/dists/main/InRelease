@@ -5,26 +5,35 @@ Origin: monteur.zoralab.com/releases/deb
 Label: ZORALab's Monteur Deb Package (Stable Branch)
 Suite: stable
 Codename: main
-Date: Wed, 05 Jan 2022 13:18:31 UTC
-Architectures: amd64
+Date: Sat, 08 Jan 2022 05:22:37 UTC
+Architectures: amd64 armhf
 Components: stable
 Description: software manufacturing automation tool in one single app.
 MD5Sum:
- 2d7b2bf0f0758205e42628c4dad01547 711 stable/binary-amd64/Packages
- f9211a7d0d9fded5eca72be910811c50 495 stable/binary-amd64/Packages.gz
+ 7fb15bf846c0157af5120fe4d48e8690 711 stable/binary-amd64/Packages
+ e588f1708053a02e50a7ebe865494706 494 stable/binary-amd64/Packages.gz
  9bac4f7f885ad2148be13139783a21cd 219 stable/binary-amd64/Release
+ 4205c9c2453078d049cb8eac0de351af 711 stable/binary-armhf/Packages
+ 98c9c598afef792fa37b5f47c088d3cd 495 stable/binary-armhf/Packages.gz
+ 904eeead11482ed6a22070e1a5c5a013 219 stable/binary-armhf/Release
 SHA1:
- 2423a8d48888c1badade63042efcb2f381d8f278 711 stable/binary-amd64/Packages
- 1ad63c1c6d88e4aeace7b6dc295f55018ec05676 495 stable/binary-amd64/Packages.gz
+ 534bece604c53d6269c879ca59c4330d6fe6c255 711 stable/binary-amd64/Packages
+ da4c2bebdfe67120add143e2587bec0e90980775 494 stable/binary-amd64/Packages.gz
  da775d16c4eda4873f82dcc3711276c1b740ebae 219 stable/binary-amd64/Release
+ 13b556c8c626d49be53a4eafc23f6ccd3883a13b 711 stable/binary-armhf/Packages
+ ca223891c863e3acb668091a773207b9d924f648 495 stable/binary-armhf/Packages.gz
+ cd60f9ff01a1759ab836011807f2127984c2d56e 219 stable/binary-armhf/Release
 SHA256:
- 19af622d5c7eba777b524a7fe042fbc0ed576dc4e59a85b2e8c8f39f670af93a 711 stable/binary-amd64/Packages
- 22a296cfac00a181a8205956a118245d8ece013b3f803217592f963d772b03f0 495 stable/binary-amd64/Packages.gz
+ fcc7d1157d00baef71f62e5e8f499ec855aaa39a0c0d54b601117a2bed923840 711 stable/binary-amd64/Packages
+ c3098ec50ae2652734fba8597104235e56ad4802c27c7c6b7c93dbaa59b1fb1e 494 stable/binary-amd64/Packages.gz
  37031745c25fa4c46c1c4c6b77f17964c4f0ea3b25a0b975606729b1551962e3 219 stable/binary-amd64/Release
+ 2b206da0d59d846abb5675591ccd5c230d76052ddd99dcee4a483da919a103d8 711 stable/binary-armhf/Packages
+ 82a1f1524396268a830d1761143298e9a069ff41b6d39e13a279213626a82259 495 stable/binary-armhf/Packages.gz
+ cd5fe093abc27a692c686697447425172e754fa416b49aff3c6b750c826fbafa 219 stable/binary-armhf/Release
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYIAB0WIQSQXrg+vMxMexWuHBAQ2ZQWKbSjQgUCYdWaqAAKCRAQ2ZQWKbSj
-QsG5AQDh3lSW6CWKcIVILMPQni7dXaHmnhfqRO4gfkv3QejMJAD/S2hzB69mErPR
-LMXMnHlzDGKlKG/uu2ZIubqAdjbrTAw=
-=w+3V
+iHUEARYIAB0WIQSQXrg+vMxMexWuHBAQ2ZQWKbSjQgUCYdkfnQAKCRAQ2ZQWKbSj
+QtEoAQC2eJpm6Cmq678A8Ybu1o/MEZP4e1P1SDkfIZhR6Okx/QEAiVPc0ZWNrThH
+OeoebGr25I9B7P9E3clL9ANdouCX+Qc=
+=0A3i
 -----END PGP SIGNATURE-----

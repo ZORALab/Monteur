@@ -41,6 +41,10 @@ OS = [ "linux" ]
 Arch = [ "amd64" ]
 Source = '{{- .PackageDir -}}/{{- .PackageType -}}/{{- .PkgName -}}_{{- .PkgVersionDigitLed -}}_{{- .PkgArch -}}.deb'
 
+[Releases.Packages.linux-armhf]
+OS = [ "linux" ]
+Arch = [ "armhf" ]
+Source = '{{- .PackageDir -}}/{{- .PackageType -}}/{{- .PkgName -}}_{{- .PkgVersionDigitLed -}}_{{- .PkgArch -}}.deb'
 
 
 
