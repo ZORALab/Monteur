@@ -168,7 +168,7 @@ func sanitizeSources(sources map[string]*libmonteur.TOMLSource,
 	actual := sources[libmonteur.COMPUTE_SYSTEM_OMNI]
 
 	// get platform specific source
-	specific := sources[thisSystem]
+	specific := _getSpecificSource(sources, thisSystem)
 
 	// merge both into one
 	if actual == nil {
@@ -219,6 +219,47 @@ func sanitizeSources(sources map[string]*libmonteur.TOMLSource,
 	}
 
 	return err
+}
+
+func _getSpecificSource(sources map[string]*libmonteur.TOMLSource,
+	thisSystem string) (out *libmonteur.TOMLSource) {
+	var ok bool
+	var list []string
+	var os, arch, system string
+
+	// get system os and arch
+	list = strings.Split(thisSystem, "-")
+	os = list[0]
+	arch = list[1]
+
+	// source output
+	out, ok = sources[thisSystem]
+	if ok {
+		return out
+	}
+
+	// check if is specific arm type
+	if arch == "arm" {
+		list = []string{
+			"armv7l",
+			"armv7",
+			"armv6l",
+			"armv6",
+			"armhf",
+			"armel",
+		}
+
+		for _, t := range list {
+			system = os + "-" + t
+			out, ok = sources[system]
+			if ok {
+				return out
+			}
+		}
+	}
+
+	// return nil since we cannot detect any usable sources at all
+	return nil
 }
 
 func sanitizeSourceChecksum(out *libmonteur.TOMLSource) (err error) {
