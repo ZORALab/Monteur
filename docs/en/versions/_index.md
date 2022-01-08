@@ -88,10 +88,13 @@ in `root` permission (as in `sudo` all the instructions here):
 curl https://www.zoralab.com/pubkey.gpg \
 	| gpg --yes --dearmor --output /usr/share/keyrings/zoralab-keyring.gpg
 
-# write source list file (choose either 'stable', 'unstable', 'experimental')
-# Here, 'stable' was chosen.
-echo 'deb [signed-by=/usr/share/keyrings/zoralab-keyring.gpg] https://monteur.zoralab.com/releases/deb stable main' \
-	| sudo tee /etc/apt/sources.list.d/zoralab-monteur.list
+# write source list file. Choose any of the following repo:
+#  1. 'main stable' - main branch, a stable suite
+#  2. 'staging unstable' - staging branch, a testing/unstable suite
+#  3. 'next experimental' - next branch, a bleeding edge experiemntal suite
+# Here, 'main stable' was chosen.
+echo 'deb [signed-by=/usr/share/keyrings/zoralab-keyring.gpg] https://monteur.zoralab.com/releases/deb main stable' \
+	> /etc/apt/sources.list.d/zoralab-monteur.list
 
 # perform apt update
 apt update -y
