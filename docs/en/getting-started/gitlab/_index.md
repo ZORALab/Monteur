@@ -109,6 +109,16 @@ However, since Monteur is for isolating vendor-specific CI configurations,
 you can modify the the recipes below as per your repository and GitLab CI runner
 needs.
 
+{{< note warning "Heads Up" >}}
+While Monteur trying to test itself on Raspberry Pi 3B GitLab Runner, we
+encountered so many unknown errors to the point that **we do not recommend using
+Raspberry Pi as GitLab Runner at all**, least for integrating Monteur.
+{{< /note >}}
+
+{{< note warning "Heads Up" >}}
+Monteur currently only works with Shell Executor. See
+https://docs.gitlab.com/runner/executors/ for more info.
+{{< /note >}}
 
 
 
@@ -120,54 +130,130 @@ By minimum, the `.gitlab-ci.yml` **MUST** at least contain the following main
 components:
 
 ```yaml {linenos=table,hl_lines=[],linenostart=1}
-image: debian:latest
-
-stages:
-    - test
-    - build
-    - package
-    - deploy
-    - docs
+image:
+  name: debian:latest
+  entrypoint: [ "" ]
 
 variables:
-    TERM: "xterm"
-    GITLAB_CI: "true"
+  MONTEUR_CONFIG: ".monteurFS/config/main"
+
+stages:
+  - setup
+  - test
+  - build
+  - docs
+
+cache:
+  - key: "MonteurFS"
+    paths:
+      - ".monteurFS/"
+
+before_script:
+  - apt-get update -y
+  - apt-get upgrade -y
+  - |
+    apt-get --no-install-recommends install \
+      curl \
+      gnupg2 \
+      ca-certificates \
+      -y
+  - |
+    curl https://www.zoralab.com/pubkey.gpg \
+      | gpg --yes --dearmor --output /usr/share/keyrings/zoralab-keyring.gpg
+  - |
+    echo 'deb [signed-by=/usr/share/keyrings/zoralab-keyring.gpg] https://monteur.zoralab.com/releases/deb next experimental' \
+        >  /etc/apt/sources.list.d/zoralab-monteur.list
+  - apt-get update -y
+  - apt-get install monteur -y
 ```
 
-You need the docker `image` specification, the standard CI stages, and common
-variables for outputs.
+This is the standard way of setting up Monteur. To reduce the Monteur setup
+time, simply use the cache across all the jobs would be suffice (1 time setup
+and use across all.
 
-For CI `stages`, Monteur recommends `test`, `build`, and `docs` are sufficient.
+For CI `stages`, Monteur recommends `setup`, `test`, `build`, and `docs` are
+sufficient.
 
-For `package` and `deploy` CI `stages`, usually they involves secrecy data such
+For Monteur's `Package` and `Release` API, they usually involve secret data such
 as key signing and etc. Since Monteur can now handle these jobs locally at your
 side, there is no need to expose these secrecy to external contractors, further
 protecting your secrecy data's confidentiality.
 
+Obviously, the caching method is used as `setup` stage shall assemble your
+Monteur local filesystem (`MONTEUR_CONFIG`). Then, the filesystem is cached
+and used across all the remaining jobs, saving time and bandwidth for not
+repeatedly calling Monteur Setup API for each job.
+
 
 
 ### Test
-Coming soon.
+For Monteur Test API, assuming the test coverage text output is unchanged,
+the recommended settings would be as follows:
+
+```yaml {linenos=table,hl_lines=[],linenostart=1}
+test:
+  stage: test
+  tags:
+    - linux
+  environment:
+    name: production
+  except:
+    refs:
+      - gh-pages
+  interruptible: true
+  coverage: '/TOTAL\s*TEST\s*COVERAGE:\s*(\d+.?\d*%?)/'
+  script:
+    - source "$MONTEUR_CONFIG"
+    - monteur test
+```
 
 
 
 ### Build
-Coming soon.
+For Monteur Build API, the recommended settings would be as follows:
 
-
-
-### Package
-Coming soon.
-
-
-
-### Deploy
-Coming soon.
+```yaml {linenos=table,hl_lines=[],linenostart=1}
+build:
+  stage: build
+  tags:
+    - linux
+  environment:
+    name: production
+  except:
+    refs:
+      - gh-pages
+  environment:
+    name: production
+  script:
+    - source "$MONTEUR_CONFIG"
+    - monteur prepare
+    - monteur build
+```
 
 
 
 ### Compose
-Coming soon.
+For Compose GitLab CI Job, the recommended settings would be as follows:
+
+```yaml {linenos=table,hl_lines=[],linenostart=1}
+compose:
+  stage: docs
+  tags:
+    - linux
+  environment:
+    name: production
+  except:
+    refs:
+      - gh-pages
+  script:
+    - source "$MONTEUR_CONFIG"
+    - monteur compose
+```
+
+Note that this Job only wants to test the Monteur Compose API is working fine.
+It does not publish the output.
+
+
 
 
 
@@ -180,22 +266,25 @@ implementation, it's very easy to implement the
 
 ```yaml {linenos=table,hl_lines=[],linenostart=1}
 pages:
-    stage: docs
-    tags:
-        - debian
-    environment:
-        name: production
-    only:
-        refs:
-            - gh-pages
-    artifacts:
-        paths:
-            - public
-        expire_in: 1 day
-    script:
-        - mkdir -p public
-        - shopt -s extglob
-        - mv !(public|.*) public
+  stage: docs
+  tags:
+    - linux
+  environment:
+    name: production
+  only:
+    refs:
+      - gh-pages
+  cache: []
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 day
+  before_script:
+    - mkdir -p public
+    - shopt -s extglob
+    - mv !(public|.*) public
+  script:
+    - printf "[ DONE ] Nothing to implement.\n"
 ```
 
 What the code does is moving all the contents in the branch into `public/`

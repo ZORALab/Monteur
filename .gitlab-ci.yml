@@ -1,70 +1,59 @@
-image: debian:latest
-
-stages:
-    - test
-    - build
-    - docs
+image:
+  name: debian:latest
+  entrypoint: [ "" ]
 
 variables:
-    TERM: "xterm"
-    GITLAB_CI: "true"
+  MONTEUR_CONFIG: ".monteurFS/config/main"
 
-test:
-    stage: test
-    tags:
-        - linux
-    environment:
-        name: production
-    except:
-        refs:
-            - gh-pages
-    coverage: '/total:\s{1,}\(statements\)\s{1,}(\d+.\d+%)/'
-    script:
-        - echo "pending test"
+stages:
+  - setup
+  - test
+  - build
+  - docs
 
-build:
-    stage: build
-    tags:
-        - linux
-    environment:
-        name: production
-    except:
-        refs:
-            - gh-pages
-    environment:
-        name: production
-    script:
-        - echo "pending build"
+cache:
+  - key: "MonteurFS"
+    paths:
+      - ".monteurFS/"
 
-compose:
-    stage: docs
-    tags:
-        - linux
-    environment:
-        name: production
-    except:
-        refs:
-            - gh-pages
-    only:
-        refs:
-            - schedules
-    script:
-        - echo "pending compose"
+before_script:
+  - apt-get update -y
+  - apt-get upgrade -y
+  - |
+    apt-get --no-install-recommends install \
+      curl \
+      gnupg2 \
+      ca-certificates \
+      -y
+  - |
+    curl https://www.zoralab.com/pubkey.gpg \
+      | gpg --yes --dearmor --output /usr/share/keyrings/zoralab-keyring.gpg
+  - |
+    echo 'deb [signed-by=/usr/share/keyrings/zoralab-keyring.gpg] https://monteur.zoralab.com/releases/deb next experimental' \
+        >  /etc/apt/sources.list.d/zoralab-monteur.list
+  - apt-get update -y
+  - apt-get install monteur -y
+
+
+
 
 pages:
-    stage: docs
-    tags:
-        - linux
-    environment:
-        name: production
-    only:
-        refs:
-            - gh-pages
-    artifacts:
-        paths:
-            - public
-        expire_in: 1 day
-    script:
-        - mkdir -p public
-        - shopt -s extglob
-        - mv !(public|.*) public
+  stage: docs
+  tags:
+    - linux
+  environment:
+    name: production
+  only:
+    refs:
+      - gh-pages
+  cache: []
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 day
+  before_script:
+    - mkdir -p public
+    - shopt -s extglob
+    - mv !(public|.*) public
+  script:
+    - printf "[ DONE ] Nothing to implement.\n"
