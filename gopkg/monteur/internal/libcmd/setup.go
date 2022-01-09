@@ -149,6 +149,12 @@ func (me *setup) Run(ctx context.Context, ch chan conductor.Message) {
 	me.log.Info(libmonteur.LOG_JOB_START + "\n\n")
 	me.reportUp = ch
 
+	err = me.prepareMonteurFS()
+	if err != nil {
+		me.reportError(err)
+		return
+	}
+
 	unpackFx, err = me.prepareUnpackFx()
 	if err != nil {
 		me.reportError(err)
@@ -218,14 +224,10 @@ func (me *setup) Run(ctx context.Context, ch chan conductor.Message) {
 
 func (me *setup) createMainConfig() (err error) {
 	var data []byte
-	var ok bool
 	var thisOS, configPath, configDir, binDir string
 
 	// process configDir
-	configDir, ok = me.variables[libmonteur.VAR_CFG].(string)
-	if !ok {
-		panic("Monteur DEV: why is VAR_CFG missing?")
-	}
+	configDir = me.variables[libmonteur.VAR_CFG].(string)
 	configPath = filepath.Join(configDir,
 		libmonteur.FILENAME_BIN_CONFIG_MAIN,
 	)
@@ -234,16 +236,10 @@ func (me *setup) createMainConfig() (err error) {
 	)
 
 	// process binDir
-	binDir, ok = me.variables[libmonteur.VAR_BIN].(string)
-	if !ok {
-		panic("Monteur DEV: why is VAR_BIN missing?")
-	}
+	binDir = me.variables[libmonteur.VAR_BIN].(string)
 
 	// process thisOS
-	thisOS, ok = me.variables[libmonteur.VAR_OS].(string)
-	if !ok {
-		panic("Monteur DEV: why is VAR_OS missing?")
-	}
+	thisOS = me.variables[libmonteur.VAR_OS].(string)
 
 	switch thisOS {
 	case "linux",
@@ -304,14 +300,10 @@ esac`)
 }
 
 func (me *setup) processConfig() (err error) {
-	var ok bool
 	var configPath, pathing string
 
 	// get config path
-	configPath, ok = me.variables[libmonteur.VAR_CFG].(string)
-	if !ok {
-		panic("MONTEUR_DEV: why is VAR_CFG missing?")
-	}
+	configPath = me.variables[libmonteur.VAR_CFG].(string)
 
 	// process pathing
 	pathing = strings.ToLower(me.metadata.Name)
@@ -411,6 +403,47 @@ func (me *setup) prepareUnpackFx() (out func(*libmonteur.TOMLSource,
 	}
 
 	return out, err
+}
+
+func (me *setup) prepareMonteurFS() (err error) {
+	var list []string
+	var ret string
+	var ok bool
+
+	// create list of directory preparations
+	list = []string{}
+
+	// check critical variables
+	ret, ok = me.variables[libmonteur.VAR_OS].(string)
+	if !ok || ret == "" {
+		panic("MONTEUR_DEV: why is VAR_OS missing?")
+	}
+
+	// get critical paths
+	ret, ok = me.variables[libmonteur.VAR_BIN].(string)
+	if !ok {
+		panic("MONTEUR_DEV: why is VAR_BIN missing?")
+	}
+	list = append(list, ret)
+
+	ret, ok = me.variables[libmonteur.VAR_CFG].(string)
+	if !ok {
+		panic("MONTEUR_DEV: why is VAR_CFG missing?")
+	}
+	ret = filepath.Join(ret, libmonteur.DIRECTORY_MONTEUR_CONFIG_D)
+	list = append(list, ret)
+
+	for _, path := range list {
+		err = os.MkdirAll(path, libmonteur.PERMISSION_DIRECTORY)
+		if err != nil {
+			return fmt.Errorf("%s: %s",
+				libmonteur.ERROR_DIR_CREATE_FAILED,
+				err,
+			)
+		}
+	}
+
+	return nil
 }
 
 // Name is to return the task name
