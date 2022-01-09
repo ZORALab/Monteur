@@ -42,6 +42,7 @@ Monteur - Getting the job done locally and remotely at scale!
 	m.Version = monteur.VERSION
 	m.Examples = []string{
 		`$ monteur help`,
+		`$ monteur version`,
 		`$ monteur init`,
 		`$ monteur setup`,
 		`$ monteur clean`,
@@ -61,6 +62,16 @@ Monteur - Getting the job done locally and remotely at scale!
 		Help:  "call for help",
 		HelpExamples: []string{
 			"$ monteur help",
+		},
+	})
+
+	_ = m.Add(&oshelper.Argument{
+		Name:  "Version",
+		Label: []string{"version"},
+		Value: &action,
+		Help:  "check the Monteur version",
+		HelpExamples: []string{
+			"$ monteur version",
 		},
 	})
 
@@ -171,6 +182,9 @@ Monteur - Getting the job done locally and remotely at scale!
 	switch action {
 	case "help", "--help", "-h":
 		fmt.Fprintf(os.Stderr, "%s", m.PrintHelp())
+		return
+	case "version":
+		fmt.Fprintf(os.Stdout, "%s\n", monteur.VERSION)
 		return
 	case "init":
 		os.Exit(monteur.Init())
