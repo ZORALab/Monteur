@@ -21,6 +21,6 @@ Label: ZORALab's Monteur Deb Package (Next Branch)
 Codename: next
 Suite: experimental
 Architectures: amd64 armhf arm64
-Components: experiemntal
+Components: experimental
 Description: software manufacturing automation tool in one single app.
 SignWith: hello@zoralab.com
