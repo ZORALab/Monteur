@@ -54,6 +54,14 @@ Distribution = [
 ]
 Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
 
+[Packages.linux-arm64]
+OS = [ 'linux' ]
+Arch = [ 'arm64' ]
+Distribution = [
+	'stable',
+]
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
+
 [Packages.linux-armhf]
 OS = [ 'linux' ]
 Arch = [ 'armhf' ]

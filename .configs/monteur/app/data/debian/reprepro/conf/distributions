@@ -2,7 +2,7 @@ Origin: monteur.zoralab.com/releases/deb
 Label: ZORALab's Monteur Deb Package (Stable Branch)
 Codename: main
 Suite: stable
-Architectures: amd64 armhf
+Architectures: amd64 armhf arm64
 Components: stable
 Description: software manufacturing automation tool in one single app.
 SignWith: hello@zoralab.com
@@ -11,7 +11,7 @@ Origin: monteur.zoralab.com/releases/deb
 Label: ZORALab's Monteur Deb Package (Testing Branch)
 Codename: staging
 Suite: unstable
-Architectures: amd64 armhf
+Architectures: amd64 armhf arm64
 Components: unstable
 Description: software manufacturing automation tool in one single app.
 SignWith: hello@zoralab.com
@@ -20,7 +20,7 @@ Origin: monteur.zoralab.com/releases/deb
 Label: ZORALab's Monteur Deb Package (Next Branch)
 Codename: next
 Suite: experimental
-Architectures: amd64 armhf
+Architectures: amd64 armhf arm64
 Components: experiemntal
 Description: software manufacturing automation tool in one single app.
 SignWith: hello@zoralab.com

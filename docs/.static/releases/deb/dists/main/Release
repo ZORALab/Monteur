@@ -2,8 +2,8 @@ Origin: monteur.zoralab.com/releases/deb
 Label: ZORALab's Monteur Deb Package (Stable Branch)
 Suite: stable
 Codename: main
-Date: Sat, 08 Jan 2022 05:22:37 UTC
-Architectures: amd64 armhf
+Date: Sun, 09 Jan 2022 01:54:13 UTC
+Architectures: amd64 armhf arm64
 Components: stable
 Description: software manufacturing automation tool in one single app.
 MD5Sum:
@@ -13,6 +13,9 @@ MD5Sum:
  4205c9c2453078d049cb8eac0de351af 711 stable/binary-armhf/Packages
  98c9c598afef792fa37b5f47c088d3cd 495 stable/binary-armhf/Packages.gz
  904eeead11482ed6a22070e1a5c5a013 219 stable/binary-armhf/Release
+ 5c3c8a69d591614f7126784518478bab 711 stable/binary-arm64/Packages
+ be4279dfa997f42bfc8207d73505199e 494 stable/binary-arm64/Packages.gz
+ 8233a07d56c1a677a39489a607de3aa4 219 stable/binary-arm64/Release
 SHA1:
  534bece604c53d6269c879ca59c4330d6fe6c255 711 stable/binary-amd64/Packages
  da4c2bebdfe67120add143e2587bec0e90980775 494 stable/binary-amd64/Packages.gz
@@ -20,6 +23,9 @@ SHA1:
  13b556c8c626d49be53a4eafc23f6ccd3883a13b 711 stable/binary-armhf/Packages
  ca223891c863e3acb668091a773207b9d924f648 495 stable/binary-armhf/Packages.gz
  cd60f9ff01a1759ab836011807f2127984c2d56e 219 stable/binary-armhf/Release
+ 0ad9751fa2d5ebf388aa192b22fb77011c08b2e5 711 stable/binary-arm64/Packages
+ 7d7ea4db4fbd03677e337594ac2aff0533aaa6f4 494 stable/binary-arm64/Packages.gz
+ 5081edb69cfef42b766b74cfedde933eb5591357 219 stable/binary-arm64/Release
 SHA256:
  fcc7d1157d00baef71f62e5e8f499ec855aaa39a0c0d54b601117a2bed923840 711 stable/binary-amd64/Packages
  c3098ec50ae2652734fba8597104235e56ad4802c27c7c6b7c93dbaa59b1fb1e 494 stable/binary-amd64/Packages.gz
@@ -27,3 +33,6 @@ SHA256:
  2b206da0d59d846abb5675591ccd5c230d76052ddd99dcee4a483da919a103d8 711 stable/binary-armhf/Packages
  82a1f1524396268a830d1761143298e9a069ff41b6d39e13a279213626a82259 495 stable/binary-armhf/Packages.gz
  cd5fe093abc27a692c686697447425172e754fa416b49aff3c6b750c826fbafa 219 stable/binary-armhf/Release
+ 7c8543f279d25eeaa162995607855c0a8e8906570555bf7ab6dddb7dc723de3a 711 stable/binary-arm64/Packages
+ 9a06a541f5a0199ac1be0fb6dfba9d34f7fcb651cb9dc23f28eb25fad2f44af8 494 stable/binary-arm64/Packages.gz
+ f7d1159a1feb26e292f87392fa2355959fb983f0a48b0ca8ce2c57dd9a277e44 219 stable/binary-arm64/Release

@@ -19,6 +19,7 @@ DataPath = '{{- .DataDir -}}/debian/reprepro'
 
 
 
+
 [[Dependencies]]
 Name = 'Reprepro'
 Condition = 'all-all'
@@ -33,6 +34,7 @@ Command = 'gpg'
 
 
 
+
 [Releases]
 Target = '{{- .ReleaseDir -}}/deb'
 
@@ -41,10 +43,16 @@ OS = [ "linux" ]
 Arch = [ "amd64" ]
 Source = '{{- .PackageDir -}}/{{- .PackageType -}}/{{- .PkgName -}}_{{- .PkgVersionDigitLed -}}_{{- .PkgArch -}}.deb'
 
+[Releases.Packages.linux-arm64]
+OS = [ "linux" ]
+Arch = [ "arm64" ]
+Source = '{{- .PackageDir -}}/{{- .PackageType -}}/{{- .PkgName -}}_{{- .PkgVersionDigitLed -}}_{{- .PkgArch -}}.deb'
+
 [Releases.Packages.linux-armhf]
 OS = [ "linux" ]
 Arch = [ "armhf" ]
 Source = '{{- .PackageDir -}}/{{- .PackageType -}}/{{- .PkgName -}}_{{- .PkgVersionDigitLed -}}_{{- .PkgArch -}}.deb'
+
 
 
 

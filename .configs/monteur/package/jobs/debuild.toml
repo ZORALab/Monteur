@@ -43,6 +43,20 @@ BuildSource = false
 '{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
 
 
+[Packages.linux-arm64]
+OS = [ 'linux' ]
+Arch = [ 'arm64' ]
+Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
+Distribution = [
+	'stable',
+]
+BuildSource = false
+
+[Packages.linux-arm64.Files]
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+
+
 [Packages.linux-armhf]
 OS = [ 'linux' ]
 Arch = [ 'armhf' ]

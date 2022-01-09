@@ -92,9 +92,9 @@ Here are some of the downloadable archived pack available for manual deployment.
 Here are the list of supported Monteur variants available for different
 platforms and CPU architectures.
 
-* `linux-amd64` - `.deb`
-* `linux-arm64` - `.tar.gz`
-* `linux-arm` (v7) - `.tar.gz`
+* `linux-amd64` - `.tar.gz`, `.deb`
+* `linux-arm64` - `.tar.gz`, `.deb`
+* `linux-arm` (v7) - `.tar.gz`, `.deb`
 * `darwin-amd64` - `.tar.gz`
 * `darwin-arm64` - `.tar.gz`
 * `windows-amd64` - `.zip`
