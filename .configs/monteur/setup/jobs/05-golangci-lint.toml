@@ -23,7 +23,7 @@ BaseURL = 'https://github.com/golangci/golangci-lint/releases/download'
 # Only list out supported packages will do.
 [Sources.all-all]
 Format = 'tar.gz'
-Archive = 'golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}'
+Archive = 'golangci-lint-{{- .Version -}}-{{- .ComputeSystem -}}.{{- .Format -}}'
 URL = '{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}'
 Method = 'GET'
 [Sources.all-all.Checksum]
@@ -58,9 +58,13 @@ Value = 'f3515cebec926257da703ba0a2b169e4a322c11dc31a8b4656b50a43e48877f4'
 [Sources.linux-arm64.Checksum]
 Value = 'e21c681735faf4efd4086f95d5b49904b0bbbe510dd2058058047a8dbfaee546'
 
+[Sources.linux-armv6]
+Archive = 'golangci-lint-{{- .Version -}}-linux-armv6.{{- .Format -}}'
 [Sources.linux-armv6.Checksum]
 Value = 'fb7f6d4d39028570d70f81f42f4eaec2db62efe40d86c01fb9d9666b304372aa'
 
+[Sources.linux-armv7]
+Archive = 'golangci-lint-{{- .Version -}}-linux-armv7.{{- .Format -}}'
 [Sources.linux-armv7.Checksum]
 Value = '05e56dfeb15db6d1de6beba1c9cba4a8ce81479195e03b87e86f163eab380031'
 
@@ -117,7 +121,7 @@ Source = '{{- .BinDir -}}/golangci-lint'
 Name = 'Install Golang-CI Linter'
 Type = 'move'
 Condition = [ 'all-all' ]
-Source = '{{- .WorkingDir -}}/golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}/golangci-lint'
+Source = '{{- .WorkingDir -}}/golangci-lint-{{- .Version -}}-{{ .SourceSystem }}/golangci-lint'
 Target = '{{- .BinDir -}}/golangci-lint'
 
 

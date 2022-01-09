@@ -55,11 +55,6 @@ Archive = 'hugo_{{- .Version -}}_Linux-ARM.{{- .Format -}}'
 [Sources.linux-arm.Checksum]
 Value = 'fd67670bb1ee9f018da7878ef605d89b9a8ef8d227253ee2043b02524d289fae'
 
-[Sources.linux-armv7]
-Archive = 'hugo_{{- .Version -}}_Linux-ARM.{{- .Format -}}'
-[Sources.linux-armv7.Checksum]
-Value = 'fd67670bb1ee9f018da7878ef605d89b9a8ef8d227253ee2043b02524d289fae'
-
 [Sources.linux-arm64]
 Archive = 'hugo_{{- .Version -}}_Linux-ARM64.{{- .Format -}}'
 [Sources.linux-arm64.Checksum]
