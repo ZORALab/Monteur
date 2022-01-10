@@ -5,44 +5,44 @@ Origin: monteur.zoralab.com/releases/deb
 Label: ZORALab's Monteur Deb Package (Stable Branch)
 Suite: stable
 Codename: main
-Date: Sun, 09 Jan 2022 01:54:13 UTC
+Date: Mon, 10 Jan 2022 02:29:32 UTC
 Architectures: amd64 armhf arm64
 Components: stable
 Description: software manufacturing automation tool in one single app.
 MD5Sum:
- 7fb15bf846c0157af5120fe4d48e8690 711 stable/binary-amd64/Packages
- e588f1708053a02e50a7ebe865494706 494 stable/binary-amd64/Packages.gz
+ aa782697ad2316a8ba430c3054d60f3f 711 stable/binary-amd64/Packages
+ 47ee9d44a9fbe2d7961bd2d04034f947 495 stable/binary-amd64/Packages.gz
  9bac4f7f885ad2148be13139783a21cd 219 stable/binary-amd64/Release
- 4205c9c2453078d049cb8eac0de351af 711 stable/binary-armhf/Packages
- 98c9c598afef792fa37b5f47c088d3cd 495 stable/binary-armhf/Packages.gz
+ 29d300c19dd947d4882b640f2fa9aafe 711 stable/binary-armhf/Packages
+ a21a3d061954fb3e8c8500ae99a0bbef 495 stable/binary-armhf/Packages.gz
  904eeead11482ed6a22070e1a5c5a013 219 stable/binary-armhf/Release
- 5c3c8a69d591614f7126784518478bab 711 stable/binary-arm64/Packages
- be4279dfa997f42bfc8207d73505199e 494 stable/binary-arm64/Packages.gz
+ e36cb070a5bdc5ecbb8ae80ba39e8988 711 stable/binary-arm64/Packages
+ 324ee2a12c8d5ece49e4e0b52320af20 496 stable/binary-arm64/Packages.gz
  8233a07d56c1a677a39489a607de3aa4 219 stable/binary-arm64/Release
 SHA1:
- 534bece604c53d6269c879ca59c4330d6fe6c255 711 stable/binary-amd64/Packages
- da4c2bebdfe67120add143e2587bec0e90980775 494 stable/binary-amd64/Packages.gz
+ 9ae51615e60d09779246dc1a3027ee2dc7bba8bc 711 stable/binary-amd64/Packages
+ d2bc95baa64c56f151bfc7b9fbf24ddaa2394e1a 495 stable/binary-amd64/Packages.gz
  da775d16c4eda4873f82dcc3711276c1b740ebae 219 stable/binary-amd64/Release
- 13b556c8c626d49be53a4eafc23f6ccd3883a13b 711 stable/binary-armhf/Packages
- ca223891c863e3acb668091a773207b9d924f648 495 stable/binary-armhf/Packages.gz
+ 4f58191646eee42e3def788dde73adbbcb2ad180 711 stable/binary-armhf/Packages
+ 9b6ebafa0297ccac0d4bf3da5aa10c356bc5e30d 495 stable/binary-armhf/Packages.gz
  cd60f9ff01a1759ab836011807f2127984c2d56e 219 stable/binary-armhf/Release
- 0ad9751fa2d5ebf388aa192b22fb77011c08b2e5 711 stable/binary-arm64/Packages
- 7d7ea4db4fbd03677e337594ac2aff0533aaa6f4 494 stable/binary-arm64/Packages.gz
+ 9c860d579ec98b5fedf4ef3465f390502d77a3f0 711 stable/binary-arm64/Packages
+ 626a249bd425a1e7c8454e43668283dc3e781318 496 stable/binary-arm64/Packages.gz
  5081edb69cfef42b766b74cfedde933eb5591357 219 stable/binary-arm64/Release
 SHA256:
- fcc7d1157d00baef71f62e5e8f499ec855aaa39a0c0d54b601117a2bed923840 711 stable/binary-amd64/Packages
- c3098ec50ae2652734fba8597104235e56ad4802c27c7c6b7c93dbaa59b1fb1e 494 stable/binary-amd64/Packages.gz
+ bf531236511efb5263d868b8a419f83708f3e5d10c47f4533d940da5f82c55e1 711 stable/binary-amd64/Packages
+ dc2cbecc2c9263be8ae725adec1504f472ac3d28d3ddeda6ff416654c1f2cf60 495 stable/binary-amd64/Packages.gz
  37031745c25fa4c46c1c4c6b77f17964c4f0ea3b25a0b975606729b1551962e3 219 stable/binary-amd64/Release
- 2b206da0d59d846abb5675591ccd5c230d76052ddd99dcee4a483da919a103d8 711 stable/binary-armhf/Packages
- 82a1f1524396268a830d1761143298e9a069ff41b6d39e13a279213626a82259 495 stable/binary-armhf/Packages.gz
+ 658cee20248ce9f19d84405f9f5a762e92fff14ee42728a727e622a6ccf9c3d2 711 stable/binary-armhf/Packages
+ 66359c65c5b6daaf8c813cc1722d63c93cb6ed8f9b57f2b216ca66386be33911 495 stable/binary-armhf/Packages.gz
  cd5fe093abc27a692c686697447425172e754fa416b49aff3c6b750c826fbafa 219 stable/binary-armhf/Release
- 7c8543f279d25eeaa162995607855c0a8e8906570555bf7ab6dddb7dc723de3a 711 stable/binary-arm64/Packages
- 9a06a541f5a0199ac1be0fb6dfba9d34f7fcb651cb9dc23f28eb25fad2f44af8 494 stable/binary-arm64/Packages.gz
+ 3a7d8ddeaa35b84392ed7a73159d9c88f886731307542bb55fbf352066ea2639 711 stable/binary-arm64/Packages
+ 5f8de68a7767ed4f10ad54cefbfa0ef6e66d9bfc685a79081bf5ec3d0de45f19 496 stable/binary-arm64/Packages.gz
  f7d1159a1feb26e292f87392fa2355959fb983f0a48b0ca8ce2c57dd9a277e44 219 stable/binary-arm64/Release
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYIAB0WIQSQXrg+vMxMexWuHBAQ2ZQWKbSjQgUCYdpARQAKCRAQ2ZQWKbSj
-QmCiAP0RmPWUExBTdqfaRqB0r20tAi8Wyz+DETSJu6oVSSo7AAD+KHgshyrAYf93
-HQGkfnfP4VDF1V4N4sg3LZV8lZ1K4gM=
-=dH1k
+iHUEARYIAB0WIQSQXrg+vMxMexWuHBAQ2ZQWKbSjQgUCYduaDAAKCRAQ2ZQWKbSj
+QigqAQC06AFC8cWiNcZu/vjngv3quZrLoIqHJKOPLW7k/o4+QQD8C7o6wsTwxRxh
+srkG/7ZQQhpsa4qfgjBfav7QgOPRhw0=
+=v49M
 -----END PGP SIGNATURE-----

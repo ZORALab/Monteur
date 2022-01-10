@@ -1,16 +1,16 @@
 Package: monteur
-Version: 0.0.2
+Version: 0.0.3
 Architecture: armhf
 Maintainer: ZORALab Enterprise <hello@zoralab.com>
-Installed-Size: 6602
+Installed-Size: 6610
 Homepage: https://monteur.zoralab.com/
 Priority: optional
 Section: devel
-Filename: pool/stable/m/monteur/monteur_0.0.2_armhf.deb
-Size: 1917312
-SHA256: ec9191b380ddd22b0837f82437700d960a1a994f5b5e128bcb6b97ba49e96297
-SHA1: 1a78e2d16d863c2afc8564f1e8b3490b2176b38b
-MD5sum: 81e11594a33a388c2649a39b263a7e36
+Filename: pool/stable/m/monteur/monteur_0.0.3_armhf.deb
+Size: 1919024
+SHA256: 222287f296edf04ce0f81509f6c182a60c0ecd001c90bc7fdd774080cc2c5cac
+SHA1: 742b2f3ace6a556b59305168c1892e78a4cdc31e
+MD5sum: a456d969657ecfdf22f13a1dc0e53591
 Description: software manufacturing automation tool in one single app.
  Monteur focuses on keeping the software development repository's continuous
  improvements execution seamlessly scalable with great consistency.

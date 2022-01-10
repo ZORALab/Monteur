@@ -77,6 +77,13 @@ prototype to standardize its internal operations and external interactions.
 There are non-backward compatible changes so please go through this document
 clearly for what has changed.
 
+{{< note warning "Heads Up" >}}
+There is a bug where the Setup API failed to create the main MonteurFS
+directories (See [Issue 44](https://gitlab.com/zoralab/monteur/-/issues/44)).
+
+Please upgrade to Monteur `v0.0.3` or manually create those main directories
+for Monteur to work.
+{{< /note >}}
 
 
 
