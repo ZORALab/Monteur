@@ -45,101 +45,21 @@ func (me *Manager) Parse(path string, secret *libsecrets.Secrets) (err error) {
 	// parse data file
 	switch me.Job {
 	case libmonteur.JOB_TEST:
-		subject := &basicCMD{
-			thisSystem: system,
-			variables:  me.Variables,
-		}
-
-		err = subject.Parse(path, secret)
-		if err != nil {
-			return err
-		}
-
-		me.task = subject
+		err = me.runTest(system, path, secret)
 	case libmonteur.JOB_PREPARE:
-		subject := &preparer{
-			thisSystem: system,
-			variables:  me.Variables,
-		}
-
-		err = subject.Parse(path, secret)
-		if err != nil {
-			return err
-		}
-
-		me.task = subject
+		err = me.runPrepare(system, path, secret)
 	case libmonteur.JOB_BUILD:
-		subject := &basicCMD{
-			thisSystem: system,
-			variables:  me.Variables,
-		}
-
-		err = subject.Parse(path, secret)
-		if err != nil {
-			return err
-		}
-
-		me.task = subject
+		err = me.runBuild(system, path, secret)
 	case libmonteur.JOB_PACKAGE:
-		subject := &packager{
-			thisSystem: system,
-			variables:  me.Variables,
-		}
-
-		err = subject.Parse(path, secret)
-		if err != nil {
-			return err
-		}
-
-		me.task = subject
+		err = me.runPackage(system, path, secret)
 	case libmonteur.JOB_RELEASE:
-		subject := &releaser{
-			thisSystem: system,
-			variables:  me.Variables,
-		}
-
-		err = subject.Parse(path, secret)
-		if err != nil {
-			return err
-		}
-
-		me.task = subject
+		err = me.runRelease(system, path, secret)
 	case libmonteur.JOB_COMPOSE:
-		subject := &basicCMD{
-			thisSystem: system,
-			variables:  me.Variables,
-		}
-
-		err = subject.Parse(path, secret)
-		if err != nil {
-			return err
-		}
-
-		me.task = subject
+		err = me.runCompose(system, path, secret)
 	case libmonteur.JOB_PUBLISH:
-		subject := &basicCMD{
-			thisSystem: system,
-			variables:  me.Variables,
-		}
-
-		err = subject.Parse(path, secret)
-		if err != nil {
-			return err
-		}
-
-		me.task = subject
+		err = me.runPublish(system, path, secret)
 	case libmonteur.JOB_CLEAN:
-		subject := &basicCMD{
-			thisSystem: system,
-			variables:  me.Variables,
-		}
-
-		err = subject.Parse(path, secret)
-		if err != nil {
-			return err
-		}
-
-		me.task = subject
+		err = me.runClean(system, path, secret)
 	case libmonteur.JOB_SETUP:
 		err = me.runSetup(system, path, secret)
 	default:
@@ -147,6 +67,134 @@ func (me *Manager) Parse(path string, secret *libsecrets.Secrets) (err error) {
 	}
 
 	return err
+}
+
+func (me *Manager) runTest(system string,
+	path string, secret *libsecrets.Secrets) (err error) {
+	subject := &basicCMD{
+		thisSystem: system,
+		variables:  me.Variables,
+	}
+
+	err = subject.Parse(path, secret)
+	if err != nil {
+		return err
+	}
+
+	me.task = subject
+	return nil
+}
+
+func (me *Manager) runPrepare(system string,
+	path string, secret *libsecrets.Secrets) (err error) {
+	subject := &preparer{
+		thisSystem: system,
+		variables:  me.Variables,
+	}
+
+	err = subject.Parse(path, secret)
+	if err != nil {
+		return err
+	}
+
+	me.task = subject
+	return nil
+}
+
+func (me *Manager) runBuild(system string,
+	path string, secret *libsecrets.Secrets) (err error) {
+	subject := &basicCMD{
+		thisSystem: system,
+		variables:  me.Variables,
+	}
+
+	err = subject.Parse(path, secret)
+	if err != nil {
+		return err
+	}
+
+	me.task = subject
+	return nil
+}
+
+func (me *Manager) runPackage(system string,
+	path string, secret *libsecrets.Secrets) (err error) {
+	subject := &packager{
+		thisSystem: system,
+		variables:  me.Variables,
+	}
+
+	err = subject.Parse(path, secret)
+	if err != nil {
+		return err
+	}
+
+	me.task = subject
+	return nil
+}
+
+func (me *Manager) runRelease(system string,
+	path string, secret *libsecrets.Secrets) (err error) {
+	subject := &releaser{
+		thisSystem: system,
+		variables:  me.Variables,
+	}
+
+	err = subject.Parse(path, secret)
+	if err != nil {
+		return err
+	}
+
+	me.task = subject
+	return nil
+}
+
+func (me *Manager) runCompose(system string,
+	path string, secret *libsecrets.Secrets) (err error) {
+	subject := &basicCMD{
+		thisSystem: system,
+		variables:  me.Variables,
+	}
+
+	err = subject.Parse(path, secret)
+	if err != nil {
+		return err
+	}
+
+	me.task = subject
+	return nil
+}
+
+func (me *Manager) runPublish(system string,
+	path string, secret *libsecrets.Secrets) (err error) {
+	subject := &basicCMD{
+		thisSystem: system,
+		variables:  me.Variables,
+	}
+
+	err = subject.Parse(path, secret)
+	if err != nil {
+		return err
+	}
+
+	me.task = subject
+	return nil
+}
+
+func (me *Manager) runClean(system string,
+	path string, secret *libsecrets.Secrets) (err error) {
+	subject := &basicCMD{
+		thisSystem: system,
+		variables:  me.Variables,
+	}
+
+	err = subject.Parse(path, secret)
+	if err != nil {
+		return err
+	}
+
+	me.task = subject
+	return nil
 }
 
 func (me *Manager) runSetup(system string,
