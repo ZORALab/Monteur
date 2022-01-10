@@ -121,7 +121,7 @@ Source = '{{- .BinDir -}}/golangci-lint'
 Name = 'Install Golang-CI Linter'
 Type = 'move'
 Condition = [ 'all-all' ]
-Source = '{{- .WorkingDir -}}/golangci-lint-{{- .Version -}}-{{ .SourceSystem }}/golangci-lint'
+Source = '{{- .WorkingDir -}}/golangci-lint-{{- .Version -}}-{{ .SourceCompute }}/golangci-lint'
 Target = '{{- .BinDir -}}/golangci-lint'
 
 

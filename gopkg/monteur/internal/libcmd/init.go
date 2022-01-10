@@ -16,6 +16,8 @@
 package libcmd
 
 import (
+	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -66,6 +68,105 @@ func initializeLogger(logger **liblog.Logger,
 	}
 
 	(*logger).Info(libmonteur.LOG_JOB_INIT_SUCCESS)
+
+	return nil
+}
+
+func initializeMonteurFS(variables map[string]interface{}) (err error) {
+	var list []string
+	var data []byte
+	var thisOS, configPath, configDir, binDir string
+	var ok bool
+
+	// create list of directories
+	list = []string{}
+
+	// process critical directories
+	binDir, ok = variables[libmonteur.VAR_BIN].(string)
+	if !ok {
+		panic("MONTEUR_DEV: why is VAR_BIN missing?")
+	}
+	list = append(list, binDir)
+
+	configDir, ok = variables[libmonteur.VAR_CFG].(string)
+	if !ok {
+		panic("MONTEUR_DEV: why is VAR_CFG missing?")
+	}
+	configPath = filepath.Join(configDir,
+		libmonteur.FILENAME_BIN_CONFIG_MAIN,
+	)
+	configDir = filepath.Join(configDir,
+		libmonteur.DIRECTORY_MONTEUR_CONFIG_D,
+	)
+	list = append(list, configDir)
+
+	for _, path := range list {
+		err = os.MkdirAll(path, libmonteur.PERMISSION_DIRECTORY)
+		if err != nil {
+			return fmt.Errorf("%s: %s",
+				libmonteur.ERROR_DIR_CREATE_FAILED,
+				err,
+			)
+		}
+	}
+
+	// process thisOS
+	thisOS, ok = variables[libmonteur.VAR_OS].(string)
+	if !ok || thisOS == "" {
+		panic("MONTEUR_DEV: why is VAR_OS missing?")
+	}
+
+	switch thisOS {
+	case "linux",
+		"freebsd",
+		"openbsd",
+		"plan9",
+		"dragonfly",
+		"android",
+		"netbsd",
+		"solaris",
+		"darwin":
+		data = []byte(`#!/bin/sh
+export LOCAL_BIN="` + binDir + `"
+config_dir="` + configDir + `"
+
+stop() {
+	PATH=:${PATH}:
+	PATH=${PATH//:$LOCAL_BIN:/:}
+
+	for cfg in "$config_dir"/*; do
+		source "$cfg" --stop
+	done
+}
+
+case $1 in
+--stop)
+	stop
+	;;
+*)
+	export PATH="${PATH}:$LOCAL_BIN"
+	for cfg in "$config_dir"/*; do
+		source $cfg
+	done
+esac`)
+	default:
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_OS_UNSUPPORTED,
+			thisOS,
+		)
+	}
+
+	// remove previous file regardlessly
+	_ = os.RemoveAll(configPath)
+
+	// create file
+	err = os.WriteFile(configPath, data, libmonteur.PERMISSION_CONFIG)
+	if err != nil {
+		return fmt.Errorf("%s: %s",
+			libmonteur.ERROR_PROGRAM_CONFIG_FAILED,
+			err,
+		)
+	}
 
 	return nil
 }

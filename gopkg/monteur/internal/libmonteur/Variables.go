@@ -48,6 +48,9 @@ const (
 	VAR_PACKAGE_VERSION_DIGIT_LED = "PkgVersionDigitLed"
 	VAR_PACKAGE_OS                = "PkgOS"
 	VAR_PACKAGE_ARCH              = "PkgArch"
+	VAR_SOURCE_ARCH               = "SourceArch"
+	VAR_SOURCE_COMPUTE            = "SourceCompute"
+	VAR_SOURCE_OS                 = "SourceOS"
 	VAR_RELEASE                   = "ReleaseDir"
 	VAR_TIMESTAMP                 = "Timestamp"
 )

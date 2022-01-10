@@ -168,7 +168,7 @@ func sanitizeSources(sources map[string]*libmonteur.TOMLSource,
 	actual := sources[libmonteur.COMPUTE_SYSTEM_OMNI]
 
 	// get platform specific source
-	specific := _getSpecificSource(sources, thisSystem)
+	specific := _getSpecificSource(sources, thisSystem, variables)
 
 	// merge both into one
 	if actual == nil {
@@ -222,7 +222,8 @@ func sanitizeSources(sources map[string]*libmonteur.TOMLSource,
 }
 
 func _getSpecificSource(sources map[string]*libmonteur.TOMLSource,
-	thisSystem string) (out *libmonteur.TOMLSource) {
+	thisSystem string,
+	variables *map[string]interface{}) (out *libmonteur.TOMLSource) {
 	var ok bool
 	var list []string
 	var os, arch, system string
@@ -231,6 +232,9 @@ func _getSpecificSource(sources map[string]*libmonteur.TOMLSource,
 	list = strings.Split(thisSystem, "-")
 	os = list[0]
 	arch = list[1]
+	(*variables)[libmonteur.VAR_SOURCE_OS] = os
+	(*variables)[libmonteur.VAR_SOURCE_ARCH] = arch
+	(*variables)[libmonteur.VAR_SOURCE_COMPUTE] = thisSystem
 
 	// source output
 	out, ok = sources[thisSystem]
@@ -241,18 +245,20 @@ func _getSpecificSource(sources map[string]*libmonteur.TOMLSource,
 	// check if is specific arm type
 	if arch == "arm" {
 		list = []string{
-			"armv7l",
-			"armv7",
-			"armv6l",
-			"armv6",
-			"armhf",
 			"armel",
+			"armhf",
+			"armv6",
+			"armv6l",
+			"armv7",
+			"armv7l",
 		}
 
 		for _, t := range list {
 			system = os + "-" + t
 			out, ok = sources[system]
 			if ok {
+				(*variables)[libmonteur.VAR_SOURCE_ARCH] = t
+				(*variables)[libmonteur.VAR_SOURCE_COMPUTE] = system
 				return out
 			}
 		}

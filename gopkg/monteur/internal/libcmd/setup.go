@@ -149,12 +149,6 @@ func (me *setup) Run(ctx context.Context, ch chan conductor.Message) {
 	me.log.Info(libmonteur.LOG_JOB_START + "\n\n")
 	me.reportUp = ch
 
-	err = me.prepareMonteurFS()
-	if err != nil {
-		me.reportError(err)
-		return
-	}
-
 	unpackFx, err = me.prepareUnpackFx()
 	if err != nil {
 		me.reportError(err)
@@ -211,92 +205,7 @@ func (me *setup) Run(ctx context.Context, ch chan conductor.Message) {
 	}
 	me.log.Info("Executing config scripting ➤ DONE\n\n")
 
-	me.log.Info("Executing main config scripting now...")
-	err = me.createMainConfig()
-	if err != nil {
-		me.reportError(err)
-		return
-	}
-	me.log.Info("Executing main config scripting ➤ DONE\n\n")
-
 	me.reportDone()
-}
-
-func (me *setup) createMainConfig() (err error) {
-	var data []byte
-	var thisOS, configPath, configDir, binDir string
-
-	// process configDir
-	configDir = me.variables[libmonteur.VAR_CFG].(string)
-	configPath = filepath.Join(configDir,
-		libmonteur.FILENAME_BIN_CONFIG_MAIN,
-	)
-	configDir = filepath.Join(configDir,
-		libmonteur.DIRECTORY_MONTEUR_CONFIG_D,
-	)
-
-	// process binDir
-	binDir = me.variables[libmonteur.VAR_BIN].(string)
-
-	// process thisOS
-	thisOS = me.variables[libmonteur.VAR_OS].(string)
-
-	switch thisOS {
-	case "linux",
-		"freebsd",
-		"openbsd",
-		"plan9",
-		"dragonfly",
-		"android",
-		"netbsd",
-		"solaris",
-		"darwin":
-		data = []byte(`#!/bin/sh
-export LOCAL_BIN="` + binDir + `"
-config_dir="` + configDir + `"
-
-stop() {
-	PATH=:${PATH}:
-	PATH=${PATH//:$LOCAL_BIN:/:}
-
-	for cfg in "$config_dir"/*; do
-		source "$cfg" --stop
-	done
-}
-
-case $1 in
---stop)
-	stop
-	;;
-*)
-	export PATH="${PATH}:$LOCAL_BIN"
-	for cfg in "$config_dir"/*; do
-		source $cfg
-	done
-esac`)
-	default:
-		return fmt.Errorf("%s: %s",
-			libmonteur.ERROR_OS_UNSUPPORTED,
-			thisOS,
-		)
-	}
-
-	// generate pathing
-	me.log.Info("Post main-configuring into '%s'", configPath)
-
-	// remove previous file regardlessly
-	_ = os.RemoveAll(configPath)
-
-	// create file
-	err = os.WriteFile(configPath, data, libmonteur.PERMISSION_CONFIG)
-	if err != nil {
-		return fmt.Errorf("%s: %s",
-			libmonteur.ERROR_PROGRAM_CONFIG_FAILED,
-			err,
-		)
-	}
-
-	return nil
 }
 
 func (me *setup) processConfig() (err error) {
@@ -403,47 +312,6 @@ func (me *setup) prepareUnpackFx() (out func(*libmonteur.TOMLSource,
 	}
 
 	return out, err
-}
-
-func (me *setup) prepareMonteurFS() (err error) {
-	var list []string
-	var ret string
-	var ok bool
-
-	// create list of directory preparations
-	list = []string{}
-
-	// check critical variables
-	ret, ok = me.variables[libmonteur.VAR_OS].(string)
-	if !ok || ret == "" {
-		panic("MONTEUR_DEV: why is VAR_OS missing?")
-	}
-
-	// get critical paths
-	ret, ok = me.variables[libmonteur.VAR_BIN].(string)
-	if !ok {
-		panic("MONTEUR_DEV: why is VAR_BIN missing?")
-	}
-	list = append(list, ret)
-
-	ret, ok = me.variables[libmonteur.VAR_CFG].(string)
-	if !ok {
-		panic("MONTEUR_DEV: why is VAR_CFG missing?")
-	}
-	ret = filepath.Join(ret, libmonteur.DIRECTORY_MONTEUR_CONFIG_D)
-	list = append(list, ret)
-
-	for _, path := range list {
-		err = os.MkdirAll(path, libmonteur.PERMISSION_DIRECTORY)
-		if err != nil {
-			return fmt.Errorf("%s: %s",
-				libmonteur.ERROR_DIR_CREATE_FAILED,
-				err,
-			)
-		}
-	}
-
-	return nil
 }
 
 // Name is to return the task name

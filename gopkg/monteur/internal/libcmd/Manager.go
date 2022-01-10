@@ -141,22 +141,34 @@ func (me *Manager) Parse(path string, secret *libsecrets.Secrets) (err error) {
 
 		me.task = subject
 	case libmonteur.JOB_SETUP:
-		subject := &setup{
-			thisSystem: system,
-			variables:  me.Variables,
-		}
-
-		err = subject.Parse(path, secret)
-		if err != nil {
-			return err
-		}
-
-		me.task = subject
+		err = me.runSetup(system, path, secret)
 	default:
 		panic("MONTEUR DEV: What kind of job is this? ➤ " + me.Job)
 	}
 
 	return err
+}
+
+func (me *Manager) runSetup(system string,
+	path string, secret *libsecrets.Secrets) (err error) {
+	err = initializeMonteurFS(me.Variables)
+	if err != nil {
+		return err
+	}
+
+	subject := &setup{
+		thisSystem: system,
+		variables:  me.Variables,
+	}
+
+	err = subject.Parse(path, secret)
+	if err != nil {
+		return err
+	}
+
+	me.task = subject
+
+	return nil
 }
 
 // Name is for generating the program Metadata.Name when used as in interface.
