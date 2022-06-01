@@ -11,7 +11,7 @@ PublishBranch = 'gh-pages'
 PublishCommitID='Will be overwritten by publish command sequences'
 
 [FMTVariables]
-SourceDir = '{{- .RootDir -}}/.sites'
+SourceDir = '{{- .RootDir -}}/.configs/hugo'
 DestinationDir = '{{- .WorkingDir -}}/public'
 PublishDir = '{{- .WorkingDir -}}/{{- .PublishBranch -}}'
 
@@ -30,21 +30,8 @@ Condition = 'all-all'
 Type = 'command'
 Command = 'git'
 
-[[Dependencies]]
-Name = 'Bissetii'
-Condition = 'all-all'
-Type = 'command'
-Command = 'bissetii'
 
 
-
-
-[[CMD]]
-Name = "Bissetii get latest theme modules"
-Type = 'command'
-Condition = [ 'all-all' ]
-Location = '{{- .RootDir -}}'
-Source = 'bissetii --get'
 
 [[CMD]]
 Name = "Delete Destination Directory for Clean Build"
@@ -66,6 +53,14 @@ Condition = [ 'all-all' ]
 Location = '{{- .SourceDir -}}'
 Source = '{{- .DestinationDir -}}/{{- .MainLang -}}/404.html'
 Target = '{{- .DestinationDir -}}/404.html'
+
+[[CMD]]
+Name = "Script No Jekyll file for Github compatibility"
+Type = "script"
+Condition = [ 'all-all' ]
+Location = '{{- .SourceDir -}}'
+Source = 'No Jekyll'
+Target = '{{- .DestinationDir -}}/.nojekyll'
 
 [[CMD]]
 Name = "Copy GitLab CI if available"

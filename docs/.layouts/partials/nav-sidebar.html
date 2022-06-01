@@ -1,0 +1,56 @@
+{{- /* WARNING: Auto-generated file. DO NOT EDIT! */ -}}
+
+{{- /* .RightSide         = Set NavSidebar animation to push towards left */ -}}
+{{- /* .Class             = NavSidebar class attribute                    */ -}}
+{{- /* .ID                = NavSidebar id attribute                       */ -}}
+{{- /* .Menu              = NavSidebar Menu icon HTML code                */ -}}
+{{- /* .Close             = NavSidebar Close icon HTML code               */ -}}
+{{- /* .List              = NavSidebar primary List                       */ -}}
+{{- /*   .UID             = List UID for animation identification         */ -}}
+{{- /*   .HTML            = HTML content for the item                     */ -}}
+{{- /*   .Items           = Sub list. Repeat List structure. Optional.    */ -}}
+
+{{- define "nav-sidebar-item" -}}
+<li {{- if .ID }} id="{{- .ID -}}"{{- end -}}
+	{{- if .Class }} class="{{- .Class -}}"{{- end -}}
+	{{- if .Style }} style="{{- .Style -}}"{{- end -}}>
+	{{- if ne (len .Items) 0 }}
+		<input id="nav-sidebar-submenu-{{- .UID -}}"
+			type="checkbox"
+			checked>
+		<label for="nav-sidebar-submenu-{{- .UID -}}">
+			{{- .HTML -}}
+		</label>
+		<ul id="nav-sidebar-submenu-list-{{- .UID -}}">
+			{{- range .Items }}
+				{{ template "nav-sidebar-item" . -}}
+			{{- end -}}
+		</ul>
+	{{- else }}
+		{{ .HTML }}
+	{{- end }}
+</li>
+{{ end -}}
+
+<nav class="nav-sidebar{{- if .RightSide }} right-side{{- end }}
+	{{- if .DrawerMode }} drawer{{- end }}
+	{{- if .Class }} {{ .Class -}}{{- end }}"
+	{{- if .ID }}id="{{- .ID -}}"{{- end -}}>
+	<input id="nav-sidebar-{{- .List.UID -}}"
+		class="nav-sidebar-trigger"
+		type="checkbox">
+	<label class="nav-sidebar-trigger" for="nav-sidebar-{{- .List.UID -}}">
+		{{- .Menu -}}
+		{{- .Close -}}
+	</label>
+	<label class="nav-sidebar-shade" for="nav-sidebar-{{- .List.UID -}}">
+	</label>
+	<ul class="nav-sidebar-list">
+		{{- if .List.HTML }}
+			<li class="nav-sidebar-title">{{ .List.HTML }}</li>
+		{{- end -}}
+		{{- range .List.Items }}
+			{{ template "nav-sidebar-item" . -}}
+		{{- end -}}
+	</ul>
+</nav>

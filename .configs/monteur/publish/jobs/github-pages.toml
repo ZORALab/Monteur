@@ -1,12 +1,15 @@
 [Metadata]
-Name = 'Gitlab Pages'
+Name = 'GitHub Pages'
 Description = """
-Publish web documentations artifact into GitLab Pages.
+Publish web documentations artifact into GitHub Pages.
 """
+
+
+
 
 [Variables]
 PublishBranch = 'gh-pages'
-FirstCommitID = 'Will be overwritten by publish command sequences'
+FirstCommitID = 'Will be overwritten by CMD'
 
 [FMTVariables]
 SourceDir = '{{- .DocsDir -}}/public'

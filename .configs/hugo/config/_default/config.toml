@@ -15,11 +15,11 @@ enableRobotsTXT = true
 
 archetypeDir = "archetypes"
 assetDir = "assets"
-dataDir = "../docs/.data"
-staticDir = [ "static", "../static", "../docs/.static" ]
-layoutDir = "layouts"
+dataDir = "../../docs/.data"
+staticDir = [ "static", "../../docs/.static" ]
+layoutDir = "../../docs/.layouts"
 themesDir = "themes"
-publishDir = "../public"
+publishDir = "../../public"
 i18nDir = "i18n"
 
 defaultContentLanguage = "en"

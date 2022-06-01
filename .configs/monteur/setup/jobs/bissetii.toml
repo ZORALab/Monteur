@@ -1,0 +1,70 @@
+[Metadata]
+Name = 'Hugo Theme - Bissetii'
+Description = """
+Setup Bissetii Hugo Theme into existing hugo themes directory.
+"""
+Type = 'local-system'
+
+
+
+
+[Variables]
+Version = 'main'
+BaseURL = 'https://gitlab.com/zoralab/bissetii.git'
+Theme = 'bissetii'
+ThemesDir = '.configs/hugo/themes'
+
+[FMTVariables]
+
+
+
+
+# Supported OS and CPU Architectures program sources. The Key for supported
+# OS and CPU complies to the format:
+#	[Sources.{GOOS}-{GOARCH}]
+# Only list out supported packages will do.
+[Sources.all-all]
+Format = 'raw'
+Archive = 'To be Deleted'
+Method = 'GET'
+URL = 'git'
+
+
+
+
+[[CMD]]
+Name = 'Delete Target for Installation'
+Type = 'delete-recursive-quiet'
+Condition = ['all-all']
+Source = '{{- .ThemesDir -}}/{{- .Theme -}}'
+
+[[CMD]]
+Name = 'Install Hugo Theme via Git'
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'git clone {{ .BaseURL }} {{ .ThemesDir -}}/{{- .Theme -}}'
+
+[[CMD]]
+Name = 'Checkout the desired version (branch / tag)'
+Type = 'command'
+Condition = [ 'all-all' ]
+Location = '{{ .ThemesDir -}}/{{- .Theme -}}'
+Source = 'git checkout {{ .Version }}'
+
+
+
+
+# Config file for localized filesystem initialization.
+[Config]
+linux = """
+#!/bin/bash
+
+_name="bissetii"
+
+case $1 in
+--stop)
+	;;
+*)
+	;;
+esac
+"""
