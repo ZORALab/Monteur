@@ -1,6 +1,8 @@
-[comment]: # (GitLab Internal Operation Headers)
-/label ~"Documentation" ~"Discussion"
-[comment]: # (GitLab Internal Operation Headers)
+---
+name: "Documentation Problem"
+about: "use for reporting documentation problem regarding the repository."
+labels: "Documentation, Discussion"
+---
 
 # Description
 ```

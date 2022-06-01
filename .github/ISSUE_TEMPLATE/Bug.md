@@ -1,12 +1,13 @@
-[comment]: # (GitLab Internal Operation Headers)
-/label ~"Bug" ~"Discussion"
-[comment]: # (GitLab Internal Operation Headers)
+---
+name: "Bug Report"
+about: "use for reporting bug/gitches regarding the repository."
+labels: "Bug, Discussion"
+---
 
 # Description
 ```
 Please provide a short description of what you have encountered below.
 ```
-
 
 
 
@@ -34,7 +35,7 @@ Please specify all the steps required to re-produce the problem.
 
 
 
-# Attachment
+# Attachments
 ```
 Please drag and drop the necessary data files (e.g. screenshot, logs, etc)
 below.
