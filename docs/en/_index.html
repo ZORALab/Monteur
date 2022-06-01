@@ -1,0 +1,164 @@
++++
+date = "2021-11-21T10:38:47+08:00"
+title = "Monteur"
+description = """
+A localized CI software robot to manage your software repository locally and
+integrable with latest CI service providers. It is built to do more with less
+noises; business sense.
+"""
+keywords = [
+	"Monteur",
+	"ZORALab",
+	"ci",
+	"localized",
+	"continuous integrations",
+	"software",
+	"repository",
+	"git",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/img/thumbnails/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur"
+
+[thumbnails.1]
+url = "/img/thumbnails/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur"
+
+[thumbnails.2]
+url = "/img/thumbnails/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur"
+
+
+[menu.main]
+parent = ""
+name = "Home"
+pre = "💠"
+weight = 1
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<div class="align center middle">
+		<img src="{{< link "/img/logo/zoralab-monteur-1200x628.svg"
+			"" "url-only" />}}"
+			alt="ZORALab's Monteur"
+			width="1200"
+			height="628"
+			loading="lazy"
+		>
+	</div>
+	<h1>{{% param "title" %}}</h1>
+	<p>
+{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="why-monteur">
+	<h2>So Why Use Monteur?</h2>
+	<p>
+		Since there are so many continuous integration services in the
+		market, here are some of the great reasons to use Monteur for
+		your existing and new automation projects:
+	</p>
+
+{{< cards "en.cards.monteur.features"
+	"--grid-column-max-width:max-content;--grid-justify-content:center;" >}}
+</section>
+
+
+
+
+<section id="who-uses-monteur">
+	<h2>So Who Uses Monteur Already?</h2>
+	<p>
+		Don't just take our words for it. Check out these projects and
+		their portfolios!
+	</p>
+{{< cards "en.cards.monteur.portfolios"
+	"--grid-column-max-width:max-content;--grid-justify-content:center;" >}}
+</section>
+
+
+
+
+<section id="contributors">
+	<h2>Project Contributors</h2>
+	<p>
+		This project is definitely not a lone efforts. Please check out
+		all our past and current contributors, both codes and media!
+	</p>
+
+	<section id="codes-development-contributors">
+		<h3>Code Development</h3>
+		<p>
+			These people continuously contributes their coding and
+			algorithms into the projects:
+		</p>
+{{< cards "en.cards.monteur.contributors"
+	"text-align:center;--grid-column-max-width:max-content;--grid-justify-content:center;" >}}
+	</section>
+
+	<section id="media-contributors">
+		<h3>Graphics and Media</h3>
+		<p>
+			These people contributes their photography, graphics,
+			and media artworks to keep the project fresh and lively:
+		</p>
+{{< cards "en.cards.monteur.artists"
+	"text-align:center;--grid-column-max-width:max-content;--grid-justify-content:center;" >}}
+	</section>
+</section>
+
+
+
+
+<section id="try-monteur">
+	<h2>Try Monteur out!</h2>
+	<p>
+		It's easy to install, readily available on major platforms.
+		Please give it a try or explore its potentials. Monteur — do
+		more; less noises; busienss sense!
+	</p>
+	<div class="align center middle">
+		<a href="{{< link "/getting-started" "this" "url-only" />}}"
+			class="button">
+			Get Started with Monteur
+		</a>
+	</div>
+</section>
