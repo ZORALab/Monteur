@@ -72,9 +72,9 @@ selectType = "WebPage"
 
 {{< align center middle >}}
 {{< image "ZORALab's Monteur"
-	"/img/logo/banner-1200x400.svg"
+	"/img/logo/zoralab-monteur-1200x628.svg"
 	"1200"
-	"400"
+	"628"
 	"false"
 	"lazy"
 	""
