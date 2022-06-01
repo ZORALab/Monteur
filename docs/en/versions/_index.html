@@ -1,0 +1,193 @@
++++
+date = "2021-12-23T21:34:34+08:00"
+title = "Downloads Portal"
+description = """
+A catalog of ZORALab's Monteur multiple release versions across its birth time.
+Each version contains advancement upgrades necessary to improve its capability
+and performances.
+"""
+keywords = [
+	"releases",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "list"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/versions/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "Monteur Releases"
+
+[thumbnails.1]
+url = "/en/versions/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "Monteur Releases"
+
+[thumbnails.2]
+url = "/en/versions/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "Monteur Releases"
+
+
+[menu.main]
+parent = ""
+name = "Downloads"
+pre = "📥"
+weight = 5
+identifier = "versions"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="installation">
+	<h2>Installation</h2>
+	<p>
+		To install Monteur into your operating system, please find your
+		operating system guides and execute its instructions:
+	</p>
+
+
+	<section id="installation-debian">
+		<h3>Debian-based OS</h3>
+		<p>
+			A dedicated <code>apt</code> repository was setup for
+			Debian-based operating system. This <code>apt</code>
+			package repository is always packed with the latest
+			version <b>ONLY</b>.
+			<br/>
+			While with <code>root</code> permission (e.g. prepend
+			<code>sudo</code> if you're sudoer), please execute the
+			following ONE-TIME setup instructions:
+{{% highlight bash "linenos=table,hl_lines=[],linenostart=1" %}}
+# [STEP 1] ZORALab public GPG Keys
+# NOTE:
+#   1. skip if you done this before for other ZORALAb's products.
+#   2. redo this step if apt complains about incompatible key (means we
+#      refreshed our keys and you need to get the latest one again).
+curl https://www.zoralab.com/pubkey.gpg \
+	| gpg --yes --dearmor --output /usr/share/keyrings/zoralab-keyring.gpg
+
+# [STEP 2] Create APT Source List File
+# Please replace any tailing upstream to match your needs:
+#  1. 'main stable'       - MAIN branch, a stable suite (DEFAULT)
+#  2. 'staging unstable'  - STAGING branch, a testing/unstable suite
+#  3. 'next experimental' - NEXT branch, a bleeding edge experiemntal suite
+echo 'deb [signed-by=/usr/share/keyrings/zoralab-keyring.gpg] https://monteur.zoralab.com/releases/deb main stable' \
+	> /etc/apt/sources.list.d/zoralab-monteur.list
+
+# [STEP 3] perform apt update
+apt update -y
+
+# [STEP 4] install monteur
+apt install montuer -y
+
+# [STEP 5] exit root account (If you use 'sudo', please skip this step)
+exit
+{{% /highlight %}}
+		<br/>
+		You should test out your newly installed Monteur with the
+		following:
+{{% highlight bash "linenos=table,hl_lines=[],linenostart=1" %}}
+# test out monteur
+monteur help
+{{% /highlight %}}
+		</p>
+	</section>
+
+
+	<section id="installation-go">
+		<h3>Go</h3>
+		<p>
+			Monteur is completely available for <code>go get</code>
+			instruction. Simply issue the following command for a
+			proper Go programming language setup system:
+{{% highlight bash "linenos=table,hl_lines=[],linenostart=1" %}}
+go install gitlab.com/zoralab/monteur/gopkg/app/monteur@main
+{{% /highlight %}}
+		<br/>
+		Please select the branches accordingly to meet your needs:
+		<ul>
+			<li><p>
+				<b><code>main</code></b> - stable and current
+				branch.
+			</p></li>
+			<li><p>
+				<b><code>staging</code></b> - next stable branch
+				that is under testing.
+			</p></li>
+			<li><p>
+				<b><code>next</code></b> - bleeding edge branch
+				(unstable due to development).
+			</p></li>
+		</ul>
+		</p>
+	</section>
+</section>
+
+
+
+<section id="source-codes">
+	<h2>Source Codes</h2>
+	<p>
+		Starting from June 1, 2022, Monteur source codes are publicly
+		available at: <a class="button"
+		href="https://github.com/ZORALab/Monteur">
+		https://github.com/ZORALab/Monteur</a>
+		<br/><br/>
+		It was previously hosted on GitLab until they have a different
+		business direction incompatible with ZORALab's Monteur busienss
+		direction. Hence, we migrated the entire repository into GitHub.
+		<br/><br/>
+		ZORALab's Monteur source codes repository is fully managed using
+		<code>git</code> version control system.
+	</p>
+</section>
+
+
+
+
+<section id="archived-files">
+	<h2>Archived Files</h2>
+	<p>
+		Here are our available archived files (in <code>.tar.gz</code>
+		or <code>.zip</code> formats) based on the available versions:
+	</p>
+</section>
