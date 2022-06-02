@@ -1,0 +1,360 @@
++++
+date = "2021-12-24T00:51:19+08:00"
+title = "Version v0.0.1"
+description = """
+Monteur released its version v0.0.1 with a bunch of new changes, notable
+releases and supports, and upgrades. This section denotes all the important
+notices related to this release.
+"""
+keywords = [
+	"version",
+	"v0.0.1",
+	"releases",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/versions/v0-0-1/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Version v0.0.1"
+
+[thumbnails.1]
+url = "/en/versions/v0-0-1/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Version v0.0.1"
+
+[thumbnails.2]
+url = "/en/versions/v0-0-1/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Version v0.0.1"
+
+
+[menu.main]
+parent = "Versions"
+name = "v0.0.1"
+pre = "🏅"
+weight = 5
+identifier = "versions-v0.0.1"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+{{% param "description" %}}
+		<br/><br/>
+		This release primarily focuses on prototyping Monteur fulfilling
+		its objective. It is the proof-of-concept of the technology.
+	</p>
+</section>
+
+
+
+
+<section id="supported-variants">
+	<h2>Supported Variants</h2>
+	<p>
+		Here are the list of supported Monteur variants available for
+		different platforms and CPU architectures.
+	</p>
+	<ul>
+		<li><p>
+			<code>linux-amd64</code> - <code>.deb</code>
+		</p></li>
+	</ul>
+</section>
+
+
+
+
+<section id="notable-changes">
+	<h2>Notable Changes</h2>
+	<p>
+		Here are some of the notable changes for this version.
+	</p>
+
+
+	<section id="backward-compatible-changes">
+		<h3>Backward Compatible</h3>
+		<p>
+			Among the backward-compatible changes are:
+		</p>
+		<ol>
+			<li><p>
+				<b>Added Setup API</b> - Allows Monteur to
+				download all dependencies and have the
+				repository ready for opreations. Supported
+				features are:
+					<ul>
+						<li><p>
+							Go codes with no mix up.
+						</p></li>
+						<li><p>
+							Handles checksum safety
+							checking.
+						</p></li>
+						<li><p>
+							Automatic hardware and
+							platform identification.
+						</p></li>
+						<li><p>
+							Automatic target
+							extraction.
+						</p></li>
+						<li><p>
+							Facilitate post
+							scripting
+							configurations.
+						</p></li>
+						<li><p>
+							Parallel executions.
+						</p></li>
+						<li><p>
+							Universally halt if
+							any error is found.
+						</p></li>
+						<li><p>
+							Supported
+							<a href="{{< link "/internals/commands"
+								"this" "url-only" />}}">
+							Command</a>.
+						</p></li>
+					</ul>
+			</p></li>
+			<li><p>
+				<b>Added Test API</b> - Allows Monteur to
+				execute all test instructions consistently at
+				developer level and plans for automated CI.
+				Supported features are:
+					<ul>
+						<li><p>
+							Test Coverage regex
+							parsing.
+						</p></li>
+						<li><p>
+							Dump repot to
+							<code>STDOUT</code> for
+							piping.
+						</p></li>
+						<li><p>
+							Supported
+							<a href="{{< link "/internals/commands"
+								"this" "url-only" />}}">
+							Command</a>.
+						</p></li>
+					</ul>
+			</p></li>
+			<li><p>
+				<b>Added Clean API</b> - Allows Monteur to clean
+				the repository back to its initial stage.
+				Supported features are:
+					<ul>
+						<li><p>
+							Self-clean any directory
+							or file in the
+							repository.
+						</p></li>
+						<li><p>
+							Supported
+							<a href="{{< link "/internals/commands"
+								"this" "url-only" />}}">
+							Command</a>.
+						</p></li>
+					</ul>
+			</p></li>
+			<li><p>
+				<b>Added Build API</b> - Allows Monteur to
+				consistently and systematically build the
+				production grade output product. Supported
+				features are:
+					<ul>
+						<li><p>
+							Systematic and
+							consistent data
+							structure to build
+							variations.
+						</p></li>
+						<li><p>
+							Customizable build steps
+							for each build.
+						</p></li>
+						<li><p>
+							Supported
+							<a href="{{< link "/internals/commands"
+								"this" "url-only" />}}">
+							Command</a>.
+						</p></li>
+					</ul>
+			</p></li>
+			<li><p>
+				<b>Added Package API</b> - Allows Monteur to
+				assemble and pack the production-grade built
+				software into various packages. Supported
+				feature are:
+					<ul>
+						<li><p>
+							Seamless dynamic for
+							packaging all variants
+							of a distribution.
+						</p></li>
+						<li><p>
+							Supported
+							<a href="{{< link "/internals/commands"
+								"this" "url-only" />}}">
+							Command</a>.
+						</p></li>
+					</ul>
+			</p></li>
+			<li><p>
+				<b>Added Release API</b> - Allows Monteur to
+				consistently release the software packages to
+				the designated distributions. Supported features
+				are:
+					<ul>
+						<li><p>
+							Supported
+							<a href="{{< link "/internals/commands"
+								"this" "url-only" />}}">
+							Command</a>.
+						</p></li>
+					</ul>
+			</p></li>
+			<li><p>
+				<b>Added Compose API</b> - Allows Monteur to
+				generate and write the documentations of the
+				repository. Supported features are:
+					<ul>
+						<li><p>
+							Supported
+							<a href="{{< link "/internals/commands"
+								"this" "url-only" />}}">
+							Command</a>.
+						</p></li>
+					</ul>
+			</p></li>
+			<li><p>
+				<b>Added Publish API</b> - Allows Monteur to
+				publish the composed documentations of the
+				repository to the publishers. Supported feature
+				are:
+					<ul>
+						<li><p>
+							Supported
+							<a href="{{< link "/internals/commands"
+								"this" "url-only" />}}">
+							Command</a>.
+						</p></li>
+					</ul>
+			</p></li>
+			<li><p>
+				<b>Enable Custom Headers for HTTPS download</b>
+				- Setup recipes can set custom headers like
+				<code>User-Agent</code> before interacting with
+				the supplier's server.
+			</p></li>
+			<li><p>
+				<b>Enable Secrets Data Parsing</b> - allows
+				the use of sensitive data (e.g. authentication
+				token) in Montuer. Supported features are:
+					<ul>
+						<li><p>
+							Key-Value driven TOML
+							format.
+						</p></li>
+						<li><p>
+							Read via multiple
+							overriding layers from
+							user directory to
+							repository level.
+						</p></li>
+						<li><p>
+							Follows symlink if given
+							as filepath.
+						</p></li>
+					</ul>
+			</p></li>
+		</ol>
+	</section>
+
+
+	<section id="non-backward-compatible">
+		<h3>Non-Backward Compatible</h3>
+		<p>
+			<b>NO non-backward compatible</b> changes found for this
+			version.
+		</p>
+	</section>
+</section>
+
+
+
+
+<section id="whats-next">
+	<h2>What's Next</h2>
+	<p>
+		Given the fact that Monteur has to be working in a
+		cross-platform manner, the following new changes are seen as
+		important and given priority:
+		<ol>
+			<li><p>
+				Support <code>darwin-amd64</code> and
+				<code>darwin-arm64</code>.
+			</p></li>
+			<li><p>
+				Native support of <code>.deb</code> packaging
+				mechanism (complies to linting, security, and
+				standards).
+			</p></li>
+			<li><p>
+				Native support of <code>.zip</code> packaging
+				mechanism.
+			</p></li>
+			<li><p>
+				Native support of <code>.tar.gz</code> packaging
+				mechanism.
+			</p></li>
+			<li><p>
+				Native support of <code>SHA</code> checksum
+				mechanism.
+			</p></li>
+		</ol>
+	</p>
+</section>
+
+
+
+
+{{< epilogue >}}
+That's all for this release.
+{{< /epilogue >}}
