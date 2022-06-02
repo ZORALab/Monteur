@@ -1,0 +1,21 @@
+{{- /* .context              = Page data for processing        */ -}}
+{{- /* .Content              = Content of the link             */ -}}
+{{- /* .OutputFormat         = Selected link output format     */ -}}
+
+
+
+
+{{- /* Create variables for work */ -}}
+{{- $dataList := dict "context" .context -}}
+
+
+
+
+{{- /* process .Content */ -}}
+{{- $dataList = merge $dataList (dict "Content" (safeHTML .Content)) -}}
+
+
+
+
+{{- /* Render the output */ -}}
+{{- partial "epilogue-en.html" $dataList -}}
