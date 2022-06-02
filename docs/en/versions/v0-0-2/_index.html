@@ -1,0 +1,322 @@
++++
+date = "2021-12-24T00:51:19+08:00"
+title = "Version v0.0.2"
+description = """
+Monteur released its version v0.0.2 with a bunch of new changes, notable
+releases and supports, and upgrades.
+"""
+keywords = [
+	"version",
+	"v0.0.2",
+	"releases",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/versions/v0-0-2/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Version v0.0.2"
+
+[thumbnails.1]
+url = "/en/versions/v0-0-2/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Version v0.0.2"
+
+[thumbnails.2]
+url = "/en/versions/v0-0-2/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Version v0.0.2"
+
+
+[menu.main]
+parent = "Versions"
+name = "v0.0.2"
+pre = "🏅"
+weight = 5
+identifier = "versions-v0.0.2"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+{{% param "description" %}}
+		<br/><br/>
+		This release primarily interate major feature improvements over
+		the first prototype to standardize its internal operations and
+		external interactions. There are non-backward compatible changes
+		so please go through this document clearly for what has changed.
+	</p>
+{{< note error "Heads Up" >}}
+There is a bug where the Setup API failed to create the main MonteurFS
+directories like <code>.monteurFS/bin</code> and
+<code>.monteurFS/config/config.d</code>.
+
+Please upgrade to Monteur version <code>v0.0.3</code> or manually create those
+main directories for Monteur to work.
+{{< /note >}}
+</section>
+
+
+
+
+<section id="supported-variants">
+	<h2>Supported Variants</h2>
+	<p>
+		Here are the list of supported Monteur variants available for
+		different platforms and CPU architectures.
+	</p>
+	<ul>
+		<li><p>
+			<b><code>linux-amd64</code></b> —
+				<code>.deb</code>,
+				<code>.tar.gz</code>
+		</p></li>
+		<li><p>
+			<b><code>linux-arm64</code></b> —
+				<code>.deb</code>,
+				<code>.tar.gz</code>
+		</p></li>
+		<li><p>
+			<b><code>linux-arm (v7)</code></b> —
+				<code>.deb</code>,
+				<code>.tar.gz</code>
+		</p></li>
+		<li><p>
+			<b><code>darwin-amd64</code></b> —
+				<code>.tar.gz</code>
+		</p></li>
+		<li><p>
+			<b><code>darwin-arm64</code></b> —
+				<code>.tar.gz</code>
+		</p></li>
+		<li><p>
+			<b><code>windows-amd64</code></b> —
+				<code>.zip</code>
+		</p></li>
+		<li><p>
+			<b><code>windows-arm64</code></b> —
+				<code>.zip</code>
+		</p></li>
+	</ul>
+</section>
+
+
+
+
+<section id="notable-changes">
+	<h2>Notable Changes</h2>
+	<p>
+		Here are some of the notable changes for this version.
+	</p>
+
+
+	<section id="backward-compatible-changes">
+		<h3>Backward Compatible</h3>
+		<p>
+			Among the backward-compatible changes are:
+		</p>
+		<ol>
+			<li><p>
+				<b>Added Init API</b> - Allows Monteur to
+				easily initialize a repository with its
+				configurations. Supported features are:
+					<ul>
+						<li><p>
+							Seamless consistent
+							initialization.
+						</p></li>
+					</ul>
+			</p></li>
+			<li><p>
+				<b>Added Prepare API</b> - Allows Monteur to
+				perform repository updates prior to Test, Build,
+				or Compose API that are otherwise unsuitable
+				to be in any of them. Supported features are:
+					<ul>
+						<li><p>
+							Supported
+							<a href="{{< link "/internals/commands"
+								"this" "url-only" />}}">
+							Command</a>.
+						</p></li>
+					</ul>
+			</p></li>
+			<li><p>
+				<b>Added native <code>.tar.gz</code>
+				functions</b> - Allows Monteur to pack and
+				unpack the format without depending on external
+				software.
+			</p></li>
+			<li><p>
+				<b>Added native <code>.zip</code>
+				functions</b> - Allows Monteur to pack and
+				unpack the format without depending on external
+				software.
+			</p></li>
+			<li><p>
+				<b>Added native <code>sha256</code>
+				functions</b> - Allows Monteur to perform
+				integrity checksum without depending on external
+				software.
+			</p></li>
+			<li><p>
+				<b>Added native <code>sha512</code>
+				functions</b> - Allows Monteur to perform
+				integrity checksum without depending on external
+				software.
+			</p></li>
+			<li><p>
+				<b>Added native <code>sha512->sha256</code>
+				functions</b> - Allows Monteur to perform
+				integrity checksum without depending on external
+				software.
+			</p></li>
+			<li><p>
+				<b>Fixed <code>delete-quiet</code> not deleting
+				anything bug</b> - The CEU is now deleting
+				something.
+			</p></li>
+			<li><p>
+				<b>Added secret data support and logger
+				filtration</b> - To protect the confidentiality
+				of the data with dumb-redaction algorithm.
+			</p></li>
+			<li><p>
+				<b>Fixed Concurrency bug for Package API</b> -
+				The Package API will no longer fail in an
+				unpredictable way compared to all other APIs.
+			</p></li>
+			<li><p>
+				<b>Added support for <code>linux/arm</code>
+				platform</b> - Monteur should be able to opreate
+				in the said operating system and CPU.
+			</p></li>
+			<li><p>
+				<b>Added support for <code>darwin/amd64</code>
+				platform</b> - Monteur should be able to opreate
+				in the said operating system and CPU.
+			</p></li>
+		</ol>
+	</section>
+
+
+	<section id="non-backward-compatible">
+		<h3>Non-Backward Compatible</h3>
+		<p>
+			Among the backward-compatible changes are:
+		</p>
+		<ol>
+			<li><p>
+				<b>Renames all jobs directories (e.g.
+				<code>compose/composers</code>,
+				<code>publish/publishers</code>) into an unified
+				name called <code>jobs</code> (e.g.
+				<code>compose/jobs</code>,
+				<code>publish/jobs</code>)</b> - For simpler
+				communications and documentations.
+				<br/>
+				Actions Required from you:
+				<ol>
+					<li><p>
+						Manually rename all the said
+						directories accordingly.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<b>Shifted Build API's job directory from
+				<code>app/variants</code> to
+				<code>build/jobs</code></b> - For simpler
+				communications and documentations and
+				consistency over CI API.
+				<br/>
+				Actions Required from you:
+				<ol>
+					<li><p>
+						Manually move and rename all the
+						said directories accordingly.
+					</p></li>
+				</ol>
+			</p></li>
+		</ol>
+	</section>
+</section>
+
+
+
+
+<section id="whats-next">
+	<h2>What's Next</h2>
+	<p>
+		Now that Monteur main features are up and running, the next
+		phase is to ensure maximum compatibility between all release
+		distributions and packaging functions. The following new changes
+		are seen as important and given priority:
+		<ol>
+			<li><p>
+				Native support of <code>.deb</code> packaging
+				mechanism (complies to linting, security, and
+				standards).
+			</p></li>
+			<li><p>
+				External support of <code>Homebrew</code>
+				distribution for package API and release API.
+			</p></li>
+			<li><p>
+				External support of <code>AppImage</code>
+				distribution for package API and release API.
+			</p></li>
+		</ol>
+	</p>
+</section>
+
+
+
+
+<section id="downloadable-software">
+	<h2>Downloadable Software</h2>
+	<p>
+		Here are some of the downloadable Monteur archived packages
+		available for manual deployments:
+	</p>
+	{{< release "v0-0-2" />}}
+</section>
+
+
+
+
+{{< epilogue >}}
+That's all for this release.
+{{< /epilogue >}}
