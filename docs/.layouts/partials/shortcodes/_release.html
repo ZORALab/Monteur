@@ -18,14 +18,14 @@
 		{{- range $product := $data }}
 		{{- $url := printf "/%s/%s" $URLPrefix $product.URL -}}
 		<tr>
-			<th>
-				<a href="{{- safeHTMLAttr $url -}}" donwload>
+			<td>
+				<b><a href="{{- safeHTMLAttr $url -}}" download>
 				{{- safeHTML $product.Filename -}}
-				</a>
-			</th>
-			<th>
-				{{- safeHTML $product.Hash -}}
-			</th>
+				</a></b>
+			</td>
+			<td>
+				<code>{{- safeHTML $product.Hash -}}</code>
+			</td>
 		</tr>
 		{{- end }}
 	</tbody>
