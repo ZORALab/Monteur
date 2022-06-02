@@ -1,0 +1,145 @@
++++
+date = "2021-12-24T00:11:52+08:00"
+title = "Getting Started"
+description = """
+Using Monteur can be quite intimidating if left alone in the dark so here's a
+getting started guide for you; continuously updated one too!
+"""
+keywords = [
+	"Getting Started",
+	"ZORALab's Monteur",
+	"guides",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/getting-started/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "Getting Started with ZORALab's Monteur"
+
+[thumbnails.1]
+url = "/en/getting-started/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "Getting Started with ZORALab's Monteur"
+
+[thumbnails.2]
+url = "/en/getting-started/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "Getting Started with ZORALab's Monteur"
+
+
+[menu.main]
+parent = ""
+name = "Getting Started"
+pre = "🛫"
+weight = 5
+identifier = "getting-started"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="step-1-install-monteur">
+	<h2>Step 1: Install Monteur</h2>
+	<p>
+		For starter, regardless on whether you're here to create a
+		repository or working on existing one, you need to install
+		Monteur first. We have our downloads and installation guides
+		here (new window will open): <a
+			href="{{< link "/versions" "this" "url-only" />}}"
+			target="_blank"
+			class="button">
+		Download and Install Monteur</a>
+	</p>
+</section>
+
+
+
+
+<section id="step-2-setup-repository">
+	<h2>Step 2: Setup Your Repository</h2>
+	<p>
+		Now that you have Montuer working in your operating system, the
+		next step depends on what do you plan to do next, either A or B:
+	</p>
+
+
+	<section id="work-on-existing-repo">
+		<h3>(A) Working on Existing Repo</h3>
+		<p>
+			That's easy. What you probably need is to perform the
+			Setup API in your repository with the following command:
+{{% highlight bash "linenos=table,hl_lines=[],linenostart=1" %}}
+monteur setup
+{{% /highlight %}}
+			Depending on what you're working on, please let Monteur
+			setup the repository for operations. Once completed,
+			your repository is ready. The next time you want to
+			start working on it, simple source the localized
+			configuration file. Example, for <code>UNIX</code>/
+			<code>Linux</code> operating system:
+{{% highlight bash "linenos=table,hl_lines=[],linenostart=1" %}}
+source .monteurFS/config/main
+{{% /highlight %}}
+			and you're good to go!
+		</p>
+	</section>
+
+
+	<section id="initialize-a-new-repo">
+		<h3>(B) Initialize A New Repo</h3>
+		<p>
+			To initialize your repository with Monteur, simply head
+			over to our Monteur's Init API section and follows the
+			guide there:
+
+			<a href="{{< link "/internals/init-api" "this"
+				"url-only" />}}"
+				class="button">Montuer Init API</a>
+		</p>
+	</section>
+</section>
+
+
+
+
+{{< epilogue >}}
+That's all for getting started with Monteur.
+{{< /epilogue >}}
