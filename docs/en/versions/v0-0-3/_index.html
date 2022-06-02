@@ -1,0 +1,223 @@
++++
+date = "2022-01-10T10:30:19+08:00"
+title = "Version v0.0.3"
+description = """
+Monteur released its version v0.0.3 with a bunch of new changes, notable
+releases and supports, and upgrades. This section denotes all the important
+notices related to this release.
+"""
+keywords = [
+	"version",
+	"v0.0.3",
+	"releases",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/versions/v0-0-3/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Version v0.0.3"
+
+[thumbnails.1]
+url = "/en/versions/v0-0-3/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Version v0.0.3"
+
+[thumbnails.2]
+url = "/en/versions/v0-0-3/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Version v0.0.3"
+
+
+[menu.main]
+parent = "Versions"
+name = "v0.0.3"
+pre = "🏅"
+weight = 5
+identifier = "versions-v0.0.3"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+{{% param "description" %}}
+		<br/><br/>
+		This release primarily interate major feature improvements over
+		the <code>v0.0.2</code> prototype to standardize its internal
+		operations and external interactions.
+	</p>
+</section>
+
+
+
+
+<section id="supported-variants">
+	<h2>Supported Variants</h2>
+	<p>
+		Here are the list of supported Monteur variants available for
+		different platforms and CPU architectures.
+	</p>
+	<ul>
+		<li><p>
+			<b><code>linux-amd64</code></b> —
+				<code>.deb</code>,
+				<code>.tar.gz</code>
+		</p></li>
+		<li><p>
+			<b><code>linux-arm64</code></b> —
+				<code>.deb</code>,
+				<code>.tar.gz</code>
+		</p></li>
+		<li><p>
+			<b><code>linux-arm (v7)</code></b> —
+				<code>.deb</code>,
+				<code>.tar.gz</code>
+		</p></li>
+		<li><p>
+			<b><code>darwin-amd64</code></b> —
+				<code>.tar.gz</code>
+		</p></li>
+		<li><p>
+			<b><code>darwin-arm64</code></b> —
+				<code>.tar.gz</code>
+		</p></li>
+		<li><p>
+			<b><code>windows-amd64</code></b> —
+				<code>.zip</code>
+		</p></li>
+		<li><p>
+			<b><code>windows-arm64</code></b> —
+				<code>.zip</code>
+		</p></li>
+	</ul>
+</section>
+
+
+
+
+<section id="notable-changes">
+	<h2>Notable Changes</h2>
+	<p>
+		Here are some of the notable changes for this version.
+	</p>
+
+
+	<section id="backward-compatible-changes">
+		<h3>Backward Compatible</h3>
+		<p>
+			Among the backward-compatible changes are:
+		</p>
+		<ol>
+			<li><p>
+				<b>Added Version API</b> - Allows Monteur to
+				report its current version.
+			</p></li>
+			<li><p>
+				<b>Fixed Setup API critical bug</b> - Montuer
+				Setup API now will create critical working
+				directories (<code>.monteurFS/bin</code> and
+				<code>.monteurFS/config/config.d</code>) to
+				operate properly.
+			</p></li>
+			<li><p>
+				<b>Updated Setup API to smartly detect legacy
+				ARM CPU</b> - Allows Monteur to smartly
+				determine legacy ARM CPU like
+					<code>armv7l</code>,
+					<code>armv7</code>,
+					<code>armv6l</code>,
+					<code>armv6</code>,
+					<code>armhf</code>, and
+					<code>armel</code>.
+			</p></li>
+		</ol>
+	</section>
+
+
+	<section id="non-backward-compatible">
+		<h3>Non-Backward Compatible</h3>
+		<p>
+			<b>NO non-backward compatible</b> changes found for this
+			version.
+		</p>
+	</section>
+</section>
+
+
+
+
+<section id="whats-next">
+	<h2>What's Next</h2>
+	<p>
+		Now that Monteur main features are up and running, the next
+		phase is to ensure maximum compatibility between all release
+		distributions and packaging functions. The following new changes
+		are seen as important and given priority:
+		<ol>
+			<li><p>
+				Native support of <code>.deb</code> packaging
+				mechanism (complies to linting, security, and
+				standards).
+			</p></li>
+			<li><p>
+				External support of <code>Homebrew</code>
+				distribution for package API and release API.
+			</p></li>
+			<li><p>
+				External support of <code>AppImage</code>
+				distribution for package API and release API.
+			</p></li>
+		</ol>
+	</p>
+</section>
+
+
+
+
+<section id="downloadable-software">
+	<h2>Downloadable Software</h2>
+	<p>
+		Here are some of the downloadable Monteur archived packages
+		available for manual deployments:
+	</p>
+	{{< release "v0-0-3" />}}
+</section>
+
+
+
+
+{{< epilogue >}}
+That's all for this release.
+{{< /epilogue >}}
