@@ -1,0 +1,238 @@
++++
+date = "2022-01-03T16:32:00+08:00"
+title = "Command Dependency Checker"
+description = """
+Monteur supplies a built-in dependency checker for command line's program. This
+checks the availability of the program for use in the operating system.
+"""
+keywords = [
+	"dependencies",
+	"checking",
+	"dependencies checking",
+	"command",
+	"command type",
+	"ZORALab's Monteur",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/internals/dependencies-checking/command/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Dependencies Checking Function"
+
+[thumbnails.1]
+url = "/en/internals/dependencies-checking/command/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Dependencies Checking Function"
+
+[thumbnails.2]
+url = "/en/internals/dependencies-checking/command/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Dependencies Checking Function"
+
+
+[menu.main]
+parent = "disabled"
+name = "Dependent Command Checker"
+pre = "🧮"
+weight = 10
+identifier = "internals-dependencies-checking-command-type"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="purpose">
+	<h2>Purpose</h2>
+	<p>
+		The checker main purpose is to ensure a command line's program
+		is readily available for use. This is useful for building CI Job
+		recipe that <b>integrates third-party programs'
+		interactions like <code>git</code>, <code>exec</code>,
+		<code>bash</code></b> and etc.
+	</p>
+</section>
+
+
+
+
+<section id="data-structure">
+	<h2>Data Structure</h2>
+	<p>
+		The data structure for command line checker is as follows:
+	</p>
+{{% highlight bash "linenos=table,hl_lines=[],linenostart=1" %}}
+[[Dependencies]]
+Name = 'Git Version Control Software for Changelog Generations'
+Condition = 'all-all'
+Type = 'command'
+Command = 'git'
+{{% /highlight %}}
+	<p><ul>
+		<li>
+			<p>
+				<code>Name</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b>.
+				</p></li>
+				<li><p>
+					Maily used for identification, logging,
+					and referencing purposes.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>Condition</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b>.
+				</p></li>
+				<li><p>
+					The list of supported <a href="{{< link
+					"/internals/platform-identification/"
+					"this" "url-only" />}}">
+						Platform ID
+					</a> where the commands shall be
+					executed when Monteur is opreating on
+					the matching operating system.
+				</p></li>
+				<li><p>
+					Should <code>all-all</code> is used,
+					it will overwrite all platform ID for
+					both specified and unspecified ones due
+					to its always <code>true</code> nature.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>Type</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b>.
+				</p></li>
+				<li><p>
+					Set to <code>"command"</code>.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>Command</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b>.
+				</p></li>
+				<li><p>
+					The terminal command to invoke the
+					dependency.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+	</ul></p>
+
+
+	<section id="data-structure-examples">
+		<h3>Examples</h3>
+		<p>
+			Here are some of the examples:
+		</p>
+{{% highlight bash "linenos=table,hl_lines=[],linenostart=1" %}}
+...
+
+[[Dependencies]]
+Name = 'Git Version Control Software for Changelog Generations'
+Condition = 'all-all'
+Type = 'command'
+Command = 'git'
+
+
+[[Dependencies]]
+Name = 'cURL for API calls'
+Condition = 'all-all'
+Type = 'command'
+Command = 'curl'
+
+
+[[Dependencies]]
+Name = 'BASH for local executions'
+Condition = 'linux-amd64'
+Type = 'command'
+Command = 'bash'
+
+...
+{{% /highlight %}}
+		<p>
+			The above will instruct Monteur to always check for
+			<code>git</code> and <code>curl</code> in every
+			operating system while only check for <code>bash</code>
+			when operating on <code>linux</code> kernel and
+			<code>amd64</code> CPU operating system.
+		</p>
+	</section>
+</section>
+
+
+
+
+{{% epilogue %}}
+That's all for command dependency checker type.
+{{% /epilogue %}}
