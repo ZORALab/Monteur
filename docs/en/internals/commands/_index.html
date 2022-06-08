@@ -1,0 +1,519 @@
++++
+date = "2021-11-26T07:02:07+08:00"
+title = "Commands Execution Unit (CEU)"
+description = """
+Monteur supplies its own Commands Execution Unit (CEU) for cross-platform
+portability purposes. That way, the execution are consistent regardless of
+operating system.
+"""
+keywords = [
+	"commands",
+	"commands execution unit",
+	"ZORALab's Monteur",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "list"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/internals/commands/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "Monteur's Commands Execution Unit"
+
+[thumbnails.1]
+url = "/en/internals/commands/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "Monteur's Commands Execution Unit"
+
+[thumbnails.2]
+url = "/en/internals/commands/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "Monteur's Commands Execution Unit"
+
+
+[menu.main]
+parent = "Z) Monteur Internals"
+name = "Commands Execution Units"
+pre = "🧑‍✈️"
+weight = 5
+identifier = "internals-commands-execution-units"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="data-structure">
+	<h2>Data Structure</h2>
+	<p>
+		Monteur's Commands Execution Unit uses a set of fields arranged
+		in a single array of instructions. The availability generally
+		depends on the CI Job. Currently, most CI Jobs do offer their
+		own single or parallel executions list of array.
+		<br/><br/>
+		The following data structure is the full CEU that you may or
+		may not need them for your recipe construction:
+	</p>
+{{% highlight bash "linenos=table,hl_lines=[],linenostart=1" %}}
+[[CMD]]
+Name = 'Get Publish Branch First Commit for Cleaning'
+Condition = [ 'all-all' ]
+Type = 'command'
+Location = '{{- .WorkingDir -}}'
+Source = 'git rev-list --max-parents=0 --abbrev-commit HEAD'
+Target = ''
+Save = 'FirstCommitID'
+SaveRegex = '(\w*)'
+SaveStderr = true
+ToSTDOUT = '{{- FirstCommitID -}}'
+ToSTDERR = 'Completed obtaining first commit ID'
+{{% /highlight %}}
+	<p><ul>
+		<li>
+			<p>
+				<code>Name</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b>.
+				</p></li>
+				<li><p>
+					Maily used for identification, logging,
+					and referencing purposes.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>Condition</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b>.
+				</p></li>
+				<li><p>
+					The list of supported <a href="{{< link
+					"/internals/platform-identification/"
+					"this" "url-only" />}}">
+						Platform ID
+					</a> where the commands shall be
+					executed when Monteur is opreating on
+					the matching operating system.
+				</p></li>
+				<li><p>
+					Should <code>all-all</code> is used,
+					it will overwrite all platform ID for
+					both specified and unspecified ones due
+					to its always <code>true</code> nature.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>Type</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b>.
+				</p></li>
+				<li><p>
+					The Command Execution Instruction ID.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>Location</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>OPTIONAL</b> - include only if used.
+				</p></li>
+				<li><p>
+					The directory location for executing
+					the command.
+				</p></li>
+				<li><p>
+					Monteur shall change into the specified
+					directory location before executing
+					the command. Once done, Monteur shall
+					return back to the original directory
+					for the next instruction.
+				</p></li>
+				<li><p>
+					<a href="{{< link
+						"/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+						Variables formatting
+					</a> is available for this field.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>Source</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>COMPULSORY/OPTIONAL</b> - depends on
+					the CEU <code>Type</code>. Include
+					only if used.
+				</p></li>
+				<li><p>
+					Usually taken as the main input of the
+					command. Please refer to the CEU
+					instruction for their use definitions.
+				</p></li>
+				<li><p>
+					<a href="{{< link
+						"/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+						Variables formatting
+					</a> is available for this field.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>Target</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>COMPULSORY/OPTIONAL</b> - depends on
+					the CEU <code>Type</code>. Include
+					only if used.
+				</p></li>
+				<li><p>
+					Usually taken as the secondary input or
+					output of the command. Please refer to
+					the CEU instruction for their use
+					definitions.
+				</p></li>
+				<li><p>
+					<a href="{{< link
+						"/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+						Variables formatting
+					</a> is available for this field.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>Save</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>OPTIONAL</b> - include only if used.
+				</p></li>
+				<li><p>
+					The <code>Key</code> of the key-value
+					field for saving the <code>STDOUT</code>
+					of an executed CEU into the runtime
+					<a href="{{< link
+						"/internals/variables-processing/"
+						"this"
+						"url-only" />}}">
+						Variables
+					</a> list for later use.
+				</p></li>
+				<li><p>
+					<a href="{{< link
+						"/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+						Variables formatting
+					</a> is available for this field.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>SaveRegex</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>OPTIONAL</b> - include only if used.
+				</p></li>
+				<li><p>
+					<b>REQUIRES</b> - <code>Save</code> to
+					be active and use.
+				</p></li>
+				<li><p>
+					A regular expression filter to extract
+					the wanted data using pattern
+					recognitions like
+					<code>
+						(\w{1,}):(\s{1}).{1,}\((\d+.\d+%)\)
+					</code>
+					on
+					<code>
+						total:    statement  (50.0%)
+					</code>
+					yields
+					<code>
+						total 50.0%
+					</code>
+					when the CEU's <code>Save</code> is
+					used. Otherwise, this field ignored.
+				</p></li>
+				<li><p>
+					<b>DO NOT</b> include the regex slashes
+					(e.g. <code>/ YOUR_REGEX /</code>).
+				</p></li>
+				<li><p>
+					<a href="{{< link
+						"/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+						Variables formatting
+					</a> is available for this field.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>SaveStderr</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>OPTIONAL</b> - include only if used.
+				</p></li>
+				<li><p>
+					<b>REQUIRES</b> - <code>Save</code> to
+					be active and use.
+				</p></li>
+				<li><p>
+					<b>ONLY ACCEPTS</b> -
+						<code>true</code>;
+						<code>false</code>;
+						<code>""</code> (empty).
+				</p></li>
+				<li><p>
+					Instructs Monteur to save from
+					<code>STDERR</code> output instead of
+					the common and default
+					<code>STDOUT</code>.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>ToSTDOUT</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>OPTIONAL</b> - include only if used.
+				</p></li>
+				<li><p>
+					Dump the CEU output into
+					<code>STDOUT</code>. If the value is
+					empty (e.g. <code>""</code>), no action
+					will be taken.
+				</p></li>
+				<li><p>
+					<a href="{{< link
+						"/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+						Variables formatting
+					</a> is available for this field.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>ToSTDERR</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>OPTIONAL</b> - include only if used.
+				</p></li>
+				<li><p>
+					Dump the CEU output into
+					<code>STDERR</code>. If the value is
+					empty (e.g. <code>""</code>), no action
+					will be taken.
+				</p></li>
+				<li><p>
+					<a href="{{< link
+						"/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+						Variables formatting
+					</a> is available for this field.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+	</ul></p>
+</section>
+
+
+
+
+<section id="internal-working-mechanism">
+	<h2>Internal Working Mechanism</h2>
+	<p>
+		To make sure there is a common behavior for Monteur, this
+		section shall defines the Command Execution Unit's way of
+		working internally in a step-by-step manner. Please note that
+		to keep things simple, these explainations are abstractive and
+		are not the complete algorithm. For that, you have to refer to
+		the source codes.
+	</p>
+
+
+	<section id="step-0-supported-commands-scan">
+		<h3>Step 0: Scan for Supported Commands</h3>
+		<p>
+			During the data file parsing, Monteur will check each
+			of the CEU commands are within its version's supporting
+			range via the CEU <code>Type</code> field. <b>Should
+			any one (1) of them falls outside of the supporting
+			range, Monteur shall raise an error without executing
+			any of the commands</b>.
+		</p>
+	</section>
+
+
+	<section id="step-1-process-the-current-command">
+		<h3>Step 1: Process the Current Command</h3>
+		<p>
+			The CEU will process the current command from the list
+			of commands with the <a href="{{< link
+				"/internals/variables-processing/#variables-formatting"
+			"this" "url-only" />}}">Variables Formatting</a>
+			function.
+			<br/><br/>
+			Should there be any processing errors (e.g. syntax
+			error), Monteur shall raise that error and the chain
+			of comamnds is stopped.
+		</p>
+	</section>
+
+
+	<section id="step-2-executing-the-current-command">
+		<h3>Step 2: Executing the Current Command</h3>
+		<p>
+			The CEU will execute the current command as instructed
+			and have both <code>STDOUT</code> and
+			<code>STDERR</code> saved in its temporary memory for
+			the command's <code>Save</code> processing.
+			<br/><br/>
+			Should there be any processing errors (e.g. syntax
+			error), Monteur shall raise that error and the chain
+			of comamnds is stopped.
+		</p>
+	</section>
+
+
+	<section id="step-3-process-save-from-current-command">
+		<h3>Step 3: Process Save data from Current Command</h3>
+		<p>
+			The CEU will now process the <code>Save</code> function
+			from <code>STDOUT</code> and <code>STDERR</code> from
+			the current command. Otherwise, the CEU shall skip this
+			step.
+			<br/><br/>
+			If <code>Save</code> is executed correctly, then the
+			variables list shall be updated accordingly for the next
+			command usage.
+			<br/><br/>
+			Should there be any processing errors (e.g. syntax
+			error), Monteur shall raise that error and the chain
+			of comamnds is stopped.
+		</p>
+	</section>
+
+
+	<section id="step-4-repeat-step-1-if-available">
+		<h3>Step 4: Repeat Step 1 for Next Command</h3>
+		<p>
+			At this point, the current command is completed. The
+			next available command is then be executed by repeating
+			Step 1 onto it.
+			<br/><br/>
+			Should the list be exhausted, then Monteur will conclude
+			the chain of commands as completed.
+		</p>
+	</section>
+</section>
+
+
+
+
+<section id="available-commands">
+	<h2>Available Commands</h2>
+	<p>
+		Monteur shall continuously develop and add new commands from
+		time to time. As of now, these are the currently available
+		commands for your deployment:
+	</p>
+</section>
