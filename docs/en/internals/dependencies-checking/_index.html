@@ -1,0 +1,245 @@
++++
+date = "2022-01-03T16:32:00+08:00"
+title = "Dependencies Checking"
+description = """
+Monteur has an optional built-in dependencies checking function useful for
+reproducible build. This page explains the function in details.
+"""
+keywords = [
+	"dependencies",
+	"checking",
+	"dependencies checking",
+	"ZORALab's Monteur",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "list"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/internals/dependencies-checking/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Dependencies Checking Function"
+
+[thumbnails.1]
+url = "/en/internals/dependencies-checking/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Dependencies Checking Function"
+
+[thumbnails.2]
+url = "/en/internals/dependencies-checking/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Dependencies Checking Function"
+
+
+[menu.main]
+parent = "Z) Monteur Internals"
+name = "Dependencies Checking"
+pre = "🧮"
+weight = 5
+identifier = "internals-dependencies-checking"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="purpose">
+	<h2>Main Purpose</h2>
+	<p>
+		The purpose is to ensure all dependent programs (internal and
+		external) are checked to ensure they are available <b>before
+		executing</b> the list of <a href="{{< link
+		"/internals/commands/" "this" "url-only" />}}">Commands
+		Execution Units (CEU)</a>.
+		<br/><br/>
+		Doing so has a number of benefits:
+		<ol>
+			<li><p>
+				Any recipe users can <b>quickly check through
+				the dependencies list without messing with your
+				CEU commands list</b>. This is VERY USEFUL for
+				organizations who executes tight security
+				control (like restricted and vetted supply chain
+				of software), working in an offline environment,
+				or maintaining your published CI Job recipe.
+			</p></li>
+			<li><p>
+				The CEU's chain of commands can just <b>focus
+				on the execution jobs without worrying
+				dependencies checking at all</b>. This keeps
+				documenting and maintaining your CI Job recipe
+				a lot easier, scalable, straight to the point,
+				and simpler algorithm.
+			</p></li>
+			<li><p>
+				Montuer <b>can perform early warning mechanism
+				before executing any of the CEU commands</b>.
+				This saves expensive CPU and network resources
+				when you are operating on mileage environment
+				like cloud server or connecting to a limited
+				mobile network data.
+			</p></li>
+		</ol>
+		However, please <b>DO NOT CONFUSE this function with your
+		product's dependencies (as in your end-product app for your
+		customers requiring them to pre-install
+		<code>library-XYZ</code>)</b>. Remember: Monteur is a software
+		manufacturing tool, not a product distribution one. Therefore,
+		you still need to communicate with your customers thoroughly.
+	</p>
+</section>
+
+
+
+
+<section id="data-structure">
+	<h2>Data Structure</h2>
+	<p>
+		Monteur's dependencies checking function uses a set of fields
+		arranged in a single "shopping" array list. The availability
+		generally depends on the CI job and is usually optional.
+		Currently, most CI Jobs offer such function for pre-checking
+		before commands execution.
+		<br/><br/>
+		The following data structure is the full dependencies checking
+		function that you may or may not need them for your recipe
+		construction:
+	</p>
+{{% highlight bash "linenos=table,hl_lines=[],linenostart=1" %}}
+[[Dependencies]]
+Name = 'Git Version Control Software for Changelog Generations'
+Condition = 'all-all'
+Type = 'command'
+Command = 'git'
+{{% /highlight %}}
+	<p><ul>
+		<li>
+			<p>
+				<code>Name</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b>.
+				</p></li>
+				<li><p>
+					Maily used for identification, logging,
+					and referencing purposes.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>Condition</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b>.
+				</p></li>
+				<li><p>
+					The list of supported <a href="{{< link
+					"/internals/platform-identification/"
+					"this" "url-only" />}}">
+						Platform ID
+					</a> where the commands shall be
+					executed when Monteur is opreating on
+					the matching operating system.
+				</p></li>
+				<li><p>
+					Should <code>all-all</code> is used,
+					it will overwrite all platform ID for
+					both specified and unspecified ones due
+					to its always <code>true</code> nature.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>Type</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b>.
+				</p></li>
+				<li><p>
+					The dependency checker ID. See below for
+					all available checker types.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+		<li>
+			<p>
+				<code>Command</code>
+			</p>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b>.
+				</p></li>
+				<li><p>
+					The terminal command to invoke the
+					dependency.
+				</p></li>
+				<li><p>
+					Available since Montuer Version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</li>
+	</ul></p>
+</section>
+
+
+
+
+<section id="available-checker-types">
+	<h2>Available Checker Types</h2>
+	<p>
+		Monteur shall continuously develop and add new checker types
+		from time to time. As of now, these are the currently available
+		checkers for your deployment:
+	</p>
+</section>
