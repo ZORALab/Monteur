@@ -1,0 +1,469 @@
++++
+date = "2022-01-04T10:49:21+08:00"
+title = "Package Meta Processing"
+description = """
+Monteur has a special metadata processing function for keeping its CI Job sane
+and maintainable. The inner mechanics are explained here!
+"""
+keywords = [
+	"package",
+	"metadata processing",
+	"ZORALab's Monteur",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/internals/package-meta/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Package Meta Processing"
+
+[thumbnails.1]
+url = "/en/internals/package-meta/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Package Meta Processing"
+
+[thumbnails.2]
+url = "/en/internals/package-meta/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Package Meta Processing"
+
+
+[menu.main]
+parent = "Z) Monteur Internals"
+name = "Package Meta Processing"
+pre = "📋"
+weight = 5
+identifier = "internals-package-meta"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="the-problem">
+	<h2>The Problem</h2>
+	<p>
+		It was all started with a very messy mathematical problem. Say
+		a build variant <code>linux-amd64</code> is required to be
+		packaged into 3 different distribution channels:
+		<ul>
+			<li><p><code>.appimage</code></p></li>
+			<li><p><code>.deb</code></p></li>
+			<li><p><code>.tar.gz</code></p></li>
+		</ul>
+		That's a total of <code>1 x 3 = 3</code> <b>SAME</b> CI job
+		recipe files.
+		<br/><br/>
+		Now, try to deploy a full list of build variants for the same
+		list of channels above, let's say:
+		<ol>
+			<li><p><code>linux-arm64</code></p></li>
+			<li><p><code>linux-arm</code></p></li>
+			<li><p><code>darwin-amd64</code></p></li>
+			<li><p><code>darwin-arm64</code></p></li>
+			<li><p><code>windows-amd64</code></p></li>
+			<li><p><code>windows-arm64</code></p></li>
+		</ol>
+		That would be <code> 6 x 3 = 18</code> <b>SAME</b> CI job
+		recipe files! If we scale things in a mathematical way, that's
+		a total of <code>m x n</code> duplicated CI job recipe files for
+		a project supporting <code>m</code> number of build variants for
+		<code>n</code> of distribution channels.
+		<br/><br/>
+		<b>That is A LOT of duplications which is extra ordinary scary
+		and unmaintainable!</b> This means that we need a solution to
+		scale the CI Job not just horizontally across each different
+		distribution channel but also vertically across each build
+		variant.
+	</p>
+</section>
+
+
+
+
+<section id="the-solution">
+	<h2>The Solution</h2>
+	<p>
+		To solve the problem above, Monteur uses this <b>Package Meta
+		Processing approach to facilitate the vertically scaling</b> for
+		any amount of build variants. The idea is to:
+		<ol>
+			<li><p>
+				Keep the CI Job recipe specific to the
+				distribution channel (means scaling
+				horizontally).
+			</p></li>
+			<li><p>
+				Each recipe lists out all the build variant and
+				package them repeatedly based on the recipe
+				(means scaling vertically).
+			</p></li>
+		</ol>
+		By doing so, we kept all vertically scaling vector into 1 single
+		CI Job recipe while letting the recipe creator to focus on the
+		distribution channel's requirements.
+	</p>
+
+
+	<section id="current-deployment">
+		<h3>Current Deployment</h3>
+		<p>
+			Currently, this function is deployed in the following
+			CI Jobs:
+			<ol>
+				<li><p>
+					<a href="{{< link "/ci-jobs/package/"
+						"this" "url-only" />}}">
+						Package</a>
+					since Monteur version
+					<code>v0.0.1</code>.
+				</p></li>
+				<li><p>
+					<a href="{{< link "/ci-jobs/release/"
+						"this" "url-only" />}}">
+						Release</a>
+					since Monteur version
+					<code>v0.0.1</code>.
+				</p></li>
+				<li><p>
+					<a href="{{< link "/ci-jobs/prepare/"
+						"this" "url-only" />}}">
+						Prepare</a>
+					since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p>
+	</section>
+</section>
+
+
+
+
+<section id="data-structure">
+	<h2>Data Structure</h2>
+	<p>
+		To operate this function, Monteur uses a single unified data
+		structure. Please keep in mind that not all fields are used in a
+		CI Job recipe. You should consult the CI Job's documentation for
+		specific fields' availability and purpose.
+		<br/><br/>
+		The full data structure is shown below:
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+[Packages.(ID)]
+OS = [ 'linux' ]
+Arch = [ 'amd64' ]
+Name = '{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+Distribution = [
+        'stable',
+]
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
+BuildSource = false
+Source = '{{- .PackageDir -}}/targz/{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}.tar.gz'
+Target = '{{- .ReleaseDir -}}/archives'
+
+[Packages.(ID).Files]
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+'{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'
+{{% /highlight %}}
+	<ul>
+		<li><p>
+			<code>Package.(ID)</code>
+			<ol>
+				<li><p>
+					Label of the package. the
+					<code>(ID)</code> can be anything as
+					long as period (<code>.</code>) is not
+					used.
+				</p></li>
+				<li><p>
+					<code>(ID)</code> data map is used to
+					uniquely sort each package to a single
+					entry. That being said, any same
+					<code>(ID)</code> data structure comes
+					later will overwrite its existing
+					entry.
+				</p></li>
+				<li><p>
+					Recommends to use
+					<a href="{{< link "/internals/platform-identification/"
+						"this" "url-only" />}}">
+						Platform Identification</a>
+					IDs as <code>(ID)</code> like
+					<code>linux-amd64</code> for consistency
+					and mental sanity sake.
+					<br/>Example:
+					<code>[Packages.linux-amd64]</code>
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Package.(ID).OS</code>
+			<ol>
+				<li><p>
+					List of supported operating system.
+					The <b>FIRST</b> value is given priority
+					for any single value filling.
+				</p></li>
+				<li><p>
+					Can be used as <code>.PkgOS</code>
+					(first value) in
+					<a href="{{< link "/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+						Variables Formatting</a>
+					for supported fields.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Package.(ID).Arch</code>
+			<ol>
+				<li><p>
+					List of supported CPU architecture.
+					The <b>FIRST</b> value is given priority
+					for any single value filling.
+				</p></li>
+				<li><p>
+					Can be used as <code>.PkgArch</code>
+					(first value) in
+					<a href="{{< link "/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+						Variables Formatting</a>
+					for supported fields.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Package.(ID).Name</code>
+			<ol>
+				<li><p>
+					Naming pattern for the package's
+					filename <b>without the file
+					extension</b>.
+				</p></li>
+				<li><p>
+					<a href="{{< link "/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">Variables Formatting</a>
+					function is available for formulating
+					the pattern dynamically.
+				</p></li>
+				<li><p>
+					Depending on the packaging program,
+					this field can be overwritten (e.g.
+					<code>debuild</code> has its own strict
+					naming pattern.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Package.(ID).Distribution</code>
+			<ol>
+				<li><p>
+					List of distribution series in a
+					distribution channel. Example:
+					<code>stable</code>,
+					<code>unstable</code>,
+					<code>experimental</code>,
+					<code>debian</code>,
+					<code>ubuntu</code>,
+					<code>bullseye</code>,
+					and etc.
+				</p></li>
+				<li><p>
+					When in doubt, stick to:
+					<code>stable</code>,
+					<code>unstable</code>, and
+					<code>experimental</code>.
+				</p></li>
+				<li><p>
+					Introduced and used by Release API.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Package.(ID).Changelog</code>
+			<ol>
+				<li><p>
+					States the location of the changelog
+					data file.
+				</p></li>
+				<li><p>
+					<a href="{{< link "/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">Variables Formatting</a>
+					function is available for formulating
+					the pathing dynamically.
+				</p></li>
+				<li><p>
+					Introduced and used by Package API.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Package.(ID).BuildSource</code>
+			<ol>
+				<li><p>
+					Decision to package source codes
+					depending on the packager program.
+				</p></li>
+				<li><p>
+					Value can be either <code>true</code> or
+					<code>false</code>.
+				</p></li>
+				<li><p>
+					Introduced and used by Package API.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Package.(ID).Source</code>
+			<ol>
+				<li><p>
+					Package filepath.
+				</p></li>
+				<li><p>
+					<a href="{{< link "/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">Variables Formatting</a>
+					function is available for formulating
+					the pathing dynamically.
+				</p></li>
+				<li><p>
+					Introduced and used by Release API.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Package.(ID).Target</code>
+			<ol>
+				<li><p>
+					Release destination directory.
+				</p></li>
+				<li><p>
+					<a href="{{< link "/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">Variables Formatting</a>
+					function is available for formulating
+					the pathing dynamically.
+				</p></li>
+				<li><p>
+					Introduced and used by Release API.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Package.(ID).Files</code>
+			<ol>
+				<li><p>
+					The list of files for packaging in a
+					<code>KEY:VALUE</code> pattern. The
+					<code>KEY</code> is the destination
+					while the <code>VALUE</code> is the
+					source of the file.
+				</p></li>
+				<li><p>
+					<a href="{{< link "/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">Variables Formatting</a>
+					function is available for formulating
+					the pathing dynamically for both
+					<code>KEY</code> and <code>VALUE</code>
+					accordingly.
+				</p></li>
+				<li><p>
+					For safety reason, files are copied over
+					instead of move.
+				</p></li>
+				<li><p>
+					Should the destination has a different
+					filename, the copied file shall be
+					renamed accordingly.
+				</p></li>
+				<li><p>
+					Example, for
+					<code>'{{- .PackageDir -}}/License.pdf' = '{{- .LicensePath -}}'</code>,
+					a file located in <code>.LicensePath</code>
+					shall be copied into
+					<code>.PackageDir/</code>
+					directory and renamed as
+					<code>License.pdf</code>.
+				</p></li>
+				<li><p>
+					Introduced and used by Package API.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</p></li>
+	</ul>
+	</p>
+</section>
+
+
+
+
+{{< epilogue >}}
+That's all for Monteur's Package Meta Processing function.
+{{< /epilogue >}}
