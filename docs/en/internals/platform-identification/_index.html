@@ -1,0 +1,213 @@
++++
+date = "2021-11-26T07:01:06+08:00"
+title = "Platform Identification"
+description = """
+Monteur offers a list of platform IDs for consistent manufacturing management
+based on Go Programming Language. These IDs are friendly to most deployments!
+"""
+keywords = [
+	"platform ID",
+	"identification",
+	"ZORALab's Monteur",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/internals/platform-identification/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur - Platform Identification"
+
+[thumbnails.1]
+url = "/en/internals/platform-identification/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur - Platform Identification"
+
+[thumbnails.2]
+url = "/en/internals/platform-identification/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur - Platform Identification"
+
+
+[menu.main]
+parent = "Z) Monteur Internals"
+name = "Platform Identification"
+pre = "🧿"
+weight = 5
+identifier = "internals-platform-id"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="cross-platform-support">
+	<h2>Supporting Cross Platform Production</h2>
+	<p>
+		Monteur supplies a built-in platfrom ID for these few reasons:
+		<ol>
+			<li><p>
+				<b>To enable customers to build their product
+				via cross-platform implementations</b>. A good
+				example would be Monteur's own package releases
+				where all its variants are cross-built using
+				<code>linux-amd64</code> workstation platform.
+			</p></li>
+			<li><p>
+				<b>To make Monteur CI jobs work consistently
+				when customer is operating his/her project on a
+				different workstation</b>. A good example would
+				be Monteur's
+				<a href="{{< link "/internals/commands"
+					"this" "url-only" />}}">
+					Command Execution Unit</a>
+				Where each command has its
+				<code>Condition</code> to specify when to
+				execute the command while Monteur is on the
+				correct workstation operating system.
+			</p></li>
+			<li><p>
+				<b>To make sure the ID is usable anywhere like
+				URL and filepath</b>. Existing Go Programming
+				Language uses forward slash (<code>/</code>)
+				which can be intepreted as directory in certain
+				applications like URL pathing and filepath.
+				That's why Monteur corrects the ID to make sure
+				we speak in the same terms across different
+				jobs and functions.
+			</p></li>
+		</ol>
+		<br/><br/>
+	</p>
+</section>
+
+
+
+
+<section id="data-pattern">
+	<h2>Data Pattern</h2>
+	<p>
+		The data pattern for Monteur's Platform Indentification function
+		is:
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+Pattern: [OS]-[ARCH]
+Example:
+         linux-amd64
+         linux-arm64
+         darwin-amd64
+         darwin-arm64
+         windows-amd64
+         windows-arm64
+{{% /highlight %}}
+	</p>
+</section>
+
+
+
+
+<section id="supported-platform">
+	<h2>Supported Platform</h2>
+	<p>
+		That being said, Monteur supports the following platform IDs:
+		<ul>
+			<li><p>
+				<code>linux-amd64</code> - Linux operating
+				system with <code>amd64</code> x86-64 CPU
+				architecture.
+			</p></li>
+			<li><p>
+				<code>linux-arm64</code> - Linux operating
+				system with <code>arm64</code> ARM-64 CPU
+				architecture.
+			</p></li>
+			<li><p>
+				<code>darwin-amd64</code> - MacOS operating
+				system with <code>amd64</code> x86-64 CPU
+				architecture.
+			</p></li>
+			<li><p>
+				<code>darwin-arm64</code> - MacOS operating
+				system with <code>arm64</code> ARM-64 CPU
+				architecture.
+			</p></li>
+			<li><p>
+				<code>windows-amd64</code> - Windows operating
+				system with <code>amd64</code> x86-64 CPU
+				architecture.
+			</p></li>
+			<li><p>
+				<code>windows-arm64</code> - Windows operating
+				system with <code>arm64</code> ARM-64 CPU
+				architecture.
+			</p></li>
+		</ul>
+	</p>
+
+
+	<section id="generic-id">
+		<h3>Generic IDs</h3>
+		<p>
+			A set of generic IDs is made available where a
+			configuration is applicable to all operating system,
+			all CPU architecture for a operating system, or all
+			operating system and all CPU architecture. Hence, the
+			following IDs are recognizable by Monteur:
+			<ul>
+				<li><p>
+					<code>all-all</code> - all operating
+					system and all CPU architecture.
+				</p></li>
+				<li><p>
+					<code>[OS]-all</code> - all CPU
+					architecture for a specific
+					operating system <code>[OS]</code>.
+				</p></li>
+				<li><p>
+					<code>all-[ARCH]</code> - all operating
+					system for a specific CPU architecture.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+</section>
+
+
+
+
+{{% epilogue %}}
+That's all for Monteur's Platform Identification.
+{{% /epilogue %}}
