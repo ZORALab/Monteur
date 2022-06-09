@@ -1,0 +1,1728 @@
++++
+date = "2022-01-04T06:03:52+08:00"
+title = "Init API"
+description = """
+Monteur has this API to keep its setup in your repository seamlessly guided and
+simple. The aim is to make development easier and happier from the get go!
+"""
+keywords = [
+	"init",
+	"init API",
+	"API",
+	"repository",
+	"repo",
+	"ZORALab's Monteur",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/internals/init-api/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Init API"
+
+[thumbnails.1]
+url = "/en/internals/init-api/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Init API"
+
+[thumbnails.2]
+url = "/en/internals/init-api/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Init API"
+
+
+[menu.main]
+parent = "Z) Monteur Internals"
+name = "Init API"
+pre = "🛫"
+weight = 5
+identifier = "internals-init-api"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+		<br/><br/>
+		Init API is only available starting from Monteur version
+		<code>v0.0.2</code>.
+	</p>
+</section>
+
+
+
+
+<section id="initialization">
+	<h2>Initialize Your Repository</h2>
+	<p>
+		To initialize your repository, please:
+		<ol>
+			<li><p>
+				Go to your repository's root directory.
+			</p></li>
+			<li><p>
+				Issue the following command:
+{{% highlight bash "linenos=table,hl_lines=[],linenostart=1" %}}
+monteur init
+{{% /highlight %}}
+			</p></li>
+		</ol>
+		Monteur shall scan for its existence properly and if it is
+		absent, Monteur will do the rest of the config files creation
+		automatically.
+	</p>
+</section>
+
+
+
+
+<section id="app-metadata">
+	<h2>Naming Your Project Metadata</h2>
+	<p>
+		Once done, the next thing to do is to fill up your project/app
+		metadata. These information are crucial for documents
+		generations, packaging metadata usage, and even release your
+		product or publish your documents. <b>You usually need to set
+		them up once</b>.
+		<br/><br/>
+		These configuration files were intentionally designed to be
+		<code>i18n</code> compatible. For simplicity sake, this
+		specification shall explain in <code>en</code> for English.
+		There are a bunch of configurations to deal with so sit tight
+		and let's go over each of them one-by-one.
+	</p>
+
+
+	<section id="app-metadata-toml">
+		<h3>App <code>metadata.toml</code></h3>
+		<p>
+			This file is located in
+			<code>.configs/monteur/app/config/en/metadata.toml</code>.
+			<br/><br/>
+			These are the main metadata used across various
+			composer, writer, builder, packager, and publisher via
+			Monteur's CI Jobs. The goal is to ensure all these
+			outputs only source from 1 unified input (here) in order
+			to maintain metadata consistency for your project/app.
+			<br/><br/>
+			Here are the list of information you need to update
+			matching your project's metadata:
+		</p>
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+[Software]
+Name = '<directory Name in title case>'
+Command = '<directory name in filepath format>'
+ID = '<directory name in filepath format>'
+Version = 'v0.0.1' # version number
+Category = 'devel' # software category
+Suite = ''         # software suite (e.g. MSFT Office for MSFT Word)
+Abstract = 'software XYZ tool in one single app.'
+Description = """
+Describe your software as much as you want. Please make sure you end it with
+its unique selling pitch.
+"""
+Website = 'https://example.com/'
+
+[Software.Contact]
+Name = 'ACME Entity'
+Email = [ 'hello@example.com' ]
+
+
+
+
+[Software.Maintainers.ACME]
+Name = 'ACME Entity'
+Email = [ 'tech@example.com' ]
+[Software.Maintainers.ACME.JointTime]
+Year = '2021'
+
+
+
+
+[Software.Contributors.ACME]
+Name = 'ACME Entity'
+Email = [ 'tech@example.com' ]
+[Software.Contributors.ACME.JointTime]
+Year = '2021'
+
+
+
+
+[Software.Sponsors.ACME]
+Name = 'ACME Entity'
+Email = [ 'tech@example.com' ]
+[Software.Sponsors.ACME.JointTime]
+Year = '2021'
+{{% /highlight %}}
+	<p><ul>
+		<li><p>
+			<code>Software.Name</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - used as the
+					documented product name.
+				</p></li>
+				<li><p>
+					Monteur automatically takes the
+					directory name as project/app name.
+					Please alter them accordingly.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.Command</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - used as the program
+					name for invoking its command usage.
+				</p></li>
+				<li><p>
+					Whenever possible, try to keep it to 1
+					short sensible word only dash
+					(<code>-</code>), alphanumeric
+					characters, avoid space
+					(<code> </code>), and avoid other
+					symbols.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.ID</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - used as the stock
+					keeping unit (SKU) identifier.
+				</p></li>
+				<li><p>
+					Monteur automatically takes the
+					directory name as the project/app ID.
+					Please alter them accordingly.
+				</p></li>
+				<li><p>
+					Whenever possible, try to keep it below
+					<code>64</code> characters long using
+					only dash (<code>-</code>), alphanumeric
+					characters, avoid space
+					(<code> </code>), and avoid other
+					symbols.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.Version</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - indicate the current
+					version of development.
+				</p></li>
+				<li><p>
+					Whenever possible, try to keep it as
+					compliant to <a
+					href="https://semver.org/">Semantic
+					Versioning</a> as possible.
+				</p></li>
+				<li><p>
+					This is the central control of the
+					version number where it will be used
+					for generating all necessary version
+					files across the repository.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.Category</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - indicate the
+					name of the catalog the project/app is
+					belonged to.
+				</p></li>
+				<li><p>
+					Useful for packaging jobs like
+					<code>.deb</code>.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.Suite</code>
+			<ol>
+				<li><p>
+					<b>OPTIONAL</b> - indicate the
+					name of the software suite the
+					project/app is belonged to.
+				</p></li>
+				<li><p>
+					For incompatible project/app, just leave
+					the field blank (<code>''</code>).
+				</p></li>
+				<li><p>
+					Example: <code>Microsoft Word</code> in
+					<code>Microsoft Office</code> (Suite).
+				</p></li>
+				<li><p>
+					Useful for packaging jobs like
+					<code>.deb</code>.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.Abstract</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - a short, no article
+					("a", "an", "the") description with max
+					70 characters. Make it a pitch of your
+					project/app.
+				</p></li>
+				<li><p>
+					Useful for packaging jobs like
+					<code>.deb</code>.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.Description</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - a longer description
+					joining after the abstract starting with
+					a new paragraph.
+				</p></li>
+				<li><p>
+					Useful for packaging jobs like
+					<code>.deb</code>.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.Website</code>
+			<ol>
+				<li><p>
+					<b>OPTIONAL</b> - the homepage of the
+					project/app.
+				</p></li>
+				<li><p>
+					For incompatible project/app, just leave
+					the field blank (<code>''</code>).
+				</p></li>
+				<li><p>
+					Useful for packaging jobs like
+					<code>.deb</code>.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.Contact.Name</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - the contact entity's
+					name (e.g. a person or company name) for
+					project/app general inquiry purposes.
+				</p></li>
+				<li><p>
+					Useful for packaging jobs like
+					<code>.deb</code>.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.Contact.Email</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - the contact entity's
+					email addresses for project/app general
+					inquiry purposes.
+				</p></li>
+				<li><p>
+					The first email address <b>shall be
+					given priority</b> during a single
+					email address selection.
+				</p></li>
+				<li><p>
+					Useful for packaging jobs like
+					<code>.deb</code>.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.Maintainers.[ID]</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - a maintainer's
+					identity. Details of the entity's fields
+					are described in
+					<code>Software.[TYPE].[ID]</code>
+					section later.
+				</p></li>
+				<li><p>
+					This list is for the project/app
+					maintainers, usually those who has power
+					for maintaining the upkeep.
+				</p></li>
+				<li><p>
+					The <code>[ID]</code> can be anything
+					and was meant for grouping the entity's
+					information properly. To add more
+					maintainers, simply duplicate the
+					fields and provide another unique
+					<code>[ID]</code> for it. In any cases,
+					the <code>[ID]</code> <b>MUST be the
+					same</b> if the same entity is also
+					contributing other role like sponsors.
+				</p></li>
+				<li><p>
+					Use for assembling and rendering the
+					project's/app's copyrights and citation
+					list.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.Contributors.[ID]</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - a contributor's
+					identity. Details of the entity's fields
+					are described in
+					<code>Software.[TYPE].[ID]</code>
+					section later.
+				</p></li>
+				<li><p>
+					This list is for the project/app
+					contributors, usually those who
+					contribute once or twice in a blue moon
+					into the project/app.
+				</p></li>
+				<li><p>
+					The <code>[ID]</code> can be anything
+					and was meant for grouping the entity's
+					information properly. To add more
+					contributors, simply duplicate the
+					fields and provide another unique
+					<code>[ID]</code> for it. In any cases,
+					the <code>[ID]</code> <b>MUST be the
+					same</b> if the same entity is also
+					contributing in another role like
+					sponsors.
+				</p></li>
+				<li><p>
+					Use for assembling and rendering the
+					project's/app's copyrights and citation
+					list.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.Sponsors.[ID]</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - a financial
+					sponsor's identity. Details of the
+					entity's fields are described in
+					<code>Software.[TYPE].[ID]</code>
+					section later.
+				</p></li>
+				<li><p>
+					This list is for the project/app
+					financial contributors, who
+					contribute once/twice in a blue moon OR
+					periodically into the project/app.
+				</p></li>
+				<li><p>
+					The <code>[ID]</code> can be anything
+					and was meant for grouping the entity's
+					information properly. To add more
+					sponsors, simply duplicate the fields
+					and provide another <code>[ID]</code>
+					for it. In any cases, the
+					<code>[ID]</code> <b>MUST be the
+					same</b> if the same entity is also
+					contributing in another role like
+					maintainers.
+				</p></li>
+				<li><p>
+					Use for assembling and rendering the
+					project's/app's copyrights and citation
+					list.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.[TYPE].[ID].Name</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - name of a legal
+					entity.
+				</p></li>
+				<li><p>
+					The <code>[TYPE]</code> refers to the
+					<code>Maintainers</code>,
+					<code>Contributors</code>,
+					and <code>Sponsors</code> above.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.[TYPE].[ID].Email</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - list of emails of
+					a legal entity.
+				</p></li>
+				<li><p>
+					The <code>[TYPE]</code> refers to the
+					<code>Maintainers</code>,
+					<code>Contributors</code>,
+					and <code>Sponsors</code> above.
+				</p></li>
+				<li><p>
+					The first email is given the highest
+					priority in a single email address
+					selection.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Software.[TYPE].[ID].JointTime.Year</code>
+			<ol>
+				<li><p>
+					<b>COMPULSORY</b> - the year where an
+					legal entity participated by giving into
+					the project/app.
+				</p></li>
+				<li><p>
+					The <code>[TYPE]</code> refers to the
+					<code>Maintainers</code>,
+					<code>Contributors</code>,
+					and <code>Sponsors</code> above.
+				</p></li>
+				<li><p>
+					Available since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p></li>
+	</ul></p>
+	</section>
+
+
+	<section id="app-metadata-toml">
+		<h3>App <code>help.toml</code></h3>
+		<p>
+			This file is located in
+			<code>.configs/monteur/app/config/en/help.toml</code>.
+			<br/><br/>
+			By default, Montuer created a default help guide data
+			stored inside <code>help.toml</code> which contains all
+			the known help file rendering templates. Some software
+			distributors (e.g. <code>.deb</code>) requires the
+			obselete help file made available in their packages. If
+			you are not using it, please skip step.
+			<br/><br/>
+			Here are the list of information you need to update
+			matching your project's metadata:
+		</p>
+{{% highlight bash "linenos=table,hl_lines=["2-13","16-17","22-26","31-35","40-44"],linenostart=1" %}}
+[Help]
+Command = '$ {{ .App.Command }} help'
+Description = '{{ .App.Abstract }}'
+Resources = 'Visit {{ .App.Website }} for detailed documentations.'
+
+[Help.Manpage]
+Lv1 = """
+.\\" {{ .App.Name }} - Lv1 Manpage
+.\\" Contact {{ index .App.Contact.Email 0 }} for errors or typos.
+.TH man 1 "{{- .App.Time.Day }} {{ .App.Time.Month }} {{ .App.Time.Year -}}" "{{- .App.Version -}}" "{{- .App.ID }} man page"
+
+.SH NAME
+{{ .App.Name }} - {{ .App.Abstract }}
+
+.SH SYNOPSIS
+{{ .App.Help.Command }}
+
+.SH DESCRIPTION
+{{ .App.Description -}}
+
+.SH OPTIONS
+{{ .App.Help.Description }}
+
+.SH SEE ALSO
+{{ .App.Help.Resources }}
+
+#.SH AUTHORS
+#{{ range $index, $owner := .App.Maintainers -}}
+#       {{- $owner.Name }} ({{- index $owner.Email 0 -}})
+#{{ end -}}
+"""
+{{% /highlight %}}
+		<p><ul>
+			<li><p>
+				<code>Help.Command</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - the one-line
+						command to call out its help
+						display.
+					</p></li>
+					<li><p>
+						Use to guide users to call for
+						help from the project/app (e.g.
+						<code>program --help</code> or
+						<code>program help</code>).
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Help.Description</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - the
+						description of the project/app.
+					</p></li>
+					<li><p>
+						By default, it is mapped to your
+						<code>Software.Abstract</code>
+						from the
+						<code>metadata.toml</code>
+						above.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Help.Resources</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - the
+						instruction to obtain more
+						details or for the project/app.
+					</p></li>
+					<li><p>
+						By default, it is mapped to
+						visit
+						<code>Software.Website</code>
+						from the
+						<code>metadata.toml</code>
+						above.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Help.Manpage.[LEVEL]</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - the
+						instruction to generate all
+						corresponding
+						<code>[LEVEL]</code> man pages
+						for the project/app.
+					</p></li>
+					<li><p>
+						By default, Monteur generates
+						level 1 (<code>.1</code>) man
+						page that briefly describes the
+						project/app and the help command
+						(<code>Help.Command</code>
+						above) to obtain actual help.
+					</p></li>
+					<li><p>
+						The <code>[LEVEL]</code> can be
+						anything but generally advised
+						to be numeric number starting
+						from <code>1</code> and usually
+						ends at <code>8</code>. Please
+						consult your operating system's
+						specifications about each
+						levels.
+					</p></li>
+					<li><p>
+						The <code>[LEVEL]</code>s <b>are
+						usually being used as the file
+						extension depending on the CI
+						Job recipe</b>.
+						Please consult the CI Job recipe
+						for its modifications'
+						compatibility.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+		</ul></p>
+	</section>
+
+
+	<section id="app-license-toml">
+		<h3>App <code>[LICENSE].toml</code></h3>
+		<p>
+			This file is located in
+			<code>.configs/monteur/app/copyrights/[LICENSE].toml</code>.
+			The <code>[LICENSE]</code> is a placeholder filename
+			which can be anything useful for own referencing usage.
+			<br/></br>
+			Montuer is designed to manage and generate
+			multi-licenses project/app work environment. Hence you
+			can include multiple licenses whenever applicable like
+			dual-licensing or multiple licenses (e.g. media license
+			+ software license).
+			<br/><br/>
+			These license data files are the template and input data
+			for rendering the publishable license file during a
+			build or CI Job. It uses other metadata like the
+			copyright holders to fill in the gap while still
+			permitting project/app developer to overwrite them.
+			<br/><br/>
+			By default, Monteur generates
+			<a href="https://opensource.org/licenses/Apache-2.0">
+				Apache 2.0 Open Source License
+			</a>
+			for maximum permissive and commercial friendly usage.
+			This default file is meant for example referencing
+			usage. Please remove it when it is incompatible to the
+			project/app after creating your own license data file.
+			<br/><br/>
+			Here are the list of information you need for creating
+			a <code>[LICENSE].toml</code> data file:
+		</p>
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+[Copyright]
+Name = 'License Name' # license full name
+ID = 'license-name'   # identifiable license ID
+Comment = ''
+Materials = [ '*' ]
+Holders = [
+        # A string with year, then name, then email with diamond braces. Ex.:
+        #
+        #   '2021 John S. Smith <john.s.smith@email.com>',
+        #
+        # If the list is empty, all maintainers, contributors, and sponsors
+        # shall be attached to it.
+]
+Notice = """
+License notice usually prepend in front of source codes.
+"""
+Text = """
+Full license text body.
+"""
+{{% /highlight %}}
+		<p><ul>
+			<li><p>
+				<code>Copyright.Name</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> -  name of the
+						license for human comprehension.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Copyright.ID</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - ID of the
+						license for tracking and
+						identifcation use.
+					</p></li>
+					<li><p>
+						For open source licenses, please
+						consult
+						<a href="https://spdx.org/licenses/">
+							SPDX Licenses List</a>
+						for maximum compatibility
+						identifier.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Copyright.Comment</code>
+				<ol>
+					<li><p>
+						<b>OPTIONAL</b> - comment for
+						the license to appear in the
+						rendering.
+					</p></li>
+					<li><p>
+						Please leave it empty (
+						<code>""</code>) if it is no
+						comment.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Copyright.Materials</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - list out
+						all the files or the naming
+						patterns of the materials where
+						the license is applicable.
+					</p></li>
+					<li><p>
+						General symbols is allowed like
+						<code>*</code> stands for any
+						or all pattern of. Example:
+						<code>*.jpg</code> refers to
+						all files with <code>.jpg</code>
+						file extension, regardless of
+						its location in the repository,
+						is subjected this this license.
+					</p></li>
+					<li><p>
+						To apply the license to ALL
+						files, simple just retain the
+						<code>'*'</code> which stands
+						for all files regardless name
+						or extensions.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Copyright.Holders</code>
+				<ol>
+					<li><p>
+						<b>OPTIONAL</b> - list out
+						all the copyright holders of
+						this license, overriding the
+						default rendering completely.
+					</p></li>
+					<li><p>
+						The format <b>MUST</b> be:
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+Format : '[YEAR] [FULL NAME] <[EMAIL]>',
+Example: '2021 John S. Smith <john.s.smith@email.com>',
+{{% /highlight %}}
+						<b>NOTE</b>: The tailing comma
+						(<code>,</code>) is removed for
+						the last entry.
+					</p></li>
+					<li><p>
+						If left empty, all
+						maintainers, contributors, and
+						sponsors from
+						<code>metadata.toml</code> above
+						shall be assembled and formatted
+						automatically to fill in the
+						gap.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Copyright.Notice</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - a short
+						copyright notice usually
+						preprended in front of a
+						source codes, emit into
+						command-line request, or an IP
+						document.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Copyright.Text</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - full license
+						body in plaintext without the
+						copyright holders prepend to it.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+		</ul></p>
+	</section>
+
+
+	<section id="app-debian-toml">
+		<h3>App <code>debian.toml</code></h3>
+		<p>
+			This file is located in
+			<code>.configs/monteur/app/config/en/debian.toml</code>.
+			<br/><br/>
+			These are <code>.deb</code> package specific information
+			meant for Debian-based Linux operating system. The
+			fields and data here are meant for offical
+			<code>dehelper</code> packager to systematically work
+			out a signed <code>.deb</code> package file. Depending
+			on which packaging software you're using (e.g.
+			<code>debuild</code>), certain information are
+			<b>COMPULSORY</b>. Monteur itself is using this packager
+			complying to the Debian Policy itself to ensure maximum
+			compatiblity with the ecosystem.
+			<br/><br/>
+			If you're not deploying a <code>.deb</code> package
+			distribution, please skip this configuration file.
+			<br/><br/>
+			Here are the list of information you need to update
+			matching your project's metadata:
+		</p>
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+[DEB]
+Compat = 11
+Rules = """
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	echo "nothing to override"
+override_dh_slibdeps:
+	echo "nothing to depend on"
+"""
+
+[DEB.Control]
+Essential = false
+PackageType = 'deb'
+Priority = 'optional'
+RulesRequiresRoot = 'binary-targets'
+Standards = '4.6.0'
+Section = 'devel'
+
+[DEB.Relationships]
+'Build-Depends' = [
+	'debhelper (>= 11)',
+]
+'Depends' = [
+]
+
+# More Info:
+#  https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields
+[DEB.VCS]
+Type = 'Vcs-Git'
+URL = 'https://example.com/git'
+Branch = 'main'
+#Path = '.'
+
+[DEB.Testsuite]
+Paths = [
+	# 'relative/path/to/debTestScript',
+]
+
+[DEB.Copyright]
+Format = 'https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/'
+Disclaimer = ''
+Comment = ''
+
+[DEB.Changelog]
+Urgency = 'low'
+
+[DEB.Source]
+Format = '3.0 (native)'
+LocalOptions = """
+"""
+Options = """
+"""
+LintianOverrides = """
+# supply the license file in case OS did not supply one
+
+# we are go package so it is okay not to specify Depends:
+"""
+
+[DEB.Install]
+{{% /highlight %}}
+		<p><ul>
+			<li><p>
+				<code>DEB.Compat</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - generates
+						the <code>DEBIAN/compat</code>
+						file.
+					</p></li>
+					<li><p>
+						The values must be compliant to
+						<a href="https://www.debian.org/doc/manuals/maint-guide/dother.en.html#compat">
+							debhelper Compatibility Level
+						</a>.
+					</p></li>
+					<li><p>
+						Only used if you are using
+						<b>debhelper</b> to build the
+						<code>.deb</code> package.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Rules</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - generates
+						the <code>DEBIAN/rules</code>
+						file.
+					</p></li>
+					<li><p>
+						The values must be compliant to
+						<a href="https://www.debian.org/doc/debian-policy/ch-source.html#s-debianrules">
+							Debian Rules Policy
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Control</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - generates
+						the <code>DEBIAN/control</code>
+						file.
+					</p></li>
+					<li><p>
+						The generated file is compliant
+						to
+						<a href="https://www.debian.org/doc/debian-policy/ch-controlfields.html">
+							Control Fields Policy
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Control.Essential</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - set the
+						<code>.deb</code> not to be
+						uninstalled if marked as
+						essential packages.
+					</p></li>
+					<li><p>
+						Accepts only <code>true</code>
+						or <code>false</code> as
+						complying to
+						<a href="https://www.debian.org/doc/debian-policy/ch-controlfields.html#essential">
+							Essential Policy
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Control.PackageType</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - set the
+						<code>.deb</code> not to be
+						uninstalled.
+					</p></li>
+					<li><p>
+						Accepts only <code>deb</code>
+						or <code>udeb</code> complying
+						to <a href="https://www.debian.org/doc/debian-policy/ch-controlfields.html#package-type">
+							Package Type Policy
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Control.Priority</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - set the
+						<code>.deb</code> package's
+						installation priority nature.
+					</p></li>
+					<li><p>
+						Only accepts value from
+						<a href="https://www.debian.org/doc/debian-policy/ch-archive.html#s-priorities">
+							Package Installation Priority
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Control.RulesRequiresRoot</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - set the
+						<code>.deb</code> package to be
+						handled by the level of root
+						permissions.
+					</p></li>
+					<li><p>
+						Accepts only values from
+						<a href="https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-rules-requires-root">
+							Rules Requires Root Policy
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Control.Standards</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - set the
+						package validator standards.
+					</p></li>
+					<li><p>
+						Accepts only the semantic
+						versioning ID as value
+						from <a href="https://www.debian.org/doc/debian-policy/upgrading-checklist.html">
+						Debian Policy Checklist</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Control.Section</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - set the
+						package catagory.
+					</p></li>
+					<li><p>
+						Accepts only the standards ID
+						from <a href="https://www.debian.org/doc/debian-policy/ch-archive.html#s-subsections">
+						Debian Archive Subsection</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Relationships.[TYPE]</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - generates
+						all the project/app relationship
+						with other packages inside
+						the <code>DEBIAN/control</code>
+						file.
+					</p></li>
+					<li><p>
+						The <code>[TYPE]</code>
+						<b>MUST</b> be the exact name of
+						the relationship type stated in
+						<a href="https://www.debian.org/doc/debian-policy/ch-relationships.html">
+							Debian Package Relationship
+						</a> like
+						<code>Build-Depends</code>,
+						<code>Build-Depends-Indep</code>,
+						<code>Build-Depends-Arch</code>,
+						and etc.
+					</p></li>
+					<li><p>
+						The value <b>MUST</b> be a list
+						of corresponding
+						<code>.deb</code> packages.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.VCS</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - generates
+						the VCS field inside <code>
+						DEBIAN/control</code> file.
+					</p></li>
+					<li><p>
+						More info:
+						<a href="https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields">
+						Debian Archive Subsection
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.VCS.Type</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - specify the
+						version control type used to
+						manage the repository.
+					</p></li>
+					<li><p>
+						Accepts only the value from:
+						<a href="https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields">
+						Debian Control VCS Fields
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.VCS.URL</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - specify the
+						URL source to obtain a copy of
+						the project/app code repository.
+					</p></li>
+					<li><p>
+						Accepts only the value from:
+						<a href="https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields">
+						Debian Control VCS Fields
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.VCS.Branch</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - specify the
+						version control branch
+						responsible for this packaging
+						from the repository.
+					</p></li>
+					<li><p>
+						Accepts only the value from:
+						<a href="https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields">
+						Debian Control VCS Fields
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.VCS.Path</code>
+				<ol>
+					<li><p>
+						<b>OPTIONAL</b> - specify the
+						directory pathing of the
+						version control repository.
+					</p></li>
+					<li><p>
+						Accepts only the value from:
+						<a href="https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields">
+						Debian Control VCS Fields
+						</a>.
+					</p></li>
+					<li><p>
+						Leave the field absent or
+						commented if unused.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.VCS.Testsuite.Paths</code>
+				<ol>
+					<li><p>
+						<b>OPTIONAL</b> - list out
+						the test suite files for testing
+						the <code>.deb</code> package.
+					</p></li>
+					<li><p>
+						Leave the list empty if unused.
+					</p></li>
+					<li><p>
+						Accepts only the value from:
+						<a href="https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-testsuite">
+						Debian Control Testsuite Fields
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Copyright</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - generates
+						the
+						<code>DEBIAN/copyright</code>
+						file.
+					</p></li>
+					<li><p>
+						The actual copyright  entries
+						are generated internally using
+						app <code>copyright.toml</code>
+						data above. These are additional
+						data requirements specific to
+						<code>.deb</code> packaging.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Copyright.Format</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - states the
+						copyright format version.
+					</p></li>
+					<li><p>
+						Accepts only the format version
+						in full URL from:
+						<a href="https://www.debian.org/doc/packaging-manuals/copyright-format/">
+						Debian Copyright Format
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Copyright.Disclaimer</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - states your
+						copyright disclaimers.
+					</p></li>
+					<li><p>
+						Accepts only the value complying
+						to the selected standards format
+						from:
+						<a href="https://www.debian.org/doc/packaging-manuals/copyright-format/">
+						Debian Copyright Format
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Copyright.Comment</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - states your
+						copyright comments.
+					</p></li>
+					<li><p>
+						Accepts only the value complying
+						to the selected standards format
+						from:
+						<a href="https://www.debian.org/doc/packaging-manuals/copyright-format/">
+						Debian Copyright Format
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Changelog</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - generate
+						the necessary data for
+						<code>DEBIAN/changelog</code>
+						file.
+					</p></li>
+					<li><p>
+						The actual changelog entries
+						are generated via <a
+						href="{{< link "/ci-jobs/prepare/changelog-deb/" "this" "url-only" />}}">
+							Prepare CI Job
+						</a> recipe. These fields act
+						as supplimentary where the data
+						is not suitable to be placed in
+						the recipe file itself.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Changelog.Urgency</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - states the
+						current changelog entry's
+						urgency.
+					</p></li>
+					<li><p>
+						Only accepts values from <a
+						href="https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-urgency">
+							Changelog Urgency
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Source</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - generates
+						all files in
+						<code>DEBIAN/source</code>
+						directory.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Source.Format</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - defines the
+						<code>.deb</code> package
+						format by generating
+						<code>DEBIAN/source/format</code>
+						file.
+					</p></li>
+					<li><p>
+						Only accepts values from <a
+						href="https://www.debian.org/doc/manuals/maint-guide/dother.en.html#sourcef">
+							Source Format
+						</a>.
+					</p></li>
+					<li><p>
+						When in doubt, use
+						<code>3.0 (native)</code>
+						instead.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Source.LocalOptions</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - generates
+						<code>DEBIAN/source/local-options</code>
+						file.
+					</p></li>
+					<li><p>
+						Only accepts values from <a
+						href="https://www.debian.org/doc/manuals/maint-guide/dother.en.html#sourcel">
+							Source Local Options
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Source.Options</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - generates
+						<code>DEBIAN/source/local-options</code>
+						file.
+					</p></li>
+					<li><p>
+						Only accepts values from <a
+						href="https://www.debian.org/doc/manuals/maint-guide/dother.en.html#sourceopt">
+							Source Options
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Source.LintianOverrides</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - generates
+						<code>DEBIAN/source/lintian-overrides</code>
+						file.
+					</p></li>
+					<li><p>
+						Only accepts values from <a
+						href="https://www.debian.org/doc/manuals/maint-guide/dother.en.html#lintian">
+							Source Lintian Overrides
+						</a>.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DEB.Install</code>
+				<ol>
+					<li><p>
+						<b>COMPULSORY</b> - generates
+						<code>DEBIAN/install</code>
+						file.
+					</p></li>
+					<li><p>
+						The values are a set of
+						<code>key = value</code> data,
+						where the:
+						<ul>
+							<li><p>
+								<b>Key</b> -
+								designate the
+								installation
+								path where it
+								should be
+								relative without
+								the starting
+								root (
+								<code>/</code>)
+								path.
+							</p></li>
+							<li><p>
+								<b>Value</b> -
+								designate the
+								pathing to the
+								installation
+								target.
+							</p></li>
+						</ul>
+					</p></li>
+					<li><p>
+						Example:
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+[DEB.Install]
+'usr/bin' = 'monteur'
+{{% /highlight %}}
+						will install a packaged
+						<code>monteur</code> executable
+						file into <code>usr/bin</code>
+						directory of an operating
+						system.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+		</ul></p>
+	</section>
+</section>
+
+
+
+
+<section id="assemble-ci-jobs">
+	<h2>Assemble Monteur's CI Jobs</h2>
+	<p>
+		Now that the repository with Monteur ready, it's time to
+		assemble the CI Jobs compatible to your project/app. Montuer
+		is designed to make different jobs portable yet maintainable
+		across its ecosystem so don't you worry.
+		<br/><br/>
+		For starter, please head over to the <a
+		href="{{< link "/ci-jobs/" "this" "url-only" />}}"
+		class="button">
+			CI Jobs' Galleries
+		</a> and shop for existing continuously improved recipes. That
+		will save you tons of times and get to work.
+		<br/><br/>
+		Alternatively, you can develop your on CI Job recipe. Each
+		recipe has its own configurations so please go through them
+		accordingly.
+	</p>
+</section>
+
+
+
+
+{{% epilogue %}}
+That's all for initializing Monteur into your project/app repository.
+{{% /epilogue %}}

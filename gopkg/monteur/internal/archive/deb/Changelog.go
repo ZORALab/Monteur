@@ -24,6 +24,8 @@ import (
 )
 
 // ChangelogUrgency are the strict urgency values.
+//
+// More info: https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-urgency
 type ChangelogUrgency string
 
 const (

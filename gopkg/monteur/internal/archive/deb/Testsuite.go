@@ -25,7 +25,7 @@ import (
 // Testsuite is the DEBIAN/control Testsuite: field with strict format.
 //
 // More info:
-//   https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields
+//   https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-testsuite
 type Testsuite struct {
 	// Basepath is the base directory of the package.
 	//
