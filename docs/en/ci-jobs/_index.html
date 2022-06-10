@@ -1,0 +1,224 @@
++++
+date = "2022-06-10T13:33:46+08:00"
+title = "CI Job Processing"
+description = """
+Monteur key feature is its CI Job approach to achieve reproducible build from
+sourcing supply chain to customers shipment. This page details its technical
+specifications.
+"""
+keywords = [
+	"CI Job",
+	"Processing Specifications",
+	"ZORALab's Monteur",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "list"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur - CI Jobs"
+
+[thumbnails.1]
+url = "/en/ci-jobs/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur - CI Jobs"
+
+[thumbnails.2]
+url = "/en/ci-jobs/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur - CI Jobs"
+
+
+[menu.main]
+parent = "Z) Monteur Internals"
+name = "CI Job Processing"
+pre = "📑"
+weight = 5
+identifier = "internals-ci-jobs"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="the-problems">
+	<h2>The Problems</h2>
+	<p>
+		Dated to year 2020, there is a realization within
+		<a href="https://www.zoralab.com">ZORALab</a> team that their
+		projects and products had overly relying on 3rd-party vendor
+		locked-in continuous integration services like
+		<a href="https://docs.gitlab.com/ee/ci/">GitLab CI</a>,
+		<a href="https://circleci.com/">Circle CI</a>,
+		and <a href="https://travis-ci.org/">Travis CI</a>. The team
+		also technically reviewed
+		<a href="https://www.jenkins.io/">Jenkins CI</a> but found that
+		it was gigantic and quite heavy as an independent platform
+		service.
+		<br/><br/>
+		Among the key vulnerabilities discovered were:
+		<ol>
+			<li><p>
+				<b>The project becomes very vulnerable to these
+				locked-in vendors</b>. Should any of these
+				vendors perform business-wide direction changes
+				(<a href="https://www.theregister.com/2021/01/27/gitlab_removes_starter_tier/">GitLab CI Case Exhibits I</a>,
+				<a href="https://techcrunch.com/2021/01/26/gitlab-reshuffles-its-paid-subscription-plans/">GitLab CI Case Exhibits II</a>,
+				<a href="https://www.reddit.com/r/programming/comments/uah6n5/gitlab_kicking_off_all_free_accounts_with_more/">GitLab CI Case Exhibits III</a>,
+				<a href="https://www.theregister.com/2020/11/02/travis_ci_pricng/">Travis CI Case Exhibits I</a>,
+				<a href="https://www.jeffgeerling.com/blog/2020/travis-cis-new-pricing-plan-threw-wrench-my-open-source-works">Travis CI Case Exhibits II</a>,
+				and
+				<a href="https://devclass.com/2020/11/25/travis-ci-open-source-engagement/">Travis CI Case Exhibits III</a>),
+				to change such a critical CI service tool
+				while still continuously developing the project
+				can be very cumbersome and can take months to
+				change.
+			</p></li>
+			<li><p>
+				<b>Inflexible, vendor-specific, and
+				custom-brewed instructions scripts</b>. The
+				critical CI can <b>ONLY and ONLINE ONLY</b> be
+				running on these third-party platforms of your
+				choice. There is NO WAY to run CI locally in an
+				offline, decentralized, and independent manner.
+			</p></li>
+			<li><p>
+				<b>Global geo-political instability that can
+				instantly kill one or more project entirely
+				anytime</b>. Should the geo-political
+				implication is unfavorable to the project (<a
+href="https://github.com/1995parham/github-do-not-ban-us">GitHub Exihibit I</a>,
+				<a href="https://www.bleepingcomputer.com/news/security/github-suspends-accounts-of-russian-devs-at-sanctioned-companies/">GitHub Exihibit II</a>,
+				<a
+href="https://segmentfault.com/a/1190000041719488/en">GitHub Exihibit III</a>,
+				<a
+href="https://news.ycombinator.com/item?id=24886102">GitLab Exihibit I</a>,
+				<a
+href="https://dev.to/banji220/gitlab-has-blocked-iran-1hn5">GitLab Exihibit II</a>,
+				and
+				<a
+href="https://gitlab.com/gitlab-org/gitlab/-/issues/353869">GitLab Exihibit III</a>),
+				there is little efforts these service providers
+				can do but to comply with their country of
+				origin's export restrictions.
+			</p></li>
+			<li><p>
+				<b>Project-specific, non-reusable CI
+				investment</b> across different projects. This
+				means it is very hard to roll out updates for
+				the CI script across multiple projects there are
+				using the same CI job.
+			</p></li>
+		</ol>
+		Hence, the <a href="https://www.zoralab.com">ZORALab</a> team
+		know they have to do something about it to remove these
+		vulnerabilities as soon possible before something bad happen
+		(where it did on May 1st, 2022, even to this Monteur project
+		itself).
+	</p>
+</section>
+
+
+
+
+<section id="the-solution">
+	<h2>The Solution</h2>
+	<p>
+		The <a href="https://www.zoralab.com">ZORALab</a> team
+		immediately put this Monteur project at work. <b>Monteur CI Jobs
+		specifically facilitates anyone or everyone a consistent
+		implementations of CI at decentralized, offline-capable, down
+		to work laptop level</b>. This should solve the geo-politics
+		instability vulnerability.
+		<br/><br/>
+		To make sure Monteur's customers do not suffer the never ending
+		SHELL+BATCH scripting choice, <b>Monteur itself is works as
+		an intepreter executing its CI commands based on a standardized
+		<a href="https://github.com/toml-lang/toml">TOML data
+		format</a></b>. This should solve the portability matter related
+		to the CI script.
+		<br/><br/>
+		The CI Job TOML data file is <b>continuously designed and tested
+		across time to formulate a generic job for interacting various
+		3rd-party software in the project and existing 3rd-party CI
+		services</b>. Due to the generic nature of the CI Job, the
+		distribution and update rolling to any of the existing CI Job
+		script can be easily rolled out across various project, thus
+		solving the non-reusable investment vulnerability.
+		<br/><br/>
+		To keep communications simple, Monteur keeps the CI stages based
+		on brewing a cup of artistic coffee. That way, it's easier to
+		communicate between technical folks and non-technical folks.
+	</p>
+
+
+	<section id="open-source-distribution">
+		<h3>Open Source Licensed Distribution</h3>
+		<p>
+			Given the fact that there weren't any open-source CI
+			tool like Monteur in the market and those
+			vulnerabilities stated are too vital for other projects,
+			<b>we decided to license the entire Monteur software as
+			<a href="{{< link "/licenses/" "this" "url-only" />}}">
+				Apache 2.0</a>
+			to help others open-source developers and small
+			companies that could not afford the 3rd-party CI service
+			providers</b>.
+			<br/><br/>
+			In case you're worrying that somewhere in the future
+			where
+			<a href="https://www.zoralab.com">ZORALab</a> may
+			disappear as well, please feel free to <a href="{{< link
+			"/versions/" "this" "url-only" />}}">keep a copy of the
+			source codes</a>.
+		</p>
+	</section>
+</section>
+
+
+
+
+<section id="available-ci-jobs">
+	<h2>Available CI Jobs</h2>
+	<p>
+		To date, Monteur had developed the following CI Jobs for
+		specific needs. Please remember that each CI Jobs has its own
+		currently maintained job recipes for known platforms and
+		interacting 3rd-party software. Here are the available CI Jobs:
+	</p>
+</section>
