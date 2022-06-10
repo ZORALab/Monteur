@@ -19,10 +19,13 @@ package libmonteur
 //
 // It is used in every toml config file inside setup/program/ config directory
 // for placeholding variable elements in the fields' value.
+//
+// NOTE: arrangement are alphabetical order of the VALUE, not KEY, for
+//       documentation purpose.
 const (
+	VAR_APP                       = "App"
 	VAR_ARCH                      = "Arch"
 	VAR_ARCHIVE                   = "Archive"
-	VAR_APP                       = "App"
 	VAR_BASE                      = "BaseDir"
 	VAR_BUILD                     = "BuildDir"
 	VAR_BIN                       = "BinDir"
@@ -37,20 +40,20 @@ const (
 	VAR_METHOD                    = "Method"
 	VAR_OS                        = "OS"
 	VAR_PACKAGE                   = "PackageDir"
-	VAR_ROOT                      = "RootDir"
-	VAR_SOURCE                    = "Source"
-	VAR_SECRETS                   = "Secrets"
-	VAR_TARGET                    = "Target"
-	VAR_TMP                       = "WorkingDir"
-	VAR_URL                       = "URL"
+	VAR_PACKAGE_ARCH              = "PkgArch"
 	VAR_PACKAGE_NAME              = "PkgName"
+	VAR_PACKAGE_OS                = "PkgOS"
 	VAR_PACKAGE_VERSION           = "PkgVersion"
 	VAR_PACKAGE_VERSION_DIGIT_LED = "PkgVersionDigitLed"
-	VAR_PACKAGE_OS                = "PkgOS"
-	VAR_PACKAGE_ARCH              = "PkgArch"
+	VAR_RELEASE                   = "ReleaseDir"
+	VAR_ROOT                      = "RootDir"
+	VAR_SECRETS                   = "Secrets"
+	VAR_SOURCE                    = "Source"
 	VAR_SOURCE_ARCH               = "SourceArch"
 	VAR_SOURCE_COMPUTE            = "SourceCompute"
 	VAR_SOURCE_OS                 = "SourceOS"
-	VAR_RELEASE                   = "ReleaseDir"
+	VAR_TARGET                    = "Target"
 	VAR_TIMESTAMP                 = "Timestamp"
+	VAR_URL                       = "URL"
+	VAR_TMP                       = "WorkingDir"
 )

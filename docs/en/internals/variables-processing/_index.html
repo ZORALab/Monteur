@@ -1,0 +1,931 @@
++++
+date = "2021-11-26T07:00:07+08:00"
+title = "Variables Processing"
+description = """
+To reduce and prevent duplications, Monteur offers its variables system for
+dynamic processing in its config files. It's unique and clean!
+"""
+keywords = [
+	"variables processing",
+	"variables",
+	"processing",
+	"ZORALab's Monteur",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/internals/variables-processing/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur - Variables Processing"
+
+[thumbnails.1]
+url = "/en/internals/variables-processing/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur - Variables Processing"
+
+[thumbnails.2]
+url = "/en/internals/variables-processing/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur - Variables Processing"
+
+
+[menu.main]
+parent = "Z) Monteur Internals"
+name = "Variables Processing"
+pre = "🪢"
+weight = 5
+identifier = "internals-variable-processing"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="the-problem">
+	<h2>The Problem</h2>
+	<p>
+		During the first CI Job design and creation, the team bumped
+		into a big problem when:
+		<ol>
+			<li><p>
+				<b>There is a need to dynamically formulate
+				a field</b>. A good case study would be to
+				formulate a package name for a given
+				project/app version. Constantly modifying many
+				Package API recipe because of the version
+				changes is not maintainable as there are too
+				many duplications.
+			</p></li>
+			<li><p>
+				<b>Too many dynamic values duplications</b>.
+				Likewise, a lot of project/app info can be made
+				available in a single app data file and query
+				from there.
+			</p></li>
+			<li><p>
+				<b>Specific CI Job customization needs</b>.
+				Some CI Job recipes, due to the reliance on
+				interfacting with third-party program, can have
+				its own specific parameters and inputs
+				processing.
+			</p></li>
+		</ol>
+		Hence, we need a technical solution to solve all these problems.
+	</p>
+</section>
+
+
+
+
+<section id="the-solution">
+	<h2>The Solution</h2>
+	<p>
+		To solve the problem above, Monteur facilitates variables
+		formatting for the following purposes to applicable data fields:
+		<ol>
+			<li><p>
+				Comply to <b>Don't Repeat Yourself</b>
+				principle.
+			</p></li>
+			<li><p>
+				Permits the ability to dynamically create
+				configurations data for adaptive environment.
+			</p></li>
+			<li><p>
+				Permits an algorithmic approach to simplify all
+				CI Job's recipe whenever applicable.
+			</p></li>
+		</ol>
+		A very good example of its usage is the
+		<a href="{{< link "/internals/commands/" "this"
+		"url-only" />}}">
+			Commands Execution Unit</a> where dynamic formatting
+		is heavily used to formulate its final command instruction. Here
+		is an example where the <code>Location</code> field is
+		dynamically filled with the value from <code>.WorkingDir</code>:
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+[[CMD]]
+Name = 'Get Publish Branch First Commit for Cleaning'
+Condition = 'all-all'
+Type = 'command'
+Location = '{{- .WorkingDir -}}'
+Source = 'git rev-list --max-parents=0 --abbrev-commit HEAD'
+Target = ''
+Save = 'FirstCommitID'
+{{% /highlight %}}
+		<br/>
+		Variables Processing function is available since Monteur version
+		<code>v0.0.1</code>.
+	</p>
+</section>
+
+
+
+
+<section id="data-structure">
+	<h2>Data Structure</h2>
+	<p>
+		The variable processing function deploys 2 different types of
+		variables: the <b>plain variables</b> and the <b>formattable
+		variables</b>. Although both have different roles and purposes,
+		they share the same operating mechanics which are a common and
+		unique list of <code>KEY:VALUE</code> data.
+		<br/><br/>
+		The <code>KEY</code> from the variable is used as the ID for the
+		formattable variables <b>is strictly a <code>string</code> data
+		type</b>.
+		<br/><br/>
+		The <code>VALUE</code> however, can be any data types.
+		<br/><br/>
+		Monteur always maintain a <b>SINGLE common and uniquely
+		identified list of variables</b> and <b>carries out the "create
+		or overwrite" policy</b>. Hence, any duplicated variables entry
+		having the same <code>KEY</code> shall overwrites its existing
+		value.
+	</p>
+
+
+	<section id="plain-variables-definition">
+		<h3>Plain Variables Definition</h3>
+		<p>
+			The first type is the <b>plain variables</b>. These
+			variables are straight-up basic values meant to be used
+			directly or for formatting. They are parsed as it is.
+			<br/><br/>
+			The data structure usually looks something as such:
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+[Variables]
+Version = '1.17.3'
+BaseURL = 'https://golang.org/dl/'
+{{% /highlight %}}
+			<ol>
+				<li><p>
+					The table indicator is
+					<code>[Variables]</code>.
+				</p></li>
+				<li><p>
+					Sub-definitions (e.g.
+					<code>[Variables.MyDef]</code>) are
+					<b>strictly prohibited</b>.
+				</p></li>
+			</ol>
+		</p>
+	</section>
+
+
+	<section id="formattable-variables-definition">
+		<h3>Formattable Variables Definition</h3>
+		<p>
+			The second type is the <b>formattable variables</b>.
+			These variables can be formatted with existing available
+			variables before being parsed into the variables list.
+			<br/><br/>
+			The data structure is usually looks something as such:
+{{% highlight toml "linenos=table,hl_lines=4-5,linenostart=1" %}}
+[Variables]
+Version = '1.17.3'
+
+[FMTVariables]
+Payload = 'myapp-{{- .Version -}}.tar.gz'
+{{% /highlight %}}
+			<ol>
+				<li><p>
+					The table indicator is
+					<code>[FMTVariables]</code>.
+				</p></li>
+				<li><p>
+					Sub-definitions (e.g.
+					<code>[FMTVariables.MyDef]</code>) are
+					<b>strictly prohibited</b>.
+				</p></li>
+				<li><p>
+					Due to the <code>KEY:VALUE</code> list
+					nature, <b>there is no guarentee that
+					the items are parsed in a consistent
+					and orderly manner</b>. Therefore,
+					<b>ONLY create formattable variables
+					independent of one another</b>.
+				</p></li>
+				<li><p>
+					The above example shall create or
+					overwrite the variable
+					<code>Payload</code> with the
+					<code>Value</code> as
+					<code>myapp-1.17.3.tar.gz</code>, as
+					<code>Version = '1.17.3'</code> was
+					supplied as a plain variable right
+					above.
+				</p></li>
+			</ol>
+		</p>
+	</section>
+</section>
+
+
+
+
+<section id="variables-formatting">
+	<h2>Variables Formatting</h2>
+	<p>
+		It's quite easy to use variable formatting. Consider the
+		following fields as our case study:
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+Subject1 = "Name  {{ .Version }}  .tar.gz"
+Subject2 = "Name  {{- .Version }}  .tar.gz"
+Subject3 = "Name  {{ .Version -}}  .tar.gz"
+Subject4 = "Name  {{- .Version -}}  .tar.gz"
+{{% /highlight %}}
+		The first thing to consider is the whitespace cleaning which are
+		shown in all 4 subject fields. Then, given as example that we
+		have a plain variables table as such:
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+[Variables]
+Version = '1.0.0'
+{{% /highlight %}}
+		There is a <code>KEY</code> called <code>Version</code> pointing
+		to its string value <code>1.0.0</code>. Hence, the above case
+		study yields:
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+Subject1 = "Name  1.0.0  .tar.gz"
+Subject2 = "Name1.0.0  .tar.gz"
+Subject3 = "Name  1.0.0.tar.gz"
+Subject4 = "Name1.0.0.tar.gz"
+{{% /highlight %}}
+		You should notice that the existence of the hyphen
+		(<code>-</code>) right after/before the opening/closing template
+		braces instructs the removal of whitespaces like
+		space <code>" "</code>, new line (<code>\n</code>),
+		return carriage (<code>\r</code>), and tab (<code>\t</code>) in
+		that direction.
+	</p>
+
+
+	<section id="variables-formatting-availability">
+		<h3>Variables Formatting Availability</h3>
+		<p>
+			<b>Not all data fields have variable formatting
+			function</b>. One good case is
+			<b>the plain variables</b> above where it makes no sense
+			to faclitate variable formatting.
+			<br/><br/>
+			Therefore, you need to consult the component's
+			documentation to check the variable formatting's
+			availability.
+		</p>
+	</section>
+</section>
+
+
+
+
+<section id="parsing-mechanism">
+	<h2>Parsing Mechanism</h2>
+	<p>
+		To achieve the solution presented earlier, Monteur maintains
+		<b>multi-layer overwriting policy</b> for parsing all variables
+		across different data sources. Here, we will briefly walkthrough
+		each key activities in sequences.
+	</p>
+
+
+	<section id="level-1-parsing-main-source">
+		<h3>Level 1: Parsing Main Source</h3>
+		<p>
+			Monteur starts off by parsing <b>all plain variables
+			ONLY</b> from the main configuration files located in
+			<code>.configs/monteur/workspace.toml</code> by default.
+			This will serve as the foundation of the variables list.
+			<br/><br/>
+			All variables here are <b>visible globally</b> across
+			all
+			<a href="{{< link "/ci-jobs" "this" "url-only" />}}">
+			CI Jobs</a>.
+		</p>
+	</section>
+
+
+	<section id="level-2-parsing-ci-configuration-source">
+		<h3>Level 2: Parsing CI Configuration Source</h3>
+		<p>
+			Monteur then parse the CI Job's common configuration
+			<b>plain and formattable variables</b>. All formattable
+			variables are processed before being saved into the
+			variable list. The data source are located in your CI
+			Job recipe file usually located in
+			<code>.configs/monteur/[CI-JOB]/config.toml</code>.
+			<br/><br/>
+			Any new variables created at this level <b>ONLY visible
+			to all the recipes in this CI Job</b> while any existing
+			global variables <b>shall remain globally visible</b>.
+			<br/><br/>
+			Also, any conflicting variables (same <code>KEY</code>)
+			shall be overwritten by the new ones.
+		</p>
+	</section>
+
+
+	<section id="level-3-parsing-recipe-source">
+		<h3>Level 3: Parsing Recipe Source</h3>
+		<p>
+			Monteur then parse the recipe-level <b>plain and
+			formattable variables</b>. All formattable variables are
+			processed before being saved into the variable list. The
+			data source are located in your CI Job recipe file
+			usually located in
+			<code>.configs/monteur/[CI-JOB]/jobs/[recipe].toml</code>.
+			<br/><br/>
+			Any new variables created at this level <b>ONLY visible
+			to THIS recipe</b> while any existing variables
+			<b>retains its status quo visibility</b>.
+			<br/><br/>
+			Also, any conflicting variables (same <code>KEY</code>)
+			shall be overwritten by the new ones.
+		</p>
+	</section>
+</section>
+
+
+
+
+<section id="reserved-variables">
+	<h2>Reserved Variables</h2>
+	<p>
+		In common cases, Monteur reserved and use a set of pre-defined
+		variables for its CI Job operations, made visibly available via
+		the variables list. Hence, you <b>should avoid these pre-defined
+		<code>KEY</code> when creating your own variables!</b>
+		<br/><br/>
+		Among them are:
+		<ul>
+			<li><p>
+				<code>App</code>
+				<ol>
+					<li><p>
+						The project/app data created via
+						<a href="{{< link
+							"/internals/init-api/"
+							"this"
+							"url-only" />}}">
+						Init API</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Arch</code>
+				<ol>
+					<li><p>
+						Denotes current workstation
+						CPU architecture.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Archive</code>
+				<ol>
+					<li><p>
+						Denotes an archive filepath in a
+						task.
+					</p></li>
+					<li><p>
+						Used by <a href="{{< link
+						"/ci-jobs/setup" "this"
+						"url-only" />}}">Setup CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>BaseDir</code>
+				<ol>
+					<li><p>
+						Denotes the directory that acts
+						as the foundation of the
+						work (e.g. root directory of
+						your source codes).
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>BuildDir</code>
+				<ol>
+					<li><p>
+						Denotes the artifact directory
+						output by <a href="{{< link
+						"/ci-jobs/build" "this"
+						"url-only" />}}">Build CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>BinDir</code>
+				<ol>
+					<li><p>
+						Denotes the directory holding
+						all localized executables
+						created by <a href="{{< link
+						"/ci-jobs/setup" "this"
+						"url-only" />}}">Setup CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>ConfigDir</code>
+				<ol>
+					<li><p>
+						Denotes the directory holding
+						all Monteur Filesystem's config
+						directory.
+					</p></li>
+					<li><p>
+						Used for setting up the terminal
+						to match the project/app working
+						environment.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>ChangelogEntries</code>
+				<ol>
+					<li><p>
+						Holds all changelog template
+						data.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>ComputeSystem</code>
+				<ol>
+					<li><p>
+						The workstation's Monteur
+						Platform ID.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DataDir</code>
+				<ol>
+					<li><p>
+						Monteur data directory for
+						persistent storage.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>DocsDir</code>
+				<ol>
+					<li><p>
+						The directory holding the
+						project/app documentation.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Format</code>
+				<ol>
+					<li><p>
+						Denotes a format of a task.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>HomeDir</code>
+				<ol>
+					<li><p>
+						Denotes the user's home
+						directory.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>LogDir</code>
+				<ol>
+					<li><p>
+						Denotes Monteur's logging output
+						directory.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Method</code>
+				<ol>
+					<li><p>
+						Denotes a method of a task.
+					</p></li>
+					<li><p>
+						Used by <a href="{{< link
+						"/ci-jobs/setup" "this"
+						"url-only" />}}">Setup CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>OS</code>
+				<ol>
+					<li><p>
+						Denotes workstation's OS.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>PackageDir</code>
+				<ol>
+					<li><p>
+						Denotes Monteur's output
+						directory from <a href="{{< link
+						"/ci-jobs/package" "this"
+						"url-only" />}}">Package CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>PkgArch</code>
+				<ol>
+					<li><p>
+						CPU architecture of a package.
+					</p></li>
+					<li><p>
+						Used by <a href="{{< link
+						"/ci-jobs/package" "this"
+						"url-only" />}}">Package CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>PkgName</code>
+				<ol>
+					<li><p>
+						Name of a package.
+					</p></li>
+					<li><p>
+						Used by <a href="{{< link
+						"/ci-jobs/package" "this"
+						"url-only" />}}">Package CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>PkgOS</code>
+				<ol>
+					<li><p>
+						Opreating system of a package.
+					</p></li>
+					<li><p>
+						Used by <a href="{{< link
+						"/ci-jobs/package" "this"
+						"url-only" />}}">Package CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>PkgVersion</code>
+				<ol>
+					<li><p>
+						Version of a package.
+					</p></li>
+					<li><p>
+						Used by <a href="{{< link
+						"/ci-jobs/package" "this"
+						"url-only" />}}">Package CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>PkgVersionDigitLed</code>
+				<ol>
+					<li><p>
+						Version of a package where it
+						is digit-led.
+					</p></li>
+					<li><p>
+						Used by <a href="{{< link
+						"/ci-jobs/package" "this"
+						"url-only" />}}">Package CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>ReleaseDir</code>
+				<ol>
+					<li><p>
+						Denotes the release directory
+						for <a href="{{< link
+						"/ci-jobs/release" "this"
+						"url-only" />}}">Release CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>RootDir</code>
+				<ol>
+					<li><p>
+						Denotes the root directory of
+						the project/app repository.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Secrets</code>
+				<ol>
+					<li><p>
+						Denotes Monteur's secret data.
+					</p></li>
+					<li><p>
+						Monteur internal use only.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Source</code>
+				<ol>
+					<li><p>
+						Denotes a source input of a
+						task.
+					</p></li>
+					<li><p>
+						Used by <a href="{{< link
+						"/internals/commands/" "this"
+						"url-only" />}}">Commands
+						Execution Unit</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>SourceArch</code>
+				<ol>
+					<li><p>
+						Denotes the CPU architecture of
+						the source input of a task.
+					</p></li>
+					<li><p>
+						Used by <a href="{{< link
+						"/ci-jobs/setup" "this"
+						"url-only" />}}">Setup CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>SourceCompute</code>
+				<ol>
+					<li><p>
+						Denotes the platform ID of
+						the source input of a task.
+					</p></li>
+					<li><p>
+						Used by <a href="{{< link
+						"/ci-jobs/setup" "this"
+						"url-only" />}}">Setup CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>SourceOS</code>
+				<ol>
+					<li><p>
+						Denotes the OS of the source
+						input of a task.
+					</p></li>
+					<li><p>
+						Used by <a href="{{< link
+						"/ci-jobs/setup" "this"
+						"url-only" />}}">Setup CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Target</code>
+				<ol>
+					<li><p>
+						Denotes a target input of a
+						task.
+					</p></li>
+					<li><p>
+						Used by <a href="{{< link
+						"/internals/commands/" "this"
+						"url-only" />}}">Commands
+						Execution Unit</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Timestamp</code>
+				<ol>
+					<li><p>
+						Denotes a full timestamp of a
+						task when Monteur is invoked.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>URL</code>
+				<ol>
+					<li><p>
+						Denotes an URL usable in a task.
+					</p></li>
+					<li><p>
+						Used by <a href="{{< link
+						"/ci-jobs/setup" "this"
+						"url-only" />}}">Setup CI
+						Job</a>.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>WorkingDir</code>
+				<ol>
+					<li><p>
+						Denotes the temporary workspace
+						directory for executing the
+						task.
+					</p></li>
+					<li><p>
+						Reserved since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+		</ul>
+	<p>
+</section>
+
+
+
+
+{{% epilogue %}}
+That's all for Monteur's Variable Processing Function.
+{{% /epilogue %}}
