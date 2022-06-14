@@ -1,0 +1,666 @@
++++
+date = "2022-06-13T13:58:09+08:00"
+title = "Setup Meta Processing"
+description = """
+Monteur has a special metadata processing function for keeping its Setup CI Job
+sane and maintainable. Here's its working mechanics and specifications!
+"""
+keywords = [
+	"setup metadata processing function",
+	"metadata processing",
+	"ZORALab's Monteur",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "list"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/internals/setup-meta/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Setup Meta Processing"
+
+[thumbnails.1]
+url = "/en/internals/setup-meta/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Setup Meta Processing"
+
+[thumbnails.2]
+url = "/en/internals/setup-meta/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Setup Meta Processing"
+
+
+[menu.main]
+parent = "Z) Monteur Internals"
+name = "Setup Meta Processing"
+pre = "🧩"
+weight = 5
+identifier = "internals-setup-meta"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="the-problem">
+	<h2>The Problem</h2>
+	<p>
+		It was started with supporting development on various operating
+		system and CPU archictures. Due to this, many software and tool
+		packages are organized in its own list of distributions, naming
+		conventions, and release strategies.
+		<br/><br/>
+		Among known problems are:
+		<ol>
+			<li><p>
+				<b>There are simply too many platform
+				variants and archiving formats</b> offered by
+				3rd-party software for great cross-platform
+				experiences.
+			</p></li>
+			<li><p>
+				<b>There are no consistent executable scripts
+				(e.g. <code>shell</code> vs
+				<code>batch</code>)</b> that allows unilingual
+				scripting.
+			</p></li>
+			<li><p>
+				<b>There are various combinations and
+				permutations of methods to make dependencies
+				available</b> for a development.
+			</p></li>
+			<li><p>
+				<b>All the problems above are specific to Setup
+				API</b> and not seen in other jobs.
+			</p></li>
+		</ol>
+	</p>
+</section>
+
+
+
+
+<section id="the-solution">
+	<h2>The Solution</h2>
+	<p>
+		Since Monteur wants its dependencies management to be managable
+		via <b>ONE (1)</b> interface without too many duplications, this
+		setup meta processing function is created to solve all the
+		problems above.
+
+		To solve the problem above, Monteur uses this <b>Setup Meta
+		Processing function to solve those
+		<a href="{{< link "/ci-jobs/setup" "this" "url-only" />}}">Setup
+		CI Job</a> specific problems above</b> for any amount of the
+		supplied variants in a managable manner. The idea is to:
+		<ol>
+			<li><p>
+				Keep the dependency artifact sourcing from
+				supplier <b>maintainable using the overwrite
+				policy</b>.
+			</p></li>
+			<li><p>
+				<b>Facilitates various type of built-in sourcing
+				methods</b> to meet various sourcing needs.
+			</p></li>
+			<li><p>
+				<b>Acts as a command intepreter whenever
+				possible</b> for ensuring performance
+				consistencies across different platforms
+				specifically dealing with
+				<a href="{{< link "/ci-jobs/setup" "this"
+				"url-only" />}}">Setup CI Job</a>.
+			</p></li>
+		</ol>
+		By doing so, we kept the development, maintenance, and using
+		<a href="{{< link "/ci-jobs/setup" "this"
+		"url-only" />}}">Setup CI Job</a> experiences seamlessly easy
+		to perform.
+	</p>
+
+
+	<section id="current-deployment">
+		<h3>Current Deployment</h3>
+		<p>
+			Currently, this function is deployed in the following
+			CI Jobs:
+			<ol>
+				<li><p>
+					<a href="{{< link "/ci-jobs/setup/"
+						"this" "url-only" />}}">
+						Setup</a>
+					since Monteur version
+					<code>v0.0.1</code>.
+				</p></li>
+			</ol>
+		</p>
+	</section>
+</section>
+
+
+
+
+<section id="data-structure">
+	<h2>Data Structure</h2>
+	<p>
+		This function is specifically built into the
+		<a href="{{< link "/ci-jobs/setup/" "this" "url-only" />}}">
+		Setup CI Job</a>. Hence, its data structure is <b>scattered
+		across various parts and sections of the CI Job recipe</b>.
+		In this specification, all its settings are specified in each
+		sub-sections by following the CI Job's recipe's data file
+		from top to bottom.
+	</p>
+
+
+	<section id="sourcing-method-type">
+		<h3>Sourcing Method Type</h3>
+		<p>
+			This function offers a number of sourcing method types
+			that are offered in its own catalog section offered
+			later in this page. Each type has its own explaination
+			of its requirements and the how-to in the recipe file.
+			The configuration is set via <code>Metadata.Type</code>.
+			Here is a code snippet of the recipe file:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Metadata]
+...
+Type = 'https-download'
+
+...
+{{% /highlight %}}
+		</p>
+	</section>
+
+
+	<section id="recipe-sourcing-section">
+		<h3>Recipe Sourcing Section</h3>
+		<p>
+			This function has a very special method to list all the
+			recipe's sourcing data complying to <b>Don't Repeat
+			Yourself</b> policy. To do that, the function employs
+			<b>the overwriting policy</b> allowing one to first
+			write a generic settings and then overwrite the
+			needed fields with specific data.
+			<br/><br/>
+			Depending on the sourcing method type above, some types
+			might not need all the fields. Hence, please refer to
+			your selected sourcing method type's specification on
+			how to construct this section.
+			<br/><br/>
+			Here is the full list of data fields along with its
+			dummy data for specification's referencing purposes:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Sources.{OS}-{ARCH}]
+Format = 'tar.gz'
+URL = '{{- .BaseURL -}}{{- .Archive -}}'
+Archive = 'go{{- .Version -}}.{{- .ComputeSystem -}}.{{- .Format -}}'
+Method = 'GET'
+
+[Sources.{OS}-{ARCH}.Checksum]
+Type = 'sha256'
+Format = 'hex'
+Value = '...'
+
+[Sources.{OS}-{ARCH}.Headers]
+"User-Agent" = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'
+"auth-token" = "{{- GetSecret "Github.Token" -}}"
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}</code>
+					<ol>
+						<li><p>
+							The <a href="{{< link
+							"/internals/platform-identification/"
+							"this"
+							"url-only" />}}">
+								Monteur Platform
+							ID</a> for this sourcing
+							data to be effective.
+							Example:
+							<code>[Sources.all-all]</code>
+							and
+							<code>[Sources.linux-amd64]</code>.
+						</p></li>
+						<li><p>
+							<b>COMPULSORY</b> - this
+							setting is used for
+							uniquely grouping and
+							structuring source data
+							between multiple groups
+							of data fields. It is
+							also used for
+							facilitating
+							cross-platform supports
+							like listing all the
+							sources here instead of
+							spinning multiple recipe
+							files.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Format</code>
+					<ol>
+						<li><p>
+							Originally designed to
+							specify the source
+							format.
+						</p></li>
+						<li><p>
+							<b>COMPULSORY /
+							OPTIONAL</b> - Its
+							definition is in the
+							selected sourcing method
+							type's specification.
+						</p></li>
+						<li><p>
+							Depending on the
+							sourcing method type,
+							some can implement
+							Monteur's built-in
+							functions like unpack
+							<code>.tar.gz</code> or
+							<code>.zip</code>
+							archived file.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.URL</code>
+					<ol>
+						<li><p>
+							Originally designed to
+							specify the source URL
+							for networking sourcing
+							type.
+						</p></li>
+						<li><p>
+							<b>COMPULSORY /
+							OPTIONAL</b> - Its
+							definition is in the
+							selected sourcing method
+							type's specification.
+						</p></li>
+						<li><p>
+							Depending on the
+							sourcing method type,
+							some can implement
+							Monteur's built-in
+							functions like unpack
+							<code>https</code>
+							download.
+						</p></li>
+						<li><p>
+							<a href="{{< link
+								"/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+								Variables
+							formatting</a> is
+							available for this field.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Archives</code>
+					<ol>
+						<li><p>
+							Originally designed to
+							define the downloaded
+							archived filename
+							pattern.
+						</p></li>
+						<li><p>
+							<b>COMPULSORY /
+							OPTIONAL</b> - Its
+							definition is in the
+							selected sourcing method
+							type's specification.
+						</p></li>
+						<li><p>
+							Depending on the
+							sourcing method type,
+							some can implement
+							Monteur's built-in
+							functions like unpack
+							<code>https</code>
+							download.
+						</p></li>
+						<li><p>
+							<a href="{{< link
+								"/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+								Variables
+							formatting</a> is
+							available for this field.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Method</code>
+					<ol>
+						<li><p>
+							Originally designed to
+							define the HTTPS method
+							for HTTPS download type.
+						</p></li>
+						<li><p>
+							<b>COMPULSORY /
+							OPTIONAL</b> - Its
+							definition is in the
+							selected sourcing method
+							type's specification.
+						</p></li>
+						<li><p>
+							Depending on the
+							sourcing method type,
+							some can implement
+							Monteur's built-in
+							functions like unpack
+							<code>https</code>
+							download.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Checksum</code>
+					<ol>
+						<li><p>
+							Perform checksum
+							integrity checking using
+							Monteur's built-in
+							checksum function.
+						</p></li>
+						<li><p>
+							<b>COMPULSORY /
+							OPTIONAL</b> - Its
+							definition is in the
+							selected sourcing method
+							type's specification.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Checksum.Type</code>
+					<ol>
+						<li><p>
+							Defines the checksum
+							algorithm type.
+							Supported algorithms
+							are:
+							<code>md5</code>,
+							<code>sha256</code>,
+							<code>sha512</code>,
+							and
+							<code>sha512-&#62;sha256</code>.
+						</p></li>
+						<li><p>
+							<b>COMPULSORY</b> - if
+							<code>Sources.{OS}-{ARCH}.Checksum</code>
+							is enabled.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Checksum.Format</code>
+					<ol>
+						<li><p>
+							Defines the format of
+							the checksum value.
+							Supported values are:
+							<code>hex</code>,
+							<code>base64</code>,
+							and
+							<code>base64-url</code>.
+						</p></li>
+						<li><p>
+							<b>COMPULSORY</b> - if
+							<code>Sources.{OS}-{ARCH}.Checksum</code>
+							is enabled.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Checksum.Value</code>
+					<ol>
+						<li><p>
+							Defines the checksum
+							value.
+						</p></li>
+						<li><p>
+							<b>COMPULSORY</b> - if
+							<code>Sources.{OS}-{ARCH}.Checksum</code>
+							is enabled.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Headers</code>
+					<ol>
+						<li><p>
+							Originally designed for
+							HTTPS sourcing method
+							type to append or
+							overwrite the HTTPS
+							request headers.
+						</p></li>
+						<li><p>
+							<b>OPTIONAL</b> - made
+							available in case there
+							is a need for
+							customization like
+							setting authentication
+							token.
+						</p></li>
+						<li><p>
+							The final value is a
+							list of
+							<code>KEY:VALUE</code>
+							headers where the
+							<code>KEY</code> is the
+							header identifer while
+							<code>VALUE</code> is
+							the value of the header.
+							<b>Both <code>KEY</code>
+							and <code>VALUE</code>
+							are as it is</b>.
+						</p></li>
+						<li><p>
+							<a href="{{< link
+								"/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+								Variables formatting
+							</a> is available for
+							the <code>VALUE</code>
+							of the field.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="user-startup-configurations">
+		<h3>User Startup Configurations</h3>
+		<p>
+			This function also offers a standard methods of starting
+			up the project repository after setup completions. This
+			allows the user to startup the repository for any tasks
+			in a uniformed manner.
+			<br/><br/>
+			From Monteur version <code>v0.0.1</code>, this function
+			uses the operating system's command line scripting
+			method to source all configurations. A full list of its
+			data structure is shown below:
+{{% note info "For Your Info" %}}
+A development is on-going to make Monteur removes all these scripting needs and
+set itself as an intepreter to:
+
+1. Reduce the learning curves needs (e.g. learning shell and powershell
+   scripting).
+2. Reduce Monteur dependencies on external programs.
+{{% /note %}}
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Config]
+linux = """
+#!/bin/bash
+
+_name="hugo"
+
+case $1 in
+--stop)
+	;;
+*)
+	if [ ! -z "$(type -p "$_name")" ]; then
+		1>&2 printf "[ DONE  ] '$_name' is available.\\n"
+        else
+		1>&2 printf "[ ERROR ] '$_name' is missing.\\n"
+	fi
+	;;
+esac
+"""
+windows = """
+...COMING SOON...
+"""
+darwin = """
+...COMING SOON...
+"""
+...
+
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>Config.{OS}</code>
+					<ol>
+						<li><p>
+							The <code>{OS}</code>
+							<b>MUST</b> be the
+							<a href="{{< link
+							"/internals/platform-identification/"
+							"this"
+							"url-only" />}}">
+								Monteur Platform
+							ID</a> like
+							<code>linux</code> and
+							<code>windows</code>.
+						</p></li>
+						<li><p>
+							<b>COMPULSORY</b> - the
+							value <b>MUST</b> be the
+							operating system's
+							terminal scripts like
+							<code>shell</code> or
+							<code>powershell</code>
+							scripts.
+						</p></li>
+						<li><p>
+							Whenever applicable,
+							<b>Montuer shall never
+							set these scripts to
+							be executables</b>.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+			</ul>
+		</p>
+	</section>
+</section>
+
+
+
+
+<section id="available-sourcing-methods">
+	<h3>Available Sourcing Methods</h3>
+	<p>
+		Monteur shall continuously develop and add new sourcing methods
+		(<code>Metadata.Type</code>) from time to time. Here are the
+		available sourcing methods at your disposal:
+	</p>
+</section>
