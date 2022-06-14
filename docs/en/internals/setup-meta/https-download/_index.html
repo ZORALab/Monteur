@@ -1,0 +1,462 @@
++++
+date = "2022-06-14T15:25:24+08:00"
+title = "HTTPS Download Sourcing Type"
+description = """
+Montuer has a built-in HTTPS download sourcing method for its Setup Meta
+processing function. Here's its working mechanics and specifications.
+"""
+keywords = [
+	"setup metadata processing function",
+	"metadata processing",
+	"ZORALab's Monteur",
+	"https-download",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/internals/setup-meta/https-download/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Setup Meta Processing - HTTPS Download Type"
+
+[thumbnails.1]
+url = "/en/internals/setup-meta/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Setup Meta Processing - HTTPS Download Type"
+
+[thumbnails.2]
+url = "/en/internals/setup-meta/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Setup Meta Processing - HTTPS Download Type"
+
+
+[menu.main]
+parent = "disabled"
+name = "Setup Meta Processing"
+pre = "🧩"
+weight = 5
+identifier = "internals-setup-meta-https-download"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="purpose">
+	<h2>Purpose</h2>
+	<p>
+		The purpose of facilitating this sourcing method type is for
+		Monteur to source a 3rd-party software package for the
+		repository via <code>HTTPS</code> download, all solely using
+		its built-in functionalities including network interactions.
+	</p>
+</section>
+
+
+
+
+<section id="data-structure">
+	<h2>Data Structure</h2>
+	<p>
+		This function is specifically built into the
+		<a href="{{< link "/ci-jobs/setup/" "this" "url-only" />}}">
+		Setup CI Job</a>. Hence, its data structure is <b>scattered
+		across various parts and sections of the CI Job recipe</b>.
+		In this specification, all its settings are specified in each
+		sub-sections by following the CI Job's recipe's data file
+		from top to bottom.
+	</p>
+
+
+	<section id="sourcing-method-type">
+		<h3>Sourcing Method Type</h3>
+		<p>
+			To use this method type, simply set
+			<code>Metadata.Type</code> to percisely
+			<code>https-download</code>. This will instruct Monteur
+			to use its internal <code>HTTPS</code> download function
+			for sourcing the 3rd-party target file across the
+			network.
+			<br/><br/>
+			Here is a code snippet of the recipe file:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Metadata]
+...
+Type = 'https-download'
+{{% /highlight %}}
+		</p>
+	</section>
+
+
+	<section id="recipe-sourcing-section">
+		<h3>Recipe Sourcing Section</h3>
+		<p>
+			This sourcing method employs almost all the fields in
+			the recipe sourcing section. Moreover, the
+			<b>overwriting policy</b> is a great feature to keep
+			most of the settings sane and maintain <b>Don't Repeat
+			Yourself</b> policy.
+			<br/><br/>
+			Generally speaking, you want to define the overall
+			<code>HTTPS</code> interface using the
+			<code>all-all</code> <a href="{{< link
+			"/internals/platform-identification/" "this"
+			"url-only" />}}">
+				Monteur Platform ID</a>
+			first to unify the server interactions  before
+			overwriting it with opreating system specific
+			data. The easiest and greatest example would be the
+			target's checksum value where they have many variants
+			across different platforms and each of them changed
+			between releases.
+			<br/><br/>
+			Here is the <b>recommended</b> fields in its data
+			structure for effective maintenance and readability
+			usage:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Sources.all-all]
+Format = 'tar.gz'
+URL = '{{- .BaseURL -}}{{- .Archive -}}'
+Archive = 'go{{- .Version -}}.{{- .ComputeSystem -}}.{{- .Format -}}'
+Method = 'GET'
+
+[Sources.all-all.Checksum]
+Type = 'sha256'
+Format = 'hex'
+
+[Sources.all-all.Headers]
+"User-Agent" = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'
+"auth-token" = "{{- GetSecret "Github.Token" -}}"
+
+[Sources.darwin-amd64.Checksum]
+Value = '874bc6f95e07697380069a394a21e05576a18d60f4ba178646e1ebed8f8b1f89'
+
+[Sources.linux-amd64.Checksum]
+Value = '231654bbf2dab3d86c1619ce799e77b03d96f9b50770297c8f4dff8836fc8ca2'
+
+...
+
+[Sources.{OS}-{ARCH}.Checksum]
+Valut = '...'
+
+...
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}</code>
+					<ol>
+						<li><p>
+							<b>COMPULSORY</b> - This
+							setting is used for
+							uniquely grouping and
+							structuring source data
+							between multiple groups
+							of data fields. It is
+							also used for
+							facilitating
+							cross-platform supports
+							like listing all the
+							sources here instead of
+							spinning multiple recipe
+							files.
+						</p></li>
+						<li><p>
+							The <a href="{{< link
+							"/internals/platform-identification/"
+							"this"
+							"url-only" />}}">
+								Monteur Platform
+							ID</a> for this sourcing
+							data to be effective.
+							Example:
+							<code>[Sources.all-all]</code>
+							and
+							<code>[Sources.linux-amd64]</code>.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Format</code>
+					<ol>
+						<li><p>
+							<b>COMPULSORY</b> - It
+							is used to define the
+							downloaded target
+							archived file format.
+							Monteur uses this field
+							to unpack the archived
+							file.
+						</p></li>
+						<li><p>
+							See <a href="{{< link
+							"/internals/setup-meta/"
+							"this" "url-only" />}}">
+							Setup Meta
+							Processing</a> for
+							supported algorithms.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.URL</code>
+					<ol>
+						<li><p>
+							<b>COMPULSORY</b> - The
+							location to download the
+							target.
+						</p></li>
+						<li><p>
+							<a href="{{< link
+								"/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+								Variables
+							formatting</a> is
+							available for this field.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Archives</code>
+					<ol>
+						<li><p>
+							<b>COMPULSORY</b> -
+							denotes the naming of
+							the downloaded archived
+							file.
+						</p></li>
+						<li><p>
+							<a href="{{< link
+								"/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+								Variables
+							formatting</a> is
+							available for this field.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Method</code>
+					<ol>
+						<li><p>
+							<b>COMPULSORY</b> -
+							defines the HTTPS method
+							of communications.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Checksum</code>
+					<ol>
+						<li><p>
+							<b>RECOMMENDED</b> - to
+							ensure the downloaded
+							artifact is with
+							integrity.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Checksum.Type</code>
+					<ol>
+						<li><p>
+							<b>COMPULSORY</b> - if
+							<code>Sources.{OS}-{ARCH}.Checksum</code>
+							is enabled to select
+							the algorithm type.
+						</p></li>
+						<li><p>
+							See <a href="{{< link
+							"/internals/setup-meta/"
+							"this" "url-only" />}}">
+							Setup Meta
+							Processing</a> for
+							supported algorithms.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Checksum.Format</code>
+					<ol>
+						<li><p>
+							<b>COMPULSORY</b> - if
+							<code>Sources.{OS}-{ARCH}.Checksum</code>
+							is enabled for selecting
+							parsing format.
+						</p></li>
+						<li><p>
+							See <a href="{{< link
+							"/internals/setup-meta/"
+							"this" "url-only" />}}">
+							Setup Meta
+							Processing</a> for
+							supported formats.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Checksum.Value</code>
+					<ol>
+						<li><p>
+							<b>COMPULSORY</b> - if
+							<code>Sources.{OS}-{ARCH}.Checksum</code>
+							is enabled to define
+							checksum value.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Headers</code>
+					<ol>
+						<li><p>
+							<b>OPTIONAL</b> - made
+							available in case there
+							is a need for HTTPS
+							headers
+							customization like
+							setting authentication
+							token.
+						</p></li>
+						<li><p>
+							See <a href="{{< link
+							"/internals/setup-meta/"
+							"this" "url-only" />}}">
+							Setup Meta
+							Processing</a> for its
+							working mechanism.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="user-startup-configurations">
+		<h3>User Startup Configurations</h3>
+		<p>
+			This sourcing method complies to the original
+			<a href="{{< link "/internals/setup-meta/" "this"
+			"url-only" />}}">Setup Meta Processing</a> so nothing
+			special is needed.
+			<br/><br/>
+			Here is an example for quick referencing only:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Config]
+linux = """
+#!/bin/bash
+
+_name="hugo"
+
+case $1 in
+--stop)
+	;;
+*)
+	if [ ! -z "$(type -p "$_name")" ]; then
+		1>&2 printf "[ DONE  ] '$_name' is available.\\n"
+        else
+		1>&2 printf "[ ERROR ] '$_name' is missing.\\n"
+	fi
+	;;
+esac
+"""
+windows = """
+...COMING SOON...
+"""
+darwin = """
+...COMING SOON...
+"""
+...
+
+{{% /highlight %}}
+		</p>
+	</section>
+</section>
+
+
+
+
+{{< epilogue >}}
+That's all for HTTPS downloading sourcing type.
+{{< /epilogue >}}
