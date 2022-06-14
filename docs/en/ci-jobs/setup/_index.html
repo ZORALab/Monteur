@@ -1,0 +1,519 @@
++++
+date = "2021-11-25T12:54:54+08:00"
+title = "Setup"
+description = """
+Monteur provides Setup CI Job to setup and get the repository ready for work -
+develop, test, build, package, release, etc.
+"""
+keywords = [
+	"Setup",
+	"CI job",
+	"Setup CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "list"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/setup/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Setup CI Job"
+
+[thumbnails.1]
+url = "/en/ci-jobs/setup/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Setup CI Job"
+
+[thumbnails.2]
+url = "/en/ci-jobs/setup/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Setup CI Job"
+
+
+[menu.main]
+parent = "CI Jobs"
+name = "Setup"
+pre = "🧩"
+weight = 10
+identifier = "ci-jobs-setup"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+		<br/><br/>
+		The objective of the job is simple: <b>to setup the repository
+		all the way for other CI Jobs with consistency, minimal efforts,
+		and now further instructions</b>.
+		<br/><br/>
+		All users has to do is to issue this command:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+montuer setup
+{{% /highlight %}}
+	</p>
+</section>
+
+
+
+
+<section id="job-level-configurations">
+	<h2>Job Level Configurations</h2>
+	<p>
+		Montuer does facilitate a job-wide configurations file for
+		configuring Setup CI-Job over all settings and supplying
+		job-wide variables.
+		<br/><br/>
+		The configuration file, by default, are stored in
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+.configs/monteur/setup/config.toml
+{{% /highlight %}}
+		The currently supported format are:
+<ul>
+	<li><p>
+		<code>.toml (TOML)</code> -
+		<a href="https://github.com/toml-lang/toml">
+			https://github.com/toml-lang/toml</a>
+	</p></li>
+</ul>
+		The file structure of the recipe configuration file is detailed
+		from top to bottom in the following sub-sections, in sequences.
+	</p>
+
+
+	<section id="job-level-downloads-settings">
+		<h3>Job Level Download Settings</h3>
+		<p>
+			These settings affect all network downloads performances
+			to avoid network starvation or abuses. The data
+			structure of the settings are:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Downloads]
+Limit = 3
+Timeout = 120000000000 # nanosecond
+{{% /highlight %}}
+			<ul>
+				<li><p><code>Limit</code> - Setting the total
+				downloads limit at a time. <code>0</code> or
+				negative values denotes unlimited download
+				activities.
+{{< note "info" "For Your Info" >}}
+This feature is still pending for development.
+{{< /note >}}
+				</p></li>
+				<li><p><code>Timeout</code> - Instructs Monteur
+				to bail out a network waiting and report as
+				error after waiting a specific amount of time.
+				The unit is <code>nanosecond</code>. The value
+				<b>MUST</b> be positive value. Setting
+				<code>0</code> or negative values denotes the
+				default 2 minutes.
+				<br/><br/>
+				Example, for 2 minutes duration, it is
+				<code>2 x 60 x 1000 x 1000 x 1000 =
+				120000000000</code>.
+{{< note "info" "For Your Info" >}}
+This feature is still pending for development.
+{{< /note >}}
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="job-level-variables-section">
+		<h3>Job Level Variables Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/variables-processing/"
+				"this"
+				"url-only" />}}">Variables Processing</a>
+			features. All variables defined in this job-wide
+			configuration file <b>only visible to ALL Setup CI Job
+			recipes</b>. It is highly recommended to place
+			project-based variables data into this list for
+			recipes consistency purposes.
+			<br/><br/>
+			An example of the job-level variables section consists
+			of the following fields:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Variables]
+Version = '1.17.3'
+BaseURL = 'https://golang.org/dl/'
+
+[FMTVariables]
+SourceDir = '{{- .WorkingDir -}}/public'
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>[Variables]</code> - plain
+					variables list complying to
+					<a href="{{< link
+						"/internals/variables-processing/#plain-variables-definition"
+						"this"
+						"url-only" />}}">
+						Montuer Plain Variables
+						Definition</a>.
+				</p></li>
+				<li><p>
+					<code>[FMTVariables]</code> -
+					formattable variables list complying to
+					<a href="{{< link
+						"/internals/variables-processing/#formattable-variables-definition"
+						"this"
+						"url-only" />}}">
+						Montuer Formattable Variables
+						Definition</a>.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+</section>
+
+
+
+<section id="recipe-configuration-file">
+	<h2>Recipe Configuration File</h2>
+	<p>
+		All setup recipe configuration files, by default, are stored in
+		directory with any name followed the a strict file extension
+		called:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+.configs/monteur/setup/jobs/
+{{% /highlight %}}
+		The currently supported format presented in their respective
+		file extensions are:
+<ul>
+	<li><p>
+		<code>.toml (TOML)</code> -
+		<a href="https://github.com/toml-lang/toml">
+			https://github.com/toml-lang/toml</a>
+	</p></li>
+</ul>
+		The file structure of the recipe configuration file is detailed
+		from top to bottom in the following sub-sections, in sequences,
+		and in <code>TOML</code> format.
+	</p>
+
+
+	<section id="recipe-metadata-section">
+		<h3>Recipe's Metadata Section</h3>
+		<p>
+			The recipe's metadata section consists of the following
+			fields:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Metadata]
+Name = 'Go Programming Language'
+Description = """
+Setup Go Programming Language for compiling Go source codes.
+"""
+Type = 'https-download'
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>Name</code> - used for recipe
+					identification, reporting, and
+					referencing usage. Monteur recommends
+					<b>keeping it short, concise and without
+					any weird symbols (e.g. space will be
+					replaced by short dash
+					(<code>-</code>))</b>.
+				</p></li>
+				<li><p>
+					<code>Description</code> - mainly for
+					logging and reporting purposes.
+					<b>Describe the details of the
+					recipe.</b>
+				</p></li>
+				<li><p>
+					<code>Type</code> - <b>defines the
+					dependency sourcing method</b>. The
+					availability and its working mechanics
+					are detailed in <a href="{{< link
+						"/internals/setup-meta/"
+						"this"
+						"url-only" />}}">Setup Meta
+						Processing Specification</a>.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-variables-section">
+		<h3>Recipe's Variables Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/variables-processing/"
+				"this"
+				"url-only" />}}">Variables Processing</a>
+			features. All variables defined in this recipe's
+			configuration file <b>only visible to this recipe</b>.
+			It is highly recommended to abstract as much variables
+			away from your setup algorithm as possible so that your
+			user only has to customize these tables and not needing
+			to mess with your algorithm.
+			<br/><br/>
+			The variables section consists of the following
+			fields:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Variables]
+Version = '1.17.3'
+BaseURL = 'https://golang.org/dl/'
+
+[FMTVariables]
+SourceDir = '{{- .WorkingDir -}}/public'
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>[Variables]</code> - plain
+					variables list complying to
+					<a href="{{< link
+						"/internals/variables-processing/#plain-variables-definition"
+						"this"
+						"url-only" />}}">
+						Montuer Plain Variables
+						Definition</a>.
+				</p></li>
+				<li><p>
+					<code>[FMTVariables]</code> -
+					formattable variables list complying to
+					<a href="{{< link
+						"/internals/variables-processing/#formattable-variables-definition"
+						"this"
+						"url-only" />}}">
+						Montuer Formattable Variables
+						Definition</a>.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-dependencies-section">
+		<h3>Recipe's Dependencies Checking Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/dependencies-checking/"
+				"this"
+				"url-only" />}}">Dependencies Checking</a>
+			features. All dependencies here are checked against the
+			running operating system to ensure proper operations.
+			It is highly recommended to abstract as much dependencies
+			into this list and away from your setup algorithm as
+			possible so that your user can check through the list
+			without messing with your algorithm.
+			<br/><br/>
+			The dependencies checking section consists of the
+			following fields:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[[Dependencies]]
+Name = 'Hugo for documentation purposes'
+Condition = 'all-all'
+Type = 'command'
+Command = 'hugo'
+
+[[Dependencies]]
+Name = 'Git for version control'
+Condition = 'all-all'
+Type = 'command'
+Command = 'git'
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>[[Dependencies]]</code> - a
+					dependency entry complying to
+					<a href="{{< link
+						"/internals/dependencies-checking/"
+						"this"
+						"url-only" />}}">
+						Montuer Dependencies Checking
+						Function</a>. The double square
+						bracquets is the TOML formatting
+						of an array entry to a list.
+						Hence, you can add as many as
+						you need shown above.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-sources-section">
+		<h3>Recipe's Sources Section</h3>
+		<p>
+			The <b>OPTIONAL</b> list of sources' parameters. Its
+			existences is entirely depends on the previous
+			<code>Metadata.Type</code>, where some types requires
+			it while some are not. The entire data structure are
+			compliant to <a href="{{< link
+						"/internals/setup-meta/"
+						"this"
+						"url-only" />}}">Setup Meta
+						Processing Specification</a> of
+			your selected <code>Metadata.Type</code>.
+			</br><br/>
+			If needed, the recipe's sources section consists of the
+			following fields:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Sources.all-all]
+Format = 'tar.gz'
+URL = '{{- .BaseURL -}}{{- .Archive -}}'
+Archive = 'go{{- .Version -}}.{{- .ComputeSystem -}}.{{- .Format -}}'
+Method = 'GET'
+
+[Sources.all-all.Checksum]
+Type = 'sha256'
+Format = 'hex'
+[Sources.all-all.Headers]
+
+[Sources.darwin-amd64.Checksum]
+Value = '874bc6f95e07697380069a394a21e05576a18d60f4ba178646e1ebed8f8b1f89'
+
+[Sources.linux-amd64.Checksum]
+Value = '231654bbf2dab3d86c1619ce799e77b03d96f9b50770297c8f4dff8836fc8ca2'
+
+...
+{{% /highlight %}}
+		</p>
+	</section>
+
+
+	<section id="recipe-commands-section">
+		<h3>Recipe's Commands Section</h3>
+		<p>
+			The list of executing commands complying to
+			compliant to <a href="{{< link
+						"/internals/commands/"
+						"this"
+						"url-only" />}}">Commands
+				Execution Unit (CEU) Specification</a>.
+			The commands are executed AFTER the recipe executed its
+			Setup Meta processing.
+			<br/><br/>
+			The data structure is entirely based on the
+			<a href="{{< link "/internals/commands/"
+				"this"
+				"url-only" />}}">Commands Execution Unit (CEU)
+			Specification</a>. An example of this recipe's commands
+			section would be:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+...
+
+[[CMD]]
+Name = 'Delete Target for Installation'
+Type = 'delete-recursive-quiet'
+Condition = ['all-all']
+Source = '{{- .BinDir -}}/golang'
+
+[[CMD]]
+Name = 'Install Go Programming Language Entire Directory'
+Type = 'move'
+Condition = ['all-all']
+Source = '{{- .WorkingDir -}}/go'
+Target = '{{- .BinDir -}}/golang'
+
+...
+{{% /highlight %}}
+		</p>
+	</section>
+
+
+	<section id="recipe-user-config-section">
+		<h3>Recipe's User Config Section</h3>
+		<p>
+			The recipe user config section is the operating system
+			specific user configuration script. The data structure
+			are detailed in <a href="{{< link
+				"/internals/setup-meta/" "this"
+				"url-only" />}}">Setup Meta
+				Processing Specification</a>.
+			<br/><br/>
+			Here is an example of the recipe's user config section
+			consisting of the following fields:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Config]
+linux = """
+#!/bin/bash
+export LOCAL_BIN="${LOCAL_BIN:-{{- .BinDir -}}}"
+export GOROOT="${LOCAL_BIN}/golang"
+export GOPATH="${LOCAL_BIN}/gopath"
+export GOBIN="${GOPATH}/bin"
+export GOCACHE="${LOCAL_BIN}/gocache"
+export GOENV="${LOCAL_BIN}/goenv"
+
+stop_go() {
+        PATH=:${PATH}:
+        GOROOT="${GOROOT}/bin"
+        PATH=${PATH//:$GOROOT:/:}
+        PATH=${PATH//:$GOBIN:/:}
+        PATH=${PATH//:$GOPATH:/:}
+        PATH=${PATH%:}
+        unset GOROOT GOPATH GOBIN GOCACHE GOENV
+}
+
+case $1 in
+--stop)
+        stop_go
+        ;;
+*)
+        export PATH="${PATH}:${GOROOT}/bin:${GOPATH}:${GOBIN}"
+
+        if [ ! -z "$(type -p go)" ] && [ ! -z "$(type -p gofmt)" ]; then
+                1>&2 printf "[ DONE  ] localized Go started.\\n"
+        else
+                1>&2 printf "[ ERROR ] localized Go failed to initalized.\\n"
+                stop_go
+        fi
+        ;;
+esac
+"""
+{{% /highlight %}}
+		Currently, this is the last section of the recipe configuration
+		file.
+		</p>
+	</section>
+</section>
+
+
+
+
+<section id="known-recipes">
+	<h2>Known Recipes</h2>
+	<p>
+		Instead of working on all the recipes from scratch, Monteur
+		does maintain a number of existing and continuously improved
+		recipes to kick-start your compatible deployment. Here are the
+		available recipes:
+	</p>
+</section>
