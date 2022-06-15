@@ -1,0 +1,286 @@
++++
+date = "2022-06-15T07:26:25+08:00"
+title = "Local System Sourcing Type"
+description = """
+Montuer has a built-in local system sourcing method for its Setup Meta
+processing function. Here's its working mechanics and specifications.
+"""
+keywords = [
+	"setup metadata processing function",
+	"metadata processing",
+	"ZORALab's Monteur",
+	"local-system",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/internals/setup-meta/local-system/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Setup Meta Processing - Local System"
+
+[thumbnails.1]
+url = "/en/internals/setup-meta/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Setup Meta Processing - Local System"
+
+[thumbnails.2]
+url = "/en/internals/setup-meta/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Setup Meta Processing - Local System"
+
+
+[menu.main]
+parent = "disabled"
+name = "Setup Meta Processing"
+pre = "🧩"
+weight = 5
+identifier = "internals-setup-meta-local-system"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="purpose">
+	<h2>Purpose</h2>
+	<p>
+		The purpose of facilitating this sourcing method type is for
+		Monteur to source a 3rd-party software package for the
+		repository via checking the local system command's availability
+		solely using its built-in functionalities.
+	</p>
+</section>
+
+
+
+
+<section id="data-structure">
+	<h2>Data Structure</h2>
+	<p>
+		This function is specifically built into the
+		<a href="{{< link "/ci-jobs/setup/" "this" "url-only" />}}">
+		Setup CI Job</a>. Hence, its data structure is <b>scattered
+		across various parts and sections of the CI Job recipe</b>.
+		In this specification, all its settings are specified in each
+		sub-sections by following the CI Job's recipe's data file
+		from top to bottom.
+	</p>
+
+
+	<section id="sourcing-method-type">
+		<h3>Sourcing Method Type</h3>
+		<p>
+			To use this method type, simply set
+			<code>Metadata.Type</code> to percisely
+			<code>local-system</code>. This will instruct Monteur
+			to use its internal command checking function for
+			checking the availability of the 3rd-party tool or
+			library.
+			<br/><br/>
+			Note that in certain terminal system (e.g.
+			<code>BASH</code>) that <b>offers aliases, Monteur will
+			not be able to see them as they're specific to that
+			terminal only</b>.
+			<br/><br/>
+			Here is a code snippet of the recipe file:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Metadata]
+...
+Type = 'local-system'
+{{% /highlight %}}
+		</p>
+	</section>
+
+
+	<section id="recipe-sourcing-section">
+		<h3>Recipe Sourcing Section</h3>
+		<p>
+			This sourcing method employs simple fields in the recipe
+			sourcing section.
+			Generally speaking, you want to define the common
+			command via <code>all-all</code> <a href="{{< link
+			"/internals/platform-identification/" "this"
+			"url-only" />}}">
+				Monteur Platform ID</a>
+			and then overwrite with the operating system specific
+			data if needed.
+			<br/><br/>
+			Here is the <b>recommended</b> fields in its data
+			structure for effective maintenance and readability
+			usage:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Sources.all-all]
+Format = 'raw'
+URL = 'git'
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}</code>
+					<ol>
+						<li><p>
+							<b>COMPULSORY</b> - This
+							setting is used for
+							uniquely grouping and
+							structuring source data
+							between multiple groups
+							of data fields. It is
+							also used for
+							facilitating
+							cross-platform supports
+							like listing all the
+							sources here instead of
+							spinning multiple recipe
+							files.
+						</p></li>
+						<li><p>
+							The <a href="{{< link
+							"/internals/platform-identification/"
+							"this"
+							"url-only" />}}">
+								Monteur Platform
+							ID</a> for this sourcing
+							data to be effective.
+							Example:
+							<code>[Sources.all-all]</code>
+							and
+							<code>[Sources.linux-amd64]</code>.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.Format</code>
+					<ol>
+						<li><p>
+							<b>COMPULSORY</b> - It
+							is used to define the
+							target file format.
+						</p></li>
+						<li><p>
+							See <a href="{{< link
+							"/internals/setup-meta/"
+							"this" "url-only" />}}">
+							Setup Meta
+							Processing</a> for
+							supported algorithms.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Sources.{OS}-{ARCH}.URL</code>
+					<ol>
+						<li><p>
+							<b>COMPULSORY</b> - The
+							location or the command
+							of the target.
+						</p></li>
+						<li><p>
+							<a href="{{< link
+								"/internals/variables-processing/#variables-formatting" "this" "url-only" />}}">
+								Variables
+							formatting</a> is
+							available for this field.
+						</p></li>
+						<li><p>
+							This field was added
+							since Monteur version
+							<code>v0.0.1</code>.
+						</p></li>
+					</ol>
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="user-startup-configurations">
+		<h3>User Startup Configurations</h3>
+		<p>
+			This sourcing method complies to the original
+			<a href="{{< link "/internals/setup-meta/" "this"
+			"url-only" />}}">Setup Meta Processing</a> so nothing
+			special is needed.
+			<br/><br/>
+			Here is an example for quick referencing only:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+[Config]
+linux = """
+#!/bin/bash
+
+_name="hugo"
+
+case $1 in
+--stop)
+	;;
+*)
+	if [ ! -z "$(type -p "$_name")" ]; then
+		1>&2 printf "[ DONE  ] '$_name' is available.\\n"
+        else
+		1>&2 printf "[ ERROR ] '$_name' is missing.\\n"
+	fi
+	;;
+esac
+"""
+windows = """
+...COMING SOON...
+"""
+darwin = """
+...COMING SOON...
+"""
+...
+
+{{% /highlight %}}
+		</p>
+	</section>
+</section>
+
+
+
+
+{{< epilogue >}}
+That's all for local system sourcing type.
+{{< /epilogue >}}
