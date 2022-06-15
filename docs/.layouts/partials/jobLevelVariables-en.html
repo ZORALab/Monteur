@@ -1,0 +1,30 @@
+<section id="job-level-variables-section">
+	<h3>Job Level Variables Section</h3>
+	<p>
+		The Monteur's
+		<a href="{{- .VariablesProcessingURL -}}">Variables
+		Processing</a> features. All variables defined in this job-wide
+		configuration file <b>only visible to ALL {{ .JobTitle }} CI Job
+		recipes</b>. It is highly recommended to place project-based
+		variables data into this list for recipes consistency purposes.
+		<br/><br/>
+		An example of the job-level variables section consists
+		of the following fields:
+{{ .SampleCodeBlock }}
+		<ul>
+			<li><p>
+				<code>[Variables]</code> - plain variables list
+				complying to
+				<a href="{{- .PlainVariablesURL -}}">
+					Montuer Plain Variables Definition</a>.
+			</p></li>
+			<li><p>
+				<code>[FMTVariables]</code> - formattable
+				variables list complying to
+				<a href="{{- .FormattableVariablesURL -}}">
+					Montuer Formattable Variables
+					Definition</a>.
+			</p></li>
+		</ul>
+	</p>
+</section>
