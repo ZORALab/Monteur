@@ -1,0 +1,50 @@
+{{- /* .context            = Page data for processing                 */ -}}
+{{- /* .Content            = Content of the link                      */ -}}
+{{- /* .OutputFormat       = Selected link output format              */ -}}
+{{- /* .MediaTypes         = Explicit all output format data list     */ -}}
+{{- /* .Lang               = Selected language                        */ -}}
+
+
+
+
+{{- /* Create variables for work */ -}}
+{{- $mediaTypes := .context.Site.Data.bissetii.mediaTypes -}}
+{{- if .MediaTypes -}}
+	{{- $mediaTypes = .MediaTypes -}}
+{{- end -}}
+
+
+
+
+{{- /* Create variables for work */ -}}
+{{- $dataList := dict "context" .context -}}
+{{- $dl := dict "context" .context "OutputFormat" .OutputFormat -}}
+{{- $dl = merge $dl (dict "MediaTypes" $mediaTypes) -}}
+
+
+
+
+{{- /* process .Content */ -}}
+{{- $dataList = merge $dataList (dict "Content" (safeHTML .Content)) -}}
+
+
+
+
+{{- /* process .Filepath */ -}}
+{{- $ret := index .context.Params 1 -}}
+{{- $ret = printf ".configs/monteur/%s/jobs/" (lower $ret) -}}
+{{- $ret = highlight $ret "bash" "linenos=table,hl_lines=,linenostart=1" -}}
+{{- $dataList = merge $dataList (dict "Filepath" $ret) -}}
+
+
+
+
+{{- /* process .JobTitle */ -}}
+{{- $ret = index .context.Params 1 -}}
+{{- $dataList = merge $dataList (dict "JobTitle" (title $ret | safeHTML) ) -}}
+
+
+
+
+{{- /* Render the output */ -}}
+{{- partial "recipeLevelConfigs-en.html" $dataList -}}
