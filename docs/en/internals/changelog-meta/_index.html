@@ -1,0 +1,369 @@
++++
+date = "2022-06-17T06:59:39+08:00"
+title = "Changelog Meta Processing"
+description = """
+Monteur has a special metadata processing function for sourcing and processing
+changelog entry. The inner mechanics are explained here!
+"""
+keywords = [
+	"changelog",
+	"metadata processing",
+	"ZORALab's Monteur",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/internals/changelog-meta/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Changelog Meta Processing"
+
+[thumbnails.1]
+url = "/en/internals/changelog-meta/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Changelog Meta Processing"
+
+[thumbnails.2]
+url = "/en/internals/changelog-meta/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Changelog Meta Processing"
+
+
+[menu.main]
+parent = "Z) Monteur Internals"
+name = "Changelog Meta Processing"
+pre = "📚"
+weight = 5
+identifier = "internals-changelog-meta"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="the-problems">
+	<h2>The Problems</h2>
+	<p>
+		It was all started when performing a packaging with
+		<a href="{{< link "/internals/package-meta/" "this"
+		"url-only" />}}">Package Meta Processing</a> where each package
+		has its own version and format of changelog output files.
+		<br/><br/>
+		<b>Generally speaking, it was very messy to generate different
+		set of changelog based on the packager type and
+		requirements</b>. Some packages, like <code>.deb</code> type,
+		has platform specific in its changelog and essentially made the
+		generation efforts even more complicated at scale; some like
+		<code>.appimage</code> does not need a changelog at all.
+		<br/><br/>
+		<b>Another issue is that there are various version control
+		system like <code>git</code>, <code>svn</code>, and etc</b>.
+		Hence, this complicates the process of sourcing the latest
+		changelog entry and trying to simplify all of them into a single
+		maintainable yet simple CI Job recipe.
+	</p>
+</section>
+
+
+
+
+<section id="the-solution">
+	<h2>The Solution</h2>
+	<p>
+		To solve the problems above, Monteur uses this <b>Changelog Meta
+		Processing approach to facilitate changelog sourcing and
+		output formatting as a preprocessor</b>. This approach works
+		closely with
+		<a href="{{< link "/internals/package-meta/"
+			"this" "url-only" />}}">Package Meta Processing</a>
+		function.
+		<br/><br/>
+		The idea is to:
+		<ol>
+			<li><p>
+				Provides a 2-stage
+				<a href="{{< link "/internals/commands/"
+				"this" "url-only" />}}">Commands Execution Unit
+				(CEU)</a>
+				commands execution where:
+				<ol>
+					<li><p>
+						The 1ST stage source and process
+						the changelog data; AND
+					</p></li>
+					<li><p>
+						The 2ND stage actually runs the
+						recipe's actual CEU commands.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				Matchmaking closely with
+				<a href="{{< link "/internals/package-meta/"
+				"this" "url-only" />}}">Package Meta
+				Processing</a>
+				function to ensure the changelog data and
+				filepath are always aligned.
+			</p></li>
+		</ol>
+		By doing so, we kept all kinds of version control system
+		interfaces independent of Monteur while still able to work with
+		any number of changelog generations or updates.
+	</p>
+
+
+	<section id="current-deployment">
+		<h3>Current Deployment</h3>
+		<p>
+			Currently, this function is deployed in the following
+			CI Jobs:
+			<ol>
+				<li><p>
+					<a href="{{< link "/ci-jobs/prepare/"
+						"this" "url-only" />}}">
+						Prepare</a>
+					since Monteur version
+					<code>v0.0.2</code>.
+				</p></li>
+			</ol>
+		</p>
+	</section>
+</section>
+
+
+
+
+<section id="data-structure">
+	<h2>Data Structure</h2>
+	<p>
+		To operate this function, Monteur uses a single unified
+		changelog data structure alongside
+		<a href="{{< link "/internals/package-meta/"
+		"this" "url-only" />}}">Package Meta Processing</a>
+		data structure. Hence, <b>there are 2 parts of it</b> so the
+		following sub-sections shall detail them from top to bottom
+		in sequences.
+	</p>
+
+
+		<section id="changelog-data-structure">
+			<h3>Changelog Data Structure</h3>
+			<p>
+				The <b>first part would be the Changelog Data
+				structure</b> itself. This section, when made
+				available via <code>[[Changelog.CMD]]</code>,
+				<b>SHALL BE EXECUTED before anything else</b>.
+				This is to ensure Monteur obtained all necessary
+				input before actually executing the actual
+				recipe's job.
+				<br/><br/>
+				The full data structure is shown below:
+			</p>
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+...
+
+[Changelog]
+LineBreak = "\n"
+Regex = ''
+
+[[Changelog.CMD]]
+Name = "Fetch All Local Remote Branches To The Latest"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'git fetch --all'
+
+[[Changelog.CMD]]
+Name = "Get Changelog Data from Git Log Between Branches"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = """git --no-pager log \
+"{{- .ChangelogTo -}}..{{- .ChangelogFrom -}}" \
+--pretty="format:%h %s"
+"""
+Save = "ChangelogEntries"
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>Changelog.LineBreak</code>
+					<ol>
+						<li><p>
+							<b>COMPULSORY</b> - The
+							line break characters
+							for parsing.
+						</p></li>
+						<li><p>
+							By default or when in
+							doubt, it's
+							<code>\n</code>. This
+							field is for some
+							operating system and
+							software that uses
+							other symbols like
+							carrier return
+							(e.g.
+							<code>\r\n</code>).
+						</p></li>
+						<li><p>
+							Available since Monteur
+							version
+							<code>v0.0.2</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Changelog.Regex</code>
+					<ol>
+						<li><p>
+							<b>COMPULSORY</b> - The
+							regular expression field
+							for capturing the
+							changelog.
+						</p></li>
+						<li><p>
+							Can be left empty to
+							indicate the entire
+							output are indeed the
+							exact changelog entry.
+						</p></li>
+						<li><p>
+							Available since Monteur
+							version
+							<code>v0.0.2</code>.
+						</p></li>
+					</ol>
+				</p></li>
+				<li><p>
+					<code>Changelog.CMD</code>
+					<ol>
+						<li><p>
+							<b>OPTIONAL</b> - List
+							of commands complying to
+							<a href="{{< link
+							"/internals/commands"
+							"this"
+							"url-only" />}}">Commands
+							Execution Unit</a>
+							specification.
+						</p></li>
+						<li><p>
+							<b>RECOMMENDED NOT TO
+							USE ANY
+							<code>-quiet</code> CEU
+							type to make sure the
+							recipe fails early</b>
+							when something went
+							wrong.
+						</p></li>
+						<li><p>
+							List <b>can be left
+							empty or completely
+							absent</b> to indicate
+							that the recipe is not
+							preparing a changelog
+							update but working
+							something else like
+							project version.
+						</p></li>
+						<li><p>
+							Available since Monteur
+							version
+							<code>v0.0.2</code>.
+						</p></li>
+					</ol>
+				</p></li>
+			</ul>
+		</section>
+
+
+		<section id="package-data-structure">
+			<h3>Package Data Structure</h3>
+			<p>
+				The <b>second part would be the list of packages
+				data structure</b> itself. This sole purpose
+				is to update all packages' changelog data file
+				with the newly obtained changelog entry data.
+				<br/><br/>
+				The data structure is fully compliant to
+				<a href="{{< link "/internals/package-meta"
+					"this" "url-only" />}}">Package
+					Meta Processing Specification</a>.
+				Moreover, when changelog is used, the package
+				list <b>SHALL MATCH AND MAP EXACTLY</b>
+				with the corresponding
+				<a href="{{< link "/ci-jobs/package" "this"
+				"url-only" />}}">Package CI Job's Recipes</a>.
+				<br/><br/>
+				An example of the data structure is shown
+				below:
+			</p>
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+...
+
+[Packages.linux-amd64]
+OS = [ 'linux' ]
+Arch = [ 'amd64' ]
+Distribution = [
+        'stable',
+]
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
+
+[Packages.linux-arm64]
+OS = [ 'linux' ]
+Arch = [ 'arm64' ]
+Distribution = [
+        'stable',
+]
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
+
+[Packages.linux-armhf]
+OS = [ 'linux' ]
+Arch = [ 'armhf' ]
+Distribution = [
+        'stable',
+]
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
+
+...
+{{% /highlight %}}
+</section>
+
+
+
+
+{{< epilogue >}}
+That's all for Monteur's Changelog Meta Processing function.
+{{< /epilogue >}}
