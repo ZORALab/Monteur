@@ -89,26 +89,7 @@ montuer setup
 
 <section id="job-level-configurations">
 	<h2>Job Level Configurations</h2>
-	<p>
-		Montuer does facilitate a job-wide configurations file for
-		configuring Setup CI Job over all settings and supplying
-		job-wide variables.
-		<br/><br/>
-		The configuration file, by default, are stored in
-{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
-.configs/monteur/setup/config.toml
-{{% /highlight %}}
-		The currently supported format are:
-<ul>
-	<li><p>
-		<code>.toml (TOML)</code> -
-		<a href="https://github.com/toml-lang/toml">
-			https://github.com/toml-lang/toml</a>
-	</p></li>
-</ul>
-		The file structure of the recipe configuration file is detailed
-		from top to bottom in the following sub-sections, in sequences.
-	</p>
+{{% ciJob/jobLevelConfigs "en" "setup" /%}}
 
 
 	<section id="job-level-downloads-settings">
@@ -151,79 +132,14 @@ This feature is still pending for development.
 	</section>
 
 
-	<section id="job-level-variables-section">
-		<h3>Job Level Variables Section</h3>
-		<p>
-			The Monteur's <a href="{{< link
-				"/internals/variables-processing/"
-				"this"
-				"url-only" />}}">Variables Processing</a>
-			features. All variables defined in this job-wide
-			configuration file <b>only visible to ALL Setup CI Job
-			recipes</b>. It is highly recommended to place
-			project-based variables data into this list for
-			recipes consistency purposes.
-			<br/><br/>
-			An example of the job-level variables section consists
-			of the following fields:
-{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
-[Variables]
-Version = '1.17.3'
-BaseURL = 'https://golang.org/dl/'
-
-[FMTVariables]
-SourceDir = '{{- .WorkingDir -}}/public'
-{{% /highlight %}}
-			<ul>
-				<li><p>
-					<code>[Variables]</code> - plain
-					variables list complying to
-					<a href="{{< link
-						"/internals/variables-processing/#plain-variables-definition"
-						"this"
-						"url-only" />}}">
-						Montuer Plain Variables
-						Definition</a>.
-				</p></li>
-				<li><p>
-					<code>[FMTVariables]</code> -
-					formattable variables list complying to
-					<a href="{{< link
-						"/internals/variables-processing/#formattable-variables-definition"
-						"this"
-						"url-only" />}}">
-						Montuer Formattable Variables
-						Definition</a>.
-				</p></li>
-			</ul>
-		</p>
-	</section>
+{{% ciJob/jobLevelVariables "en" "setup" /%}}
 </section>
 
 
 
 <section id="recipe-configuration-file">
 	<h2>Recipe Configuration File</h2>
-	<p>
-		All setup recipe configuration files, by default, are stored in
-		directory with any name followed the a strict file extension
-		called:
-{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
-.configs/monteur/setup/jobs/
-{{% /highlight %}}
-		The currently supported format presented in their respective
-		file extensions are:
-<ul>
-	<li><p>
-		<code>.toml (TOML)</code> -
-		<a href="https://github.com/toml-lang/toml">
-			https://github.com/toml-lang/toml</a>
-	</p></li>
-</ul>
-		The file structure of the recipe configuration file is detailed
-		from top to bottom in the following sub-sections, in sequences,
-		and in <code>TOML</code> format.
-	</p>
+{{% ciJob/recipeLevelConfigs "en" "setup" /%}}
 
 
 	<section id="recipe-metadata-section">
@@ -419,7 +335,7 @@ Value = '231654bbf2dab3d86c1619ce799e77b03d96f9b50770297c8f4dff8836fc8ca2'
 						"url-only" />}}">Commands
 				Execution Unit (CEU) Specification</a>.
 			The commands are executed AFTER the recipe executed its
-			Setup Meta processing.
+			meta processing processes.
 			<br/><br/>
 			The data structure is entirely based on the
 			<a href="{{< link "/internals/commands/"
@@ -508,12 +424,4 @@ esac
 
 
 
-<section id="known-recipes">
-	<h2>Known Recipes</h2>
-	<p>
-		Instead of working on all the recipes from scratch, Monteur
-		does maintain a number of existing and continuously improved
-		recipes to kick-start your compatible deployment. Here are the
-		available recipes:
-	</p>
-</section>
+{{% ciJob/knownRecipes "en" "setup" /%}}
