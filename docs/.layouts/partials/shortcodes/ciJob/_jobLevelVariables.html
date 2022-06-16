@@ -56,8 +56,9 @@
 
 
 
+
 {{- /* process .SampleCodeBlock */ -}}
-{{- $ret = printf "[Variables]\nVersion = '1.17.3'\nBaseURL = 'https://golang.org/dl/'\n\n[FMTVariables]\nSourceDir = '/public'" -}}
+{{- $ret = printf "[Variables]\nVersion = '1.17.3'\nBaseURL = 'https://golang.org/dl/'\n\n[FMTVariables]\nCommand = 'go{{- .Version -}}'" -}}
 {{- $ret = highlight $ret "toml" "linenos=table,hl_lines=,linenostart=1" -}}
 {{- $dataList = merge $dataList (dict "SampleCodeBlock" $ret) -}}
 

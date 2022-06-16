@@ -2,18 +2,20 @@
 	Montuer does facilitate a job-wide configurations file for configuring
 	{{ .JobTitle }} CI Job over all settings and supplying job-wide variables.
 	<br/><br/>
-	The configuration file, by default, are stored in
+	The configurations, by default, are stored in the data file located in:
 {{ .Filepath }}
 	<br/>
-	Currently, the supported format are as follows, picked with priority in
+	The file <b>MUST be strictly named <code>config</code> alongside with
+	the following supported data format's file extension</b>. Currently,
+	Monteur offers the following supported formats, arranged in priority by
 	sequences:
-<ul>
-	<li><p>
-		<code>.toml (TOML)</code> -
-		<a href="https://github.com/toml-lang/toml">
-			https://github.com/toml-lang/toml</a>
-	</p></li>
-</ul>
+	<ul>
+		<li><p>
+			<code>.toml (TOML)</code> -
+			<a href="https://github.com/toml-lang/toml">
+				https://github.com/toml-lang/toml</a>
+		</p></li>
+	</ul>
 		The file structure of the recipe configuration file is detailed
 		from top to bottom in the following sub-sections, in sequences.
-	</p>
+</p>
