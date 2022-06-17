@@ -175,6 +175,92 @@ selectType = "WebPage"
 
 
 
+<section id="built-in-packagers">
+	<h2>Built-In Packagers</h2>
+	<p>
+		Monteur offers a list of built-in packagers to provider
+		cross-platform supports as far as possible for applicable CI Job
+		like
+		<a href="{{< link "/ci-jobs/package/" "this" "url-only" />}}">
+			Package CI Job</a>. To select a packager in the recipe,
+		simply set <code>Metadata.Type</code> as shown below:
+	<p>
+{{% highlight toml "linenos=table,hl_lines=[],linenostart=1" %}}
+[Metadata]
+...
+Type = 'deb-manual'
+{{% /highlight %}}
+	<p>
+		Currently, these are the available packagers:
+		<ul>
+			<li><p>
+				<code>manual</code>
+				<ol>
+					<li><p>
+						<b>EXTERNAL</b> - Perform the
+						packaging manually via the
+						recipe's CEU commands.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>deb-manual</code>
+				<ol>
+					<li><p>
+						<b>EXTERNAL</b> - Perform the
+						<code>.deb</code> packaging
+						manually using third-party
+						software like
+						<code>debuild</code> via the
+						recipe's CEU commands.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>targz</code>
+				<ol>
+					<li><p>
+						<b>BUILT-IN</b> - Perform the
+						<code>.tar.gz</code> packaging
+						using built-in
+						<code>targz</code> function.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>zip</code>
+				<ol>
+					<li><p>
+						<b>BUILT-IN</b> - Perform the
+						<code>.zip</code> packaging
+						using built-in
+						<code>zip</code> function.
+					</p></li>
+					<li><p>
+						Available since Monteur version
+						<code>v0.0.1</code>.
+					</p></li>
+				</ol>
+			</p></li>
+		</ul>
+	</p>
+</section>
+
+
+
+
 <section id="data-structure">
 	<h2>Data Structure</h2>
 	<p>
