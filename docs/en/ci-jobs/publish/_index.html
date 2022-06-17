@@ -1,0 +1,364 @@
++++
+date = "2021-11-27T15:15:18+08:00"
+title = "Publish"
+description = """
+Monteur provides Publish CI Job to publish the documentation artifacts to
+the designated publishers.
+"""
+keywords = [
+	"Publish",
+	"CI job",
+	"Publish CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "list"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/publish/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Publish CI Job"
+
+[thumbnails.1]
+url = "/en/ci-jobs/publish/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Publish CI Job"
+
+[thumbnails.2]
+url = "/en/ci-jobs/publish/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Publish CI Job"
+
+
+[menu.main]
+parent = "CI Jobs"
+name = "Publish"
+pre = "📖"
+weight = 110
+identifier = "ci-jobs-publish"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+		<br/><br/>
+		The objective of the job is simple: <b>to publish the
+		documentation artifacts to the designated publishers in
+		accordance to their respective instructions.</b>.
+		<br/><br/>
+		All users has to do is to issue this command:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+montuer publish
+{{% /highlight %}}
+	</p>
+</section>
+
+
+
+
+<section id="job-level-configurations">
+	<h2>Job Level Configurations</h2>
+{{% ciJob/jobLevelConfigs "en" "publish" /%}}
+{{% ciJob/jobLevelVariables "en" "publish" /%}}
+</section>
+
+
+
+
+<section id="recipe-configuration-file">
+	<h2>Recipe Configuration File</h2>
+{{% ciJob/recipeLevelConfigs "en" "publish" /%}}
+
+
+	<section id="recipe-metadata-section">
+		<h3>Recipe's Metadata Section</h3>
+		<p>
+			The recipe's metadata section consists of the following
+			fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[Metadata]
+Name = 'GitHub Pages'
+Description = """
+Publish web documentations artifact into GitHub Pages.
+"""
+
+...
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>Name</code> - used for recipe
+					identification, reporting, and
+					referencing usage. Monteur recommends
+					<b>keeping it short, concise and without
+					any weird symbols (e.g. space will be
+					replaced by short dash
+					(<code>-</code>))</b>.
+				</p></li>
+				<li><p>
+					<code>Description</code> - mainly for
+					logging and reporting purposes.
+					<b>Describe the details of the
+					recipe.</b>
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-variables-section">
+		<h3>Recipe's Variables Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/variables-processing/"
+				"this"
+				"url-only" />}}">Variables Processing</a>
+			features. All variables defined in this recipe's
+			configuration file <b>only visible to this recipe</b>.
+			It is highly recommended to abstract as much variables
+			away from your command algorithm as possible so that
+			your user only has to customize these tables and not
+			messing with your algorithm.
+			<br/><br/>
+			The variables section consists of the following
+			fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+...
+
+[Variables]
+PublishBranch = 'gh-pages'
+FirstCommitID = 'Will be overwritten by CMD'
+
+[FMTVariables]
+SourceDir = '{{- .DocsDir -}}/public'
+DestinationDir = '{{- .WorkingDir -}}/{{- .PublishBranch -}}'
+
+...
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>[Variables]</code> - plain
+					variables list complying to
+					<a href="{{< link
+						"/internals/variables-processing/#plain-variables-definition"
+						"this"
+						"url-only" />}}">
+						Montuer Plain Variables
+						Definition</a>.
+				</p></li>
+				<li><p>
+					<code>[FMTVariables]</code> -
+					formattable variables list complying to
+					<a href="{{< link
+						"/internals/variables-processing/#formattable-variables-definition"
+						"this"
+						"url-only" />}}">
+						Montuer Formattable Variables
+						Definition</a>.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-dependencies-section">
+		<h3>Recipe's Dependencies Checking Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/dependencies-checking/"
+				"this"
+				"url-only" />}}">Dependencies Checking</a>
+			features. All dependencies here are checked against the
+			running operating system to ensure proper operations.
+			It is highly recommended to abstract as much
+			dependencies into this list and away from your command
+			algorithm as possible so that your user can check
+			through the list without messing with your algorithm.
+			<br/><br/>
+			The dependencies checking section consists of the
+			following fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+...
+
+[[Dependencies]]
+Name = 'Git'
+Condition = 'all-all'
+Type = 'command'
+Command = 'git'
+
+...
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>[[Dependencies]]</code> - a
+					dependency entry complying to
+					<a href="{{< link
+						"/internals/dependencies-checking/"
+						"this"
+						"url-only" />}}">
+						Montuer Dependencies Checking
+						Function</a>. The double square
+						bracquets is the TOML formatting
+						of an array entry to a list.
+						Hence, you can add as many as
+						you need shown above.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-commands-section">
+		<h3>Recipe's Commands Section</h3>
+		<p>
+			The list of executing commands complying to
+			compliant to <a href="{{< link
+						"/internals/commands/"
+						"this"
+						"url-only" />}}">Commands
+				Execution Unit (CEU) Specification</a>.
+			The commands are executed AFTER the recipe executed its
+			meta processing processes.
+			<br/><br/>
+			The data structure is entirely based on the
+			<a href="{{< link "/internals/commands/"
+				"this"
+				"url-only" />}}">Commands Execution Unit (CEU)
+			Specification</a>. An example of this recipe's commands
+			section would be:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+...
+
+[[CMD]]
+Name = 'Check Artifact Directory Exists and Ready'
+Condition = [ 'all-all' ]
+Type = 'is-exists'
+Source = '{{- .SourceDir -}}/index.html'
+
+[[CMD]]
+Name = 'Remove Git Workspace for Publishing Branch'
+Condition = [ 'all-all' ]
+Type = 'command-quiet'
+Source = 'git worktree remove "{{- .DestinationDir -}}"'
+
+[[CMD]]
+Name = 'Delete Publishing Directory Regardlessly'
+Condition = [ 'all-all' ]
+Type = 'delete-recursive-quiet'
+Source = '{{- .DestinationDir -}}'
+
+[[CMD]]
+Name = 'Create New Publishing Directory'
+Condition = [ 'all-all' ]
+Type = 'create-path'
+Source = '{{- .DestinationDir -}}'
+
+[[CMD]]
+Name = 'Add Git Worktree to Publishing Directory'
+Condition = [ 'all-all' ]
+Type = 'command'
+Source = 'git worktree add "{{- .DestinationDir -}}" "{{- .PublishBranch -}}"'
+
+[[CMD]]
+Name = 'Get Publish Branch First Commit for Cleaning'
+Condition = [ 'all-all' ]
+Type = 'command'
+Location = '{{- .DestinationDir -}}'
+Source = 'git rev-list --max-parents=0 --abbrev-commit HEAD'
+Save = 'FirstCommitID'
+
+[[CMD]]
+Name = 'Clean Up Publishing Directory for Publish Branch'
+Condition = [ 'all-all' ]
+Type = 'command'
+Location = '{{- .DestinationDir -}}'
+Source = 'git reset --hard "{{- .FirstCommitID -}}"'
+
+[[CMD]]
+Name = 'Remove All Existing Artifacts'
+Condition = [ 'all-all' ]
+Type = 'command'
+Location = '{{- .DestinationDir -}}'
+Source = 'git clean -fd'
+
+[[CMD]]
+Name = 'Copy All Publications to Publishing Directory'
+Condition = [ 'all-all' ]
+Type = 'copy'
+Source = '{{- .SourceDir -}}'
+Target = '{{- .DestinationDir -}}'
+
+[[CMD]]
+Name = 'Git Stage All Artifacts into Publishing Directory'
+Condition = [ 'all-all' ]
+Type = 'command'
+Location = '{{- .DestinationDir -}}'
+Source = 'git add .'
+
+[[CMD]]
+Name = 'Git Commit All Artifacts into Publishing Directory'
+Condition = [ 'all-all' ]
+Type = 'command'
+Location = '{{- .DestinationDir -}}'
+Source = 'git commit -m "Published as of $(git log "--format=format:%H" -1)"'
+
+[[CMD]]
+Name = 'Git Push By Force to Publish Branch'
+Condition = [ 'all-all' ]
+Type = 'command'
+Location = '{{- .DestinationDir -}}'
+Source = 'git push -f origin "{{- .PublishBranch -}}"'
+
+[[CMD]]
+Name = 'Remove Git Workspace for Publishing Branch'
+Condition = [ 'all-all' ]
+Type = 'command'
+Source = 'git worktree remove "{{- .DestinationDir -}}"'
+
+[[CMD]]
+Name = 'Delete Publishing Directory Regardlessly'
+Condition = [ 'all-all' ]
+Type = 'delete-recursive-quiet'
+Source = '{{- .DestinationDir -}}'
+{{% /highlight %}}
+		Currently, this is the last section of the recipe configuration
+		file.
+		</p>
+	</section>
+</section>
+
+
+
+
+{{% ciJob/knownRecipes "en" "publish" /%}}
