@@ -167,6 +167,90 @@ selectType = "WebPage"
 
 
 
+<section id="available-formats">
+	<h2>Available Formats</h2>
+	<p>
+		Montuer facilitates a list of built-in changelog formats for
+		updating the changelog files seamlessly. To select the format,
+		you set it via <code>Metadata.Type</code> field. For example:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[Metadata]
+...
+Type = 'deb'
+{{% /highlight %}}
+		Available formats are:
+		<ul>
+			<li><p>
+				<code>manual</code>
+				<ol>
+					<li><p>
+						You will do it manually via
+						<code>ChangelogEntries</code>
+						variable in the recipe CEU
+						commands.
+					</p></li>
+					<li><p>
+						Available since Montuer version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>markdown</code>
+				<ol>
+					<li><p>
+						Prepend changelog entires into
+						a markdown format file.
+					</p></li>
+					<li><p>
+						The highest heading level is
+						level 2 (<code>h2</code>).
+					</p></li>
+					<li><p>
+						Available since Montuer version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>deb</code>
+				<ol>
+					<li><p>
+						Prepend changelog entires into
+						a <code>.deb</code> package
+						changelog file.
+					</p></li>
+					<li><p>
+						Platform-specific data is
+						required and <b>shall be
+						supplied via the package meta
+						processing data structure</b>.
+					</p></li>
+					<li><p>
+						Available since Montuer version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>txt</code>
+				<ol>
+					<li><p>
+						Prepend changelog entires into
+						a native text file.
+					</p></li>
+					<li><p>
+						Available since Montuer version
+						<code>v0.0.2</code>.
+					</p></li>
+				</ol>
+			</p></li>
+		</ul>
+	</p>
+</section>
+
+
+
 <section id="data-structure">
 	<h2>Data Structure</h2>
 	<p>
@@ -190,6 +274,10 @@ selectType = "WebPage"
 				This is to ensure Monteur obtained all necessary
 				input before actually executing the actual
 				recipe's job.
+				<br/><br/>
+				The successful changelog extraction are <b>saved
+				into <code>ChangelogEntries</code> variable</b>
+				made available for recipe's CEU command.
 				<br/><br/>
 				The full data structure is shown below:
 			</p>
