@@ -326,25 +326,7 @@ Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
 	</section>
 
 
-	<section id="recipe-commands-section">
-		<h3>Recipe's Commands Section</h3>
-		<p>
-			The list of executing commands complying to
-			compliant to <a href="{{< link
-						"/internals/commands/"
-						"this"
-						"url-only" />}}">Commands
-				Execution Unit (CEU) Specification</a>.
-			The commands are executed AFTER the recipe executed its
-			Prepare Meta processing.
-			<br/><br/>
-			The data structure is entirely based on the
-			<a href="{{< link "/internals/commands/"
-				"this"
-				"url-only" />}}">Commands Execution Unit (CEU)
-			Specification</a>. An example of this recipe's commands
-			section would be:
-{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+{{% ciJob/recipeLevelCommands "en" "prepare" %}}
 ...
 
 [[CMD]]
@@ -369,25 +351,7 @@ const (
         VERSION = "{{- .App.Version -}}"
 )
 """
-{{% /highlight %}}
-		For recipe that handles changelog, it is usually not required
-		to implement these CEU comamnds. Hence, you can just leave it
-		with <code>placeholder</code>CEU type to do nothing. An example
-		is as follows:
-{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
-[[CMD]]
-Name = 'Placeholder'
-Type = 'placeholder'
-Condition = [ 'all-all' ]
-Source = ''
-Target = ''
-{{% /highlight %}}
-
-
-		Currently, this is the last section of the recipe configuration
-		file.
-		</p>
-	</section>
+{{% /ciJob/recipeLevelCommands %}}
 </section>
 
 

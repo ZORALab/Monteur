@@ -231,25 +231,7 @@ Command = 'git'
 	</section>
 
 
-	<section id="recipe-commands-section">
-		<h3>Recipe's Commands Section</h3>
-		<p>
-			The list of executing commands complying to
-			compliant to <a href="{{< link
-						"/internals/commands/"
-						"this"
-						"url-only" />}}">Commands
-				Execution Unit (CEU) Specification</a>.
-			The commands are executed AFTER the recipe executed its
-			meta processing processes.
-			<br/><br/>
-			The data structure is entirely based on the
-			<a href="{{< link "/internals/commands/"
-				"this"
-				"url-only" />}}">Commands Execution Unit (CEU)
-			Specification</a>. An example of this recipe's commands
-			section would be:
-{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+{{% ciJob/recipeLevelCommands "en" "clean" %}}
 ...
 
 [[CMD]]
@@ -263,13 +245,7 @@ Name = "Create Target Directory"
 Type = 'create-path'
 Condition = [ 'all-all' ]
 Source = '{{- .Target -}}'
-
-...
-{{% /highlight %}}
-		Currently, this is the last section of the recipe configuration
-		file.
-		</p>
-	</section>
+{{% /ciJob/recipeLevelCommands %}}
 </section>
 
 

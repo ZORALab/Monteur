@@ -239,25 +239,7 @@ Command = 'git'
 	</section>
 
 
-	<section id="recipe-commands-section">
-		<h3>Recipe's Commands Section</h3>
-		<p>
-			The list of executing commands complying to
-			compliant to <a href="{{< link
-						"/internals/commands/"
-						"this"
-						"url-only" />}}">Commands
-				Execution Unit (CEU) Specification</a>.
-			The commands are executed AFTER the recipe executed its
-			meta processing processes.
-			<br/><br/>
-			The data structure is entirely based on the
-			<a href="{{< link "/internals/commands/"
-				"this"
-				"url-only" />}}">Commands Execution Unit (CEU)
-			Specification</a>. An example of this recipe's commands
-			section would be:
-{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+{{% ciJob/recipeLevelCommands "en" "publish" %}}
 ...
 
 [[CMD]]
@@ -351,11 +333,7 @@ Name = 'Delete Publishing Directory Regardlessly'
 Condition = [ 'all-all' ]
 Type = 'delete-recursive-quiet'
 Source = '{{- .DestinationDir -}}'
-{{% /highlight %}}
-		Currently, this is the last section of the recipe configuration
-		file.
-		</p>
-	</section>
+{{% /ciJob/recipeLevelCommands %}}
 </section>
 
 

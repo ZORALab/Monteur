@@ -325,25 +325,7 @@ Value = '231654bbf2dab3d86c1619ce799e77b03d96f9b50770297c8f4dff8836fc8ca2'
 	</section>
 
 
-	<section id="recipe-commands-section">
-		<h3>Recipe's Commands Section</h3>
-		<p>
-			The list of executing commands complying to
-			compliant to <a href="{{< link
-						"/internals/commands/"
-						"this"
-						"url-only" />}}">Commands
-				Execution Unit (CEU) Specification</a>.
-			The commands are executed AFTER the recipe executed its
-			meta processing processes.
-			<br/><br/>
-			The data structure is entirely based on the
-			<a href="{{< link "/internals/commands/"
-				"this"
-				"url-only" />}}">Commands Execution Unit (CEU)
-			Specification</a>. An example of this recipe's commands
-			section would be:
-{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+{{% ciJob/recipeLevelCommands "en" "setup" %}}
 ...
 
 [[CMD]]
@@ -360,9 +342,7 @@ Source = '{{- .WorkingDir -}}/go'
 Target = '{{- .BinDir -}}/golang'
 
 ...
-{{% /highlight %}}
-		</p>
-	</section>
+{{% /ciJob/recipeLevelCommands %}}
 
 
 	<section id="recipe-user-config-section">
