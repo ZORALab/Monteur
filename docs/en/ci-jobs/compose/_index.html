@@ -1,0 +1,316 @@
++++
+date = "2021-11-27T19:14:10+08:00"
+title = "Compose"
+description = """
+Monteur provides Compose CI Job to generate the documentation artifacts before
+publication with consistent reproducilibity properties.
+"""
+keywords = [
+	"Compose",
+	"CI job",
+	"Compose CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "list"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/compose/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Compose CI Job"
+
+[thumbnails.1]
+url = "/en/ci-jobs/compose/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Compose CI Job"
+
+[thumbnails.2]
+url = "/en/ci-jobs/compose/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Compose CI Job"
+
+
+[menu.main]
+parent = "CI Jobs"
+name = "Compose"
+pre = "📝"
+weight = 100
+identifier = "ci-jobs-compose"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+		<br/><br/>
+		The objective of the job is simple: <b>to compose the
+		documentation artifacts ready for publication in a reproducible
+		and consistent manner</b>.
+		<br/><br/>
+		All users has to do is to issue this command:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+montuer compose
+{{% /highlight %}}
+	</p>
+</section>
+
+
+
+
+<section id="job-level-configurations">
+	<h2>Job Level Configurations</h2>
+{{% ciJob/jobLevelConfigs "en" "compose" /%}}
+{{% ciJob/jobLevelVariables "en" "compose" /%}}
+</section>
+
+
+
+
+<section id="recipe-configuration-file">
+	<h2>Recipe Configuration File</h2>
+{{% ciJob/recipeLevelConfigs "en" "compose" /%}}
+
+
+	<section id="recipe-metadata-section">
+		<h3>Recipe's Metadata Section</h3>
+		<p>
+			The recipe's metadata section consists of the following
+			fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[Metadata]
+Name = 'Hugo'
+Description = """
+Using Hugo static site generator to compose Montuer's web documentations
+artifacts.
+"""
+
+...
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>Name</code> - used for recipe
+					identification, reporting, and
+					referencing usage. Monteur recommends
+					<b>keeping it short, concise and without
+					any weird symbols (e.g. space will be
+					replaced by short dash
+					(<code>-</code>))</b>.
+				</p></li>
+				<li><p>
+					<code>Description</code> - mainly for
+					logging and reporting purposes.
+					<b>Describe the details of the
+					recipe.</b>
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-variables-section">
+		<h3>Recipe's Variables Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/variables-processing/"
+				"this"
+				"url-only" />}}">Variables Processing</a>
+			features. All variables defined in this recipe's
+			configuration file <b>only visible to this recipe</b>.
+			It is highly recommended to abstract as much variables
+			away from your command algorithm as possible so that
+			your user only has to customize these tables and not
+			messing with your algorithm.
+			<br/><br/>
+			The variables section consists of the following
+			fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+...
+
+[Variables]
+MainLang = 'en'
+PublishBranch = 'gh-pages'
+PublishCommitID='Will be overwritten by publish command sequences'
+
+[FMTVariables]
+SourceDir = '{{- .RootDir -}}/.configs/hugo'
+DestinationDir = '{{- .WorkingDir -}}/public'
+PublishDir = '{{- .WorkingDir -}}/{{- .PublishBranch -}}'
+
+...
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>[Variables]</code> - plain
+					variables list complying to
+					<a href="{{< link
+						"/internals/variables-processing/#plain-variables-definition"
+						"this"
+						"url-only" />}}">
+						Montuer Plain Variables
+						Definition</a>.
+				</p></li>
+				<li><p>
+					<code>[FMTVariables]</code> -
+					formattable variables list complying to
+					<a href="{{< link
+						"/internals/variables-processing/#formattable-variables-definition"
+						"this"
+						"url-only" />}}">
+						Montuer Formattable Variables
+						Definition</a>.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-dependencies-section">
+		<h3>Recipe's Dependencies Checking Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/dependencies-checking/"
+				"this"
+				"url-only" />}}">Dependencies Checking</a>
+			features. All dependencies here are checked against the
+			running operating system to ensure proper operations.
+			It is highly recommended to abstract as much
+			dependencies into this list and away from your command
+			algorithm as possible so that your user can check
+			through the list without messing with your algorithm.
+			<br/><br/>
+			The dependencies checking section consists of the
+			following fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+...
+
+[[Dependencies]]
+Name = 'Hugo'
+Condition = 'all-all'
+Type = 'command'
+Command = 'hugo'
+
+[[Dependencies]]
+Name = 'Git'
+Condition = 'all-all'
+Type = 'command'
+Command = 'git'
+
+...
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>[[Dependencies]]</code> - a
+					dependency entry complying to
+					<a href="{{< link
+						"/internals/dependencies-checking/"
+						"this"
+						"url-only" />}}">
+						Montuer Dependencies Checking
+						Function</a>. The double square
+						bracquets is the TOML formatting
+						of an array entry to a list.
+						Hence, you can add as many as
+						you need shown above.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-commands-section">
+		<h3>Recipe's Commands Section</h3>
+		<p>
+			The list of executing commands complying to
+			compliant to <a href="{{< link
+						"/internals/commands/"
+						"this"
+						"url-only" />}}">Commands
+				Execution Unit (CEU) Specification</a>.
+			The commands are executed AFTER the recipe executed its
+			meta processing processes.
+			<br/><br/>
+			The data structure is entirely based on the
+			<a href="{{< link "/internals/commands/"
+				"this"
+				"url-only" />}}">Commands Execution Unit (CEU)
+			Specification</a>. An example of this recipe's commands
+			section would be:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+...
+
+[[CMD]]
+Name = "Delete Destination Directory for Clean Build"
+Type = 'delete-recursive-quiet'
+Condition = [ 'all-all' ]
+Source = '{{- .DestinationDir -}}'
+
+[[CMD]]
+Name = "Hugo Build with Minimifaction"
+Type = 'command'
+Condition = [ 'all-all' ]
+Location = '{{- .SourceDir -}}'
+Source = 'hugo --minify --destination "{{- .DestinationDir -}}"'
+
+[[CMD]]
+Name = "Hugo Workaround with 404"
+Type = 'copy-quiet'
+Condition = [ 'all-all' ]
+Location = '{{- .SourceDir -}}'
+Source = '{{- .DestinationDir -}}/{{- .MainLang -}}/404.html'
+Target = '{{- .DestinationDir -}}/404.html'
+
+[[CMD]]
+Name = "Script No Jekyll file for Github compatibility"
+Type = "script"
+Condition = [ 'all-all' ]
+Location = '{{- .SourceDir -}}'
+Source = 'No Jekyll'
+Target = '{{- .DestinationDir -}}/.nojekyll'
+
+[[CMD]]
+Name = "Copy GitLab CI if available"
+Type = 'copy-quiet'
+Condition = [ 'all-all' ]
+Source = '{{- .RootDir -}}/.gitlab-ci.yml'
+Target = '{{- .DestinationDir -}}/.gitlab-ci.yml'
+{{% /highlight %}}
+		Currently, this is the last section of the recipe configuration
+		file.
+		</p>
+	</section>
+</section>
+
+
+
+
+{{% ciJob/knownRecipes "en" "compose" /%}}
