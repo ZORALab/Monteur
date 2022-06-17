@@ -1,0 +1,549 @@
++++
+date = "2021-12-22T13:16:23+08:00"
+title = "Release"
+description = """
+Monteur provides Release CI Job to release your packages into their respective
+distribution stores.
+"""
+keywords = [
+	"Release",
+	"CI job",
+	"Release CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "list"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/release/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Release CI Job"
+
+[thumbnails.1]
+url = "/en/ci-jobs/release/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Release CI Job"
+
+[thumbnails.2]
+url = "/en/ci-jobs/release/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Release CI Job"
+
+
+[menu.main]
+parent = "CI Jobs"
+name = "Release"
+pre = "🌾"
+weight = 90
+identifier = "ci-jobs-release"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+		<br/><br/>
+		The objective of the job is simple: <b>to release newly made
+		packages into their respective distribution stores</b>.
+		<br/><br/>
+		All users has to do is to issue this command:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+montuer release
+{{% /highlight %}}
+	</p>
+</section>
+
+
+
+
+<section id="job-level-configurations">
+	<h2>Job Level Configurations</h2>
+{{% ciJob/jobLevelConfigs "en" "release" /%}}
+{{% ciJob/jobLevelVariables "en" "release" /%}}
+</section>
+
+
+
+
+<section id="recipe-configuration-file">
+	<h2>Recipe Configuration File</h2>
+{{% ciJob/recipeLevelConfigs "en" "release" /%}}
+
+
+	<section id="recipe-metadata-section">
+		<h3>Recipe's Metadata Section</h3>
+		<p>
+			The recipe's metadata section consists of the following
+			fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[Metadata]
+Name = 'Reprepro'
+Description = """
+Monteur's .deb packagers released to hosting repository via Reprepro.
+"""
+Type = 'manual'
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>Name</code> - used for recipe
+					identification, reporting, and
+					referencing usage. Monteur recommends
+					<b>keeping it short, concise and without
+					any weird symbols (e.g. space will be
+					replaced by short dash
+					(<code>-</code>))</b>.
+				</p></li>
+				<li><p>
+					<code>Description</code> - mainly for
+					logging and reporting purposes.
+					<b>Describe the details of the
+					recipe.</b>
+				</p></li>
+				<li><p>
+					<code>Type</code> - select the built-in
+					packager type for its corresponding
+					release algorithm. For available
+					built-in packager types, please refer
+					to
+					<a href="{{< link
+						"/internals/package-meta#built-in-packagers"
+						"this"
+						"url-only" />}}">Packaging
+					Meta Specification</a>.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-variables-section">
+		<h3>Recipe's Variables Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/variables-processing/"
+				"this"
+				"url-only" />}}">Variables Processing</a>
+			features. All variables defined in this recipe's
+			configuration file <b>only visible to this recipe</b>.
+			It is highly recommended to abstract as much variables
+			away from your command algorithm as possible so that
+			your user only has to customize these tables and not
+			messing with your algorithm.
+			<br/><br/>
+			The variables section consists of the following
+			fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[Variables]
+PackageType = 'deb-manual'
+GPGID = 'hello@zoralab.com'
+GPGExistence = ''
+Distribution = '' # to be filled later
+
+[FMTVariables]
+DataPath = '{{- .DataDir -}}/debian/reprepro'
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>[Variables]</code> - plain
+					variables list complying to
+					<a href="{{< link
+						"/internals/variables-processing/#plain-variables-definition"
+						"this"
+						"url-only" />}}">
+						Montuer Plain Variables
+						Definition</a>.
+				</p></li>
+				<li><p>
+					<code>[FMTVariables]</code> -
+					formattable variables list complying to
+					<a href="{{< link
+						"/internals/variables-processing/#formattable-variables-definition"
+						"this"
+						"url-only" />}}">
+						Montuer Formattable Variables
+						Definition</a>.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-dependencies-section">
+		<h3>Recipe's Dependencies Checking Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/dependencies-checking/"
+				"this"
+				"url-only" />}}">Dependencies Checking</a>
+			features. All dependencies here are checked against the
+			running operating system to ensure proper operations.
+			It is highly recommended to abstract as much
+			dependencies into this list and away from your command
+			algorithm as possible so that your user can check
+			through the list without messing with your algorithm.
+			<br/><br/>
+			The dependencies checking section consists of the
+			following fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[[Dependencies]]
+Name = 'Reprepro'
+Condition = 'all-all'
+Type = 'command'
+Command = 'reprepro'
+
+[[Dependencies]]
+Name = 'GPG Tool For Signing'
+Condition = 'all-all'
+Type = 'command'
+Command = 'gpg'
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>[[Dependencies]]</code> - a
+					dependency entry complying to
+					<a href="{{< link
+						"/internals/dependencies-checking/"
+						"this"
+						"url-only" />}}">
+						Montuer Dependencies Checking
+						Function</a>. The double square
+						bracquets is the TOML formatting
+						of an array entry to a list.
+						Hence, you can add as many as
+						you need shown above.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-release-meta-section">
+		<h3>Recipe's Release Meta Section</h3>
+{{% note error "HEADS UP!" %}}
+<p>
+	This section is <b>PLANNED FOR REMOVAL BUT YET TO IMPLEMENT</b> for
+	reusing existing package meta internal function rather than moonlighting
+	its own meta executions. <b>IT SHALL BE REPLACED AFTER MONTEUR
+	VERSION<code>v0.0.3</code></b>.
+</p>
+{{% /note %}}
+		<p>
+			<code>[Releases]</code> are the list of packaged file
+			data to be released by executing the <code>[CMD]</code>
+			table onto each of the item. All these packages shall be
+			iterated with the <code>[CMD]</code> table supplied with
+			the given variables above.
+			<br/><br/>
+			Depending on <code>Metadata.Type</code>, <b>either
+			<code>archive</code> OR <code>manual</code></b>, Monteur
+			will execute a preparation executions before executing
+			the <code>[CMD]</code> for a package. This reduces the
+			need to build large <code>[CMD]</code> commands list and
+			promotes consistency.
+			<br/><br/>
+			An example is as follows:
+		</p>
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[Releases]
+Target = '{{- .ReleaseDir -}}/archives'
+Checksum = 'sha512'
+
+[Releases.Data]
+Path = '{{- .RootDir -}}/docs/.data/releases/archives'
+Format = 'toml'
+
+[Releases.Packages.darwin-amd64]
+OS = [ "darwin" ]
+Arch = [ "amd64" ]
+Source = '{{- .PackageDir -}}/targz/{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}.tar.gz'
+
+...
+{{% /highlight %}}
+		<ul>
+			<li><p>
+				<code>[Releases]</code>
+				<ol>
+					<li><p>
+						the table tag for the all the
+						packages ready for release.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Target</code>
+				<ol>
+					<li><p>
+						The directory path for housing
+						the released data. This is used
+						by local repository releases
+						such as <code>reprepro</code>.
+					</p></li>
+					<li><p>
+						This value shall be applied to
+						all
+						<code>Releases.Packages</code>
+						without their
+						<code>Target</code> value set.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Checksum</code>
+				<ol>
+					<li><p>
+						Selecting checksum hasher.
+					</p></li>
+					<li><p>
+						Supported hashers are:
+						<code>sha256</code> (default),
+						<code>sha512</code>,
+						or
+						<code>sha512-&#62;sha256</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>[Releases.Data]</code>
+				<ol>
+					<li><p>
+						Allows some releaser to spin
+						its required data structure.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Releases.Data.Format</code>
+				<ol>
+					<li><p>
+						The data file format for
+						<code>archive</code> release
+						type.
+					</p></li>
+					<li><p>
+						Supported formats are:
+						<code>toml</code>,
+						<code>txt</code>,
+						and
+						<code>csv</code>.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>Releases.Data.Path</code>
+				<ol>
+					<li><p>
+						The directory path for housing
+						the release data file.
+					</p></li>
+					<li><p>
+						The filename will be a converted
+						to filepath friendly app version
+						(<code>App.Version</code>)
+						value like <code>v0.0.2</code>
+						into <code>v0-0-2.txt</code>
+						when set to be <code>txt</code>
+						format.
+					</p></li>
+				</ol>
+			</p></li>
+			<li><p>
+				<code>[Releases.Packages]</code>
+				<ol>
+					<li><p>
+						List of packages complying to
+						<a href="{{< link
+							"/internals/package-meta"
+							"this"
+							"url-only" />}}">
+							Package Meta Processing
+							Specification.
+						</a>
+					</p></li>
+					<li><p>
+						<b>Minimum MUST have</b>
+						1 <code>OS</code>,
+						1 <code>Arch</code>,
+						<code>Source</code>,
+						and <code>Target</code>.
+					</p></li>
+				</ol>
+			</p></li>
+		</ul>
+	</section>
+
+
+	<section id="recipe-package-meta-section">
+		<h3>Recipe's Package Meta Section</h3>
+{{% note error "HEADS UP!" %}}
+<p>
+	This section is <b>PLANNED BUT YET TO IMPLEMENT</b> to replace that
+	moonlight <code>Release</code> data structure for function reusability.
+</p>
+{{% /note %}}
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/package-meta/"
+				"this"
+				"url-only" />}}">Package Meta Processing</a>
+			features. All the recipe's releases and meta commands
+			shall be executed horizontally across these packages
+			repeatedly.
+			<br/><br/>
+			The data structure is complying to the
+			<a href="{{< link
+				"/internals/package-meta/#data-structure"
+				"this"
+				"url-only" />}}">Package Meta Processing
+			Specification</a>.
+			Release CI Job requires you to at least define the
+			following fields:
+			<ul>
+				<li><p>
+					<code>OS</code> - define <b>MINIMUM</b>
+					one operating system the package is for.
+				</p></li>
+				<li><p>
+					<code>ARCH</code> - define
+					<b>MINIMUM</b> one CPU Architecture the
+					package is for.
+				</p></li>
+				<li><p>
+					<code>SOURCE</code> - the full filepath
+					of the package file.
+				</p></li>
+				<li><p>
+					<code>TARGET</code> - the directory/URL
+					path for releasing the package.
+				</p></li>
+			</ul>
+			An example would be:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+...
+
+[Packages.linux-amd64]
+OS = [ "linux" ]
+Arch = [ "amd64" ]
+Source = '{{- .PackageDir -}}/{{- .PackageType -}}/{{- .PkgName -}}_{{- .PkgVersionDigitLed -}}_{{- .PkgArch -}}.deb'
+Target = '{{- .ReleaseDir -}}/deb'
+
+[Packages.linux-arm64]
+OS = [ "linux" ]
+Arch = [ "arm64" ]
+Source = '{{- .PackageDir -}}/{{- .PackageType -}}/{{- .PkgName -}}_{{- .PkgVersionDigitLed -}}_{{- .PkgArch -}}.deb'
+Target = '{{- .ReleaseDir -}}/deb'
+
+[Packages.linux-armhf]
+OS = [ "linux" ]
+Arch = [ "armhf" ]
+Source = '{{- .PackageDir -}}/{{- .PackageType -}}/{{- .PkgName -}}_{{- .PkgVersionDigitLed -}}_{{- .PkgArch -}}.deb'
+Target = '{{- .ReleaseDir -}}/deb'
+
+...
+{{% /highlight %}}
+		</p>
+	</section>
+
+
+	<section id="recipe-commands-section">
+		<h3>Recipe's Commands Section</h3>
+		<p>
+			The list of executing commands complying to
+			compliant to <a href="{{< link
+						"/internals/commands/"
+						"this"
+						"url-only" />}}">Commands
+				Execution Unit (CEU) Specification</a>.
+			The commands are executed AFTER the recipe executed its
+			meta processing processes.
+			<br/><br/>
+			The data structure is entirely based on the
+			<a href="{{< link "/internals/commands/"
+				"this"
+				"url-only" />}}">Commands Execution Unit (CEU)
+			Specification</a>. An example of this recipe's commands
+			section would be:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+...
+
+[[CMD]]
+Name = "Get GPG Secret Key for Verifications"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'gpg --list-secret-keys "{{- .GPGID }}"'
+Save = 'GPGExistence'
+
+[[CMD]]
+Name = "Verify GPG Secret Key Must Exists For Signing"
+Type = 'is-not-empty'
+Condition = [ 'all-all' ]
+Source = '{{- .GPGExistence -}}'
+
+[[CMD]]
+Name = "Create Necessary Conf Data Directory"
+Type = 'create-path'
+Condition = [ 'all-all' ]
+Source = '{{- .DataPath -}}/conf'
+
+[[CMD]]
+Name = 'Get Current Branch'
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'git branch --show-current'
+Save = 'Distribution'
+
+[[CMD]]
+Name = "Verify Distribution is Not Empty"
+Type = 'is-not-empty'
+Condition = [ 'all-all' ]
+Source = '{{- .Distribution -}}'
+
+[[CMD]]
+Name = "Release Using Reprepro"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = """reprepro --basedir {{ .DataPath }} \
+--outdir {{ .Target }} \
+includedeb main \
+{{ .Source }}
+"""
+{{% /highlight %}}
+		Currently, this is the last section of the recipe configuration
+		file.
+		</p>
+	</section>
+</section>
+
+
+
+
+{{% ciJob/knownRecipes "en" "release" /%}}
