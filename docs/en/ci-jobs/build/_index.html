@@ -134,23 +134,9 @@ Clean up all artifacts for a job.
 	</section>
 
 
-	<section id="recipe-variables-section">
-		<h3>Recipe's Variables Section</h3>
-		<p>
-			The Monteur's <a href="{{< link
-				"/internals/variables-processing/"
-				"this"
-				"url-only" />}}">Variables Processing</a>
-			features. All variables defined in this recipe's
-			configuration file <b>only visible to this recipe</b>.
-			It is highly recommended to abstract as much variables
-			away from your command algorithm as possible so that
-			your user only has to customize these tables and not
-			messing with your algorithm.
-			<br/><br/>
-			The variables section consists of the following
-			fields:
-{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+{{% ciJob/recipeLevelVariables "en" "build" %}}
+...
+
 [Variables]
 PlatformOS = 'linux'
 PlatformCPU = 'amd64'
@@ -169,31 +155,9 @@ SrcPath = '{{- .BaseDir -}}/app/monteur/main.go'
 BuildPath = """
 {{- .WorkingDir -}}/{{- .PlatformOS -}}-{{- .PlatformCPU -}}{{- .PlatformExt -}}
 """
-{{% /highlight %}}
-			<ul>
-				<li><p>
-					<code>[Variables]</code> - plain
-					variables list complying to
-					<a href="{{< link
-						"/internals/variables-processing/#plain-variables-definition"
-						"this"
-						"url-only" />}}">
-						Montuer Plain Variables
-						Definition</a>.
-				</p></li>
-				<li><p>
-					<code>[FMTVariables]</code> -
-					formattable variables list complying to
-					<a href="{{< link
-						"/internals/variables-processing/#formattable-variables-definition"
-						"this"
-						"url-only" />}}">
-						Montuer Formattable Variables
-						Definition</a>.
-				</p></li>
-			</ul>
-		</p>
-	</section>
+
+...
+{{% /ciJob/recipeLevelVariables %}}
 
 
 {{% ciJob/recipeLevelDependencies "en" "build" %}}
