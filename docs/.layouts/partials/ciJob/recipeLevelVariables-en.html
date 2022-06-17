@@ -1,0 +1,30 @@
+<section id="recipe-variables-section">
+	<h3>Recipe's Variables Section</h3>
+	<p>
+		The Monteur's
+		<a href="{{- .VariablesProcessingURL -}}">
+			Variables Processing Specification</a>
+		features. All variables defined in this recipe's configuration
+		file are <b>visible ONLY to this recipe</b>. It is highly
+		recommended to abstract as much variables away from your
+		command algorithm as possible so that your user only has to
+		customize these tables and not messing with your algorithm.
+		<br/><br/>
+		The variables section consists of the following fields:
+	</p>
+{{- .SampleCodes -}}
+	<ul>
+		<li><p>
+			<code>[Variables]</code> - plain variables list
+			complying to
+			<a href="{{- .PlainVariablesURL -}}">
+				Montuer Plain Variables Definition</a>.
+		</p></li>
+		<li><p>
+			<code>[FMTVariables]</code> - formattable variables list
+			complying to
+			<a href="{{- .FormattableVariablesURL -}}">
+				Montuer Formattable Variables Definition</a>.
+		</p></li>
+	</ul>
+</section>
