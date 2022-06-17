@@ -1,0 +1,360 @@
++++
+date = "2021-12-21T17:33:13+08:00"
+title = "Package"
+description = """
+Monteur provides Package CI Job to pack your project or app into various
+distribution packages in a scalable and maintainable manner.
+"""
+keywords = [
+	"Package",
+	"CI job",
+	"Package CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "list"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/package/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Package CI Job"
+
+[thumbnails.1]
+url = "/en/ci-jobs/package/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Package CI Job"
+
+[thumbnails.2]
+url = "/en/ci-jobs/package/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Package CI Job"
+
+
+[menu.main]
+parent = "CI Jobs"
+name = "Package"
+pre = "📦"
+weight = 80
+identifier = "ci-jobs-package"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+		<br/><br/>
+		The objective of the job is simple: <b>to package the project
+		or app into various distribution packages per their respective
+		requirements in a scalable yet maintainable manner</b>.
+		<br/><br/>
+		All users has to do is to issue this command:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+montuer package
+{{% /highlight %}}
+	</p>
+</section>
+
+
+
+
+<section id="job-level-configurations">
+	<h2>Job Level Configurations</h2>
+{{% ciJob/jobLevelConfigs "en" "package" /%}}
+{{% ciJob/jobLevelVariables "en" "package" /%}}
+</section>
+
+
+
+
+<section id="recipe-configuration-file">
+	<h2>Recipe Configuration File</h2>
+{{% ciJob/recipeLevelConfigs "en" "package" /%}}
+
+
+	<section id="recipe-metadata-section">
+		<h3>Recipe's Metadata Section</h3>
+		<p>
+			The recipe's metadata section consists of the following
+			fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[Metadata]
+Name = 'Tar Gunzip'
+Description = """
+Package application into a single .tar.gz package.
+"""
+Type = 'targz'
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>Name</code> - used for recipe
+					identification, reporting, and
+					referencing usage. Monteur recommends
+					<b>keeping it short, concise and without
+					any weird symbols (e.g. space will be
+					replaced by short dash
+					(<code>-</code>))</b>.
+				</p></li>
+				<li><p>
+					<code>Description</code> - mainly for
+					logging and reporting purposes.
+					<b>Describe the details of the
+					recipe.</b>
+				</p></li>
+				<li><p>
+					<code>Type</code> - select the built-in
+					packager type. Refers to
+					<a href="{{< link
+						"/internals/package-meta#built-in-packagers"
+						"this"
+						"url-only" />}}">Packaging
+					Meta Specification</a>
+					for available packager types.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-variables-section">
+		<h3>Recipe's Variables Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/variables-processing/"
+				"this"
+				"url-only" />}}">Variables Processing</a>
+			features. All variables defined in this recipe's
+			configuration file <b>only visible to this recipe</b>.
+			It is highly recommended to abstract as much variables
+			away from your command algorithm as possible so that
+			your user only has to customize these tables and not
+			messing with your algorithm.
+			<br/><br/>
+			The variables section consists of the following
+			fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[Variables]
+GPGID = 'hello@zoralab.com'
+GPGExistence = ''  # to be filled by [CMD]
+
+[FMTVariables]
+LicensePath = '{{- .RootDir -}}/docs/en/licenses/monteur-software-license.pdf'
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>[Variables]</code> - plain
+					variables list complying to
+					<a href="{{< link
+						"/internals/variables-processing/#plain-variables-definition"
+						"this"
+						"url-only" />}}">
+						Montuer Plain Variables
+						Definition</a>.
+				</p></li>
+				<li><p>
+					<code>[FMTVariables]</code> -
+					formattable variables list complying to
+					<a href="{{< link
+						"/internals/variables-processing/#formattable-variables-definition"
+						"this"
+						"url-only" />}}">
+						Montuer Formattable Variables
+						Definition</a>.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-dependencies-section">
+		<h3>Recipe's Dependencies Checking Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/dependencies-checking/"
+				"this"
+				"url-only" />}}">Dependencies Checking</a>
+			features. All dependencies here are checked against the
+			running operating system to ensure proper operations.
+			It is highly recommended to abstract as much
+			dependencies into this list and away from your command
+			algorithm as possible so that your user can check
+			through the list without messing with your algorithm.
+			<br/><br/>
+			The dependencies checking section consists of the
+			following fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[[Dependencies]]
+Name = 'DEB Builder'
+Condition = 'all-all'
+Type = 'command'
+Command = 'debuild'
+
+[[Dependencies]]
+Name = 'GPG Tool'
+Condition = 'all-all'
+Type = 'command'
+Command = 'gpg'
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>[[Dependencies]]</code> - a
+					dependency entry complying to
+					<a href="{{< link
+						"/internals/dependencies-checking/"
+						"this"
+						"url-only" />}}">
+						Montuer Dependencies Checking
+						Function</a>. The double square
+						bracquets is the TOML formatting
+						of an array entry to a list.
+						Hence, you can add as many as
+						you need shown above.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-package-meta-section">
+		<h3>Recipe's Package Meta Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/package-meta/"
+				"this"
+				"url-only" />}}">Package Meta Processing</a>
+			features. All the recipe's commands shall be executed
+			horizontally across these packages repeatedly.
+			<br/><br/>
+			The data structure is complying to the
+			<a href="{{< link
+				"/internals/package-meta/#data-structure"
+				"this"
+				"url-only" />}}">Package Meta Processing
+			Specification</a>.
+			An example would be:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[Packages.linux-amd64]
+OS = [ 'linux' ]
+Arch = [ 'amd64' ]
+Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
+Distribution = [
+        'stable',
+]
+BuildSource = false
+
+[Packages.linux-amd64.Files]
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+
+
+[Packages.linux-arm64]
+OS = [ 'linux' ]
+Arch = [ 'arm64' ]
+Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
+Distribution = [
+        'stable',
+]
+BuildSource = false
+
+[Packages.linux-arm64.Files]
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+
+
+[Packages.linux-armhf]
+OS = [ 'linux' ]
+Arch = [ 'armhf' ]
+Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
+Distribution = [
+        'stable',
+]
+BuildSource = false
+
+[Packages.linux-armhf.Files]
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-arm'
+{{% /highlight %}}
+		</p>
+	</section>
+
+
+	<section id="recipe-commands-section">
+		<h3>Recipe's Commands Section</h3>
+		<p>
+			The list of executing commands complying to
+			compliant to <a href="{{< link
+						"/internals/commands/"
+						"this"
+						"url-only" />}}">Commands
+				Execution Unit (CEU) Specification</a>.
+			The commands are executed AFTER the recipe executed its
+			meta processing processes.
+			<br/><br/>
+			The data structure is entirely based on the
+			<a href="{{< link "/internals/commands/"
+				"this"
+				"url-only" />}}">Commands Execution Unit (CEU)
+			Specification</a>. An example of this recipe's commands
+			section would be:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+...
+
+[[CMD]]
+Name = "Get GPG Secret Key for Verifications"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'gpg --list-secret-keys "{{- .GPGID }}"'
+Save = 'GPGExistence'
+
+[[CMD]]
+Name = "Verify GPG Secret Key Must Exists For Signing"
+Type = 'is-not-empty'
+Condition = [ 'all-all' ]
+Source = '{{- .GPGExistence -}}'
+
+[[CMD]]
+Name = "Compile Deb Package with Debuild"
+Type = 'command'
+Condition = [ 'all-all' ]
+Location = '{{- .PackageDir -}}'
+Source = 'debuild -b -k{{- .GPGID }} -a{{- index .PkgArch 0 }}'
+{{% /highlight %}}
+		Currently, this is the last section of the recipe configuration
+		file.
+		</p>
+	</section>
+</section>
+
+
+
+
+{{% ciJob/knownRecipes "en" "package" /%}}
