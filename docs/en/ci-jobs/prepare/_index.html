@@ -1,0 +1,396 @@
++++
+date = "2022-01-03T09:07:54+08:00"
+title = "Prepare"
+description = """
+Monteur provides Prepare CI Job to update the repository for the next cycle of
+build, package, release, and etc.
+"""
+keywords = [
+	"Prepare",
+	"CI job",
+	"Prepare CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "list"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/prepare/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur Prepare CI Job"
+
+[thumbnails.1]
+url = "/en/ci-jobs/prepare/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur Prepare CI Job"
+
+[thumbnails.2]
+url = "/en/ci-jobs/prepare/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur Prepare CI Job"
+
+
+[menu.main]
+parent = "CI Jobs"
+name = "Prepare"
+pre = "🧶"
+weight = 65
+identifier = "ci-jobs-prepare"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+		<br/><br/>
+		The objective of the job is simple: <b>to prepare and update the
+		repository project data for the next build, package, release,
+		and etc</b>.
+		<br/><br/>
+		This job is available since Monteur <code>v0.0.2</code>.
+		<br/><br/>
+		All users has to do is to issue this command:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+montuer prepare
+{{% /highlight %}}
+	</p>
+</section>
+
+
+
+
+<section id="job-level-configurations">
+	<h2>Job Level Configurations</h2>
+{{% ciJob/jobLevelConfigs "en" "prepare" /%}}
+{{% ciJob/jobLevelVariables "en" "prepare" /%}}
+</section>
+
+
+
+
+<section id="recipe-configuration-file">
+	<h2>Recipe Configuration File</h2>
+{{% ciJob/recipeLevelConfigs "en" "prepare" /%}}
+
+
+	<section id="recipe-metadata-section">
+		<h3>Recipe's Metadata Section</h3>
+		<p>
+			The recipe's metadata section consists of the following
+			fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[Metadata]
+Name = 'DEB Changelog Update'
+Description = """
+Generating/Updating .deb persistent changelog files.
+"""
+Type = 'deb'
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>Name</code> - used for recipe
+					identification, reporting, and
+					referencing usage. Monteur recommends
+					<b>keeping it short, concise and without
+					any weird symbols (e.g. space will be
+					replaced by short dash
+					(<code>-</code>))</b>.
+				</p></li>
+				<li><p>
+					<code>Description</code> - mainly for
+					logging and reporting purposes.
+					<b>Describe the details of the
+					recipe.</b>
+				</p></li>
+				<li><p>
+					<code>Type</code> - denotes the output
+					changelog format. See <a href="{{< link
+					"/internals/changelog-meta/" "this"
+					"url-only" />}}">Changelog Meta
+					Processing Specification</a>
+					for supported formats.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-variables-section">
+		<h3>Recipe's Variables Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/variables-processing/"
+				"this"
+				"url-only" />}}">Variables Processing</a>
+			features. All variables defined in this recipe's
+			configuration file <b>only visible to this recipe</b>.
+			It is highly recommended to abstract as much variables
+			away from your setup algorithm as possible so that your
+			user only has to customize these tables and not needing
+			to mess with your algorithm.
+			<br/><br/>
+			The variables section consists of the following
+			fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[Variables]
+License = """//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+"""
+
+[FMTVariables]
+CodeFilepath = '{{- .RootDir -}}/gopkg/monteur/internal/libmonteur/Version.go'
+EditFilepath = '.configs/monteur/app/config/en/metadata.toml'
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>[Variables]</code> - plain
+					variables list complying to
+					<a href="{{< link
+						"/internals/variables-processing/#plain-variables-definition"
+						"this"
+						"url-only" />}}">
+						Montuer Plain Variables
+						Definition</a>.
+				</p></li>
+				<li><p>
+					<code>[FMTVariables]</code> -
+					formattable variables list complying to
+					<a href="{{< link
+						"/internals/variables-processing/#formattable-variables-definition"
+						"this"
+						"url-only" />}}">
+						Montuer Formattable Variables
+						Definition</a>.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="recipe-dependencies-section">
+		<h3>Recipe's Dependencies Checking Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/dependencies-checking/"
+				"this"
+				"url-only" />}}">Dependencies Checking</a>
+			features. All dependencies here are checked against the
+			running operating system to ensure proper operations.
+			It is highly recommended to abstract as much dependencies
+			into this list and away from your setup algorithm as
+			possible so that your user can check through the list
+			without messing with your algorithm.
+			<br/><br/>
+			The dependencies checking section consists of the
+			following fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[[Dependencies]]
+Name = 'Go'
+Condition = 'all-all'
+Type = 'command'
+Command = 'go'
+
+[[Dependencies]]
+Name = 'Git for version control'
+Condition = 'all-all'
+Type = 'command'
+Command = 'git'
+{{% /highlight %}}
+			<ul>
+				<li><p>
+					<code>[[Dependencies]]</code> - a
+					dependency entry complying to
+					<a href="{{< link
+						"/internals/dependencies-checking/"
+						"this"
+						"url-only" />}}">
+						Montuer Dependencies Checking
+						Function</a>. The double square
+						bracquets is the TOML formatting
+						of an array entry to a list.
+						Hence, you can add as many as
+						you need shown above.
+				</p></li>
+			</ul>
+		</p>
+	</section>
+
+
+	<section id="changelog-meta-section">
+		<h3>Recipe's Changelog Meta Section</h3>
+		<p>
+			The Monteur's <a href="{{< link
+				"/internals/changelog-meta/" "this"
+				"url-only" />}}">Changelog Meta Processing</a>
+			feature. This features opreate in a way to source a
+			changelog entry data before executing the recipe's
+			commands, allowing the CI Job recipe full flexibility
+			to obtain pinpoint accuracy.
+			<br/><br/>
+			The data structure is entirely compliant to
+			<a href="{{< link "/internals/changelog-meta/" "this"
+				"url-only" />}}">Changelog Meta Processing
+			Specification</a> of your selected
+			<code>Metadata.Type</code>. If needed, the recipe's
+			changelog meta section consists of the following
+			fields:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[Changelog]
+LineBreak = "\n"
+Regex = ''
+
+[[Changelog.CMD]]
+Name = "Fetch All Local Remote Branches To The Latest"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'git fetch --all'
+
+[[Changelog.CMD]]
+Name = "Get Changelog Data from Git Log Between Branches"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = """git --no-pager log \
+"{{- .ChangelogTo -}}..{{- .ChangelogFrom -}}" \
+--pretty="format:%h %s"
+"""
+Save = "ChangelogEntries"
+
+
+
+
+[Packages.linux-amd64]
+OS = [ 'linux' ]
+Arch = [ 'amd64' ]
+Distribution = [
+        'stable',
+]
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
+
+[Packages.linux-arm64]
+OS = [ 'linux' ]
+Arch = [ 'arm64' ]
+Distribution = [
+        'stable',
+]
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
+
+[Packages.linux-armhf]
+OS = [ 'linux' ]
+Arch = [ 'armhf' ]
+Distribution = [
+        'stable',
+]
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
+{{% /highlight %}}
+		</p>
+	</section>
+
+
+	<section id="recipe-commands-section">
+		<h3>Recipe's Commands Section</h3>
+		<p>
+			The list of executing commands complying to
+			compliant to <a href="{{< link
+						"/internals/commands/"
+						"this"
+						"url-only" />}}">Commands
+				Execution Unit (CEU) Specification</a>.
+			The commands are executed AFTER the recipe executed its
+			Prepare Meta processing.
+			<br/><br/>
+			The data structure is entirely based on the
+			<a href="{{< link "/internals/commands/"
+				"this"
+				"url-only" />}}">Commands Execution Unit (CEU)
+			Specification</a>. An example of this recipe's commands
+			section would be:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+...
+
+[[CMD]]
+Name = 'Delete Existing Version Codes'
+Type = 'delete-quiet'
+Condition = [ 'all-all' ]
+Source = '{{- .CodeFilepath -}}'
+
+[[CMD]]
+Name = 'Script Go Codes'
+Type = 'script'
+Condition = [ 'all-all' ]
+Source = """
+// Copyright {{ .App.Time.Year }} {{ .App.Contact.Name }} ({{- index .App.Contact.Email 0 -}})
+{{ .License }}
+// **WARNING**: auto-generated file. Please alter at:
+// {{ .EditFilepath }}
+
+package libmonteur
+
+const (
+        VERSION = "{{- .App.Version -}}"
+)
+"""
+{{% /highlight %}}
+		For recipe that handles changelog, it is usually not required
+		to implement these CEU comamnds. Hence, you can just leave it
+		with <code>placeholder</code>CEU type to do nothing. An example
+		is as follows:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[[CMD]]
+Name = 'Placeholder'
+Type = 'placeholder'
+Condition = [ 'all-all' ]
+Source = ''
+Target = ''
+{{% /highlight %}}
+
+
+		Currently, this is the last section of the recipe configuration
+		file.
+		</p>
+	</section>
+</section>
+
+
+
+
+{{% ciJob/knownRecipes "en" "package" /%}}
