@@ -32,6 +32,14 @@
 
 
 
+{{- /* process .IsLast */ -}}
+{{- $ret = strings.HasSuffix .Content "...\n" -}}
+{{- if not $ret }}
+	{{- $dataList = merge $dataList (dict "IsLast" true) -}}
+{{- end -}}
+
+
+
 {{- /* process .CommandsURL */ -}}
 {{- $ret = merge $dl (dict "GivenURL" "/internals/commands") -}}
 {{- $ret = merge $ret (dict "GivenLang" .Lang) -}}
