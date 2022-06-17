@@ -236,23 +236,9 @@ SourceDir = '{{- .WorkingDir -}}/public'
 	</section>
 
 
-	<section id="recipe-dependencies-section">
-		<h3>Recipe's Dependencies Checking Section</h3>
-		<p>
-			The Monteur's <a href="{{< link
-				"/internals/dependencies-checking/"
-				"this"
-				"url-only" />}}">Dependencies Checking</a>
-			features. All dependencies here are checked against the
-			running operating system to ensure proper operations.
-			It is highly recommended to abstract as much dependencies
-			into this list and away from your setup algorithm as
-			possible so that your user can check through the list
-			without messing with your algorithm.
-			<br/><br/>
-			The dependencies checking section consists of the
-			following fields:
-{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+{{% ciJob/recipeLevelDependencies "en" "setup" %}}
+...
+
 [[Dependencies]]
 Name = 'Hugo for documentation purposes'
 Condition = 'all-all'
@@ -264,25 +250,9 @@ Name = 'Git for version control'
 Condition = 'all-all'
 Type = 'command'
 Command = 'git'
-{{% /highlight %}}
-			<ul>
-				<li><p>
-					<code>[[Dependencies]]</code> - a
-					dependency entry complying to
-					<a href="{{< link
-						"/internals/dependencies-checking/"
-						"this"
-						"url-only" />}}">
-						Montuer Dependencies Checking
-						Function</a>. The double square
-						bracquets is the TOML formatting
-						of an array entry to a list.
-						Hence, you can add as many as
-						you need shown above.
-				</p></li>
-			</ul>
-		</p>
-	</section>
+
+...
+{{% /ciJob/recipeLevelDependencies %}}
 
 
 	<section id="recipe-sources-section">
