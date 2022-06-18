@@ -1,0 +1,8 @@
+{{- $dataList := dict "context" . -}}
+{{- $dataList = merge $dataList (dict "Content" .Inner) -}}
+
+{{- $outputFormat := .Site.Data.bissetii.mediaTypes.HTML.Name -}}
+{{- $dataList = merge $dataList (dict "OutputFormat" $outputFormat) -}}
+{{- $dataList = merge $dataList (dict "Lang" (.Get 0)) -}}
+
+{{- partial "shortcodes/ciJob/_recipeProductIntro.html" $dataList -}}
