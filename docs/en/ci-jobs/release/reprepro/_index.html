@@ -1,0 +1,498 @@
++++
+date = "2021-12-23T08:10:56+08:00"
+title = "Reprepro Release Recipe"
+description = """
+Montuer has a continuously developed release recipe dedicated for reprepro,
+a decentralized deb package distributions.
+"""
+keywords = [
+	"Reprepro",
+	"Release CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/release/default-1200x628.png"
+type = "image/png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur - Release with Reprepro"
+
+[thumbnails.1]
+url = "/en/ci-jobs/release/reprepro/default-1200x1200.png"
+type = "image/png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur - Release with Reprepro"
+
+[thumbnails.2]
+url = "/en/ci-jobs/release/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur - Release with Reprepro"
+
+
+[menu.main]
+parent = "Software - Reprepro"
+name = "Release"
+pre = "🌾"
+weight = 90
+identifier = "ci-jobs-release-reprepro"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+{{% ciJob/recipeProductIntro "en" "release" %}}
+	The objective is simple: <b>to quickly and steadily upstream the built
+	<code>.deb</code> packages in a consistent, secured, and seamlessly
+	easy manner</b>.
+{{% /ciJob/recipeProductIntro %}}
+
+
+	Reprepro instructions are available at:
+	https://wiki.debian.org/DebianRepository/SetupWithReprepro
+
+<section id="one-time-setup">
+	<h2>One-Time Setup</h2>
+	<p>
+		<code>Reprepro</code> requires a ONE-TIME (1) setup to meet its
+		minimal requirements. This 3rd-party software <b>ONLY works on
+		<code>linux</code> operating system</b>.
+		<br/><br/>
+		The first thing to do is to create a persistent data directory
+		for it to house its workspace and configuration data. All you
+		need to do is:
+	</p>
+	<ol>
+		<li><p>
+			Create the <code>conf/distributions</code> file in your
+			data directory (<code>.DataDir</code>). The content of
+			the file is as such:
+{{% highlight yaml "linenos=table,hl_lines=,linenostart=1" %}}
+Origin: monteur.zoralab.com/releases/deb
+Label: ZORALab's Monteur Deb Package (Main Branch)
+Codename: main
+Suite: stable
+Architectures: amd64
+Components: stable
+Description: software manufacturing automation tool in one single app.
+SignWith: hello@zoralab.com
+
+Origin: monteur.zoralab.com/releases/deb
+Label: ZORALab's Monteur Deb Package (Staging)
+Codename: staging
+Suite: unstable
+Architectures: amd64
+Components: unstable
+Description: software manufacturing automation tool in one single app.
+SignWith: hello@zoralab.com
+
+Origin: monteur.zoralab.com/releases/deb
+Label: ZORALab's Monteur Deb Package (Next)
+Codename: next
+Suite: experimental
+Architectures: amd64
+Components: experimental
+Description: software manufacturing automation tool in one single app.
+SignWith: hello@zoralab.com
+{{% /highlight %}}
+		</p></li>
+	</ol>
+	<ul>
+		<li><p>
+			<code>Origin</code>
+			<ol>
+				<li><p>
+					The distribution URI where users source
+					the packages from (and added into
+					<code>/etc/apt/source.list.d</code>)
+					directory.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Label</code>
+			<ol>
+				<li><p>
+					Name of the package series.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Codename</code>
+			<ol>
+				<li><p>
+					controlled field.
+				</p></li>
+				<li><p>
+					When in doubts, denotes it to your
+					branch name.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Suite</code>
+			<ol>
+				<li><p>
+					Debian distribution suite. Please refer
+					to the operating system manuals for
+					compliant names.
+				</p></li>
+				<li><p>
+					When in doubts, sticks to
+					<code>stable</code>,
+					<code>unstable</code>, or
+					<code>experimental</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Architectures</code>
+			<ol>
+				<li><p>
+					Supported CPU architectures separated by
+					space (<code> </code>). Example:
+					<code>amd64 arm64 i386</code>.
+				</p></li>
+				<li><p>
+					Please refers to operating system
+					manuals for accepted values or refer to
+					<a href="https://wiki.debian.org/Multiarch/TheCaseForMultiarch">
+					Debian MultiArch Specification</a>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Components</code>
+			<ol>
+				<li><p>
+					Distribution components.
+				</p></li>
+				<li><p>
+					When in doubt, keep it to the same as
+					<code>Suite</code>.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>Description</code>
+			<ol>
+				<li><p>
+					Abstract of the package.
+				</p></li>
+				<li><p>
+					When in doubt, use your
+					<code>App.Abstract</code> data.
+				</p></li>
+			</ol>
+		</p></li>
+		<li><p>
+			<code>SignWith</code>
+			<ol>
+				<li><p>
+					Your GPG signing key ID.
+				</p></li>
+			</ol>
+		</p></li>
+	</ul>
+	<p>
+		The above shall make your user to add your
+		<code>sources.List</code> in the following pattern:
+{{< highlight toml "linenos=table,hl_lines=,linenostart=1" >}}
+deb https://{{- .Origin }} {{ .Codename }} {{ .Components }}
+
+# example above:
+deb https://monteur.zoralab.com/releases/deb main stable
+{{< /highlight >}}
+	<br/>
+	and <code>apt search</code> in the following pattern:
+{{< highlight toml "linenos=table,hl_lines=,linenostart=1" >}}
+{{ .AppName }}/{{- .Suite }} {{ .PkgVersion }} {{ .PkgArch }}
+  {{ .Description }}
+
+# example above:
+monteur/stable 0.0.1 amd64
+  software manufacturing automation tool in one single app.
+{{< /highlight >}}
+	</p>
+</section>
+
+
+
+
+<section id="recipe-file">
+	<h2>Recipe File</h2>
+	<p>
+		Here are all the Monteur's Release CI Job recipe files for
+		operating <code>reprepro</code> semi-autonomously. They are
+		sorted by <b>the latest version first, at the top</b>.
+		<br/><br/>
+		Please read through its requirements and changes before
+		procuring.
+	</p>
+
+
+	<section id="version-2p0p0">
+		<h3>Version 2.0.0</h3>
+		<p>
+			Download Link:
+			<a href="{{< link
+				"/ci-jobs/release/reprepro/reprepro-v2p0p0.toml"
+				"this" "url-only" />}}"
+				class="button"
+				download>
+				reprepro-v2p0p0.toml
+			</a>
+		</p>
+
+
+		<section id="version-2p0p0-requirements">
+			<h4>Minimum Requirements</h4>
+			<ul>
+				<li><p>
+					Monteur version: <b><code>v0.0.2</code>
+					and above</b>.
+				</p></li>
+				<li><p>
+					Supported platform: <b>depends
+					STRICTLY on <code>reprepro</code>
+					availability</b>.
+				</p></li>
+			</ul>
+		</section>
+
+
+		<section id="version-2p0p0-installation">
+			<h4>Installation Instructions</h4>
+			<ol>
+				<li><p>
+					Download and place the recipe into your
+					<code>.configs/monteur/release/jobs</code>
+					directory as
+					<code>reprepro.toml</code>.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Variables.GPGID</code> to match
+					the signing GPG key.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>FMTVariables.DataPath</code>
+					pointing to your
+					<code>conf/distributions</code> config
+					file.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Releases.Target</code>
+					pointing to your output directory.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Releases.Packages.XXX</code>
+					matching the list of <code>.deb</code>
+					packages. Duplicate the package data
+					structure for more variants.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Releases.Packages.XXX.OS</code>
+					matching the <code>.deb</code> package's
+					operating system. <b>Minimum 1</b>.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Releases.Packages.XXX.ARCH</code>
+					matching the <code>.deb</code> package's
+					CPU architecture. <b>Minimum 1</b>.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Releases.Packages.XXX.SOURCE</code>
+					matching the <code>.deb</code> package's
+					filepath.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Dependencies</code> when needed
+					to match your CI operating system.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>CMD</code> when needed
+					to match your CI operating system.
+				</p></li>
+			</ol>
+		</section>
+
+
+		<section id="version-2p0p0-changelog">
+			<h4>Changelog</h4>
+			<ol>
+				<li><p>
+					<b>NON-BACKWARD COMPATIBLE</b> -
+					Formatted
+					<code>Releases.Packages.XXX.Source</code>
+					to use new variables for matching
+					<code>debuild</code> overwritten package
+					filename.
+				</p></li>
+				<li><p>
+					<b>NON-BACKWARD COMPATIBLE</b> -
+					Added <code>Releases.Packages.XXX.OS</code>
+					and
+					<code>Releases.Packages.XXX.Arch</code>
+					as required by Monteur
+					<code>v0.0.2</code> Package Meta
+					Processing function.
+				</p></li>
+			</ol>
+		</section>
+	</section>
+
+
+	<section id="version-1p0p0">
+		<h3>Version 1.0.0</h3>
+		<p>
+			Download Link:
+			<a href="{{< link
+				"/ci-jobs/release/reprepro/reprepro-v1p0p0.toml"
+				"this" "url-only" />}}"
+				class="button"
+				download>
+				reprepro-v1p0p0.toml
+			</a>
+		</p>
+
+
+		<section id="version-1p0p0-requirements">
+			<h4>Minimum Requirements</h4>
+			<ul>
+				<li><p>
+					Monteur version: <b>ONLY
+					<code>v0.0.1</code></b>.
+				</p></li>
+				<li><p>
+					Supported platform: <b>depends
+					STRICTLY on <code>reprepro</code>
+					availability</b>.
+				</p></li>
+			</ul>
+		</section>
+
+
+		<section id="version-1p0p0-installation">
+			<h4>Installation Instructions</h4>
+			<ol>
+				<li><p>
+					Download and place the recipe into your
+					<code>.configs/monteur/release/releasers</code>
+					directory as <code>reprepro.toml</code>.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Variables.GPGID</code> to match
+					the signing GPG key.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>FMTVariables.DataPath</code>
+					pointing to your
+					<code>conf/distributions</code> config
+					file.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Releases.Target</code>
+					pointing to your output directory.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Releases.Packages.XXX</code>
+					matching the list of <code>.deb</code>
+					packages. Duplicate the package data
+					structure for more variants.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Releases.Packages.XXX.OS</code>
+					matching the <code>.deb</code> package's
+					operating system. <b>Minimum 1</b>.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Releases.Packages.XXX.ARCH</code>
+					matching the <code>.deb</code> package's
+					CPU architecture. <b>Minimum 1</b>.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Releases.Packages.XXX.Source</code>
+					matching the <code>.deb</code> package's
+					filepath.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Dependencies</code> when needed
+					to match your CI operating system.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>CMD</code> when needed
+					to match your CI operating system.
+				</p></li>
+			</ol>
+		</section>
+
+
+		<section id="version-1p0p0-changelog">
+			<h4>Changelog</h4>
+			<ol>
+				<li><p>
+					<b>BACKWARD COMPATIBLE</b> - Created
+					the base TOML configuration recipe.
+				</p></li>
+				<li><p>
+					<b>BACKWARD COMPATIBLE</b> - Integrated
+					with GitLab CI.
+				</p></li>
+			</ol>
+		</section>
+</section>
+
+
+
+
+{{% epilogue %}}
+That's all for Monteur's Release CI Job handling <code>reprepro</code> release
+distribution system.
+{{% /epilogue %}}
