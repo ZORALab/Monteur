@@ -1,0 +1,275 @@
++++
+date = "2021-12-22T18:26:41+08:00"
+title = "GitLab Pages Publish Recipe"
+description = """
+Montuer has a continuously developed publish recipe dedicated for GitLab Pages,
+a great platform for web content publications.
+"""
+keywords = [
+	"GitLab Pages",
+	"Publish CI Job",
+	"monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/publish/gitlab/default-1200x628.png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur - Publish with GitLab Pages"
+
+[thumbnails.1]
+url = "/en/ci-jobs/publish/gitlab/default-1200x1200.png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur - Publish with GitLab Pages"
+
+[thumbnails.2]
+url = "/en/ci-jobs/publish/gitlab/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur - Publish with GitLab Pages"
+
+
+[menu.main]
+parent = "Platform - GitLab"
+name = "Publish (GitLab Pages)"
+pre = "📖"
+weight = 110
+identifier = "ci-jobs-publish-gitlab"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+		{{% param "description" %}}
+		<br/><br/>
+		The objective of the job is simple: <b>to quickly make GitLab
+		Pages publication ready and seamlessly operating correctly</b>.
+		<br/><br/>
+		All users has to do is to issue this command:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+montuer publish
+{{% /highlight %}}
+		<br/>
+		For this recipe, they are arranged based on its own
+		<a href="https://semver.org/">semantic versioning</a> and is not
+		directly related to Monteur's actual release version. Hence,
+		feel free to explore and update each versions to suit your CI
+		needs.
+	</p>
+</section>
+
+
+
+
+<section id="one-time-setup">
+	<h2>One-Time Setup</h2>
+{{< note warning "Be Careful" >}}
+Make sure you perform the following with a git repository on a clean status
+branch (no staging). Otherwise, you will lose files as one of the command
+actually deletes everything.
+{{< /note >}}
+	<p>
+		To ensure maximum portability, Monteur recommends the use of
+		<code>gh-pages</code>, a git branch where GitHub is recognizing
+		for its <a href="https://pages.github.com/">GitHub Pages</a> in
+		<a href="https://docs.gitlab.com/ee/user/project/pages/">GitLab
+		Pages</a> implementations. That way, when there is a need to
+		migrate between GitHub and GitLab in either directions, it
+		should offer a seamless no-technical-steps required migration
+		experiences.
+		<br/><br/>
+		However, doing so requires a ONE-TIME (1) setup with that
+		<code>gh-pages</code> branch. To begin, you simple execute
+		the following git commands on <b>a clean, no staging, and no new
+		editing branch</b>.
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+$ git checkout --orphan gh-pages
+$ git reset --hard
+$ git clean -fd
+$ git commit --allow-empty -m "Init"
+$ git push origin gh-pages:gh-pages
+$ git checkout <back to your work branch>
+{{% /highlight %}}
+		<br/>
+		The next step is to ensure your <code>.gitlab-ci.yml</code> CI
+		configuration file has the following task:
+{{% highlight yaml "linenos=table,hl_lines=,linenostart=1" %}}
+pages:
+  stage: docs
+  tags:
+    - linux
+  environment:
+    name: production
+  only:
+    refs:
+      - gh-pages
+  cache: []
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 day
+  before_script:
+    - mkdir -p public
+    - shopt -s extglob
+    - mv !(public|.*) public
+  script:
+    - printf "[ DONE ] Nothing to implement. Proceed to deploy web content.\n"
+{{% /highlight %}}
+{{% note warning "IMPORTANT" %}}
+<ol>
+	<li><p>
+		<b>DO NOT</b> rename the task name (<code>pages</code>) into
+		something else.
+	</p></li>
+	<li><p>
+		<b>DO NOT</b> remove the expiry time(<code>expire_in</code>).
+		Otherwise, your repository will bloat beyond the
+		<a href="https://docs.gitlab.com/ee/user/gitlab_com/index.html#account-and-limit-settings">
+		Storage Limit</a> easily.
+	</p></li>
+</ol>
+{{% /note %}}
+		Once everything are done, you may proceed to recipe procurement
+		as usual.
+	</p>
+</section>
+
+
+
+
+<section id="recipe-file">
+	<h2>Recipe File</h2>
+	<p>
+		Here are all the Monteur's Publish CI Job recipe files for
+		operating GitLab Pages semi-autonomously. They are sorted by
+		<b>the latest version first, at the top</b>.
+		<br/><br/>
+		Please read through its requirements and changes before
+		procuring.
+	</p>
+
+
+	<section id="version-1p0p0">
+		<h3>Version 1.0.0</h3>
+		<p>
+			Download Link:
+			<a href="{{< link
+				"/ci-jobs/publish/gitlab/gitlab-pages-v1p0p0.toml"
+				"this" "url-only" />}}"
+				class="button"
+				download>
+				gitlab-pages-v1p0p0.toml
+			</a>
+		</p>
+
+
+		<section id="version-1p0p0-requirements">
+			<h4>Minimum Requirements</h4>
+			<ul>
+				<li><p>
+					Monteur version: <b><code>v0.0.1</code>
+					and above</b>.
+				</p></li>
+				<li><p>
+					Supported platform: depends
+					<b>STRICTLY on <code>git</code>
+					availability</b>.
+				</p></li>
+			</ul>
+		</section>
+
+
+		<section id="version-1p0p0-installation">
+			<h4>Installation Instructions</h4>
+			<ol>
+				<li><p>
+					Download and place the recipe into your
+					<code>.configs/monteur/publish/jobs</code>
+					directory as
+					<code>gitlab-pages.toml</code>.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>FMTVariables.SourceDir</code>
+					pointing to the directory holding your
+					website artifact (e.g.
+					<code>public/</code>) directory.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>Dependencies</code> when needed
+					to match your CI operating system.
+				</p></li>
+				<li><p>
+					Update the recipe's
+					<code>CMD</code> when needed
+					to match your CI operating system.
+				</p></li>
+			</ol>
+		</section>
+
+
+		<section id="version-1p0p0-changelog">
+			<h4>Changelog</h4>
+			<ol>
+				<li><p>
+					<b>BACKWARD COMPATIBLE</b> -
+					Created base TOML configuration recipe.
+				</p></li>
+				<li><p>
+					<b>BACKWARD COMPATIBLE</b> -
+					Tested with GitLab CI.
+				</p></li>
+				<li><p>
+					<b>BACKWARD COMPATIBLE</b> -
+					Implemented <code>gh-pages</code> branch
+					method correctly.
+				</p></li>
+				<li><p>
+					<b>BACKWARD COMPATIBLE</b> -
+					Maintain single artifact commit to
+					remove duplications and reduce git
+					repository size as publication develops.
+				</p></li>
+			</ol>
+		</section>
+	</section>
+</section>
+
+
+
+
+{{% epilogue %}}
+That's all for Monteur operating on GitLab platform with GitLab Pages.
+{{% /epilogue %}}
