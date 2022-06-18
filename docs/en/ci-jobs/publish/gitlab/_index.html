@@ -67,28 +67,10 @@ identifier = "ci-jobs-publish-gitlab"
 selectType = "WebPage"
 +++
 
-
-<section id="introduction">
-	<h1>{{% param "title" %}}</h1>
-	<p>
-		{{% param "description" %}}
-		<br/><br/>
-		The objective of the job is simple: <b>to quickly make GitLab
-		Pages publication ready and seamlessly operating correctly</b>.
-		<br/><br/>
-		All users has to do is to issue this command:
-{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
-montuer publish
-{{% /highlight %}}
-		<br/>
-		For this recipe, they are arranged based on its own
-		<a href="https://semver.org/">semantic versioning</a> and is not
-		directly related to Monteur's actual release version. Hence,
-		feel free to explore and update each versions to suit your CI
-		needs.
-	</p>
-</section>
-
+{{% ciJob/recipeProductIntro "en" "publish" %}}
+	The objective is simple: <b>to quickly and steadily setup GitLab Pages
+	publication operations up and ready, and seamlessly easy</b>.
+{{% /ciJob/recipeProductIntro %}}
 
 
 
