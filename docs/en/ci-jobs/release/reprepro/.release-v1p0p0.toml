@@ -1,0 +1,92 @@
+[Metadata]
+Name = "reprepro"
+Version = "v1.0.0"
+URL = "/ci-jobs/release/reprepro/reprepro-v1p0p0.toml"
+Language = "en"
+
+
+
+
+[[MinRequirements]]
+Content = "Montuer version: <b>ONLY <code>v0.0.1</code></b>."
+
+[[MinRequirements]]
+Content = """
+Supported platform: <b>STRICTLY depends on <code>reprepro</code>
+availability</b>.
+"""
+
+
+
+
+[[Installations]]
+Content = """
+Download and place the recipe file into your
+<code>.configs/monteur/release/releasers</code> directory as
+<code>reprepro.toml</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.GPGID</code> to match the signing GPG key.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>FMTVariables.Datapath</code> pointing to your
+<code>conf/distributions</code> config file.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Releases.Target</code> pointing to your output
+directory.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Releases.Packages.XXX</code> matching the list of
+<code>.deb</code> packages. Duplicate the package data structure for more
+variants support.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Releases.Packages.XXX.OS</code> matching the
+<code>.deb</code> supported operating system. <b>Minimum 1</b>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Releases.Packages.XXX.ARCH</code> matching the
+<code>.deb</code> supported CPU Architecture. <b>Minimum 1</b>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Releases.Packages.XXX.Source</code> matching the
+<code>.deb</code> package's filepath.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Dependencies</code> when needed to match your
+customization needs.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>CMD</code> when needed to match your customization
+needs.
+"""
+
+
+
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Created the base TOML configuration recipe."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Integrated with GitLab CI."
