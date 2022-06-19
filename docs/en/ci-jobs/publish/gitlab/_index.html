@@ -150,108 +150,16 @@ pages:
 
 
 
-<section id="recipe-file">
-	<h2>Recipe File</h2>
-	<p>
-		Here are all the Monteur's Publish CI Job recipe files for
-		operating GitLab Pages semi-autonomously. They are sorted by
-		<b>the latest version first, at the top</b>.
-		<br/><br/>
-		Please read through its requirements and changes before
-		procuring.
-	</p>
+{{% ciJob/recipeFile "en" "publish" "GitLab Pages" %}}
 
+{{% ciJob/recipeVersion ".release-v1p0p0.toml" /%}}
 
-	<section id="version-1p0p0">
-		<h3>Version 1.0.0</h3>
-		<p>
-			Download Link:
-			<a href="{{< link
-				"/ci-jobs/publish/gitlab/gitlab-pages-v1p0p0.toml"
-				"this" "url-only" />}}"
-				class="button"
-				download>
-				gitlab-pages-v1p0p0.toml
-			</a>
-		</p>
-
-
-		<section id="version-1p0p0-requirements">
-			<h4>Minimum Requirements</h4>
-			<ul>
-				<li><p>
-					Monteur version: <b><code>v0.0.1</code>
-					and above</b>.
-				</p></li>
-				<li><p>
-					Supported platform: depends
-					<b>STRICTLY on <code>git</code>
-					availability</b>.
-				</p></li>
-			</ul>
-		</section>
-
-
-		<section id="version-1p0p0-installation">
-			<h4>Installation Instructions</h4>
-			<ol>
-				<li><p>
-					Download and place the recipe into your
-					<code>.configs/monteur/publish/jobs</code>
-					directory as
-					<code>gitlab-pages.toml</code>.
-				</p></li>
-				<li><p>
-					Update the recipe's
-					<code>FMTVariables.SourceDir</code>
-					pointing to the directory holding your
-					website artifact (e.g.
-					<code>public/</code>) directory.
-				</p></li>
-				<li><p>
-					Update the recipe's
-					<code>Dependencies</code> when needed
-					to match your CI operating system.
-				</p></li>
-				<li><p>
-					Update the recipe's
-					<code>CMD</code> when needed
-					to match your CI operating system.
-				</p></li>
-			</ol>
-		</section>
-
-
-		<section id="version-1p0p0-changelog">
-			<h4>Changelog</h4>
-			<ol>
-				<li><p>
-					<b>BACKWARD COMPATIBLE</b> -
-					Created base TOML configuration recipe.
-				</p></li>
-				<li><p>
-					<b>BACKWARD COMPATIBLE</b> -
-					Tested with GitLab CI.
-				</p></li>
-				<li><p>
-					<b>BACKWARD COMPATIBLE</b> -
-					Implemented <code>gh-pages</code> branch
-					method correctly.
-				</p></li>
-				<li><p>
-					<b>BACKWARD COMPATIBLE</b> -
-					Maintain single artifact commit to
-					remove duplications and reduce git
-					repository size as publication develops.
-				</p></li>
-			</ol>
-		</section>
-	</section>
-</section>
+{{% /ciJob/recipeFile %}}
 
 
 
 
 {{% epilogue %}}
-That's all for Monteur operating on GitLab platform with GitLab Pages.
+That's all for Monteur's Publish CI Job handling <code>GitLab Pages</code>
+web publication system.
 {{% /epilogue %}}

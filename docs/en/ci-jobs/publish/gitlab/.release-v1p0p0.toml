@@ -1,0 +1,66 @@
+[Metadata]
+Name = "GitLab Pages"
+Version = "v1.0.0"
+URL = "/ci-jobs/release/reprepro/gitlab-pages-v1p0p0.toml"
+Language = "en"
+
+
+
+
+[[MinRequirements]]
+Content = "Montuer version: <b><code>v0.0.1</code> and above</b>."
+
+[[MinRequirements]]
+Content = """
+Supported platform: <b>STRICTLY depends on <code>git</code> availability</b>.
+"""
+
+
+
+
+[[Installations]]
+Content = """
+Download and place the recipe file into your
+<code>.configs/monteur/publish/jobs</code> directory as
+<code>gitlab-pages.toml</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>FMTVariables.SourceDir</code> pointing to the
+directory holding your website artifact (e.g. <code>public/</code>) directory.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Dependencies</code> when needed to match your
+customization needs.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>CMD</code> when needed to match your customization
+needs.
+"""
+
+
+
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Created the base TOML configuration recipe."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Tested with GitLab CI."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Implemented <code>gh-pages</code> branch method correctly."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Maintain single artifact commit to remove duplications and reduce git repository
+size as publication develops.
+"""
