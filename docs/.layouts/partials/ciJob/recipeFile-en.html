@@ -1,0 +1,12 @@
+<section id="recipe-file">
+	<h2>Recipe File</h2>
+	<p>
+		Here are all the Monteur {{ .JobTitle }} CI Job recipe files
+		for operating <code>{{- .Software -}}</code> semi-autonomously.
+		They are sorted by <b>the latest version first, at the top</b>.
+		<br/><br/>
+		Please read through its requiremnets and changes before
+		procuring.
+	</p>
+{{- .Versions -}}
+</section>

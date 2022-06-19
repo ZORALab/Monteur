@@ -1,0 +1,61 @@
+{{- /* .context            = Page data for processing                 */ -}}
+{{- /* .Content            = Content of the link                      */ -}}
+{{- /* .OutputFormat       = Selected link output format              */ -}}
+{{- /* .MediaTypes         = Explicit all output format data list     */ -}}
+
+
+
+
+{{- /* Create variables for work */ -}}
+{{- $mediaTypes := .context.Site.Data.bissetii.mediaTypes -}}
+{{- if .MediaTypes -}}
+	{{- $mediaTypes = .MediaTypes -}}
+{{- end -}}
+
+
+
+
+{{- /* Create variables for work */ -}}
+{{- $dataList := dict "context" .context -}}
+{{- $ret := false -}}
+{{- $dl := dict "context" .context "OutputFormat" .OutputFormat -}}
+{{- $dl = merge $dl (dict "MediaTypes" $mediaTypes) -}}
+
+
+
+
+{{- /* process .Lang */ -}}
+{{- $ret = index .context.Params 1 -}}
+{{- if not $ret -}}
+	{{- $ret = "en" -}}
+{{- end -}}
+{{- $dataList = merge $dataList (dict "Lang" $ret) -}}
+
+
+
+
+{{- /* process .JobTitle */ -}}
+{{- $ret = index .context.Params 1 -}}
+{{- $dataList = merge $dataList (dict "JobTitle" (title $ret | safeHTML) ) -}}
+
+
+
+
+{{- /* process .Software */ -}}
+{{- $ret = index .context.Params 2 -}}
+{{- $dataList = merge $dataList (dict "Software" (title $ret | safeHTML) ) -}}
+
+
+
+
+{{- /* process .Versions */ -}}
+{{- $ret = dict "Content" .Content -}}
+{{- $ret = merge $ret (dict "context" .context) -}}
+{{- $ret = partial "functions/parseContent.html" $ret -}}
+{{- $dataList = merge $dataList (dict "Versions" (safeHTML $ret) ) -}}
+
+
+
+
+{{- /* Render the output */ -}}
+{{- partial "ciJob/recipeFile-en.html" $dataList -}}
