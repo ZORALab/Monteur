@@ -1,0 +1,83 @@
+[Metadata]
+Name = "Hugo"
+Version = "v1.0.0"
+URL = "/ci-jobs/compose/hugo/hugo-v1p0p0.toml"
+Language = "en"
+
+
+
+
+[[MinRequirements]]
+Content = "Montuer version: <b><code>v0.0.1</code></b>."
+
+[[MinRequirements]]
+Content = """
+Supported platform: <b>STRICTLY depends on <code>hugo</code> availability</b>.
+"""
+
+
+
+
+[[Installations]]
+Content = """
+Download and place the recipe file into your
+<code>.configs/monteur/compose/composers</code> directory as
+<code>hugo.toml</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.MainLang</code> is your selected main
+language ID. Default is <code>en</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>FMTVariables.SourceDir</code> pointing to the
+directory for executing <code>hugo</code> command.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>FMTVariables.DestinationDir</code> pointing to the
+directory for exporting the website artifacts.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Dependencies</code> when needed to match your
+customization needs.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>CMD</code> when needed to match your customization
+needs.
+"""
+
+
+
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Created the base TOML configuration recipe."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Tested with GitLab CI."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Implemented <code>gh-pages</code> branch publishing method for maximum
+compatibility between
+<a href="https://docs.gitlab.com/ee/user/project/pages/">GitLab Pages</a> and
+<a href="https://pages.github.com/">GitHub Pages</a>.
+"""
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Added Hugo's <code>404.html</code> workaround by default for Hugo's multilingual
+website.
+"""

@@ -1,0 +1,95 @@
++++
+date = "2021-12-22T18:26:41+08:00"
+title = "Hugo Compose Recipe"
+description = """
+Montuer has a continuously developed compose recipe dedicated for Hugo,
+a great static web content composer.
+"""
+keywords = [
+	"hugo",
+	"Compose CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/compose/hugo/default-1200x628.png"
+type = "image/png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur - Compose with Hugo"
+
+[thumbnails.1]
+url = "/en/ci-jobs/compose/hugo/default-1200x1200.png"
+type = "image/png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur - Compose with Hugo"
+
+[thumbnails.2]
+url = "/en/ci-jobs/compose/hugo/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur - Compose with Hugo"
+
+
+[menu.main]
+parent = "Software - Hugo"
+name = "Compose"
+pre = "📝"
+weight = 100
+identifier = "ci-jobs-compose-hugo"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+{{% ciJob/recipeProductIntro "en" "compose" %}}
+	The objective is simple: <b>to quickly and steadily compose the web
+	content using <code>Hugo</code> up until ready for publications in a
+	consistent, secured, and seamlessly easy manner</b>.
+{{% /ciJob/recipeProductIntro %}}
+
+
+
+
+{{% ciJob/recipeFile "en" "compose" "Hugo" %}}
+
+{{% ciJob/recipeVersion ".release-v1p1p0.toml" /%}}
+{{% ciJob/recipeVersion ".release-v1p0p0.toml" /%}}
+
+{{% /ciJob/recipeFile %}}
+
+
+
+
+{{% epilogue %}}
+That's all for Monteur's Compose CI Job handling <code>Hugo</code> web content
+rendering tasks.
+{{% /epilogue %}}

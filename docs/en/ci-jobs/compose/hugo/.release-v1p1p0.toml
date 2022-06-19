@@ -1,0 +1,66 @@
+[Metadata]
+Name = "Hugo"
+Version = "v1.1.0"
+URL = "/ci-jobs/compose/hugo/hugo-v1p1p0.toml"
+Language = "en"
+
+
+
+
+[[MinRequirements]]
+Content = "Montuer version: <b><code>v0.0.2</code> and above</b>."
+
+[[MinRequirements]]
+Content = """
+Supported platform: <b>STRICTLY depends on <code>hugo</code> availability</b>.
+"""
+
+
+
+
+[[Installations]]
+Content = """
+Download and place the recipe file into your
+<code>.configs/monteur/compose/jobs</code> directory as <code>hugo.toml</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.MainLang</code> is your selected main
+language ID. Default is <code>en</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>FMTVariables.SourceDir</code> pointing to the
+directory for executing <code>hugo</code> command.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>FMTVariables.DestinationDir</code> pointing to the
+directory for exporting the website artifacts.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Dependencies</code> when needed to match your
+customization needs.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>CMD</code> when needed to match your customization
+needs.
+"""
+
+
+
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Added <code>delete-quiet</code> command before generation."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Make <code>404.html</code> workaround to be quiet."
