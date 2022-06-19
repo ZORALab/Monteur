@@ -1,0 +1,57 @@
+<section id="version-{{- .Version.Safe -}}">
+	<h3>Version {{ .Version.Plain -}}</h3>
+	<p>
+		Download Link:
+		<a href="{{- .Download.Link -}}" class="button" download>
+			{{- .Download.Name -}}
+		</a>
+	</p>
+
+
+	<section id="version-{{- .Version.Safe -}}-requirements">
+		<h4>Minimum Requirements</h4>
+		{{- if not .MinRequirements }}
+		<p><b>Details are coming soon.</b></p>
+		{{- else }}
+		<ul>
+			{{- range $entry := .MinRequirements }}
+			<li><p>
+				{{- $entry -}}
+			</p></li>
+			{{ end -}}
+		</ul>
+		{{ end -}}
+	</section>
+
+
+	<section id="version-{{- .Version.Safe -}}-installations">
+		<h4>Installation Instructions</h4>
+		{{- if not .Installations }}
+		<p><b>Details are coming soon.</b></p>
+		{{- else }}
+		<ul>
+			{{- range $entry := .Installations }}
+			<li><p>
+				{{- $entry -}}
+			</p></li>
+			{{ end -}}
+		</ul>
+		{{ end -}}
+	</section>
+
+
+	<section id="version-{{- .Version.Safe -}}-changelog">
+		<h4>Changelog</h4>
+		{{- if not .Changelog }}
+		<p><b>Details are coming soon.</b></p>
+		{{- else }}
+		<ul>
+			{{- range $entry := .Changelog }}
+			<li><p>
+				{{- $entry -}}
+			</p></li>
+			{{ end -}}
+		</ul>
+		{{ end -}}
+	</section>
+</section>

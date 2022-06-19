@@ -1,0 +1,141 @@
+{{- /* .context            = Page data for processing                 */ -}}
+{{- /* .Content            = Content of the link                      */ -}}
+{{- /* .OutputFormat       = Selected link output format              */ -}}
+{{- /* .MediaTypes         = Explicit all output format data list     */ -}}
+
+
+
+
+{{- /* Create variables for work */ -}}
+{{- $mediaTypes := .context.Site.Data.bissetii.mediaTypes -}}
+{{- if .MediaTypes -}}
+	{{- $mediaTypes = .MediaTypes -}}
+{{- end -}}
+{{- $dataList := dict -}}
+{{- $entry := false -}}
+{{- $ret := false -}}
+{{- $pkg := dict -}}
+{{- $data := dict -}}
+{{- $dl := dict "context" .context "OutputFormat" .OutputFormat -}}
+{{- $dl = merge $dl (dict "MediaTypes" $mediaTypes) -}}
+
+
+
+
+{{- /* Scan for data file */ -}}
+{{- $ret = path.Dir .context.Page.File.Path -}}
+{{- $ret = path.Join $ret (index .context.Params 0) -}}
+{{- $ret = readFile $ret -}}
+{{- $data = transform.Unmarshal $ret -}}
+
+
+
+
+{{- if $data -}}
+	{{- /* process .Lang */ -}}
+	{{- $ret = $data.Metadata.Language -}}
+	{{- if not $ret -}}
+		{{- $ret = "en" -}}
+	{{- end -}}
+	{{- $dataList = merge $dataList (dict "Language" $ret) -}}
+
+
+
+
+	{{- /* process .Version and .SafeVersion */ -}}
+	{{- $ret = $data.Metadata.Version -}}
+	{{- if not $ret -}}
+		{{- $ret = "unknown" -}}
+	{{- end -}}
+	{{- $pkg = merge $pkg (dict "Plain" $ret) -}}
+
+	{{- $ret = replace $ret "." "p" -}}
+	{{- $pkg = merge $pkg (dict "Safe" $ret) -}}
+
+	{{- $dataList = merge $dataList (dict "Version" $pkg) -}}
+
+
+
+
+	{{- /* process .Download.Link and .Download.Name */ -}}
+	{{- $pkg = dict -}}
+
+	{{- $ret = merge $dl (dict "GivenURL" $data.Metadata.URL) -}}
+	{{- $ret = merge $ret (dict "GivenLang" $dataList.Language) -}}
+	{{- $ret = partial "shortcodes/link" $ret -}}
+	{{- $pkg = merge $pkg (dict "Link" $ret) -}}
+
+	{{- $ret = path.Base $data.Metadata.URL -}}
+	{{- if not $ret -}}
+		{{- $ret = "Download" -}}
+	{{- end -}}
+	{{- $pkg = merge $pkg (dict "Name" $ret) -}}
+
+	{{- $dataList = merge $dataList (dict "Download" $pkg) -}}
+
+
+
+
+	{{- /* process .MinRequirements */ -}}
+	{{- $pkg = slice -}}
+	{{- if $data.MinRequirements -}}
+		{{- range $entry := $data.MinRequirements -}}
+			{{- $ret = dict "Content" $entry.Content -}}
+			{{- $ret = merge $ret (dict "context" .context) -}}
+			{{- $ret = partial "functions/parseContent.html" $ret -}}
+			{{- $pkg = append $ret $pkg -}}
+		{{- end -}}
+	{{- end -}}
+	{{- if not $pkg -}}
+		{{- $pkg = false -}}
+	{{- end -}}
+	{{- $dataList = merge $dataList (dict "MinRequirements" $pkg) -}}
+
+
+
+
+	{{- /* process .Installations */ -}}
+	{{- $pkg = slice -}}
+	{{- if $data.Installations -}}
+		{{- range $entry := $data.Installations -}}
+			{{- $ret = dict "Content" $entry.Content -}}
+			{{- $ret = merge $ret (dict "context" .context) -}}
+			{{- $ret = partial "functions/parseContent.html" $ret -}}
+			{{- $pkg = append $ret $pkg -}}
+		{{- end -}}
+	{{- end -}}
+	{{- if not $pkg -}}
+		{{- $pkg = false -}}
+	{{- end -}}
+	{{- $dataList = merge $dataList (dict "Installations" $pkg) -}}
+
+
+
+
+	{{- /* process .Changelog */ -}}
+	{{- $pkg = slice -}}
+	{{- if $data.Changelog -}}
+		{{- range $entry := $data.Changelog -}}
+			{{- $ret = $entry.Content -}}
+			{{- if $entry.BackwardCompatible -}}
+				{{- $ret = printf "<b>BACKWARD COMPATBILE</b> - %s" $ret -}}
+			{{- else -}}
+				{{- $ret = printf "<b>NOT BACKWARD COMPATBILE</b> - %s" $ret -}}
+			{{- end -}}
+			{{- $ret = dict "Content" $ret -}}
+			{{- $ret = merge $ret (dict "context" .context) -}}
+			{{- $ret = partial "functions/parseContent.html" $ret -}}
+			{{- $pkg = append $ret $pkg -}}
+		{{- end -}}
+	{{- end -}}
+	{{- if not $pkg -}}
+		{{- $pkg = false -}}
+	{{- end -}}
+	{{- $dataList = merge $dataList (dict "Changelog" $pkg) -}}
+
+
+
+
+	{{- /* Render the output */ -}}
+	{{- partial "ciJob/recipeVersion-en.html" $dataList -}}
+{{- end -}}
