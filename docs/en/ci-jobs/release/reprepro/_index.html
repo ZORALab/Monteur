@@ -77,15 +77,17 @@ selectType = "WebPage"
 {{% /ciJob/recipeProductIntro %}}
 
 
-	Reprepro instructions are available at:
-	https://wiki.debian.org/DebianRepository/SetupWithReprepro
+
 
 <section id="one-time-setup">
 	<h2>One-Time Setup</h2>
 	<p>
 		<code>Reprepro</code> requires a ONE-TIME (1) setup to meet its
 		minimal requirements. This 3rd-party software <b>ONLY works on
-		<code>linux</code> operating system</b>.
+		<code>linux</code> operating system</b>. Its specifications is
+		available at
+		<a href="https://wiki.debian.org/DebianRepository/SetupWithReprepro">
+		https://wiki.debian.org/DebianRepository/SetupWithReprepro</a>.
 		<br/><br/>
 		The first thing to do is to create a persistent data directory
 		for it to house its workspace and configuration data. All you
@@ -248,24 +250,17 @@ monteur/stable 0.0.1 amd64
 
 
 
-<section id="recipe-file">
-	<h2>Recipe File</h2>
-	<p>
-		Here are all the Monteur's Release CI Job recipe files for
-		operating <code>reprepro</code> semi-autonomously. They are
-		sorted by <b>the latest version first, at the top</b>.
-		<br/><br/>
-		Please read through its requirements and changes before
-		procuring.
-	</p>
+{{% ciJob/recipeFile "en" "release" "reprepro" %}}
+
 {{% ciJob/recipeVersion ".release-v2p0p0.toml" /%}}
 {{% ciJob/recipeVersion ".release-v1p0p0.toml" /%}}
-</section>
+
+{{% /ciJob/recipeFile %}}
 
 
 
 
 {{% epilogue %}}
-That's all for Monteur's Release CI Job handling <code>reprepro</code> release
+That's all for Monteur's Release CI Job handling <code>Reprepro</code> release
 distribution system.
 {{% /epilogue %}}
