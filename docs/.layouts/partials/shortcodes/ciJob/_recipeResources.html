@@ -1,0 +1,44 @@
+{{- /* .context            = Page data for processing                 */ -}}
+{{- /* .Content            = Content of the link                      */ -}}
+{{- /* .OutputFormat       = Selected link output format              */ -}}
+{{- /* .MediaTypes         = Explicit all output format data list     */ -}}
+
+
+
+
+{{- /* Create variables for work */ -}}
+{{- $mediaTypes := .context.Site.Data.bissetii.mediaTypes -}}
+{{- if .MediaTypes -}}
+	{{- $mediaTypes = .MediaTypes -}}
+{{- end -}}
+{{- $dataList := dict -}}
+{{- $entry := false -}}
+{{- $ret := false -}}
+{{- $pkg := dict -}}
+{{- $data := dict -}}
+{{- $dl := dict "context" .context "OutputFormat" .OutputFormat -}}
+{{- $dl = merge $dl (dict "MediaTypes" $mediaTypes) -}}
+
+
+
+
+{{- /* process .Lang */ -}}
+{{- $ret = $data.Metadata.Language -}}
+{{- if not $ret -}}
+	{{- $ret = "en" -}}
+{{- end -}}
+{{- $dataList = merge $dataList (dict "Language" $ret) -}}
+
+
+
+
+{{- $ret = dict "Content" .Content -}}
+{{- $ret = merge $ret (dict "context" .context) -}}
+{{- $ret = partial "functions/parseContent.html" $ret -}}
+{{- $dataList = merge $dataList (dict "Content" $ret) -}}
+
+
+
+
+{{- /* Render the output */ -}}
+{{- partial "ciJob/recipeResources-en.html" $dataList -}}
