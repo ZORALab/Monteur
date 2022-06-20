@@ -1,0 +1,93 @@
++++
+date = "2022-01-05T15:29:43+08:00"
+title = "TarGz Package Recipe"
+description = """
+Montuer has a continuously developed package recipe dedicated for TarGz archive
+file distribution using its native functions.
+"""
+keywords = [
+	"TarGz",
+	"Package CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/package/targz/default-1200x628.png"
+type = "image/png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur - Package with TarGz"
+
+[thumbnails.1]
+url = "/en/ci-jobs/package/default-1200x1200.png"
+type = "image/png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur - Package with TarGz"
+
+[thumbnails.2]
+url = "/en/ci-jobs/package/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur - Package with TarGz"
+
+
+[menu.main]
+parent = "Native - Monteur"
+name = "Package (TarGz)"
+pre = "📦"
+weight = 80
+identifier = "ci-jobs-package-targz"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+{{% ciJob/recipeProductIntro "en" "package" %}}
+	The objective is simple: <b>to package the built project or app into
+	<code>.tar.gz</code> matching its archive distribution requirements</b>.
+{{% /ciJob/recipeProductIntro %}}
+
+
+
+
+{{% ciJob/recipeFile "en" "package" "TarGz" %}}
+
+{{% ciJob/recipeVersion ".release-v1p0p0.toml" /%}}
+
+{{% /ciJob/recipeFile %}}
+
+
+
+
+{{% epilogue %}}
+That's all for Monteur's Package CI Job handling <code>TarGz</code> packaging
+tasks.
+{{% /epilogue %}}

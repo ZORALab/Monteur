@@ -1,0 +1,81 @@
+[Metadata]
+Name = "TarGz"
+Version = "v1.0.0"
+URL = "/ci-jobs/package/targz/targz-v1p0p0.toml"
+Language = "en"
+
+
+
+
+[[MinRequirements]]
+Content = "Montuer version: <b><code>v0.0.2</code></b>."
+
+[[MinRequirements]]
+Content = """
+Supported platform: <b>STRICTLY depends on <code>Monteur</code>
+availability</b>.
+"""
+
+
+
+
+[[Installations]]
+Content = """
+Download and place the recipe file into your
+<code>.configs/monteur/package/jobs/</code> directory as
+<code>targz.toml</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Packages.XXX</code> and list all the packages.
+Duplicate if there are more build variants.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Packages.XXX.OS</code> list all supported operating
+system. <b>Minimum 1</b>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Packages.XXX.Arch</code> list all supported CPU
+architecture. <b>Minimum 1</b>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Packages.XXX.Name</code> filename without file
+extension.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Packages.XXX.Distribution</code> list of supported
+distributions.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Packages.XXX.BuildSource</code> instructs Monteur to
+build as source code package, not binary one, and not both. If both are
+required, use a separate recipe file.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Packages.XXX.Files</code> assemble the list of file
+for the package.
+"""
+
+
+
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Created the base TOML configuration recipe."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Tested with GitLab CI."
