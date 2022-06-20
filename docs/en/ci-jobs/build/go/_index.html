@@ -78,19 +78,23 @@ selectType = "WebPage"
 
 
 
-<section id="resources">
-	<h2>Resources</h2>
-	<p>
-		This recipe is built and maintained based on the following
-		resources:
-	</p>
-	<ul>
-		<li><p>
-			Go Programming Language -
+{{% ciJob/recipeResources "en" "build" %}}
+<ul>
+	<li><p>
+		Go Programming Language -
+		<b>
 			<a href="https://go.dev/">https://go.dev/</a>
-		</p></li>
-	</ul>
-</section>
+		</b>
+	</p></li>
+	<li><p>
+		Monteur Build Data Structure -
+		<b>
+		<a href="{{< link "/ci-jobs/build/" "this" "url-only" />}}">
+			{{< link "/ci-jobs/build/" "this" "url-only" />}}</a>
+		</b>
+	</p></li>
+</ul>
+{{% /ciJob/recipeResources %}}
 
 
 
