@@ -1,0 +1,146 @@
++++
+date = "2021-12-23T11:10:57+08:00"
+title = "Go Build API"
+description = """
+Montuer has a continuously developed build recipe dedicated for Go Programming
+Language to build its output.
+"""
+keywords = [
+	"Go",
+	"Build CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/build/go/default-1200x628.png"
+type = "image/png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab Monteur - Build with Go"
+
+[thumbnails.1]
+url = "/en/ci-jobs/build/go/default-1200x1200.png"
+type = "image/png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab Monteur - Build with Go"
+
+[thumbnails.2]
+url = "/en/ci-jobs/build/go/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab Monteur - Build with Go"
+
+
+[menu.main]
+parent = "Software - Go"
+name = "Build"
+pre = "🧰"
+weight = 70
+identifier = "ci-jobs-build-go"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+{{% ciJob/recipeProductIntro "en" "build" %}}
+	The objective is simple: <b>to build a Go app for a specific compute
+	system in a consistent and reproducible manner</b>.
+{{% /ciJob/recipeProductIntro %}}
+
+
+
+
+<section id="resources">
+	<h2>Resources</h2>
+	<p>
+		This recipe is built and maintained based on the following
+		resources:
+	</p>
+	<ul>
+		<li><p>
+			Go Programming Language -
+			<a href="https://go.dev/">https://go.dev/</a>
+		</p></li>
+	</ul>
+</section>
+
+
+
+
+<section id="one-time-setup">
+	<h2>One Time Setup</h2>
+	<p>
+		To ensure maximum compatibility with the recipe, you might need
+		to setup your build system with some of the <code>Go</code>
+		specific one-time setup into your build system.
+	</p>
+
+
+	<section id="cross-build">
+		<h3>Cross Build</h3>
+		<p>
+			There is a very high chance that you will perform
+			cross-build in your current build system. Unfortunately,
+			<code>Go</code> has yet to completely support its
+			internal linking feature for all its offering CPU
+			architectures
+			(See <a href="https://github.com/golang/go/issues/50405">
+			Issue 50405</a>).
+			<br/><br/>
+			Hence, you need to at least make sure the correct
+			<code>crossbuild-essentials</code> tools are readily
+			available in your operating system. Here are some
+			examples for installing cross-building essential tools
+			for <code>armhf</code> and <code>aarch64</code>:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+apt install crossbuild-essential-armhf
+apt install crossbuild-essential-aarch64
+{{% /highlight %}}
+		</p>
+	</section>
+</section>
+
+
+
+{{% ciJob/recipeFile "en" "build" "Go" %}}
+
+{{% ciJob/recipeVersion ".release-v2p0p0.toml" /%}}
+{{% ciJob/recipeVersion ".release-v1p0p0.toml" /%}}
+
+{{% /ciJob/recipeFile %}}
+
+
+
+
+{{% epilogue %}}
+That's all for Monteur's Package CI Job handling <code>Go</code> building
+tasks.
+{{% /epilogue %}}

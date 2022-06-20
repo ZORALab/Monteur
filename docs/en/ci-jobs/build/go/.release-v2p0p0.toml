@@ -1,0 +1,117 @@
+[Metadata]
+Name = "Go"
+Version = "v2.0.0"
+URL = "/ci-jobs/build/go/go-v2p0p0.toml"
+Language = "en"
+
+
+
+
+[[MinRequirements]]
+Content = "Montuer version: <b><code>v0.0.2</code> and above</b>."
+
+[[MinRequirements]]
+Content = """
+Supported platform: <b>STRICTLY depends on <code>Go</code> availability</b>.
+"""
+
+
+
+
+[[Installations]]
+Content = """
+Download and place the recipe file into your
+<code>.configs/montuer/build/jobs</code> directory as
+<code>[OS]-[ARCH].toml</code> filename pattern like
+<code>linux-amd64.toml</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Metadata.Name</code> to match the build summary name.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Metadata.Description</code> to accordingly especially
+replacing <code>&lt;APP&gt;</code>, <code>&lt;OS&gt;</code>, and
+<code>&lt;CPU&gt;</code> placeholders with their respective actual values.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.PlatformOS</code> to match the target OS
+with the Go compatible value (e.g. <code>linux</code>).
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.PlatformCPU</code> to match the target
+CPU architecture with the Go compatible value (e.g. <code>amd64</code> and NOT
+<code>x86_64</code>).
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.PlatformExt</code> to optionally match the
+OS compatible file extension like <code>.exe</code> for <code>windows</code>.
+Otherwise, leave it blank.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.BuildFlags</code> to match your own Go build
+customizations.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.BuildConditions</code> to match the build
+environments and conditions. The default includes everything sensible so please
+remove all non-applicable ones like <code>CC=arm-linux-gnueabi-gcc</code> for
+non-<code>arm</code> build. Please keep <code>CGO_ENABLED=0</code> as minimum
+value to explictly instruct <code>go</code> not to use <code>cgo</code> at all.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>FMTVariables.SrcPath</code> to match the directory
+location of your <code>main</code> package (containing <code>main.go</code>).
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>[[Dependencies]]</code> to have applicable
+dependencies like <code>arm-linux-gnueabi-gcc</code> for <code>arm</code> build.
+"""
+
+
+
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Added <code>arm</code> build with their specific dependencies and build
+conditions.
+"""
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Added <code>-trimpath</code> and its other variants into
+<code>Variables.BuildFlags</code>.
+"""
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Added <code>Variables.BuildConditions</code> to enable CGO and arm configurable
+settings.
+"""
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Added <code>CGO_ENABLED=0</code> to explictly instruct <code>go</code> to use
+<code>cgo</code> at will.
+"""

@@ -1,0 +1,88 @@
+[Metadata]
+Name = "Go"
+Version = "v1.0.0"
+URL = "/ci-jobs/build/go/go-v1p0p0.toml"
+Language = "en"
+
+
+
+
+[[MinRequirements]]
+Content = "Montuer version: <b><code>v0.0.1</code></b>."
+
+[[MinRequirements]]
+Content = """
+Supported platform: <b>STRICTLY depends on <code>Go</code> availability</b>.
+"""
+
+
+
+
+[[Installations]]
+Content = """
+Download and place the recipe file into your
+<code>.configs/app/variants/</code> directory as <code>[OS]-[ARCH].toml</code>
+filename pattern like <code>linux-amd64.toml</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Metadata.Name</code> to match the build summary name.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Metadata.Description</code> accordingly especially
+replacing <code>&lt;APP&gt;</code>, <code>&lt;OS&gt;</code>, and
+<code>&lt;CPU&gt;</code> placeholders with their respective actual values.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.PlatformOS</code> to match the target OS
+with the Go compatible value (e.g. <code>linux</code>).
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.PlatformCPU</code> to match the target
+CPU architecture with the Go compatible value (e.g. <code>amd64</code> and NOT
+<code>x86_64</code>).
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.PlatformExt</code> to optionally match the
+OS compatible file extension like <code>.exe</code> for <code>windows</code>.
+Otherwise, leave it blank.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.BuildFlags</code> to match your own Go build
+customizations.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>FMTVariables.SrcPath</code> to match the directory
+location of your <code>main</code> package (containing <code>main.go</code>).
+"""
+
+
+
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Created the base TOML configuration recipe."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Tested with GitLab CI."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Using <code>go</code> with <code>-buildmode=pie -ldflags "-s -w"</code> as
+default arguments.
+"""
