@@ -1,0 +1,162 @@
++++
+date = "2021-12-23T09:12:23+08:00"
+title = "DEBuild Package Recipe"
+description = """
+Montuer has a continuously developed package recipe dedicated for DEB archive
+file distribution using 3rd-party DEBuild packager.
+"""
+keywords = [
+	"DEBuild",
+	"ZORALab's Package CI Job",
+	"monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/package/debuild/default-1200x628.png"
+type = "image/png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab Monteur - Package with DEBuild"
+
+[thumbnails.1]
+url = "/en/ci-jobs/package/default-1200x1200.png"
+type = "image/png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab Monteur - Package with DEBuild"
+
+[thumbnails.2]
+url = "/en/ci-jobs/package/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab Monteur - Package with DEBuild"
+
+
+[menu.main]
+parent = "Software - DEBuild"
+name = "Package"
+pre = "📦"
+weight = 80
+identifier = "ci-jobs-package-debuild"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+{{% ciJob/recipeProductIntro "en" "package" %}}
+	The objective is simple: <b>to package the built project or app into
+	<code>.deb</code> matching its archive distribution requirements using
+	<code>debuild</code></b>.
+{{% /ciJob/recipeProductIntro %}}
+
+
+
+
+<section id="one-time-setup">
+	<h2>One Time Setup</h2>
+	<p>
+		To ensure maximum compatibiltiy with the recipe implementation,
+		<code>debuild</code> requires a ONE-TIME (1) setup on your
+		Debian-based operating system.
+	</p>
+
+
+	<section id="cross-build">
+		<h3>Cross Build</h3>
+		<p>
+			There is a very high chance that you will perform
+			cross-build in your current build system. Hence, you
+			need to at least make sure the correct
+			<code>crossbuild-essentials</code> tools are readily
+			available in your operating system. Here are some
+			examples for installing cross-building essential tools
+			for <code>armhf</code> and <code>aarch64</code>:
+{{% highlight bash "linenos=table,hl_lines=,linenostart=1" %}}
+apt install crossbuild-essential-armhf
+apt install crossbuild-essential-aarch64
+{{% /highlight %}}
+		</p>
+	</section>
+
+
+	<section id="debuild-overrides">
+		<h3><code>DEBuild</code> Overrides</h3>
+		<p>
+			In some cases, you might need to override
+			<code>dh_auto_build</code> and <code>dh_shlipdeps</code>
+			if you're using build tools elsewhere (e.g.
+			<code>Go</code> already has its own build tools done
+			and ready).
+			<br/><br/>
+			These overrides can be done in your (default path)
+			<code>.configs/monteur/app/config/[LANGUAGE]/debian.toml</code>
+			data file under <code>DEB.Rules</code> field. Here is
+			an example for Go complied package:
+{{% highlight toml "linenos=table,hl_lines=,linenostart=1" %}}
+[DEB]
+...
+Rules = """
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+        dh $@
+
+override_dh_auto_build:
+        echo "nothing to build"
+override_dh_shlibdeps:
+        echo "nothing to depend on"
+{{% /highlight %}}
+		</p>
+	</section>
+</section>
+
+
+
+
+{{% ciJob/recipeFile "en" "package" "DEBuild" %}}
+
+{{% ciJob/recipeVersion ".release-v2p0p0.toml" /%}}
+{{% ciJob/recipeVersion ".release-v1p0p0.toml" /%}}
+
+{{% /ciJob/recipeFile %}}
+
+
+
+
+{{% epilogue %}}
+That's all for Monteur's Package CI Job handling <code>DEBuild</code> packaging
+tasks.
+{{% /epilogue %}}
+
+
+
