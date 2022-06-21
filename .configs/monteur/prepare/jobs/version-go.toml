@@ -1,12 +1,20 @@
 [Metadata]
-Name = 'Script Go App Version Source Code'
+Name = 'Version File Scripting (Go)'
 Description = """
-Generating the Go Version number source code.
+Generating repository's version ID into the specified Go file.
 """
 Type = 'manual'
 
+
+
+
 [Variables]
-License = """//
+
+
+[FMTVariables]
+Filepath = '{{- .RootDir -}}/gopkg/monteur/internal/libmonteur/Version.go'
+Content = """// Copyright {{ .App.Time.Year }} {{ .App.Contact.Name }} ({{- index .App.Contact.Email 0 -}})
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -18,11 +26,17 @@ License = """//
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-"""
+//
+//
+// **WARNING**: auto-generated file. Please alter at:
+//                .configs/monteur/app/config/en/metadata.toml
 
-[FMTVariables]
-CodeFilepath = '{{- .RootDir -}}/gopkg/monteur/internal/libmonteur/Version.go'
-EditFilepath = '.configs/monteur/app/config/en/metadata.toml'
+package libmonteur
+
+const (
+	VERSION = "{{- .App.Version -}}"
+)
+"""
 
 
 
@@ -49,25 +63,14 @@ Distribution = [
 
 
 [[CMD]]
-Name = 'Delete Existing Version Codes'
+Name = 'Delete Version File'
 Type = 'delete-quiet'
 Condition = [ 'all-all' ]
-Source = '{{- .CodeFilepath -}}'
+Source = '{{- .Filepath -}}'
 
 [[CMD]]
-Name = 'Script Go Codes'
+Name = 'Script Version File'
 Type = 'script'
 Condition = [ 'all-all' ]
-Source = """
-// Copyright {{ .App.Time.Year }} {{ .App.Contact.Name }} ({{- index .App.Contact.Email 0 -}})
-{{ .License }}
-// **WARNING**: auto-generated file. Please alter at:
-// {{ .EditFilepath }}
-
-package libmonteur
-
-const (
-	VERSION = "{{- .App.Version -}}"
-)
-"""
-Target = '{{- .CodeFilepath -}}'
+Source = '{{- .Content -}}'
+Target = '{{- .Filepath -}}'

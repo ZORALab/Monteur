@@ -1,14 +1,22 @@
 [Metadata]
-Name = 'Script Repository Version File'
+Name = 'Version File Scripting'
 Description = """
-Generating the git repository version file.
+Generating repository's version ID into the specified file.
 """
 Type = 'manual'
 
+
+
+
 [Variables]
+Prefix = ''
 
 [FMTVariables]
-CodeFilepath = '{{- .RootDir -}}/VERSION'
+Filepath = '{{- .RootDir -}}/VERSION'
+Content = """
+{{- .Prefix -}}
+{{- .App.Version -}}
+"""
 
 
 
@@ -35,14 +43,14 @@ Distribution = [
 
 
 [[CMD]]
-Name = 'Delete Existing Version Codes'
+Name = 'Delete Version File'
 Type = 'delete-quiet'
 Condition = [ 'all-all' ]
-Source = '{{- .CodeFilepath -}}'
+Source = '{{- .Filepath -}}'
 
 [[CMD]]
-Name = 'Script Go Codes'
+Name = 'Script Version File'
 Type = 'script'
 Condition = [ 'all-all' ]
-Source = '{{- .App.Version -}}'
-Target = '{{- .CodeFilepath -}}'
+Source = '{{- .Content -}}'
+Target = '{{- .Filepath -}}'
