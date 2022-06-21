@@ -29,6 +29,13 @@ Download and place the recipe file into your
 
 [[Installations]]
 Content = """
+Update the recipe's <code>Metadata.Name</code> for matching the version file
+format you're generating (e.g. append <code>(Go)</code> if you're generating
+Go source code aside from standard version file).
+"""
+
+[[Installations]]
+Content = """
 Update the recipe's <code>Variables.Prefix</code> to add any prefix content
 used in <code>FMTVariables.Content</code> construction later. Otherwise, please
 leave it blank.
