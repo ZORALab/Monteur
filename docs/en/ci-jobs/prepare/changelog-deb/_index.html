@@ -1,0 +1,115 @@
++++
+date = "2022-01-05T09:03:15+08:00"
+title = "DEB Changelog Prepare Recipe"
+description = """
+Montuer has a continuously developed prepare recipe dedicated for DEB changelog
+update tasks.
+"""
+keywords = [
+	"Native DEB Changelog",
+	"Prepare CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/prepare/changelog-deb/default-1200x628.png"
+type = "image/png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab Monteur - Prepare with DEB Changelog"
+
+[thumbnails.1]
+url = "/en/ci-jobs/prepare/default-1200x1200.png"
+type = "image/png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab Monteur - Prepare with DEB Changelog"
+
+[thumbnails.2]
+url = "/en/ci-jobs/prepare/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab Monteur - Prepare with DEB Changelog"
+
+
+[menu.main]
+parent = "Native - Monteur"
+name = "Prepare (DEB Changelog)"
+pre = "🧶"
+weight = 65
+identifier = "ci-jobs-monteur-prepare-changelog-deb"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+{{% ciJob/recipeProductIntro "en" "prepare" %}}
+	The objective is simple: <b>to prepare the changelog for
+	<code>.deb</code> next build, package, and release in a consistent and
+	reproducible manner</b>.
+{{% /ciJob/recipeProductIntro %}}
+
+
+
+
+{{% ciJob/recipeResources "en" "prepare" %}}
+<ul>
+	<li><p>
+		<code>.deb</code> Changelog Specification -
+		<b>
+			<a href="https://www.debian.org/doc/debian-policy/ch-source.html#s-dpkgchangelog">https://www.debian.org/doc/debian-policy/ch-source.html#s-dpkgchangelog</a>
+		</b>
+	</p></li>
+	<li><p>
+		Monteur Prepare Data Structure -
+		<b>
+		<a href="{{< link "/ci-jobs/prepare/" "this" "url-only" />}}">
+			{{< link "/ci-jobs/prepare/" "this" "url-only" />}}</a>
+		</b>
+	</p></li>
+</ul>
+{{% /ciJob/recipeResources %}}
+
+
+
+
+{{% ciJob/recipeFile "en" "prepare" "DEB Changelog" %}}
+
+{{% ciJob/recipeVersion ".release-v1p0p0.toml" /%}}
+
+{{% /ciJob/recipeFile %}}
+
+
+
+
+{{% epilogue %}}
+That's all for Monteur's Prepare CI Job handling <code>DEB Changelog</code>
+update tasks.
+{{% /epilogue %}}

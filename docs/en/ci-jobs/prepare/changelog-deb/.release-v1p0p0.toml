@@ -1,0 +1,85 @@
+[Metadata]
+Name = "Changelog DEB"
+Version = "v1.0.0"
+URL = "/ci-jobs/prepare/changelog-deb/changelog-deb-v1p0p0.toml"
+Language = "en"
+
+
+
+
+[[MinRequirements]]
+Content = "Montuer version: <b><code>v0.0.2</code> and above</b>."
+
+[[MinRequirements]]
+Content = """
+Supported platform: <b>STRICTLY depends on <code>Monteur</code> and
+<code>Git</code> availability</b>.
+"""
+
+
+
+
+[[Installations]]
+Content = """
+Download and place the recipe file into your
+<code>.configs/monteur/prepare/jobs</code> directory as
+<code>changelog-deb.toml</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Metadata.Name</code> to match the build summary name.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>ChangelogFrom</code> pointing to the future branch
+(e.g. <code>unstable</code>).
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>ChangelogTo</code> pointing to the destination branch
+(e.g. <code>stable</code>).
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Packages.XXX</code> and list all the packages.
+Duplicate if there are more build variants.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Packages.XXX.OS</code> list all supported operating
+system. <b>Minimum 1</b>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Packages.XXX.Arch</code> list all supported CPU
+architecture. <b>Minimum 1</b>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Packages.XXX.Changelog</code> pointing to the
+package's corresponding filepath.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Packages.XXX.Distribution</code> list of supported
+distributions.
+"""
+
+
+
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Created the base TOML configuration recipe."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Tested with GitLab CI."
