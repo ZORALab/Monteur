@@ -1,0 +1,113 @@
++++
+date = "2021-12-23T11:10:57+08:00"
+title = "Go Test Recipe"
+description = """
+Montuer has a continuously developed build recipe dedicated for Go Programming
+Language to test its packages.
+"""
+keywords = [
+	"Go",
+	"Test CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/test/go/default-1200x628.png"
+type = "image/png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur - Test with Go"
+
+[thumbnails.1]
+url = "/en/ci-jobs/test/go/default-1200x1200.png"
+type = "image/png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur - Test with Go"
+
+[thumbnails.2]
+url = "/en/ci-jobs/test/go/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur - Test with Go"
+
+
+[menu.main]
+parent = "Software - Go"
+name = "Test"
+pre = "⚗️"
+weight = 60
+identifier = "ci-jobs-test-go"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+{{% ciJob/recipeProductIntro "en" "test" %}}
+	The objective is simple: <b>to test a Go package in a consistent and
+	reproducible manner</b>.
+{{% /ciJob/recipeProductIntro %}}
+
+
+
+
+{{% ciJob/recipeResources "en" "test" %}}
+<ul>
+	<li><p>
+		Go Programming Language -
+		<b>
+			<a href="https://go.dev/">https://go.dev/</a>
+		</b>
+	</p></li>
+	<li><p>
+		Monteur Test Data Structure -
+		<b>
+		<a href="{{< link "/ci-jobs/test/" "this" "url-only" />}}">
+			{{< link "/ci-jobs/test/" "this" "url-only" />}}</a>
+		</b>
+	</p></li>
+</ul>
+{{% /ciJob/recipeResources %}}
+
+
+
+
+{{% ciJob/recipeFile "en" "test" "Go" %}}
+
+{{% ciJob/recipeVersion ".release-v1p0p0.toml" /%}}
+
+{{% /ciJob/recipeFile %}}
+
+
+
+
+{{% epilogue %}}
+That's all for Monteur's Package CI Job handling <code>Go</code> testing tasks.
+{{% /epilogue %}}

@@ -1,0 +1,71 @@
+[Metadata]
+Name = "Go"
+Version = "v1.0.0"
+URL = "/ci-jobs/test/go/go-v1p0p0.toml"
+Language = "en"
+
+
+
+
+[[MinRequirements]]
+Content = "Montuer version: <b><code>v0.0.1</code> and above</b>."
+
+[[MinRequirements]]
+Content = """
+Supported platform: <b>STRICTLY depends on <code>Go</code> availability</b>.
+"""
+
+
+
+
+[[Installations]]
+Content = """
+Download and place the recipe file into your
+<code>.configs/monteur/test/jobs</code> directory as
+<code>go.toml</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.Timeout</code> to set a timeout limit
+against sleeping test run. Default is <code>14400s</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>FMTVariables.CoverageFilepath</code> to your
+destination filepath for showing the test coverage map over your tested
+packages.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>FMTVariables.TestPath</code> to your targeted Go
+package directory for testing. Triple recursion (<code>...</code>) is allowed.
+Default is <code>{{- .BaseDir -}}/...</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Metadata.Name</code> (e.g. by appending a package
+name) if you have more Go test recipes or to test multiple packages
+indepedently).
+"""
+
+
+
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Created the base TOML configuration recipe."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Tested with GitLab CI."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Generate both terminal based test coverage percentile and test coverage
+mapping
+"""
