@@ -1,0 +1,108 @@
++++
+date = "2021-12-23T17:05:21+08:00"
+title = "Deep Cleaning Clean Recipe"
+description = """
+Montuer has a continuously developed build recipe dedicated for deep cleaning
+a target in a repository.
+"""
+keywords = [
+	"Deep Cleaning",
+	"Clean CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/clean/deep-cleaning/default-1200x628.png"
+type = "image/png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab Monteur - Clean with Deep Cleaning"
+
+[thumbnails.1]
+url = "/en/ci-jobs/clean/default-1200x1200.png"
+type = "image/png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab Monteur - Clean with Deep Cleaning"
+
+[thumbnails.2]
+url = "/en/ci-jobs/clean/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab Monteur - Clean with Deep Cleaning"
+
+
+[menu.main]
+parent = "Native - Monteur"
+name = "Clean (Deep Cleaning)"
+pre = "🧹"
+weight = 20
+identifier = "ci-jobs-monteur-deep-cleaning"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+{{% ciJob/recipeProductIntro "en" "clean" %}}
+	The objective is simple: <b>to clean a target file or directory in a
+	consistent and reproducible manner</b>.
+{{% /ciJob/recipeProductIntro %}}
+
+
+
+
+{{% ciJob/recipeResources "en" "clean" %}}
+<ul>
+	<li><p>
+		Monteur Clean Data Structure -
+		<b>
+		<a href="{{< link "/ci-jobs/clean/" "this" "url-only" />}}">
+			{{< link "/ci-jobs/clean/" "this" "url-only" />}}</a>
+		</b>
+	</p></li>
+</ul>
+{{% /ciJob/recipeResources %}}
+
+
+
+
+{{% ciJob/recipeFile "en" "clean" "Deep Cleaning" %}}
+
+{{% ciJob/recipeVersion ".release-v1p0p0.toml" /%}}
+
+{{% /ciJob/recipeFile %}}
+
+
+
+
+{{% epilogue %}}
+That's all for Monteur's Package CI Job handling <code>Deep Cleaning</code>
+target cleansing tasks.
+{{% /epilogue %}}

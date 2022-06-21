@@ -1,0 +1,45 @@
+[Metadata]
+Name = "Deep Clean"
+Version = "v1.0.0"
+URL = "/ci-jobs/clean/deep-cleaning/deep-cleaning-v1p0p0.toml"
+Language = "en"
+
+
+
+
+[[MinRequirements]]
+Content = "Montuer version: <b><code>v0.0.2</code> and above</b>."
+
+[[MinRequirements]]
+Content = """
+Supported platform: <b>STRICTLY depends on <code>Monteur</code>
+availability</b>.
+"""
+
+
+
+
+[[Installations]]
+Content = """
+Download and place the recipe file into your
+<code>.configs/monteur/test/jobs</code> directory as
+<code>[PURPOPSE].toml</code> pattern like <code>build-log.toml</code>,
+<code>build-tmp.toml</code>, <code>my-target.toml</code>, and etc.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>FMTVariables.Path</code> to the target path you plan
+to delete.
+"""
+
+
+
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Created the base TOML configuration recipe."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Tested with GitLab CI."
