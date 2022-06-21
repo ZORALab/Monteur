@@ -1,0 +1,118 @@
++++
+date = "2021-12-23T20:31:53+08:00"
+title = "Hugo Setup Recipe"
+description = """
+Montuer has a continuously developed setup recipe dedicated for Hugo
+development environment.
+"""
+keywords = [
+	"Hugo",
+	"Setup CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/setup/hugo/default-1200x628.png"
+type = "image/png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur - Setup Hugo"
+
+[thumbnails.1]
+url = "/en/ci-jobs/setup/hugo/default-1200x1200.png"
+type = "image/png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur - Setup Hugo"
+
+[thumbnails.2]
+url = "/en/ci-jobs/setup/hugo/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur - Setup Hugo"
+
+
+[menu.main]
+parent = "Software - Hugo"
+name = "Setup"
+pre = "🧩"
+weight = 10
+identifier = "ci-jobs-setup-hugo"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+{{% ciJob/recipeProductIntro "en" "setup" %}}
+	The objective is simple: <b>to setup a localized Hugo
+	development environment in a consistent and reproducible manner</b>.
+{{% /ciJob/recipeProductIntro %}}
+
+
+
+
+{{% ciJob/recipeResources "en" "setup" %}}
+<ul>
+	<li><p>
+		Hugo -
+		<b>
+			<a href="https://golangci-lint.run/">
+			https://golangci-lint.run/</a>
+		</b>
+	</p></li>
+	<li><p>
+		Monteur Setup Data Structure -
+		<b>
+		<a href="{{< link "/ci-jobs/setup/" "this" "url-only" />}}">
+			{{< link "/ci-jobs/setup/" "this" "url-only" />}}</a>
+		</b>
+	</p></li>
+</ul>
+{{% /ciJob/recipeResources %}}
+
+
+
+
+{{% ciJob/recipeFile "en" "setup" "Hugo" %}}
+
+{{% ciJob/recipeVersion ".release-v3p0p0.toml" /%}}
+{{% ciJob/recipeVersion ".release-v2p0p0.toml" /%}}
+{{% ciJob/recipeVersion ".release-v1p1p0.toml" /%}}
+{{% ciJob/recipeVersion ".release-v1p0p0.toml" /%}}
+
+{{% /ciJob/recipeFile %}}
+
+
+
+
+{{% epilogue %}}
+That's all for Monteur's Setup CI Job handling <code>Hugo</code> environment
+setup tasks.
+{{% /epilogue %}}

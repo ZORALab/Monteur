@@ -1,0 +1,78 @@
+[Metadata]
+Name = "Hugo"
+Version = "v2.0.0"
+URL = "/ci-jobs/setup/hugo/hugo-v2p0p0.toml"
+Language = "en"
+
+
+
+
+[[MinRequirements]]
+Content = "Montuer version: <b><code>v0.0.2</code></b>."
+
+[[MinRequirements]]
+Content = """
+Supported platform: <b>STRICTLY depends on <code>Monteur</code>
+availability</b>.
+"""
+
+
+
+
+[[Installations]]
+Content = """
+Download and place the recipe file into your
+<code>.configs/monteur/setup/jobs/</code> directory as
+<code>hugo.toml</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.Version</code> matching the new version
+number.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.BaseURL</code> if the core development team
+changes it again.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Sources.XXX.Checksum.Value</code> with each matching
+checksum values for matching new release.
+"""
+
+
+
+
+[[Changelog]]
+BackwardCompatible = false
+Content = """
+Replaced <code>[[Setup]]</code> into <code>[[CMD]]</code>.
+"""
+
+[[Changelog]]
+BackwardCompatible = false
+Content = """
+Changed to use new Monteur setup algorithms.
+"""
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Supported continuous download between cancellations.
+"""
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Deleted target only when needed (right before copy).
+"""
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Added custom HTTPS headers table (<code>[Sources.all-all.headers]</code>).
+"""
