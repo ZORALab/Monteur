@@ -1,0 +1,66 @@
+[Metadata]
+Name = 'Debuild'
+Description = """
+Package application into .deb package file using manual commands.
+"""
+Type = 'deb-manual'
+
+[Variables]
+GPGID = 'name@email.com'
+GPGExistence = ''  # to be filled by [CMD]
+
+[FMTVariables]
+
+
+
+
+[[Dependencies]]
+Name = 'DEB Builder'
+Condition = 'all-all'
+Type = 'command'
+Command = 'debuild'
+
+[[Dependencies]]
+Name = 'GPG Tool'
+Condition = 'all-all'
+Type = 'command'
+Command = 'gpg'
+
+
+
+
+[Packages.001]
+OS = [ 'linux' ]
+Arch = [ 'amd64' ]
+Name = '{{- .App.ID -}}-{{- .App.Version -}}-{{- .PkgOS -}}-{{- .PkgArch -}}'
+Changelog = '{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}'
+Distribution = [
+	'stable',
+]
+BuildSource = false
+
+[Packages.001.Files]
+'{{- .PackageDir -}}/monteur' = '{{- .BuildDir -}}/{{- .PkgOS -}}-{{- .PkgArch -}}'
+
+
+
+
+[[CMD]]
+Name = "Get GPG Secret Key for Verifications"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'gpg --list-secret-keys "{{- .GPGID }}"'
+Save = 'GPGExistence'
+
+[[CMD]]
+Name = "Verify GPG Secret Key Must Exists For Signing"
+Type = 'is-not-empty'
+Condition = [ 'all-all' ]
+Source = '{{- .GPGExistence -}}'
+
+[[CMD]]
+Name = "Compile Deb Package with Debuild"
+Type = 'command'
+Condition = [ 'all-all' ]
+Location = '{{- .PackageDir -}}'
+Source = 'debuild -b -k{{- .GPGID }} -a{{- index .PkgArch 0 }}'

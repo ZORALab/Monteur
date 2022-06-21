@@ -1,0 +1,532 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,initial-scale=1">
+<meta name=description content="Monteur strives to be integration friendly interfacing with GitLab CI while maintaining vendor locked-in protection. Here are the guide to integrate them.">
+<meta name=keywords content="getting started,gitlab,ZORALab's Monteur,configurations,documentation">
+<meta name=author content="Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho">
+<link rel=canonical href=https://monteur.zoralab.com/en/getting-started/gitlab/><link rel=apple-touch-icon sizes=57x57 href=https://monteur.zoralab.com/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=https://monteur.zoralab.com/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=https://monteur.zoralab.com/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=https://monteur.zoralab.com/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=https://monteur.zoralab.com/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=https://monteur.zoralab.com/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=https://monteur.zoralab.com/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=https://monteur.zoralab.com/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=https://monteur.zoralab.com/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=https://monteur.zoralab.com/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=https://monteur.zoralab.com/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=https://monteur.zoralab.com/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=https://monteur.zoralab.com/favicon-16x16.png>
+<link rel=manifest href=https://monteur.zoralab.com/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:site content="ZORALab_Team">
+<meta name=twitter:creator content="Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho">
+<meta property="og:site_name" content="Monteur">
+<meta property="og:title" content="Getting Started with GitLab CI | Monteur">
+<meta property="og:locale" content="en">
+<meta property="og:description" content="Monteur strives to be integration friendly interfacing with GitLab CI while maintaining vendor locked-in protection. Here are the guide to integrate them.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://monteur.zoralab.com/en/getting-started/gitlab/">
+<meta property="og:image" content="https://monteur.zoralab.com/en/getting-started/gitlab/default-1200x628.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="628">
+<meta property="og:image:alt" content="ZORALab's Monteur - Getting Started with GitLab CI">
+<meta property="og:image" content="https://monteur.zoralab.com/en/getting-started/gitlab/default-1200x1200.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="1200">
+<meta property="og:image:alt" content="ZORALab's Monteur - Getting Started with GitLab CI">
+<meta property="og:image" content="https://monteur.zoralab.com/en/getting-started/gitlab/default-480x480.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="480">
+<meta property="og:image:height" content="480">
+<meta property="og:image:alt" content="ZORALab's Monteur - Getting Started with GitLab CI">
+<script type=application/ld+json>{"@context":"https://schema.org/","@type":"WebPage","author":"Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho","dateCreated":"2022-01-07T09:40:58+08:00","dateModified":"2022-06-22T07:26:32+08:00","datePublished":"2022-01-07T09:40:58+08:00","description":"Monteur strives to be integration friendly interfacing with GitLab CI while maintaining vendor locked-in protection. Here are the guide to integrate them.","image":"https://monteur.zoralab.com/en/getting-started/gitlab/default-1200x628.png","inLanguage":"en","keywords":"getting started, gitlab, ZORALab's Monteur, configurations, documentation","name":"Getting Started with GitLab CI","schemaVersion":"https://schema.org/version/8.0/","thumbnailUrl":"https://monteur.zoralab.com/en/getting-started/gitlab/default-1200x628.png","url":"https://monteur.zoralab.com/en/getting-started/gitlab/"}</script>
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-101500797-1','auto'),ga('send','pageview')</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<title>Getting Started with GitLab CI | Monteur</title>
+<link href=https://monteur.zoralab.com/css/bissetii-critical.min.css rel=stylesheet media=all onload='this.media="all"' integrity="sha512-dTjOFO8HW8osnU0PTWxK38WkhQSa5M3FvYTHYEanB6jUvX9E1X6iAle0IJLP16syY26haWC7zV5ba2Fs9tn5xg==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-print.min.css rel=stylesheet media=print onload='this.media="print"' integrity="sha512-XPrMPPyw9AxUVPlcja8Q4eSMRblA7CitTvBLc6kvF0aqd8VATHwgBbYeit6J9E7nzctz9I0Rs/v71nCpDXCqMA==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-tablet.min.css rel=stylesheet media="screen and (min-width: 40rem)" onload='this.media="screen and (min-width: 40rem)"' integrity="sha512-5wCMBKmbZn1Mpn9dY6rfasNcrfE+z6xNma5H6pnAAXFeJuIpUK3fG5nmPWIPeXSwIis+1MqR+fIEMp41g/j4cA==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-desktop.min.css rel=stylesheet media="screen and (min-width: 80rem)" onload='this.media="screen and (min-width: 80rem)"' integrity="sha512-P3oHnbewtCGj9wz+wRrIbC0VTcr4TmvqXX1DBOQEmYOJY1rrr5A4FZevrsL2BL5Z3hNw2wZ1jUmNEwBIS3v8ow==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-widescreen.min.css rel=stylesheet media="screen and (min-width: 120rem)" onload='this.media="screen and (min-width: 120rem)"' integrity="sha512-4/XaSIkGtWjXwVvs0EVnzgIcqqn+JdskwCkHF/jQXGCyW39BACYtS5U5K3EHFTAP6sYcvmRErcGVS3jnVPg2Ig==" crossorigin=anonymous>
+<meta name=generator content="Hugo 0.91.2">
+</head>
+<body style=--body-grid-tablet:var(--layout-left-and-top);--body-grid-desktop:var(--layout-left-and-top);--body-grid-widescreen:var(--layout-left-and-top)>
+<main>
+<section id=introduction>
+<h1>Getting Started with GitLab CI</h1>
+<p>
+Monteur strives to be integration friendly interfacing with GitLab CI while
+maintaining vendor locked-in protection. Here are the guide to integrate them.
+</p>
+</section>
+<section id=gitlab-ci-integration>
+<h2>GitLab CI Integration</h2>
+<p>
+Monteur is integrated with GitLab CI via its famous
+<code>.gitlab-ci.yml</code> config file. The difference is that
+GitLab CI is used for triggering the necessary Monteur's actions
+to operate your project autonomously. In summary, you should
+treat GitLab CI as a virtual autonomous robot working for you.
+<br><br>
+A full Debian-based operating system template is shown as
+follows:
+</p>
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 33
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 37
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 38
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 39
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 40
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 41
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 42
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 43
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 44
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 45
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 46
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 47
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 48
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 49
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 50
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 51
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 52
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 53
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 54
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 55
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 56
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 57
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 58
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 59
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 60
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 61
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 62
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 63
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 64
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 65
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 66
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 67
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 68
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 69
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 70
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 71
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 72
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 73
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 74
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 75
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 76
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 77
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 78
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 79
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 80
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 81
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 82
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 83
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 84
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 85
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 86
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 87
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 88
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 89
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 90
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 91
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 92
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 93
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 94
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 95
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 96
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 97
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 98
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 99
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">100
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">101
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">102
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">103
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">104
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-yaml data-lang=yaml><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>debian:latest<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>entrypoint</span>:<span style=color:#bbb> </span>[<span style=color:#bbb> </span><span style=color:#ba2121>&#34;&#34;</span><span style=color:#bbb> </span>]<span style=color:#bbb>
+</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:green;font-weight:700>variables</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>MONTEUR_CONFIG</span>:<span style=color:#bbb> </span><span style=color:#ba2121>&#34;.monteurFS/config/main&#34;</span><span style=color:#bbb>
+</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:green;font-weight:700>stages</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>- setup<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>- test<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>- build<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>- docs<span style=color:#bbb>
+</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:green;font-weight:700>cache</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>key</span>:<span style=color:#bbb> </span><span style=color:#ba2121>&#34;MonteurFS&#34;</span><span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>paths</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>      </span>- <span style=color:#ba2121>&#34;.monteurFS/&#34;</span><span style=color:#bbb>
+</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:green;font-weight:700>before_script</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>- apt-get update -y<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>- apt-get upgrade -y<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>- |<span style=color:#ba2121;font-style:italic>
+</span><span style=color:#ba2121;font-style:italic>    apt-get --no-install-recommends install \
+</span><span style=color:#ba2121;font-style:italic>      curl \
+</span><span style=color:#ba2121;font-style:italic>      gnupg2 \
+</span><span style=color:#ba2121;font-style:italic>      ca-certificates \
+</span><span style=color:#ba2121;font-style:italic>      -y</span><span style=color:#bbb>    
+</span><span style=color:#bbb>  </span>- |<span style=color:#ba2121;font-style:italic>
+</span><span style=color:#ba2121;font-style:italic>    curl https://www.zoralab.com/pubkey.gpg \
+</span><span style=color:#ba2121;font-style:italic>      | gpg --yes --dearmor --output /usr/share/keyrings/zoralab-keyring.gpg</span><span style=color:#bbb>    
+</span><span style=color:#bbb>  </span>- |<span style=color:#ba2121;font-style:italic>
+</span><span style=color:#ba2121;font-style:italic>    echo &#39;deb [signed-by=/usr/share/keyrings/zoralab-keyring.gpg] https://monteur.zoralab.com/releases/deb next experimental&#39; \
+</span><span style=color:#ba2121;font-style:italic>        &gt;  /etc/apt/sources.list.d/zoralab-monteur.list</span><span style=color:#bbb>    
+</span><span style=color:#bbb>  </span>- apt-get update -y<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>- apt-get install monteur -y<span style=color:#bbb>
+</span><span style=color:#bbb>
+</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:green;font-weight:700>test</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>stage</span>:<span style=color:#bbb> </span>test<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>tags</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- linux<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>environment</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>production<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>except</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>refs</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>      </span>- gh-pages<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>interruptible</span>:<span style=color:#bbb> </span><span style=color:green;font-weight:700>true</span><span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>coverage</span>:<span style=color:#bbb> </span><span style=color:#ba2121>&#39;/TOTAL\s*TEST\s*COVERAGE:\s*(\d+.?\d*%?)/&#39;</span><span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>script</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- source &#34;$MONTEUR_CONFIG&#34;<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- monteur test<span style=color:#bbb>
+</span><span style=color:#bbb>
+</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:green;font-weight:700>build</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>stage</span>:<span style=color:#bbb> </span>build<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>tags</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- linux<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>environment</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>production<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>except</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>refs</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>      </span>- gh-pages<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>environment</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>production<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>script</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- source &#34;$MONTEUR_CONFIG&#34;<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- monteur prepare<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- monteur build<span style=color:#bbb>
+</span><span style=color:#bbb>
+</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:green;font-weight:700>compose</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>stage</span>:<span style=color:#bbb> </span>docs<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>tags</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- linux<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>environment</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>production<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>except</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>refs</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>      </span>- gh-pages<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>script</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- source &#34;$MONTEUR_CONFIG&#34;<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- monteur compose<span style=color:#bbb>
+</span><span style=color:#bbb>
+</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:green;font-weight:700>pages</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>stage</span>:<span style=color:#bbb> </span>docs<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>tags</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- linux<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>environment</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>production<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>only</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>refs</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>      </span>- gh-pages<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>cache</span>:<span style=color:#bbb> </span>[]<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>artifacts</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>paths</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>      </span>- public<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>expire_in</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb> </span>day<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>before_script</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- mkdir -p public<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- shopt -s extglob<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- mv !(public|.*) public<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>script</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- printf &#34;[ DONE ] Nothing to implement.\n&#34;</code></pre></td></tr></table>
+</div>
+</div>
+<p>
+This design allows you to operate Monteur in a way independent
+of operating system and without requiring Monteur to build all
+Docker opreating system's specific images. Since CI is specific
+to your project/app, please use the above only as reference.
+<br><br>
+<b>We DO NOT recommend you to run Package and Relase CI Job on
+GitLab CI</b> mainly because of the secret GPG key involvement
+for package integrity checking. Since there is an obligation to
+protect those key files, you can operate those CI Jobs on a
+trusted compute system privately and solely on your side.
+</p>
+<section id=gitlab-runner>
+<h3>GitLab Runner</h3>
+<p>
+In the past, Monteur team tried to setup Rasberry Pi
+3B as the cross operating system's GitLab Runner and
+faced numerous unknown errors to the point that
+<b>we don't recommend you repeating our mistake. If
+possible, please use compute system closer to your
+development system</b>.
+<br><br>
+We tested both Docker and Shell Executors. Both works
+well especially with the latter.
+</p>
+</section>
+</section>
+<section id=epilogue>
+<h2>Epilogue</h2>
+<p>
+That's all for integrating Monteur with GitLab.
+If you have any question, please feel free to raise your
+question at our <a href=https://github.com/ZORALab/Monteur/issues>Issues
+Section</a>.
+</p>
+</section>
+<footer>
+<p><span>© All Rights Reserved</span><span>— Monteur Team, ZORALab Team</span></p>
+</footer>
+</main><nav class=nav-sidebar>
+<input id=nav-sidebar-5f39835 class=nav-sidebar-trigger type=checkbox>
+<label class=nav-sidebar-trigger for=nav-sidebar-5f39835><span class="nav-sidebar-icon nav-sidebar-menu">☰</span><span class="nav-sidebar-icon nav-sidebar-close">𝖷</span></label>
+<label class=nav-sidebar-shade for=nav-sidebar-5f39835>
+</label>
+<ul class=nav-sidebar-list>
+<li class=nav-sidebar-title>
+<img alt src=https://monteur.zoralab.com/img/logo/zoralab-monteur-1200x1200.svg class=nav-sidebar-logo width=200 height=200>
+<p>Monteur</p></li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/><span class=pre>💠</span>Home</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/><span class=pre>📥</span>Downloads</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/getting-started/><span class=pre>🛫</span>Getting Started</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/licenses/><span class=pre>⚖️</span>Licenses</a>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-220e3fa type=checkbox checked>
+<label for=nav-sidebar-submenu-220e3fa><span class=nav-sidebar-submenu-icon>➣</span><span>CI Jobs</span></label>
+<ul id=nav-sidebar-submenu-list-220e3fa>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/clean/><pre>🧹</pre>Clean</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/test/><pre>⚗️</pre>Test</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/><pre>🧶</pre>Prepare</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/build/><pre>🧰</pre>Build</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/><pre>📦</pre>Package</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/><pre>🌾</pre>Release</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/compose/><pre>📝</pre>Compose</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/><pre>📖</pre>Publish</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-a5bc3c7 type=checkbox checked>
+<label for=nav-sidebar-submenu-a5bc3c7><span class=nav-sidebar-submenu-icon>➣</span><span>Native - Monteur</span></label>
+<ul id=nav-sidebar-submenu-list-a5bc3c7>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/clean/deep-cleaning/><pre>🧹</pre>Clean (Deep Cleaning)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/changelog-deb/><pre>🧶</pre>Prepare (DEB Changelog)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/version-file-scripting/><pre>🧶</pre>Prepare (Version File Scripting)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/targz/><pre>📦</pre>Package (TarGz)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/zip/><pre>📦</pre>Package (Zip)</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-f36af07 type=checkbox checked>
+<label for=nav-sidebar-submenu-f36af07><span class=nav-sidebar-submenu-icon>➣</span><span>Platform - GitLab</span></label>
+<ul id=nav-sidebar-submenu-list-f36af07>
+<li class="active nav-sidebar-link">
+<a href=https://monteur.zoralab.com/en/getting-started/gitlab/><pre>🛫</pre>Getting Started - GitLab CI</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/><pre>📖</pre>Publish (GitLab Pages)</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-5b11fbd type=checkbox checked>
+<label for=nav-sidebar-submenu-5b11fbd><span class=nav-sidebar-submenu-icon>➣</span><span>Software - DEBuild</span></label>
+<ul id=nav-sidebar-submenu-list-5b11fbd>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/debuild/><pre>📦</pre>Package</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-f03c66a type=checkbox checked>
+<label for=nav-sidebar-submenu-f03c66a><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Go</span></label>
+<ul id=nav-sidebar-submenu-list-f03c66a>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/go/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/test/go/><pre>⚗️</pre>Test</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/build/go/><pre>🧰</pre>Build</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-d1ab4bc type=checkbox checked>
+<label for=nav-sidebar-submenu-d1ab4bc><span class=nav-sidebar-submenu-icon>➣</span><span>Software - GolangCI-Lint</span></label>
+<ul id=nav-sidebar-submenu-list-d1ab4bc>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/golangci-lint/><pre>🧩</pre>Setup</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-c0ac3bd type=checkbox checked>
+<label for=nav-sidebar-submenu-c0ac3bd><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Hugo</span></label>
+<ul id=nav-sidebar-submenu-list-c0ac3bd>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/hugo/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/compose/hugo/><pre>📝</pre>Compose</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-2998e89 type=checkbox checked>
+<label for=nav-sidebar-submenu-2998e89><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Reprepro</span></label>
+<ul id=nav-sidebar-submenu-list-2998e89>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/reprepro/><pre>🌾</pre>Release</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-ef58375 type=checkbox checked>
+<label for=nav-sidebar-submenu-ef58375><span class=nav-sidebar-submenu-icon>➣</span><span>Versions</span></label>
+<ul id=nav-sidebar-submenu-list-ef58375>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-1/><pre>🏅</pre>v0.0.1</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-2/><pre>🏅</pre>v0.0.2</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-3/><pre>🏅</pre>v0.0.3</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-47c6ce2 type=checkbox checked>
+<label for=nav-sidebar-submenu-47c6ce2><span class=nav-sidebar-submenu-icon>➣</span><span>Z) Monteur Internals</span></label>
+<ul id=nav-sidebar-submenu-list-47c6ce2>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/changelog-meta/><pre>📚</pre>Changelog Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/><pre>📑</pre>CI Job Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/code-of-conduct/><pre>🧬</pre>Code of Conduct</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/commands/><pre>🧑‍✈️</pre>Commands Execution Unit</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/dependencies-checking/><pre>🧮</pre>Dependencies Checking</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/init-job/><pre>🛫</pre>Init Job</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/secrets/><pre>🙊</pre>Managing Secrets</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/package-meta/><pre>📋</pre>Package Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/platform-identification/><pre>🧿</pre>Platform Identification</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/setup-meta/><pre>🧩</pre>Setup Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/><pre>🪢</pre>Variables Processing</a>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</body>
+</html>

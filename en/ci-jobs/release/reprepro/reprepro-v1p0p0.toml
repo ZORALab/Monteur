@@ -1,0 +1,86 @@
+[Metadata]
+Name = 'Reprepro'
+Description = """
+Monteur's .deb packagers released to hosting repository via Reprepro.
+"""
+Type = 'manual'
+
+
+
+
+[Variables]
+GPGID = ''
+GPGExistence = '' # to be filled by [CMD]
+Distribution = '' # to be filled by [CMD]
+
+[FMTVariables]
+DataPath = '{{- .DataDir -}}/debian/reprepro'
+
+
+
+
+[[Dependencies]]
+Name = 'Reprepro'
+Condition = 'all-all'
+Type = 'command'
+Command = 'reprepro'
+
+[[Dependencies]]
+Name = 'GPG Tool For Signing'
+Condition = 'all-all'
+Type = 'command'
+Command = 'gpg'
+
+
+
+
+[Releases]
+Target = '{{- .ReleaseDir -}}/deb'
+
+[Releases.Packages.linux-amd64]
+Source = '"{{- .PackageDir -}}/monteur-linux-amd64/monteur_"*"_amd64.deb"'
+
+
+
+
+[[CMD]]
+Name = "Get GPG Secret Key for Verifications"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'gpg --list-secret-keys "{{- .GPGID }}"'
+Save = 'GPGExistence'
+
+[[CMD]]
+Name = "Verify GPG Secret Key Must Exists For Signing"
+Type = 'is-not-empty'
+Condition = [ 'all-all' ]
+Source = '{{- .GPGExistence -}}'
+
+[[CMD]]
+Name = "Create Necessary Conf Data Directory"
+Type = 'create-path'
+Condition = [ 'all-all' ]
+Source = '{{- .DataPath -}}/conf'
+
+[[CMD]]
+Name = 'Get Current Branch'
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = 'git branch --show-current'
+Save = 'Distribution'
+
+[[CMD]]
+Name = "Verify Distribution is Not Empty"
+Type = 'is-not-empty'
+Condition = [ 'all-all' ]
+Source = '{{- .Distribution -}}'
+
+[[CMD]]
+Name = "Release Using Reprepro"
+Type = 'command'
+Condition = [ 'all-all' ]
+Source = """reprepro --basedir {{ .DataPath }} \
+--outdir {{ .Target }} \
+includedeb {{ .Distribution }} \
+{{ .Source }}
+"""

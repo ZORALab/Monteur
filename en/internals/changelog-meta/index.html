@@ -1,0 +1,685 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,initial-scale=1">
+<meta name=description content="Monteur has a special metadata processing function for sourcing and processing changelog entry. The inner mechanics are explained here!">
+<meta name=keywords content="changelog,metadata processing,ZORALab's Monteur">
+<meta name=author content="Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho">
+<link rel=canonical href=https://monteur.zoralab.com/en/internals/changelog-meta/><link rel=apple-touch-icon sizes=57x57 href=https://monteur.zoralab.com/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=https://monteur.zoralab.com/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=https://monteur.zoralab.com/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=https://monteur.zoralab.com/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=https://monteur.zoralab.com/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=https://monteur.zoralab.com/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=https://monteur.zoralab.com/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=https://monteur.zoralab.com/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=https://monteur.zoralab.com/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=https://monteur.zoralab.com/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=https://monteur.zoralab.com/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=https://monteur.zoralab.com/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=https://monteur.zoralab.com/favicon-16x16.png>
+<link rel=manifest href=https://monteur.zoralab.com/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:site content="ZORALab_Team">
+<meta name=twitter:creator content="Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho">
+<meta property="og:site_name" content="Monteur">
+<meta property="og:title" content="Changelog Meta Processing | Monteur">
+<meta property="og:locale" content="en">
+<meta property="og:description" content="Monteur has a special metadata processing function for sourcing and processing changelog entry. The inner mechanics are explained here!">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://monteur.zoralab.com/en/internals/changelog-meta/">
+<meta property="og:image" content="https://monteur.zoralab.com/en/internals/changelog-meta/default-1200x628.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="628">
+<meta property="og:image:alt" content="ZORALab's Monteur Changelog Meta Processing">
+<meta property="og:image" content="https://monteur.zoralab.com/en/internals/changelog-meta/default-1200x1200.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="1200">
+<meta property="og:image:alt" content="ZORALab's Monteur Changelog Meta Processing">
+<meta property="og:image" content="https://monteur.zoralab.com/en/internals/changelog-meta/default-480x480.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="480">
+<meta property="og:image:height" content="480">
+<meta property="og:image:alt" content="ZORALab's Monteur Changelog Meta Processing">
+<script type=application/ld+json>{"@context":"https://schema.org/","@type":"WebPage","author":"Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho","dateCreated":"2022-06-17T06:59:39+08:00","dateModified":"2022-06-17T09:36:47+08:00","datePublished":"2022-06-17T06:59:39+08:00","description":"Monteur has a special metadata processing function for sourcing and processing changelog entry. The inner mechanics are explained here!","image":"https://monteur.zoralab.com/en/internals/changelog-meta/default-1200x628.png","inLanguage":"en","keywords":"changelog, metadata processing, ZORALab's Monteur","name":"Changelog Meta Processing","schemaVersion":"https://schema.org/version/8.0/","thumbnailUrl":"https://monteur.zoralab.com/en/internals/changelog-meta/default-1200x628.png","url":"https://monteur.zoralab.com/en/internals/changelog-meta/"}</script>
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-101500797-1','auto'),ga('send','pageview')</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<title>Changelog Meta Processing | Monteur</title>
+<link href=https://monteur.zoralab.com/css/bissetii-critical.min.css rel=stylesheet media=all onload='this.media="all"' integrity="sha512-dTjOFO8HW8osnU0PTWxK38WkhQSa5M3FvYTHYEanB6jUvX9E1X6iAle0IJLP16syY26haWC7zV5ba2Fs9tn5xg==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-print.min.css rel=stylesheet media=print onload='this.media="print"' integrity="sha512-XPrMPPyw9AxUVPlcja8Q4eSMRblA7CitTvBLc6kvF0aqd8VATHwgBbYeit6J9E7nzctz9I0Rs/v71nCpDXCqMA==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-tablet.min.css rel=stylesheet media="screen and (min-width: 40rem)" onload='this.media="screen and (min-width: 40rem)"' integrity="sha512-5wCMBKmbZn1Mpn9dY6rfasNcrfE+z6xNma5H6pnAAXFeJuIpUK3fG5nmPWIPeXSwIis+1MqR+fIEMp41g/j4cA==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-desktop.min.css rel=stylesheet media="screen and (min-width: 80rem)" onload='this.media="screen and (min-width: 80rem)"' integrity="sha512-P3oHnbewtCGj9wz+wRrIbC0VTcr4TmvqXX1DBOQEmYOJY1rrr5A4FZevrsL2BL5Z3hNw2wZ1jUmNEwBIS3v8ow==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-widescreen.min.css rel=stylesheet media="screen and (min-width: 120rem)" onload='this.media="screen and (min-width: 120rem)"' integrity="sha512-4/XaSIkGtWjXwVvs0EVnzgIcqqn+JdskwCkHF/jQXGCyW39BACYtS5U5K3EHFTAP6sYcvmRErcGVS3jnVPg2Ig==" crossorigin=anonymous>
+<meta name=generator content="Hugo 0.91.2">
+</head>
+<body style=--body-grid-tablet:var(--layout-left-and-top);--body-grid-desktop:var(--layout-left-and-top);--body-grid-widescreen:var(--layout-left-and-top)>
+<main>
+<section id=introduction>
+<h1>Changelog Meta Processing</h1>
+<p>
+Monteur has a special metadata processing function for sourcing and processing
+changelog entry. The inner mechanics are explained here!
+</p>
+</section>
+<section id=the-problems>
+<h2>The Problems</h2>
+<p>
+It was all started when performing a packaging with
+<a href=https://monteur.zoralab.com/en/internals/package-meta/>Package Meta Processing</a> where each package
+has its own version and format of changelog output files.
+<br><br>
+<b>Generally speaking, it was very messy to generate different
+set of changelog based on the packager type and
+requirements</b>. Some packages, like <code>.deb</code> type,
+has platform specific in its changelog and essentially made the
+generation efforts even more complicated at scale; some like
+<code>.appimage</code> does not need a changelog at all.
+<br><br>
+<b>Another issue is that there are various version control
+system like <code>git</code>, <code>svn</code>, and etc</b>.
+Hence, this complicates the process of sourcing the latest
+changelog entry and trying to simplify all of them into a single
+maintainable yet simple CI Job recipe.
+</p>
+</section>
+<section id=the-solution>
+<h2>The Solution</h2>
+<p>
+To solve the problems above, Monteur uses this <b>Changelog Meta
+Processing approach to facilitate changelog sourcing and
+output formatting as a preprocessor</b>. This approach works
+closely with
+<a href=https://monteur.zoralab.com/en/internals/package-meta/>Package Meta Processing</a>
+function.
+<br><br>
+The idea is to:
+<ol>
+<li><p>
+Provides a 2-stage
+<a href=https://monteur.zoralab.com/en/internals/commands/>Commands Execution Unit
+(CEU)</a>
+commands execution where:
+<ol>
+<li><p>
+The 1ST stage source and process
+the changelog data; AND
+</p></li>
+<li><p>
+The 2ND stage actually runs the
+recipe's actual CEU commands.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+Matchmaking closely with
+<a href=https://monteur.zoralab.com/en/internals/package-meta/>Package Meta
+Processing</a>
+function to ensure the changelog data and
+filepath are always aligned.
+</p></li>
+</ol>
+By doing so, we kept all kinds of version control system
+interfaces independent of Monteur while still able to work with
+any number of changelog generations or updates.
+</p>
+<section id=current-deployment>
+<h3>Current Deployment</h3>
+<p>
+Currently, this function is deployed in the following
+CI Jobs:
+<ol>
+<li><p>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/>
+Prepare</a>
+since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p>
+</section>
+</section>
+<section id=available-formats>
+<h2>Available Formats</h2>
+<p>
+Montuer facilitates a list of built-in changelog formats for
+updating the changelog files seamlessly. To select the format,
+you set it via <code>Metadata.Type</code> field. For example:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>[Metadata]
+...
+Type = <span style=color:#ba2121>&#39;deb&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+Available formats are:
+<ul>
+<li><p>
+<code>manual</code>
+<ol>
+<li><p>
+You will do it manually via
+<code>ChangelogEntries</code>
+variable in the recipe CEU
+commands.
+</p></li>
+<li><p>
+Available since Montuer version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>markdown</code>
+<ol>
+<li><p>
+Prepend changelog entires into
+a markdown format file.
+</p></li>
+<li><p>
+The highest heading level is
+level 2 (<code>h2</code>).
+</p></li>
+<li><p>
+Available since Montuer version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>deb</code>
+<ol>
+<li><p>
+Prepend changelog entires into
+a <code>.deb</code> package
+changelog file.
+</p></li>
+<li><p>
+Platform-specific data is
+required and <b>shall be
+supplied via the package meta
+processing data structure</b>.
+</p></li>
+<li><p>
+Available since Montuer version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>txt</code>
+<ol>
+<li><p>
+Prepend changelog entires into
+a native text file.
+</p></li>
+<li><p>
+Available since Montuer version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+</ul>
+</p>
+</section>
+<section id=data-structure>
+<h2>Data Structure</h2>
+<p>
+To operate this function, Monteur uses a single unified
+changelog data structure alongside
+<a href=https://monteur.zoralab.com/en/internals/package-meta/>Package Meta Processing</a>
+data structure. Hence, <b>there are 2 parts of it</b> so the
+following sub-sections shall detail them from top to bottom
+in sequences.
+</p>
+<section id=changelog-data-structure>
+<h3>Changelog Data Structure</h3>
+<p>
+The <b>first part would be the Changelog Data
+structure</b> itself. This section, when made
+available via <code>[[Changelog.CMD]]</code>,
+<b>SHALL BE EXECUTED before anything else</b>.
+This is to ensure Monteur obtained all necessary
+input before actually executing the actual
+recipe's job.
+<br><br>
+The successful changelog extraction are <b>saved
+into <code>ChangelogEntries</code> variable</b>
+made available for recipe's CEU command.
+<br><br>
+The full data structure is shown below:
+</p>
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>...
+
+[Changelog]
+LineBreak = <span style=color:#ba2121>&#34;\n&#34;</span>
+Regex = <span style=color:#ba2121>&#39;&#39;</span>
+
+[[Changelog.CMD]]
+Name = <span style=color:#ba2121>&#34;Fetch All Local Remote Branches To The Latest&#34;</span>
+Type = <span style=color:#ba2121>&#39;command&#39;</span>
+Condition = [ <span style=color:#ba2121>&#39;all-all&#39;</span> ]
+Source = <span style=color:#ba2121>&#39;git fetch --all&#39;</span>
+
+[[Changelog.CMD]]
+Name = <span style=color:#ba2121>&#34;Get Changelog Data from Git Log Between Branches&#34;</span>
+Type = <span style=color:#ba2121>&#39;command&#39;</span>
+Condition = [ <span style=color:#ba2121>&#39;all-all&#39;</span> ]
+Source = <span style=color:#ba2121>&#34;&#34;&#34;git --no-pager log \
+</span><span style=color:#ba2121>&#34;</span>{{- .ChangelogTo -}}..{{- .ChangelogFrom -}}<span style=color:#ba2121>&#34; \
+</span><span style=color:#ba2121>--pretty=&#34;</span>format<span>:%</span>h <span>%</span>s<span style=color:#ba2121>&#34;
+</span><span style=color:#ba2121>&#34;&#34;&#34;</span>
+Save = <span style=color:#ba2121>&#34;ChangelogEntries&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li><p>
+<code>Changelog.LineBreak</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - The
+line break characters
+for parsing.
+</p></li>
+<li><p>
+By default or when in
+doubt, it's
+<code>\n</code>. This
+field is for some
+operating system and
+software that uses
+other symbols like
+carrier return
+(e.g.
+<code>\r\n</code>).
+</p></li>
+<li><p>
+Available since Monteur
+version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Changelog.Regex</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - The
+regular expression field
+for capturing the
+changelog.
+</p></li>
+<li><p>
+Can be left empty to
+indicate the entire
+output are indeed the
+exact changelog entry.
+</p></li>
+<li><p>
+Available since Monteur
+version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Changelog.CMD</code>
+<ol>
+<li><p>
+<b>OPTIONAL</b> - List
+of commands complying to
+<a href=https://monteur.zoralab.com/en/internals/commands/>Commands
+Execution Unit</a>
+specification.
+</p></li>
+<li><p>
+<b>RECOMMENDED NOT TO
+USE ANY
+<code>-quiet</code> CEU
+type to make sure the
+recipe fails early</b>
+when something went
+wrong.
+</p></li>
+<li><p>
+List <b>can be left
+empty or completely
+absent</b> to indicate
+that the recipe is not
+preparing a changelog
+update but working
+something else like
+project version.
+</p></li>
+<li><p>
+Available since Monteur
+version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+</ul>
+</section>
+<section id=package-data-structure>
+<h3>Package Data Structure</h3>
+<p>
+The <b>second part would be the list of packages
+data structure</b> itself. This sole purpose
+is to update all packages' changelog data file
+with the newly obtained changelog entry data.
+<br><br>
+The data structure is fully compliant to
+<a href=https://monteur.zoralab.com/en/internals/package-meta/>Package
+Meta Processing Specification</a>.
+Moreover, when changelog is used, the package
+list <b>SHALL MATCH AND MAP EXACTLY</b>
+with the corresponding
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/>Package CI Job's Recipes</a>.
+<br><br>
+An example of the data structure is shown
+below:
+</p>
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>...
+
+[Packages.linux-amd64]
+OS = [ <span style=color:#ba2121>&#39;linux&#39;</span> ]
+Arch = [ <span style=color:#ba2121>&#39;amd64&#39;</span> ]
+Distribution = [
+        <span style=color:#ba2121>&#39;stable&#39;</span>,
+]
+Changelog = <span style=color:#ba2121>&#39;{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}&#39;</span>
+
+[Packages.linux-arm64]
+OS = [ <span style=color:#ba2121>&#39;linux&#39;</span> ]
+Arch = [ <span style=color:#ba2121>&#39;arm64&#39;</span> ]
+Distribution = [
+        <span style=color:#ba2121>&#39;stable&#39;</span>,
+]
+Changelog = <span style=color:#ba2121>&#39;{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}&#39;</span>
+
+[Packages.linux-armhf]
+OS = [ <span style=color:#ba2121>&#39;linux&#39;</span> ]
+Arch = [ <span style=color:#ba2121>&#39;armhf&#39;</span> ]
+Distribution = [
+        <span style=color:#ba2121>&#39;stable&#39;</span>,
+]
+Changelog = <span style=color:#ba2121>&#39;{{- .DataDir -}}/debian/changelog-{{- .PkgArch -}}&#39;</span>
+
+...</code></pre></td></tr></table>
+</div>
+</div>
+</section>
+<section id=epilogue>
+<h2>Epilogue</h2>
+<p>
+That's all for Monteur's Changelog Meta Processing function.
+If you have any question, please feel free to raise your
+question at our <a href=https://github.com/ZORALab/Monteur/issues>Issues
+Section</a>.
+</p>
+</section>
+<footer>
+<p><span>© All Rights Reserved</span><span>— Monteur Team, ZORALab Team</span></p>
+</footer>
+</main><nav class=nav-sidebar>
+<input id=nav-sidebar-5f39835 class=nav-sidebar-trigger type=checkbox>
+<label class=nav-sidebar-trigger for=nav-sidebar-5f39835><span class="nav-sidebar-icon nav-sidebar-menu">☰</span><span class="nav-sidebar-icon nav-sidebar-close">𝖷</span></label>
+<label class=nav-sidebar-shade for=nav-sidebar-5f39835>
+</label>
+<ul class=nav-sidebar-list>
+<li class=nav-sidebar-title>
+<img alt src=https://monteur.zoralab.com/img/logo/zoralab-monteur-1200x1200.svg class=nav-sidebar-logo width=200 height=200>
+<p>Monteur</p></li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/><span class=pre>💠</span>Home</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/><span class=pre>📥</span>Downloads</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/getting-started/><span class=pre>🛫</span>Getting Started</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/licenses/><span class=pre>⚖️</span>Licenses</a>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-220e3fa type=checkbox checked>
+<label for=nav-sidebar-submenu-220e3fa><span class=nav-sidebar-submenu-icon>➣</span><span>CI Jobs</span></label>
+<ul id=nav-sidebar-submenu-list-220e3fa>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/clean/><pre>🧹</pre>Clean</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/test/><pre>⚗️</pre>Test</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/><pre>🧶</pre>Prepare</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/build/><pre>🧰</pre>Build</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/><pre>📦</pre>Package</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/><pre>🌾</pre>Release</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/compose/><pre>📝</pre>Compose</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/><pre>📖</pre>Publish</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-a5bc3c7 type=checkbox checked>
+<label for=nav-sidebar-submenu-a5bc3c7><span class=nav-sidebar-submenu-icon>➣</span><span>Native - Monteur</span></label>
+<ul id=nav-sidebar-submenu-list-a5bc3c7>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/clean/deep-cleaning/><pre>🧹</pre>Clean (Deep Cleaning)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/changelog-deb/><pre>🧶</pre>Prepare (DEB Changelog)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/version-file-scripting/><pre>🧶</pre>Prepare (Version File Scripting)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/targz/><pre>📦</pre>Package (TarGz)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/zip/><pre>📦</pre>Package (Zip)</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-f36af07 type=checkbox checked>
+<label for=nav-sidebar-submenu-f36af07><span class=nav-sidebar-submenu-icon>➣</span><span>Platform - GitLab</span></label>
+<ul id=nav-sidebar-submenu-list-f36af07>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/getting-started/gitlab/><pre>🛫</pre>Getting Started - GitLab CI</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/><pre>📖</pre>Publish (GitLab Pages)</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-5b11fbd type=checkbox checked>
+<label for=nav-sidebar-submenu-5b11fbd><span class=nav-sidebar-submenu-icon>➣</span><span>Software - DEBuild</span></label>
+<ul id=nav-sidebar-submenu-list-5b11fbd>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/debuild/><pre>📦</pre>Package</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-f03c66a type=checkbox checked>
+<label for=nav-sidebar-submenu-f03c66a><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Go</span></label>
+<ul id=nav-sidebar-submenu-list-f03c66a>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/go/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/test/go/><pre>⚗️</pre>Test</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/build/go/><pre>🧰</pre>Build</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-d1ab4bc type=checkbox checked>
+<label for=nav-sidebar-submenu-d1ab4bc><span class=nav-sidebar-submenu-icon>➣</span><span>Software - GolangCI-Lint</span></label>
+<ul id=nav-sidebar-submenu-list-d1ab4bc>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/golangci-lint/><pre>🧩</pre>Setup</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-c0ac3bd type=checkbox checked>
+<label for=nav-sidebar-submenu-c0ac3bd><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Hugo</span></label>
+<ul id=nav-sidebar-submenu-list-c0ac3bd>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/hugo/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/compose/hugo/><pre>📝</pre>Compose</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-2998e89 type=checkbox checked>
+<label for=nav-sidebar-submenu-2998e89><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Reprepro</span></label>
+<ul id=nav-sidebar-submenu-list-2998e89>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/reprepro/><pre>🌾</pre>Release</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-ef58375 type=checkbox checked>
+<label for=nav-sidebar-submenu-ef58375><span class=nav-sidebar-submenu-icon>➣</span><span>Versions</span></label>
+<ul id=nav-sidebar-submenu-list-ef58375>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-1/><pre>🏅</pre>v0.0.1</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-2/><pre>🏅</pre>v0.0.2</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-3/><pre>🏅</pre>v0.0.3</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-47c6ce2 type=checkbox checked>
+<label for=nav-sidebar-submenu-47c6ce2><span class=nav-sidebar-submenu-icon>➣</span><span>Z) Monteur Internals</span></label>
+<ul id=nav-sidebar-submenu-list-47c6ce2>
+<li class="active nav-sidebar-link">
+<a href=https://monteur.zoralab.com/en/internals/changelog-meta/><pre>📚</pre>Changelog Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/><pre>📑</pre>CI Job Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/code-of-conduct/><pre>🧬</pre>Code of Conduct</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/commands/><pre>🧑‍✈️</pre>Commands Execution Unit</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/dependencies-checking/><pre>🧮</pre>Dependencies Checking</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/init-job/><pre>🛫</pre>Init Job</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/secrets/><pre>🙊</pre>Managing Secrets</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/package-meta/><pre>📋</pre>Package Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/platform-identification/><pre>🧿</pre>Platform Identification</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/setup-meta/><pre>🧩</pre>Setup Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/><pre>🪢</pre>Variables Processing</a>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</body>
+</html>

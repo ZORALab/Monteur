@@ -1,0 +1,407 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,initial-scale=1">
+<meta name=description content="Monteur offers a list of platform IDs for consistent manufacturing management based on Go Programming Language. These IDs are friendly to most deployments!">
+<meta name=keywords content="platform ID,identification,ZORALab's Monteur">
+<meta name=author content="Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho">
+<link rel=canonical href=https://monteur.zoralab.com/en/internals/platform-identification/><link rel=apple-touch-icon sizes=57x57 href=https://monteur.zoralab.com/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=https://monteur.zoralab.com/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=https://monteur.zoralab.com/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=https://monteur.zoralab.com/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=https://monteur.zoralab.com/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=https://monteur.zoralab.com/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=https://monteur.zoralab.com/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=https://monteur.zoralab.com/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=https://monteur.zoralab.com/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=https://monteur.zoralab.com/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=https://monteur.zoralab.com/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=https://monteur.zoralab.com/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=https://monteur.zoralab.com/favicon-16x16.png>
+<link rel=manifest href=https://monteur.zoralab.com/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:site content="ZORALab_Team">
+<meta name=twitter:creator content="Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho">
+<meta property="og:site_name" content="Monteur">
+<meta property="og:title" content="Platform Identification | Monteur">
+<meta property="og:locale" content="en">
+<meta property="og:description" content="Monteur offers a list of platform IDs for consistent manufacturing management based on Go Programming Language. These IDs are friendly to most deployments!">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://monteur.zoralab.com/en/internals/platform-identification/">
+<meta property="og:image" content="https://monteur.zoralab.com/en/internals/platform-identification/default-1200x628.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="628">
+<meta property="og:image:alt" content="ZORALab's Monteur - Platform Identification">
+<meta property="og:image" content="https://monteur.zoralab.com/en/internals/platform-identification/default-1200x1200.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="1200">
+<meta property="og:image:alt" content="ZORALab's Monteur - Platform Identification">
+<meta property="og:image" content="https://monteur.zoralab.com/en/internals/platform-identification/default-480x480.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="480">
+<meta property="og:image:height" content="480">
+<meta property="og:image:alt" content="ZORALab's Monteur - Platform Identification">
+<script type=application/ld+json>{"@context":"https://schema.org/","@type":"WebPage","author":"Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho","dateCreated":"2021-11-26T07:01:06+08:00","dateModified":"2022-06-10T07:51:11+08:00","datePublished":"2021-11-26T07:01:06+08:00","description":"Monteur offers a list of platform IDs for consistent manufacturing management based on Go Programming Language. These IDs are friendly to most deployments!","image":"https://monteur.zoralab.com/en/internals/platform-identification/default-1200x628.png","inLanguage":"en","keywords":"platform ID, identification, ZORALab's Monteur","name":"Platform Identification","schemaVersion":"https://schema.org/version/8.0/","thumbnailUrl":"https://monteur.zoralab.com/en/internals/platform-identification/default-1200x628.png","url":"https://monteur.zoralab.com/en/internals/platform-identification/"}</script>
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-101500797-1','auto'),ga('send','pageview')</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<title>Platform Identification | Monteur</title>
+<link href=https://monteur.zoralab.com/css/bissetii-critical.min.css rel=stylesheet media=all onload='this.media="all"' integrity="sha512-dTjOFO8HW8osnU0PTWxK38WkhQSa5M3FvYTHYEanB6jUvX9E1X6iAle0IJLP16syY26haWC7zV5ba2Fs9tn5xg==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-print.min.css rel=stylesheet media=print onload='this.media="print"' integrity="sha512-XPrMPPyw9AxUVPlcja8Q4eSMRblA7CitTvBLc6kvF0aqd8VATHwgBbYeit6J9E7nzctz9I0Rs/v71nCpDXCqMA==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-tablet.min.css rel=stylesheet media="screen and (min-width: 40rem)" onload='this.media="screen and (min-width: 40rem)"' integrity="sha512-5wCMBKmbZn1Mpn9dY6rfasNcrfE+z6xNma5H6pnAAXFeJuIpUK3fG5nmPWIPeXSwIis+1MqR+fIEMp41g/j4cA==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-desktop.min.css rel=stylesheet media="screen and (min-width: 80rem)" onload='this.media="screen and (min-width: 80rem)"' integrity="sha512-P3oHnbewtCGj9wz+wRrIbC0VTcr4TmvqXX1DBOQEmYOJY1rrr5A4FZevrsL2BL5Z3hNw2wZ1jUmNEwBIS3v8ow==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-widescreen.min.css rel=stylesheet media="screen and (min-width: 120rem)" onload='this.media="screen and (min-width: 120rem)"' integrity="sha512-4/XaSIkGtWjXwVvs0EVnzgIcqqn+JdskwCkHF/jQXGCyW39BACYtS5U5K3EHFTAP6sYcvmRErcGVS3jnVPg2Ig==" crossorigin=anonymous>
+<meta name=generator content="Hugo 0.91.2">
+</head>
+<body style=--body-grid-tablet:var(--layout-left-and-top);--body-grid-desktop:var(--layout-left-and-top);--body-grid-widescreen:var(--layout-left-and-top)>
+<main>
+<section id=introduction>
+<h1>Platform Identification</h1>
+<p>
+Monteur offers a list of platform IDs for consistent manufacturing management
+based on Go Programming Language. These IDs are friendly to most deployments!
+</p>
+</section>
+<section id=cross-platform-support>
+<h2>Supporting Cross Platform Production</h2>
+<p>
+Monteur supplies a built-in platfrom ID for these few reasons:
+<ol>
+<li><p>
+<b>To enable customers to build their product
+via cross-platform implementations</b>. A good
+example would be Monteur's own package releases
+where all its variants are cross-built using
+<code>linux-amd64</code> workstation platform.
+</p></li>
+<li><p>
+<b>To make Monteur CI jobs work consistently
+when customer is operating his/her project on a
+different workstation</b>. A good example would
+be Monteur's
+<a href=https://monteur.zoralab.com/en/internals/commands/>
+Command Execution Unit</a>
+Where each command has its
+<code>Condition</code> to specify when to
+execute the command while Monteur is on the
+correct workstation operating system.
+</p></li>
+<li><p>
+<b>To make sure the ID is usable anywhere like
+URL and filepath</b>. Existing Go Programming
+Language uses forward slash (<code>/</code>)
+which can be intepreted as directory in certain
+applications like URL pathing and filepath.
+That's why Monteur corrects the ID to make sure
+we speak in the same terms across different
+jobs and functions.
+</p></li>
+</ol>
+<br><br>
+</p>
+</section>
+<section id=data-pattern>
+<h2>Data Pattern</h2>
+<p>
+The data pattern for Monteur's Platform Indentification function
+is:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>Pattern<span>:</span> [OS]-[ARCH]
+Example<span>:</span>
+         linux-amd64
+         linux-arm64
+         darwin-amd64
+         darwin-arm64
+         windows-amd64
+         windows-arm64</code></pre></td></tr></table>
+</div>
+</div>
+</p>
+</section>
+<section id=supported-platform>
+<h2>Supported Platform</h2>
+<p>
+That being said, Monteur supports the following platform IDs:
+<ul>
+<li><p>
+<code>linux-amd64</code> - Linux operating
+system with <code>amd64</code> x86-64 CPU
+architecture.
+</p></li>
+<li><p>
+<code>linux-arm64</code> - Linux operating
+system with <code>arm64</code> ARM-64 CPU
+architecture.
+</p></li>
+<li><p>
+<code>darwin-amd64</code> - MacOS operating
+system with <code>amd64</code> x86-64 CPU
+architecture.
+</p></li>
+<li><p>
+<code>darwin-arm64</code> - MacOS operating
+system with <code>arm64</code> ARM-64 CPU
+architecture.
+</p></li>
+<li><p>
+<code>windows-amd64</code> - Windows operating
+system with <code>amd64</code> x86-64 CPU
+architecture.
+</p></li>
+<li><p>
+<code>windows-arm64</code> - Windows operating
+system with <code>arm64</code> ARM-64 CPU
+architecture.
+</p></li>
+</ul>
+</p>
+<section id=generic-id>
+<h3>Generic IDs</h3>
+<p>
+A set of generic IDs is made available where a
+configuration is applicable to all operating system,
+all CPU architecture for a operating system, or all
+operating system and all CPU architecture. Hence, the
+following IDs are recognizable by Monteur:
+<ul>
+<li><p>
+<code>all-all</code> - all operating
+system and all CPU architecture.
+</p></li>
+<li><p>
+<code>[OS]-all</code> - all CPU
+architecture for a specific
+operating system <code>[OS]</code>.
+</p></li>
+<li><p>
+<code>all-[ARCH]</code> - all operating
+system for a specific CPU architecture.
+</p></li>
+</ul>
+</p>
+</section>
+</section>
+<section id=epilogue>
+<h2>Epilogue</h2>
+<p>
+That's all for Monteur's Platform Identification.
+If you have any question, please feel free to raise your
+question at our <a href=https://github.com/ZORALab/Monteur/issues>Issues
+Section</a>.
+</p>
+</section>
+<footer>
+<p><span>© All Rights Reserved</span><span>— Monteur Team, ZORALab Team</span></p>
+</footer>
+</main><nav class=nav-sidebar>
+<input id=nav-sidebar-5f39835 class=nav-sidebar-trigger type=checkbox>
+<label class=nav-sidebar-trigger for=nav-sidebar-5f39835><span class="nav-sidebar-icon nav-sidebar-menu">☰</span><span class="nav-sidebar-icon nav-sidebar-close">𝖷</span></label>
+<label class=nav-sidebar-shade for=nav-sidebar-5f39835>
+</label>
+<ul class=nav-sidebar-list>
+<li class=nav-sidebar-title>
+<img alt src=https://monteur.zoralab.com/img/logo/zoralab-monteur-1200x1200.svg class=nav-sidebar-logo width=200 height=200>
+<p>Monteur</p></li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/><span class=pre>💠</span>Home</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/><span class=pre>📥</span>Downloads</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/getting-started/><span class=pre>🛫</span>Getting Started</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/licenses/><span class=pre>⚖️</span>Licenses</a>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-220e3fa type=checkbox checked>
+<label for=nav-sidebar-submenu-220e3fa><span class=nav-sidebar-submenu-icon>➣</span><span>CI Jobs</span></label>
+<ul id=nav-sidebar-submenu-list-220e3fa>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/clean/><pre>🧹</pre>Clean</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/test/><pre>⚗️</pre>Test</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/><pre>🧶</pre>Prepare</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/build/><pre>🧰</pre>Build</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/><pre>📦</pre>Package</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/><pre>🌾</pre>Release</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/compose/><pre>📝</pre>Compose</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/><pre>📖</pre>Publish</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-a5bc3c7 type=checkbox checked>
+<label for=nav-sidebar-submenu-a5bc3c7><span class=nav-sidebar-submenu-icon>➣</span><span>Native - Monteur</span></label>
+<ul id=nav-sidebar-submenu-list-a5bc3c7>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/clean/deep-cleaning/><pre>🧹</pre>Clean (Deep Cleaning)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/changelog-deb/><pre>🧶</pre>Prepare (DEB Changelog)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/version-file-scripting/><pre>🧶</pre>Prepare (Version File Scripting)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/targz/><pre>📦</pre>Package (TarGz)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/zip/><pre>📦</pre>Package (Zip)</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-f36af07 type=checkbox checked>
+<label for=nav-sidebar-submenu-f36af07><span class=nav-sidebar-submenu-icon>➣</span><span>Platform - GitLab</span></label>
+<ul id=nav-sidebar-submenu-list-f36af07>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/getting-started/gitlab/><pre>🛫</pre>Getting Started - GitLab CI</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/><pre>📖</pre>Publish (GitLab Pages)</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-5b11fbd type=checkbox checked>
+<label for=nav-sidebar-submenu-5b11fbd><span class=nav-sidebar-submenu-icon>➣</span><span>Software - DEBuild</span></label>
+<ul id=nav-sidebar-submenu-list-5b11fbd>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/debuild/><pre>📦</pre>Package</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-f03c66a type=checkbox checked>
+<label for=nav-sidebar-submenu-f03c66a><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Go</span></label>
+<ul id=nav-sidebar-submenu-list-f03c66a>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/go/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/test/go/><pre>⚗️</pre>Test</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/build/go/><pre>🧰</pre>Build</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-d1ab4bc type=checkbox checked>
+<label for=nav-sidebar-submenu-d1ab4bc><span class=nav-sidebar-submenu-icon>➣</span><span>Software - GolangCI-Lint</span></label>
+<ul id=nav-sidebar-submenu-list-d1ab4bc>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/golangci-lint/><pre>🧩</pre>Setup</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-c0ac3bd type=checkbox checked>
+<label for=nav-sidebar-submenu-c0ac3bd><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Hugo</span></label>
+<ul id=nav-sidebar-submenu-list-c0ac3bd>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/hugo/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/compose/hugo/><pre>📝</pre>Compose</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-2998e89 type=checkbox checked>
+<label for=nav-sidebar-submenu-2998e89><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Reprepro</span></label>
+<ul id=nav-sidebar-submenu-list-2998e89>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/reprepro/><pre>🌾</pre>Release</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-ef58375 type=checkbox checked>
+<label for=nav-sidebar-submenu-ef58375><span class=nav-sidebar-submenu-icon>➣</span><span>Versions</span></label>
+<ul id=nav-sidebar-submenu-list-ef58375>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-1/><pre>🏅</pre>v0.0.1</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-2/><pre>🏅</pre>v0.0.2</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-3/><pre>🏅</pre>v0.0.3</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-47c6ce2 type=checkbox checked>
+<label for=nav-sidebar-submenu-47c6ce2><span class=nav-sidebar-submenu-icon>➣</span><span>Z) Monteur Internals</span></label>
+<ul id=nav-sidebar-submenu-list-47c6ce2>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/changelog-meta/><pre>📚</pre>Changelog Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/><pre>📑</pre>CI Job Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/code-of-conduct/><pre>🧬</pre>Code of Conduct</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/commands/><pre>🧑‍✈️</pre>Commands Execution Unit</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/dependencies-checking/><pre>🧮</pre>Dependencies Checking</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/init-job/><pre>🛫</pre>Init Job</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/secrets/><pre>🙊</pre>Managing Secrets</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/package-meta/><pre>📋</pre>Package Meta Processing</a>
+</li>
+<li class="active nav-sidebar-link">
+<a href=https://monteur.zoralab.com/en/internals/platform-identification/><pre>🧿</pre>Platform Identification</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/setup-meta/><pre>🧩</pre>Setup Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/><pre>🪢</pre>Variables Processing</a>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</body>
+</html>

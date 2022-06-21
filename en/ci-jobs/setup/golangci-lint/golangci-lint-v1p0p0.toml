@@ -1,0 +1,142 @@
+# Information about the software to be downloaded
+[Metadata]
+Name = 'GolangCI-Lint'
+Description = """
+Setup GolangCI-Lint static analysis tool for Go Programming Language.
+"""
+Type = 'https-download'
+
+
+
+
+# Customization
+[Variables]
+Version = '1.43.0'
+BaseURL = 'https://github.com/golangci/golangci-lint/releases/download'
+
+
+
+
+# Supported OS and CPU Architectures program sources. The Key for supported
+# OS and CPU complies to the format:
+#	[Sources.{GOOS}-{GOARCH}]
+# Only list out supported packages will do.
+[Sources.all-all]
+Format = 'tar.gz'
+Archive = 'golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}.{{- .Format -}}'
+URL = '{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}'
+Method = 'GET'
+[Sources.all-all.Checksum]
+Type = 'sha256'
+Format = 'hex'
+[Sources.all-all.headers]
+'Authorization' = '{{- string (index .Secrets "Github.API_KEY") -}}'
+
+[Sources.darwin-amd64.Checksum]
+Value = '5971ed73d25767b2b955a694e59c7381d56df46e3681a93e067c601d0d6cffad'
+
+[Sources.darwin-arm64.Checksum]
+Value = 'd0c69713b675ee09212273c2136a0d1b30203ddfc1c611a1a4fd5bfa90f9e457'
+
+[Sources.freebsd-386.Checksum]
+Value = 'e93a63ee2aa9a8ab89f4a579bc7c4dc27322eb01169c8f0b6e7bd62aa67c7704'
+
+[Sources.freebsd-amd64.Checksum]
+Value = '7e1ab0d0808b4b91caae6e0c6536abc20bd309923e8c98ad554fba6c066d4957'
+
+[Sources.freebsd-armv6.Checksum]
+Value = '9c49bc216b29dc1e0822089b2d25d73d7507480010822f5ae5d8edb5a9d6e52e'
+
+[Sources.freebsd-armv7.Checksum]
+Value = '5b353eab7b62d941c7d4b766c23690c2aa1f89cfc5c55b82e9d85c448a110880'
+
+[Sources.linux-386.Checksum]
+Value = '2c98fc0d6bc2376693b5c372421b7e68c3986c12ae0f277127b441003d24a8a2'
+
+[Sources.linux-amd64.Checksum]
+Value = 'f3515cebec926257da703ba0a2b169e4a322c11dc31a8b4656b50a43e48877f4'
+
+[Sources.linux-arm64.Checksum]
+Value = 'e21c681735faf4efd4086f95d5b49904b0bbbe510dd2058058047a8dbfaee546'
+
+[Sources.linux-armv6.Checksum]
+Value = 'fb7f6d4d39028570d70f81f42f4eaec2db62efe40d86c01fb9d9666b304372aa'
+
+[Sources.linux-armv7.Checksum]
+Value = '05e56dfeb15db6d1de6beba1c9cba4a8ce81479195e03b87e86f163eab380031'
+
+[Sources.linux-mips64.Checksum]
+Value = '7ebe6b70b2d07b96675c5742c860699b5acf8abdf0f120257a01b5b1f68abb80'
+
+[Sources.linux-mips64le.Checksum]
+Value = 'd90eab70783567107e8b0b07fa3df7b6572c181d38b393a2391ac2a815c661e8'
+
+[Sources.linux-ppc64le.Checksum]
+Value = '996a3d1eef45e87ef79e33d375213b8f33cf7396be5bdc5a03384435e89ddc78'
+
+[Sources.linux-riscv64.Checksum]
+Value = '996a3d1eef45e87ef79e33d375213b8f33cf7396be5bdc5a03384435e89ddc78'
+
+[Sources.linux-s390x.Checksum]
+Value = 'b96814f2f6ad9ab14f59779373e435b28abe6d82e59479a29c1bab67bb69a39d'
+
+[Sources.windows-386]
+Format = 'zip'
+[Sources.windows-386.Checksum]
+Value = '6055d72661566702faa5be8a128561700e7a1c6a5990740145222c8be0bae1e6'
+
+[Sources.windows-amd64]
+Format = 'zip'
+[Sources.windows-amd64.Checksum]
+Value = '5e671027474c2fdc8b5533d492b8373da70f4968724ff10cf4dcbef1d58a2f57'
+
+[Sources.windows-arm64]
+Format = 'zip'
+[Sources.windows-arm64.Checksum]
+Value = '6a1b48afc03815481434111416dafb95529b0fe02ade82274f4f727c1256c6fc'
+
+[Sources.windows-armv6]
+Format = 'zip'
+[Sources.windows-armv6.Checksum]
+Value = '9d43dd267867bb119b992296d57939836fcc7b268ce9bb9ce39f59f2df7235bc'
+
+[Sources.windows-armv7]
+Format = 'zip'
+[Sources.windows-armv7.Checksum]
+Value = 'ddbd0a9db25e245d52d2ad4bd9aa6c6d86307a416ad679148266fdab603c39a8'
+
+
+
+
+# Setup the unpacked software directories/files into the local bin directory.
+#
+# NOTE: The key field is mainly for sorting purposes.
+[[Setup]]
+Name = 'Install Golang-CI Linter'
+Type = 'move'
+Condition = [ 'all-all' ]
+Source = '{{- .WorkingDir -}}/golangci-lint-{{- .Version -}}-{{ .ComputeSystem }}/golangci-lint'
+Target = '{{- .BinDir -}}/golangci-lint'
+
+
+
+
+# Config file for localized filesystem initialization.
+[Config]
+linux = """
+#!/bin/bash
+
+_name="golangci-lint"
+
+case $1 in
+--stop)
+	;;
+*)
+	if [ ! -z "$(type -p "$_name")" ]; then
+		1>&2 printf "[ DONE  ] '$_name' is available.\\n"
+	else
+		1>&2 printf "[ ERROR ] '$_name' is missing.\\n"
+	fi
+	;;
+esac
+"""

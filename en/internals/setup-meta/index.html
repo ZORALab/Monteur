@@ -1,0 +1,906 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,initial-scale=1">
+<meta name=description content="Monteur has a special metadata processing function for keeping its Setup CI Job sane and maintainable. Here's its working mechanics and specifications!">
+<meta name=keywords content="setup metadata processing function,metadata processing,ZORALab's Monteur">
+<meta name=author content="Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho">
+<link rel=canonical href=https://monteur.zoralab.com/en/internals/setup-meta/><link rel=apple-touch-icon sizes=57x57 href=https://monteur.zoralab.com/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=https://monteur.zoralab.com/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=https://monteur.zoralab.com/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=https://monteur.zoralab.com/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=https://monteur.zoralab.com/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=https://monteur.zoralab.com/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=https://monteur.zoralab.com/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=https://monteur.zoralab.com/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=https://monteur.zoralab.com/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=https://monteur.zoralab.com/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=https://monteur.zoralab.com/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=https://monteur.zoralab.com/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=https://monteur.zoralab.com/favicon-16x16.png>
+<link rel=manifest href=https://monteur.zoralab.com/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:site content="ZORALab_Team">
+<meta name=twitter:creator content="Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho">
+<meta property="og:site_name" content="Monteur">
+<meta property="og:title" content="Setup Meta Processing | Monteur">
+<meta property="og:locale" content="en">
+<meta property="og:description" content="Monteur has a special metadata processing function for keeping its Setup CI Job sane and maintainable. Here's its working mechanics and specifications!">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://monteur.zoralab.com/en/internals/setup-meta/">
+<meta property="og:image" content="https://monteur.zoralab.com/en/internals/setup-meta/default-1200x628.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="628">
+<meta property="og:image:alt" content="ZORALab's Monteur Setup Meta Processing">
+<meta property="og:image" content="https://monteur.zoralab.com/en/internals/setup-meta/default-1200x1200.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="1200">
+<meta property="og:image:alt" content="ZORALab's Monteur Setup Meta Processing">
+<meta property="og:image" content="https://monteur.zoralab.com/en/internals/setup-meta/default-480x480.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="480">
+<meta property="og:image:height" content="480">
+<meta property="og:image:alt" content="ZORALab's Monteur Setup Meta Processing">
+<script type=application/ld+json>{"@context":"https://schema.org/","@type":"WebPage","author":"Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho","dateCreated":"2022-06-13T13:58:09+08:00","dateModified":"2022-06-15T08:15:26+08:00","datePublished":"2022-06-13T13:58:09+08:00","description":"Monteur has a special metadata processing function for keeping its Setup CI Job sane and maintainable. Here's its working mechanics and specifications!","image":"https://monteur.zoralab.com/en/internals/setup-meta/default-1200x628.png","inLanguage":"en","keywords":"setup metadata processing function, metadata processing, ZORALab's Monteur","name":"Setup Meta Processing","schemaVersion":"https://schema.org/version/8.0/","thumbnailUrl":"https://monteur.zoralab.com/en/internals/setup-meta/default-1200x628.png","url":"https://monteur.zoralab.com/en/internals/setup-meta/"}</script>
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-101500797-1','auto'),ga('send','pageview')</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<title>Setup Meta Processing | Monteur</title>
+<link href=https://monteur.zoralab.com/css/bissetii-print.min.css rel=stylesheet media=print onload='this.media="print"' integrity="sha512-XPrMPPyw9AxUVPlcja8Q4eSMRblA7CitTvBLc6kvF0aqd8VATHwgBbYeit6J9E7nzctz9I0Rs/v71nCpDXCqMA==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-critical.min.css rel=stylesheet media=all onload='this.media="all"' integrity="sha512-dTjOFO8HW8osnU0PTWxK38WkhQSa5M3FvYTHYEanB6jUvX9E1X6iAle0IJLP16syY26haWC7zV5ba2Fs9tn5xg==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-tablet.min.css rel=stylesheet media="screen and (min-width: 40rem)" onload='this.media="screen and (min-width: 40rem)"' integrity="sha512-5wCMBKmbZn1Mpn9dY6rfasNcrfE+z6xNma5H6pnAAXFeJuIpUK3fG5nmPWIPeXSwIis+1MqR+fIEMp41g/j4cA==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-desktop.min.css rel=stylesheet media="screen and (min-width: 80rem)" onload='this.media="screen and (min-width: 80rem)"' integrity="sha512-P3oHnbewtCGj9wz+wRrIbC0VTcr4TmvqXX1DBOQEmYOJY1rrr5A4FZevrsL2BL5Z3hNw2wZ1jUmNEwBIS3v8ow==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-widescreen.min.css rel=stylesheet media="screen and (min-width: 120rem)" onload='this.media="screen and (min-width: 120rem)"' integrity="sha512-4/XaSIkGtWjXwVvs0EVnzgIcqqn+JdskwCkHF/jQXGCyW39BACYtS5U5K3EHFTAP6sYcvmRErcGVS3jnVPg2Ig==" crossorigin=anonymous>
+<meta name=generator content="Hugo 0.91.2">
+</head>
+<body style=--body-grid-tablet:var(--layout-left-and-top);--body-grid-desktop:var(--layout-left-and-top);--body-grid-widescreen:var(--layout-left-and-top)>
+<main>
+<section id=introduction>
+<h1>Setup Meta Processing</h1>
+<p>
+Monteur has a special metadata processing function for keeping its Setup CI Job
+sane and maintainable. Here's its working mechanics and specifications!
+</p>
+</section>
+<section id=the-problem>
+<h2>The Problem</h2>
+<p>
+It was started with supporting development on various operating
+system and CPU archictures. Due to this, many software and tool
+packages are organized in its own list of distributions, naming
+conventions, and release strategies.
+<br><br>
+Among known problems are:
+<ol>
+<li><p>
+<b>There are simply too many platform
+variants and archiving formats</b> offered by
+3rd-party software for great cross-platform
+experiences.
+</p></li>
+<li><p>
+<b>There are no consistent executable scripts
+(e.g. <code>shell</code> vs
+<code>batch</code>)</b> that allows unilingual
+scripting.
+</p></li>
+<li><p>
+<b>There are various combinations and
+permutations of methods to make dependencies
+available</b> for a development.
+</p></li>
+<li><p>
+<b>All the problems above are specific to Setup
+API</b> and not seen in other jobs.
+</p></li>
+</ol>
+</p>
+</section>
+<section id=the-solution>
+<h2>The Solution</h2>
+<p>
+Since Monteur wants its dependencies management to be managable
+via <b>ONE (1)</b> interface without too many duplications, this
+setup meta processing function is created to solve all the
+problems above.
+To solve the problem above, Monteur uses this <b>Setup Meta
+Processing function to solve those
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/>Setup
+CI Job</a> specific problems above</b> for any amount of the
+supplied variants in a managable manner. The idea is to:
+<ol>
+<li><p>
+Keep the dependency artifact sourcing from
+supplier <b>maintainable using the overwrite
+policy</b>.
+</p></li>
+<li><p>
+<b>Facilitates various type of built-in sourcing
+methods</b> to meet various sourcing needs.
+</p></li>
+<li><p>
+<b>Acts as a command intepreter whenever
+possible</b> for ensuring performance
+consistencies across different platforms
+specifically dealing with
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/>Setup CI Job</a>.
+</p></li>
+</ol>
+By doing so, we kept the development, maintenance, and using
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/>Setup CI Job</a> experiences seamlessly easy
+to perform.
+</p>
+<section id=current-deployment>
+<h3>Current Deployment</h3>
+<p>
+Currently, this function is deployed in the following
+CI Jobs:
+<ol>
+<li><p>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/>
+Setup</a>
+since Monteur version
+<code>v0.0.1</code>.
+</p></li>
+</ol>
+</p>
+</section>
+</section>
+<section id=data-structure>
+<h2>Data Structure</h2>
+<p>
+This function is specifically built into the
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/>
+Setup CI Job</a>. Hence, its data structure is <b>scattered
+across various parts and sections of the CI Job recipe</b>.
+In this specification, all its settings are specified in each
+sub-sections by following the CI Job's recipe's data file
+from top to bottom.
+</p>
+<section id=sourcing-method-type>
+<h3>Sourcing Method Type</h3>
+<p>
+This function offers a number of sourcing method types
+that are offered in its own catalog section offered
+later in this page. Each type has its own explaination
+of its requirements and the how-to in the recipe file.
+The configuration is set via <code>Metadata.Type</code>.
+Here is a code snippet of the recipe file:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-bash data-lang=bash><span style=color:#666>[</span>Metadata<span style=color:#666>]</span>
+...
+<span style=color:#19177c>Type</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;https-download&#39;</span>
+
+...</code></pre></td></tr></table>
+</div>
+</div>
+</p>
+</section>
+<section id=recipe-sourcing-section>
+<h3>Recipe Sourcing Section</h3>
+<p>
+This function has a very special method to list all the
+recipe's sourcing data complying to <b>Don't Repeat
+Yourself</b> policy. To do that, the function employs
+<b>the overwriting policy</b> allowing one to first
+write a generic settings and then overwrite the
+needed fields with specific data.
+<br><br>
+Depending on the sourcing method type above, some types
+might not need all the fields. Hence, please refer to
+your selected sourcing method type's specification on
+how to construct this section.
+<br><br>
+Here is the full list of data fields along with its
+dummy data for specification's referencing purposes:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-bash data-lang=bash><span style=color:#666>[</span>Sources.<span style=color:#666>{</span>OS<span style=color:#666>}</span>-<span style=color:#666>{</span>ARCH<span style=color:#666>}]</span>
+<span style=color:#19177c>Format</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;tar.gz&#39;</span>
+<span style=color:#19177c>URL</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;{{- .BaseURL -}}{{- .Archive -}}&#39;</span>
+<span style=color:#19177c>Archive</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;go{{- .Version -}}.{{- .ComputeSystem -}}.{{- .Format -}}&#39;</span>
+<span style=color:#19177c>Method</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;GET&#39;</span>
+
+<span style=color:#666>[</span>Sources.<span style=color:#666>{</span>OS<span style=color:#666>}</span>-<span style=color:#666>{</span>ARCH<span style=color:#666>}</span>.Checksum<span style=color:#666>]</span>
+<span style=color:#19177c>Type</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;sha256&#39;</span>
+<span style=color:#19177c>Format</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;hex&#39;</span>
+<span style=color:#19177c>Value</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;...&#39;</span>
+
+<span style=color:#666>[</span>Sources.<span style=color:#666>{</span>OS<span style=color:#666>}</span>-<span style=color:#666>{</span>ARCH<span style=color:#666>}</span>.Headers<span style=color:#666>]</span>
+<span style=color:#ba2121>&#34;User-Agent&#34;</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148&#39;</span>
+<span style=color:#ba2121>&#34;auth-token&#34;</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#34;{{- GetSecret &#34;</span>Github.Token<span style=color:#ba2121>&#34; -}}&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li><p>
+<code>Sources.{OS}-{ARCH}</code>
+<ol>
+<li><p>
+The <a href=https://monteur.zoralab.com/en/internals/platform-identification/>
+Monteur Platform
+ID</a> for this sourcing
+data to be effective.
+Example:
+<code>[Sources.all-all]</code>
+and
+<code>[Sources.linux-amd64]</code>.
+</p></li>
+<li><p>
+<b>COMPULSORY</b> - this
+setting is used for
+uniquely grouping and
+structuring source data
+between multiple groups
+of data fields. It is
+also used for
+facilitating
+cross-platform supports
+like listing all the
+sources here instead of
+spinning multiple recipe
+files.
+</p></li>
+<li><p>
+This field was added
+since Monteur version
+<code>v0.0.1</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Sources.{OS}-{ARCH}.Format</code>
+<ol>
+<li><p>
+Originally designed to
+specify the source
+format.
+</p></li>
+<li><p>
+<b>COMPULSORY /
+OPTIONAL</b> - Its
+definition is in the
+selected sourcing method
+type's specification.
+</p></li>
+<li><p>
+Supported built-in
+format are
+<code>raw</code>,
+<code>tar.gz</code>,
+and
+<code>zip</code>.
+</p></li>
+<li><p>
+This field was added
+since Monteur version
+<code>v0.0.1</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Sources.{OS}-{ARCH}.URL</code>
+<ol>
+<li><p>
+Originally designed to
+specify the source URL
+for networking sourcing
+type.
+</p></li>
+<li><p>
+<b>COMPULSORY /
+OPTIONAL</b> - Its
+definition is in the
+selected sourcing method
+type's specification.
+</p></li>
+<li><p>
+Depending on the
+sourcing method type,
+some can implement
+Monteur's built-in
+functions like unpack
+<code>https</code>
+download.
+</p></li>
+<li><p>
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/#variables-formatting>
+Variables
+formatting</a> is
+available for this field.
+</p></li>
+<li><p>
+This field was added
+since Monteur version
+<code>v0.0.1</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Sources.{OS}-{ARCH}.Archives</code>
+<ol>
+<li><p>
+Originally designed to
+define the downloaded
+archived filename
+pattern.
+</p></li>
+<li><p>
+<b>COMPULSORY /
+OPTIONAL</b> - Its
+definition is in the
+selected sourcing method
+type's specification.
+</p></li>
+<li><p>
+Depending on the
+sourcing method type,
+some can implement
+Monteur's built-in
+functions like unpack
+<code>https</code>
+download.
+</p></li>
+<li><p>
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/#variables-formatting>
+Variables
+formatting</a> is
+available for this field.
+</p></li>
+<li><p>
+This field was added
+since Monteur version
+<code>v0.0.1</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Sources.{OS}-{ARCH}.Method</code>
+<ol>
+<li><p>
+Originally designed to
+define the HTTPS method
+for HTTPS download type.
+</p></li>
+<li><p>
+<b>COMPULSORY /
+OPTIONAL</b> - Its
+definition is in the
+selected sourcing method
+type's specification.
+</p></li>
+<li><p>
+Depending on the
+sourcing method type,
+some can implement
+Monteur's built-in
+functions like unpack
+<code>https</code>
+download.
+</p></li>
+<li><p>
+This field was added
+since Monteur version
+<code>v0.0.1</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Sources.{OS}-{ARCH}.Checksum</code>
+<ol>
+<li><p>
+Perform checksum
+integrity checking using
+Monteur's built-in
+checksum function.
+</p></li>
+<li><p>
+<b>COMPULSORY /
+OPTIONAL</b> - Its
+definition is in the
+selected sourcing method
+type's specification.
+</p></li>
+<li><p>
+This field was added
+since Monteur version
+<code>v0.0.1</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Sources.{OS}-{ARCH}.Checksum.Type</code>
+<ol>
+<li><p>
+Defines the checksum
+algorithm type.
+Supported algorithms
+are:
+<code>md5</code>,
+<code>sha256</code>,
+<code>sha512</code>,
+and
+<code>sha512->sha256</code>.
+</p></li>
+<li><p>
+<b>COMPULSORY</b> - if
+<code>Sources.{OS}-{ARCH}.Checksum</code>
+is enabled.
+</p></li>
+<li><p>
+This field was added
+since Monteur version
+<code>v0.0.1</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Sources.{OS}-{ARCH}.Checksum.Format</code>
+<ol>
+<li><p>
+Defines the format of
+the checksum value.
+Supported values are:
+<code>hex</code>,
+<code>base64</code>,
+and
+<code>base64-url</code>.
+</p></li>
+<li><p>
+<b>COMPULSORY</b> - if
+<code>Sources.{OS}-{ARCH}.Checksum</code>
+is enabled.
+</p></li>
+<li><p>
+This field was added
+since Monteur version
+<code>v0.0.1</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Sources.{OS}-{ARCH}.Checksum.Value</code>
+<ol>
+<li><p>
+Defines the checksum
+value.
+</p></li>
+<li><p>
+<b>COMPULSORY</b> - if
+<code>Sources.{OS}-{ARCH}.Checksum</code>
+is enabled.
+</p></li>
+<li><p>
+This field was added
+since Monteur version
+<code>v0.0.1</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Sources.{OS}-{ARCH}.Headers</code>
+<ol>
+<li><p>
+Originally designed for
+HTTPS sourcing method
+type to append or
+overwrite the HTTPS
+request headers.
+</p></li>
+<li><p>
+<b>OPTIONAL</b> - made
+available in case there
+is a need for
+customization like
+setting authentication
+token.
+</p></li>
+<li><p>
+The final value is a
+list of
+<code>KEY:VALUE</code>
+headers where the
+<code>KEY</code> is the
+header identifer while
+<code>VALUE</code> is
+the value of the header.
+<b>Both <code>KEY</code>
+and <code>VALUE</code>
+are as it is</b>.
+</p></li>
+<li><p>
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/#variables-formatting>
+Variables formatting
+</a> is available for
+the <code>VALUE</code>
+of the field.
+</p></li>
+<li><p>
+This field was added
+since Monteur version
+<code>v0.0.1</code>.
+</p></li>
+</ol>
+</p></li>
+</ul>
+</p>
+</section>
+<section id=user-startup-configurations>
+<h3>User Startup Configurations</h3>
+<p>
+This function also offers a standard methods of starting
+up the project repository after setup completions. This
+allows the user to startup the repository for any tasks
+in a uniformed manner.
+<br><br>
+From Monteur version <code>v0.0.1</code>, this function
+uses the operating system's command line scripting
+method to source all configurations. A full list of its
+data structure is shown below:
+<aside class="note info"><svg class="icon" width="25" height="25" viewBox="0 0 13.229 13.229" xmlns="http://www.w3.org/2000/svg"><g transform="translate(1.1061 -.94431)"><path d="m12.123 7.5589a6.6146 6.6146.0 01-6.6146 6.6146 6.6146 6.6146.0 01-6.6146-6.6146A6.6146 6.6146.0 015.5084.9443a6.6146 6.6146.0 016.6146 6.6146z" fill="#00f" stroke-linecap="round" stroke-width="2.1167"/><g transform="scale(1.2104 .82615)" fill="#fff" stroke-width=".51023" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal" aria-label="i"><path d="m5.4897 5.2207c.59187-.53064.63269-.57146 1.3266-1.1021-.12246-.24491-.2245-.40819-.26532-.46941-.12246-.24491-.14287-.26532-.30614-.6531-.040819-.081637-.081637-.16327-.12246-.26532-.10205.081637-.2245.16327-.28573.2245-.081637.081637-.24491.20409-.449.36737-.10205.081637-.24491.18368-.4286.30614-.081637.061228-.16327.12246-.24491.16327.14287.449.32655.77555.77555 1.4287zm1.4082 7.7147c-1.9389 1.0409-1.9797 1.0613-2.245 1.0613-.2245.0-.36737-.2245-.36737-.57146.0-.20409.061228-.59187.18368-1.0409 1.0409-4.286 1.245-5.1023 1.245-5.2656.0-.12246-.10205-.20409-.24491-.20409-.34696.0-1.5511.67351-3.2247 1.796l-.040819.57146c1.2041-.6531 1.3062-.69392 1.4899-.69392.16327.0.24491.12246.24491.36737.0.26532-.061228.55105-.36737 1.7144-.95924 3.5716-.95924 3.5716-.95924 4.0819.0.48982.20409.81637.48982.81637.34696.0.89801-.26532 1.9797-.95924.38778-.24491.77555-.48982 1.1633-.75514.18368-.10205.36737-.2245.57146-.34696z" fill="#fff" stroke-width=".51023" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal"/></g></g></g></svg>
+<p class=title>For Your Info</p>
+<div class=content><p>A development is on-going to make Monteur removes all these scripting needs and
+set itself as an intepreter to:</p>
+<ol>
+<li>Reduce the learning curves needs (e.g. learning shell and powershell
+scripting).</li>
+<li>Reduce Monteur dependencies on external programs.</li>
+</ol>
+</div>
+</aside>
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-bash data-lang=bash><span style=color:#666>[</span>Config<span style=color:#666>]</span>
+<span style=color:#19177c>linux</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#34;&#34;&#34;
+</span><span style=color:#ba2121>#!/bin/bash
+</span><span style=color:#ba2121>
+</span><span style=color:#ba2121>_name=&#34;</span>hugo<span style=color:#ba2121>&#34;
+</span><span style=color:#ba2121>
+</span><span style=color:#ba2121>case </span><span style=color:#19177c>$1</span><span style=color:#ba2121> in
+</span><span style=color:#ba2121>--stop)
+</span><span style=color:#ba2121>	;;
+</span><span style=color:#ba2121>*)
+</span><span style=color:#ba2121>	if [ ! -z &#34;</span><span style=color:green;font-weight:700>$(</span><span style=color:green>type</span> -p <span style=color:#ba2121>&#34;</span><span style=color:#19177c>$_name</span><span style=color:#ba2121>&#34;</span><span style=color:green;font-weight:700>)</span><span style=color:#ba2121>&#34; ]; then
+</span><span style=color:#ba2121>		1&gt;&amp;2 printf &#34;</span><span style=color:#666>[</span> DONE  <span style=color:#666>]</span> <span style=color:#ba2121>&#39;$_name&#39;</span> is available.<span style=color:#b62;font-weight:700>\\</span>n<span style=color:#ba2121>&#34;
+</span><span style=color:#ba2121>        else
+</span><span style=color:#ba2121>		1&gt;&amp;2 printf &#34;</span><span style=color:#666>[</span> ERROR <span style=color:#666>]</span> <span style=color:#ba2121>&#39;$_name&#39;</span> is missing.<span style=color:#b62;font-weight:700>\\</span>n<span style=color:#ba2121>&#34;
+</span><span style=color:#ba2121>	fi
+</span><span style=color:#ba2121>	;;
+</span><span style=color:#ba2121>esac
+</span><span style=color:#ba2121>&#34;&#34;&#34;</span>
+<span style=color:#19177c>windows</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#34;&#34;&#34;
+</span><span style=color:#ba2121>...COMING SOON...
+</span><span style=color:#ba2121>&#34;&#34;&#34;</span>
+<span style=color:#19177c>darwin</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#34;&#34;&#34;
+</span><span style=color:#ba2121>...COMING SOON...
+</span><span style=color:#ba2121>&#34;&#34;&#34;</span>
+...</code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li><p>
+<code>Config.{OS}</code>
+<ol>
+<li><p>
+The <code>{OS}</code>
+<b>MUST</b> be the
+<a href=https://monteur.zoralab.com/en/internals/platform-identification/>
+Monteur Platform
+ID</a> like
+<code>linux</code> and
+<code>windows</code>.
+</p></li>
+<li><p>
+<b>COMPULSORY</b> - the
+value <b>MUST</b> be the
+operating system's
+terminal scripts like
+<code>shell</code> or
+<code>powershell</code>
+scripts.
+</p></li>
+<li><p>
+Whenever applicable,
+<b>Montuer shall never
+set these scripts to
+be executables</b>.
+</p></li>
+<li><p>
+This field was added
+since Monteur version
+<code>v0.0.1</code>.
+</p></li>
+</ol>
+</p></li>
+</ul>
+</p>
+</section>
+</section>
+<section id=available-sourcing-methods>
+<h3>Available Sourcing Methods</h3>
+<p>
+Monteur shall continuously develop and add new sourcing methods
+(<code>Metadata.Type</code>) from time to time. Here are the
+available sourcing methods at your disposal:
+</p>
+</section>
+<nav class=nav-catalog><div class=row>
+<div class=column>
+<article class="Card vertical" id=nav-catalog-local-system-sourcing-type style=--card-width:300px;--card-height:750px>
+<div class=thumbnail>
+<img alt="ZORALab's Monteur Setup Meta Processing - Local System" src=https://monteur.zoralab.com/en/internals/setup-meta/default-480x480.png width=300px height=300px>
+</div>
+<div class=content><h3 id=local-system-sourcing-type>Local System Sourcing Type</h3>
+<p>Wed, 15 Jun 2022 08:11:10 +0800</p>
+<p>Montuer has a built-in local system sourcing method for its Setup Meta processing function. Here's its working mechanics and specifications.</p>
+</div>
+<div class=cta><ul class=default><li><a class="button clean" href=https://monteur.zoralab.com/en/internals/setup-meta/local-system/>Explore</a></li></ul></div>
+</article>
+</div>
+<div class=column>
+<article class="Card vertical" id=nav-catalog-https-download-sourcing-type style=--card-width:300px;--card-height:750px>
+<div class=thumbnail>
+<img alt="ZORALab's Monteur Setup Meta Processing - HTTPS Download Type" src=https://monteur.zoralab.com/en/internals/setup-meta/default-480x480.png width=300px height=300px>
+</div>
+<div class=content><h3 id=https-download-sourcing-type>HTTPS Download Sourcing Type</h3>
+<p>Wed, 15 Jun 2022 07:22:28 +0800</p>
+<p>Montuer has a built-in HTTPS download sourcing method for its Setup Meta processing function. Here's its working mechanics and specifications.</p>
+</div>
+<div class=cta><ul class=default><li><a class="button clean" href=https://monteur.zoralab.com/en/internals/setup-meta/https-download/>Explore</a></li></ul></div>
+</article>
+</div>
+</div></nav>
+<footer>
+<p><span>© All Rights Reserved</span><span>— Monteur Team, ZORALab Team</span></p>
+</footer>
+</main><nav class=nav-sidebar>
+<input id=nav-sidebar-5f39835 class=nav-sidebar-trigger type=checkbox>
+<label class=nav-sidebar-trigger for=nav-sidebar-5f39835><span class="nav-sidebar-icon nav-sidebar-menu">☰</span><span class="nav-sidebar-icon nav-sidebar-close">𝖷</span></label>
+<label class=nav-sidebar-shade for=nav-sidebar-5f39835>
+</label>
+<ul class=nav-sidebar-list>
+<li class=nav-sidebar-title>
+<img alt src=https://monteur.zoralab.com/img/logo/zoralab-monteur-1200x1200.svg class=nav-sidebar-logo width=200 height=200>
+<p>Monteur</p></li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/><span class=pre>💠</span>Home</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/><span class=pre>📥</span>Downloads</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/getting-started/><span class=pre>🛫</span>Getting Started</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/licenses/><span class=pre>⚖️</span>Licenses</a>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-220e3fa type=checkbox checked>
+<label for=nav-sidebar-submenu-220e3fa><span class=nav-sidebar-submenu-icon>➣</span><span>CI Jobs</span></label>
+<ul id=nav-sidebar-submenu-list-220e3fa>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/clean/><pre>🧹</pre>Clean</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/test/><pre>⚗️</pre>Test</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/><pre>🧶</pre>Prepare</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/build/><pre>🧰</pre>Build</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/><pre>📦</pre>Package</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/><pre>🌾</pre>Release</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/compose/><pre>📝</pre>Compose</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/><pre>📖</pre>Publish</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-a5bc3c7 type=checkbox checked>
+<label for=nav-sidebar-submenu-a5bc3c7><span class=nav-sidebar-submenu-icon>➣</span><span>Native - Monteur</span></label>
+<ul id=nav-sidebar-submenu-list-a5bc3c7>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/clean/deep-cleaning/><pre>🧹</pre>Clean (Deep Cleaning)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/changelog-deb/><pre>🧶</pre>Prepare (DEB Changelog)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/version-file-scripting/><pre>🧶</pre>Prepare (Version File Scripting)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/targz/><pre>📦</pre>Package (TarGz)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/zip/><pre>📦</pre>Package (Zip)</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-f36af07 type=checkbox checked>
+<label for=nav-sidebar-submenu-f36af07><span class=nav-sidebar-submenu-icon>➣</span><span>Platform - GitLab</span></label>
+<ul id=nav-sidebar-submenu-list-f36af07>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/getting-started/gitlab/><pre>🛫</pre>Getting Started - GitLab CI</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/><pre>📖</pre>Publish (GitLab Pages)</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-5b11fbd type=checkbox checked>
+<label for=nav-sidebar-submenu-5b11fbd><span class=nav-sidebar-submenu-icon>➣</span><span>Software - DEBuild</span></label>
+<ul id=nav-sidebar-submenu-list-5b11fbd>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/debuild/><pre>📦</pre>Package</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-f03c66a type=checkbox checked>
+<label for=nav-sidebar-submenu-f03c66a><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Go</span></label>
+<ul id=nav-sidebar-submenu-list-f03c66a>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/go/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/test/go/><pre>⚗️</pre>Test</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/build/go/><pre>🧰</pre>Build</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-d1ab4bc type=checkbox checked>
+<label for=nav-sidebar-submenu-d1ab4bc><span class=nav-sidebar-submenu-icon>➣</span><span>Software - GolangCI-Lint</span></label>
+<ul id=nav-sidebar-submenu-list-d1ab4bc>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/golangci-lint/><pre>🧩</pre>Setup</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-c0ac3bd type=checkbox checked>
+<label for=nav-sidebar-submenu-c0ac3bd><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Hugo</span></label>
+<ul id=nav-sidebar-submenu-list-c0ac3bd>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/hugo/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/compose/hugo/><pre>📝</pre>Compose</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-2998e89 type=checkbox checked>
+<label for=nav-sidebar-submenu-2998e89><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Reprepro</span></label>
+<ul id=nav-sidebar-submenu-list-2998e89>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/reprepro/><pre>🌾</pre>Release</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-ef58375 type=checkbox checked>
+<label for=nav-sidebar-submenu-ef58375><span class=nav-sidebar-submenu-icon>➣</span><span>Versions</span></label>
+<ul id=nav-sidebar-submenu-list-ef58375>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-1/><pre>🏅</pre>v0.0.1</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-2/><pre>🏅</pre>v0.0.2</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-3/><pre>🏅</pre>v0.0.3</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-47c6ce2 type=checkbox checked>
+<label for=nav-sidebar-submenu-47c6ce2><span class=nav-sidebar-submenu-icon>➣</span><span>Z) Monteur Internals</span></label>
+<ul id=nav-sidebar-submenu-list-47c6ce2>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/changelog-meta/><pre>📚</pre>Changelog Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/><pre>📑</pre>CI Job Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/code-of-conduct/><pre>🧬</pre>Code of Conduct</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/commands/><pre>🧑‍✈️</pre>Commands Execution Unit</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/dependencies-checking/><pre>🧮</pre>Dependencies Checking</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/init-job/><pre>🛫</pre>Init Job</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/secrets/><pre>🙊</pre>Managing Secrets</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/package-meta/><pre>📋</pre>Package Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/platform-identification/><pre>🧿</pre>Platform Identification</a>
+</li>
+<li class="active nav-sidebar-link">
+<a href=https://monteur.zoralab.com/en/internals/setup-meta/><pre>🧩</pre>Setup Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/><pre>🪢</pre>Variables Processing</a>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</body>
+</html>

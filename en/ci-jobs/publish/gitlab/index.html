@@ -1,0 +1,491 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,initial-scale=1">
+<meta name=description content="Montuer has a continuously developed publish recipe dedicated for GitLab Pages, a great platform for web content publications.">
+<meta name=keywords content="GitLab Pages,Publish CI Job,ZORALab's Monteur,configurations,documentation">
+<meta name=author content="Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho">
+<link rel=canonical href=https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/><link rel=apple-touch-icon sizes=57x57 href=https://monteur.zoralab.com/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=https://monteur.zoralab.com/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=https://monteur.zoralab.com/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=https://monteur.zoralab.com/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=https://monteur.zoralab.com/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=https://monteur.zoralab.com/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=https://monteur.zoralab.com/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=https://monteur.zoralab.com/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=https://monteur.zoralab.com/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=https://monteur.zoralab.com/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=https://monteur.zoralab.com/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=https://monteur.zoralab.com/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=https://monteur.zoralab.com/favicon-16x16.png>
+<link rel=manifest href=https://monteur.zoralab.com/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:site content="ZORALab_Team">
+<meta name=twitter:creator content="Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho">
+<meta property="og:site_name" content="Monteur">
+<meta property="og:title" content="GitLab Pages Publish Recipe | Monteur">
+<meta property="og:locale" content="en">
+<meta property="og:description" content="Montuer has a continuously developed publish recipe dedicated for GitLab Pages, a great platform for web content publications.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/">
+<meta property="og:image" content="https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/default-1200x628.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="628">
+<meta property="og:image:alt" content="ZORALab's Monteur - Publish with GitLab Pages">
+<meta property="og:image" content="https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/default-1200x1200.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="1200">
+<meta property="og:image:alt" content="ZORALab's Monteur - Publish with GitLab Pages">
+<meta property="og:image" content="https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/default-480x480.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="480">
+<meta property="og:image:height" content="480">
+<meta property="og:image:alt" content="ZORALab's Monteur - Publish with GitLab Pages">
+<script type=application/ld+json>{"@context":"https://schema.org/","@type":"WebPage","author":"Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho","dateCreated":"2021-12-22T18:26:41+08:00","dateModified":"2022-06-21T06:54:41+08:00","datePublished":"2021-12-22T18:26:41+08:00","description":"Montuer has a continuously developed publish recipe dedicated for GitLab Pages, a great platform for web content publications.","image":"https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/default-1200x628.png","inLanguage":"en","keywords":"GitLab Pages, Publish CI Job, ZORALab's Monteur, configurations, documentation","name":"GitLab Pages Publish Recipe","schemaVersion":"https://schema.org/version/8.0/","thumbnailUrl":"https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/default-1200x628.png","url":"https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/"}</script>
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-101500797-1','auto'),ga('send','pageview')</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<title>GitLab Pages Publish Recipe | Monteur</title>
+<link href=https://monteur.zoralab.com/css/bissetii-critical.min.css rel=stylesheet media=all onload='this.media="all"' integrity="sha512-dTjOFO8HW8osnU0PTWxK38WkhQSa5M3FvYTHYEanB6jUvX9E1X6iAle0IJLP16syY26haWC7zV5ba2Fs9tn5xg==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-print.min.css rel=stylesheet media=print onload='this.media="print"' integrity="sha512-XPrMPPyw9AxUVPlcja8Q4eSMRblA7CitTvBLc6kvF0aqd8VATHwgBbYeit6J9E7nzctz9I0Rs/v71nCpDXCqMA==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-tablet.min.css rel=stylesheet media="screen and (min-width: 40rem)" onload='this.media="screen and (min-width: 40rem)"' integrity="sha512-5wCMBKmbZn1Mpn9dY6rfasNcrfE+z6xNma5H6pnAAXFeJuIpUK3fG5nmPWIPeXSwIis+1MqR+fIEMp41g/j4cA==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-desktop.min.css rel=stylesheet media="screen and (min-width: 80rem)" onload='this.media="screen and (min-width: 80rem)"' integrity="sha512-P3oHnbewtCGj9wz+wRrIbC0VTcr4TmvqXX1DBOQEmYOJY1rrr5A4FZevrsL2BL5Z3hNw2wZ1jUmNEwBIS3v8ow==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-widescreen.min.css rel=stylesheet media="screen and (min-width: 120rem)" onload='this.media="screen and (min-width: 120rem)"' integrity="sha512-4/XaSIkGtWjXwVvs0EVnzgIcqqn+JdskwCkHF/jQXGCyW39BACYtS5U5K3EHFTAP6sYcvmRErcGVS3jnVPg2Ig==" crossorigin=anonymous>
+<meta name=generator content="Hugo 0.91.2">
+</head>
+<body style=--body-grid-tablet:var(--layout-left-and-top);--body-grid-desktop:var(--layout-left-and-top);--body-grid-widescreen:var(--layout-left-and-top)>
+<main>
+<section id=introduction>
+<h1>GitLab Pages Publish Recipe</h1>
+<p>Montuer has a continuously developed publish recipe dedicated for GitLab Pages,
+a great platform for web content publications.
+<br><br>
+The objective is simple: <b>to quickly and steadily setup GitLab Pages
+publication operations up and ready, and seamlessly easy</b>.
+<br><br>
+All users has to do is to issue this command:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>monteur publish</code></pre></td></tr></table>
+</div>
+</div>
+<br>
+For this recipe, they are arranged based on its own
+<a href=https://semver.org/>semantic versioning</a> and is not
+directly related to Monteur's actual release version. Hence,
+feel free to explore and update each versions to suit your CI
+needs.
+</p>
+</section>
+<section id=resources>
+<h2>Resources</h2>
+<p>
+This recipe is built and maintained based on the following
+resources:
+</p>
+<ul>
+<li><p>
+GitLab Pages -
+<b>
+<a href=https://docs.gitlab.com/ee/user/project/pages/>
+https://docs.gitlab.com/ee/user/project/pages/</a>
+</b>
+</p></li>
+<li><p>
+GitHub Pages -
+<b>
+<a href=https://pages.github.com/>
+https://pages.github.com/</a>
+</b>
+</p></li>
+<li><p>
+Monteur Publish Data Structure -
+<b>
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/>
+https://monteur.zoralab.com/en/ci-jobs/publish/</a>
+</b>
+</p></li>
+</ul>
+</section>
+<section id=one-time-setup>
+<h2>One-Time Setup</h2>
+<aside class="note warning"><svg class="icon" width="25" height="25" viewBox="0 0 13.229 13.229" xmlns="http://www.w3.org/2000/svg"><g transform="translate(1.1061 -.94431)"><path transform="matrix(.55955 0 0 .63651 -.2204 4.4326)" d="m21.052 14.296-21.628-.077477 10.881-18.692z" fill="#ffea00" stroke="#ffea00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.0148"/><g transform="scale(1.0636 .94018)" fill="#fff" stroke-width=".30947" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal" aria-label="!"><path d="m4.5786 11.075H5.767l.25995-4.5678.061894-1.7207h-1.8321l.061894 1.7207zm.59418 3.2928c.6437.0 1.1388-.51991 1.1388-1.1884s-.49515-1.1884-1.1388-1.1884c-.6437.0-1.1265.51991-1.1265 1.1884s.48277 1.1884 1.1265 1.1884z" fill="#fff" stroke-width=".30947" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal"/></g></g></svg>
+<p class=title>Be Careful</p>
+<div class=content>Make sure you perform the following with a git repository on a clean status
+branch (no staging). Otherwise, you will lose files as one of the command
+actually deletes everything.</div>
+</aside>
+<p>
+To ensure maximum portability, Monteur recommends the use of
+<code>gh-pages</code>, a git branch where GitHub is recognizing
+for its <a href=https://pages.github.com/>GitHub Pages</a> in
+<a href=https://docs.gitlab.com/ee/user/project/pages/>GitLab
+Pages</a> implementations. That way, when there is a need to
+migrate between GitHub and GitLab in either directions, it
+should offer a seamless no-technical-steps required migration
+experiences.
+<br><br>
+However, doing so requires a ONE-TIME (1) setup with that
+<code>gh-pages</code> branch. To begin, you simple execute
+the following git commands on <b>a clean, no staging, and no new
+editing branch</b>.
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-bash data-lang=bash>$ git checkout --orphan gh-pages
+$ git reset --hard
+$ git clean -fd
+$ git commit --allow-empty -m <span style=color:#ba2121>&#34;Init&#34;</span>
+$ git push origin gh-pages:gh-pages
+$ git checkout &lt;back to your work branch&gt;</code></pre></td></tr></table>
+</div>
+</div>
+<br>
+The next step is to ensure your <code>.gitlab-ci.yml</code> CI
+configuration file has the following task:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-yaml data-lang=yaml><span style=color:green;font-weight:700>pages</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>stage</span>:<span style=color:#bbb> </span>docs<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>tags</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- linux<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>environment</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>production<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>only</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>refs</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>      </span>- gh-pages<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>cache</span>:<span style=color:#bbb> </span>[]<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>artifacts</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>paths</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>      </span>- public<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>expire_in</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb> </span>day<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>before_script</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- mkdir -p public<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- shopt -s extglob<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- mv !(public|.*) public<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>script</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>- printf &#34;[ DONE ] Nothing to implement. Proceed to deploy web content.\n&#34;</code></pre></td></tr></table>
+</div>
+</div>
+<aside class="note warning"><svg class="icon" width="25" height="25" viewBox="0 0 13.229 13.229" xmlns="http://www.w3.org/2000/svg"><g transform="translate(1.1061 -.94431)"><path transform="matrix(.55955 0 0 .63651 -.2204 4.4326)" d="m21.052 14.296-21.628-.077477 10.881-18.692z" fill="#ffea00" stroke="#ffea00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.0148"/><g transform="scale(1.0636 .94018)" fill="#fff" stroke-width=".30947" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal" aria-label="!"><path d="m4.5786 11.075H5.767l.25995-4.5678.061894-1.7207h-1.8321l.061894 1.7207zm.59418 3.2928c.6437.0 1.1388-.51991 1.1388-1.1884s-.49515-1.1884-1.1388-1.1884c-.6437.0-1.1265.51991-1.1265 1.1884s.48277 1.1884 1.1265 1.1884z" fill="#fff" stroke-width=".30947" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal"/></g></g></svg>
+<p class=title>IMPORTANT</p>
+<div class=content>
+<ol>
+<li><p>
+<b>DO NOT</b> rename the task name (<code>pages</code>) into
+something else.
+</p></li>
+<li><p>
+<b>DO NOT</b> remove the expiry time(<code>expire_in</code>).
+Otherwise, your repository will bloat beyond the
+<a href=https://docs.gitlab.com/ee/user/gitlab_com/index.html#account-and-limit-settings>
+Storage Limit</a> easily.
+</p></li>
+</ol>
+</div>
+</aside>
+Once everything are done, you may proceed to recipe procurement
+as usual.
+</p>
+</section>
+<section id=recipe-file>
+<h2>Recipe File</h2>
+<p>
+Here are all the Monteur Publish CI Job recipe files
+for operating <code>GitLab Pages</code> semi-autonomously.
+They are sorted by <b>the latest version first, at the top</b>.
+<br><br>
+Please read through its requiremnets and changes before
+procuring.
+</p>
+<section id=version-v1p0p0>
+<h3>Version v1.0.0</h3>
+<p>
+Download Link:
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/reprepro/gitlab-pages-v1p0p0.toml class=button download>gitlab-pages-v1p0p0.toml</a>
+</p>
+<section id=version-v1p0p0-requirements>
+<h4>Minimum Requirements</h4>
+<ul>
+<li><p>Montuer version: <b><code>v0.0.1</code> and above</b>.</p></li>
+<li><p>Supported platform: <b>STRICTLY depends on <code>git</code> availability</b>.
+</p></li>
+</ul>
+</section>
+<section id=version-v1p0p0-installations>
+<h4>Installation Instructions</h4>
+<ul>
+<li><p>Download and place the recipe file into your
+<code>.configs/monteur/publish/jobs</code> directory as
+<code>gitlab-pages.toml</code>.
+</p></li>
+<li><p>Update the recipe's <code>FMTVariables.SourceDir</code> pointing to the
+directory holding your website artifact (e.g. <code>public/</code>) directory.
+</p></li>
+<li><p>Update the recipe's <code>Dependencies</code> when needed to match your
+customization needs.
+</p></li>
+<li><p>Update the recipe's <code>CMD</code> when needed to match your customization
+needs.
+</p></li>
+</ul>
+</section>
+<section id=version-v1p0p0-changelog>
+<h4>Changelog</h4>
+<ul>
+<li><p><b>BACKWARD COMPATBILE</b> - Created the base TOML configuration recipe.</p></li>
+<li><p><b>BACKWARD COMPATBILE</b> - Tested with GitLab CI.</p></li>
+<li><p><b>BACKWARD COMPATBILE</b> - Implemented <code>gh-pages</code> branch method correctly.</p></li>
+<li><p><b>BACKWARD COMPATBILE</b> - Maintain single artifact commit to remove duplications and reduce git repository
+size as publication develops.
+</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id=epilogue>
+<h2>Epilogue</h2>
+<p>
+That's all for Monteur's Publish CI Job handling <code>GitLab Pages</code>
+web publication system.
+If you have any question, please feel free to raise your
+question at our <a href=https://github.com/ZORALab/Monteur/issues>Issues
+Section</a>.
+</p>
+</section>
+<footer>
+<p><span>© All Rights Reserved</span><span>— Monteur Team, ZORALab Team</span></p>
+</footer>
+</main><nav class=nav-sidebar>
+<input id=nav-sidebar-5f39835 class=nav-sidebar-trigger type=checkbox>
+<label class=nav-sidebar-trigger for=nav-sidebar-5f39835><span class="nav-sidebar-icon nav-sidebar-menu">☰</span><span class="nav-sidebar-icon nav-sidebar-close">𝖷</span></label>
+<label class=nav-sidebar-shade for=nav-sidebar-5f39835>
+</label>
+<ul class=nav-sidebar-list>
+<li class=nav-sidebar-title>
+<img alt src=https://monteur.zoralab.com/img/logo/zoralab-monteur-1200x1200.svg class=nav-sidebar-logo width=200 height=200>
+<p>Monteur</p></li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/><span class=pre>💠</span>Home</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/><span class=pre>📥</span>Downloads</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/getting-started/><span class=pre>🛫</span>Getting Started</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/licenses/><span class=pre>⚖️</span>Licenses</a>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-220e3fa type=checkbox checked>
+<label for=nav-sidebar-submenu-220e3fa><span class=nav-sidebar-submenu-icon>➣</span><span>CI Jobs</span></label>
+<ul id=nav-sidebar-submenu-list-220e3fa>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/clean/><pre>🧹</pre>Clean</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/test/><pre>⚗️</pre>Test</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/><pre>🧶</pre>Prepare</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/build/><pre>🧰</pre>Build</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/><pre>📦</pre>Package</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/><pre>🌾</pre>Release</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/compose/><pre>📝</pre>Compose</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/><pre>📖</pre>Publish</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-a5bc3c7 type=checkbox checked>
+<label for=nav-sidebar-submenu-a5bc3c7><span class=nav-sidebar-submenu-icon>➣</span><span>Native - Monteur</span></label>
+<ul id=nav-sidebar-submenu-list-a5bc3c7>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/clean/deep-cleaning/><pre>🧹</pre>Clean (Deep Cleaning)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/changelog-deb/><pre>🧶</pre>Prepare (DEB Changelog)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/version-file-scripting/><pre>🧶</pre>Prepare (Version File Scripting)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/targz/><pre>📦</pre>Package (TarGz)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/zip/><pre>📦</pre>Package (Zip)</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-f36af07 type=checkbox checked>
+<label for=nav-sidebar-submenu-f36af07><span class=nav-sidebar-submenu-icon>➣</span><span>Platform - GitLab</span></label>
+<ul id=nav-sidebar-submenu-list-f36af07>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/getting-started/gitlab/><pre>🛫</pre>Getting Started - GitLab CI</a>
+</li>
+<li class="active nav-sidebar-link">
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/><pre>📖</pre>Publish (GitLab Pages)</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-5b11fbd type=checkbox checked>
+<label for=nav-sidebar-submenu-5b11fbd><span class=nav-sidebar-submenu-icon>➣</span><span>Software - DEBuild</span></label>
+<ul id=nav-sidebar-submenu-list-5b11fbd>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/debuild/><pre>📦</pre>Package</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-f03c66a type=checkbox checked>
+<label for=nav-sidebar-submenu-f03c66a><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Go</span></label>
+<ul id=nav-sidebar-submenu-list-f03c66a>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/go/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/test/go/><pre>⚗️</pre>Test</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/build/go/><pre>🧰</pre>Build</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-d1ab4bc type=checkbox checked>
+<label for=nav-sidebar-submenu-d1ab4bc><span class=nav-sidebar-submenu-icon>➣</span><span>Software - GolangCI-Lint</span></label>
+<ul id=nav-sidebar-submenu-list-d1ab4bc>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/golangci-lint/><pre>🧩</pre>Setup</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-c0ac3bd type=checkbox checked>
+<label for=nav-sidebar-submenu-c0ac3bd><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Hugo</span></label>
+<ul id=nav-sidebar-submenu-list-c0ac3bd>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/hugo/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/compose/hugo/><pre>📝</pre>Compose</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-2998e89 type=checkbox checked>
+<label for=nav-sidebar-submenu-2998e89><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Reprepro</span></label>
+<ul id=nav-sidebar-submenu-list-2998e89>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/reprepro/><pre>🌾</pre>Release</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-ef58375 type=checkbox checked>
+<label for=nav-sidebar-submenu-ef58375><span class=nav-sidebar-submenu-icon>➣</span><span>Versions</span></label>
+<ul id=nav-sidebar-submenu-list-ef58375>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-1/><pre>🏅</pre>v0.0.1</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-2/><pre>🏅</pre>v0.0.2</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-3/><pre>🏅</pre>v0.0.3</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-47c6ce2 type=checkbox checked>
+<label for=nav-sidebar-submenu-47c6ce2><span class=nav-sidebar-submenu-icon>➣</span><span>Z) Monteur Internals</span></label>
+<ul id=nav-sidebar-submenu-list-47c6ce2>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/changelog-meta/><pre>📚</pre>Changelog Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/><pre>📑</pre>CI Job Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/code-of-conduct/><pre>🧬</pre>Code of Conduct</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/commands/><pre>🧑‍✈️</pre>Commands Execution Unit</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/dependencies-checking/><pre>🧮</pre>Dependencies Checking</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/init-job/><pre>🛫</pre>Init Job</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/secrets/><pre>🙊</pre>Managing Secrets</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/package-meta/><pre>📋</pre>Package Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/platform-identification/><pre>🧿</pre>Platform Identification</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/setup-meta/><pre>🧩</pre>Setup Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/><pre>🪢</pre>Variables Processing</a>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</body>
+</html>

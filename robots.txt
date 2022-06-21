@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: https://monteur.zoralab.com/sitemap.xml

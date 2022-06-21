@@ -1,0 +1,2051 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,initial-scale=1">
+<meta name=description content="Monteur has an Init Job to keep its setup in your repository seamlessly guided and simple. The aim is to make development easier and happier from the get go!">
+<meta name=keywords content="init,init Job,Job,repository,repo,ZORALab's Monteur">
+<meta name=author content="Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho">
+<link rel=canonical href=https://monteur.zoralab.com/en/internals/init-job/><link rel=apple-touch-icon sizes=57x57 href=https://monteur.zoralab.com/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=https://monteur.zoralab.com/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=https://monteur.zoralab.com/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=https://monteur.zoralab.com/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=https://monteur.zoralab.com/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=https://monteur.zoralab.com/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=https://monteur.zoralab.com/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=https://monteur.zoralab.com/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=https://monteur.zoralab.com/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=https://monteur.zoralab.com/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=https://monteur.zoralab.com/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=https://monteur.zoralab.com/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=https://monteur.zoralab.com/favicon-16x16.png>
+<link rel=manifest href=https://monteur.zoralab.com/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:site content="ZORALab_Team">
+<meta name=twitter:creator content="Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho">
+<meta property="og:site_name" content="Monteur">
+<meta property="og:title" content="Init Job | Monteur">
+<meta property="og:locale" content="en">
+<meta property="og:description" content="Monteur has an Init Job to keep its setup in your repository seamlessly guided and simple. The aim is to make development easier and happier from the get go!">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://monteur.zoralab.com/en/internals/init-job/">
+<meta property="og:image" content="https://monteur.zoralab.com/en/internals/init-api/default-1200x628.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="628">
+<meta property="og:image:alt" content="ZORALab's Monteur - Init Job">
+<meta property="og:image" content="https://monteur.zoralab.com/en/internals/init-api/default-1200x1200.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="1200">
+<meta property="og:image:alt" content="ZORALab's Monteur - Init Job">
+<meta property="og:image" content="https://monteur.zoralab.com/en/internals/init-api/default-480x480.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="480">
+<meta property="og:image:height" content="480">
+<meta property="og:image:alt" content="ZORALab's Monteur - Init Job">
+<script type=application/ld+json>{"@context":"https://schema.org/","@type":"WebPage","author":"Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho","dateCreated":"2022-01-04T06:03:52+08:00","dateModified":"2022-06-22T07:30:48+08:00","datePublished":"2022-01-04T06:03:52+08:00","description":"Monteur has an Init Job to keep its setup in your repository seamlessly guided and simple. The aim is to make development easier and happier from the get go!","image":"https://monteur.zoralab.com/en/internals/init-api/default-1200x628.png","inLanguage":"en","keywords":"init, init Job, Job, repository, repo, ZORALab's Monteur","name":"Init Job","schemaVersion":"https://schema.org/version/8.0/","thumbnailUrl":"https://monteur.zoralab.com/en/internals/init-api/default-1200x628.png","url":"https://monteur.zoralab.com/en/internals/init-job/"}</script>
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-101500797-1','auto'),ga('send','pageview')</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<title>Init Job | Monteur</title>
+<link href=https://monteur.zoralab.com/css/bissetii-critical.min.css rel=stylesheet media=all onload='this.media="all"' integrity="sha512-dTjOFO8HW8osnU0PTWxK38WkhQSa5M3FvYTHYEanB6jUvX9E1X6iAle0IJLP16syY26haWC7zV5ba2Fs9tn5xg==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-print.min.css rel=stylesheet media=print onload='this.media="print"' integrity="sha512-XPrMPPyw9AxUVPlcja8Q4eSMRblA7CitTvBLc6kvF0aqd8VATHwgBbYeit6J9E7nzctz9I0Rs/v71nCpDXCqMA==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-tablet.min.css rel=stylesheet media="screen and (min-width: 40rem)" onload='this.media="screen and (min-width: 40rem)"' integrity="sha512-5wCMBKmbZn1Mpn9dY6rfasNcrfE+z6xNma5H6pnAAXFeJuIpUK3fG5nmPWIPeXSwIis+1MqR+fIEMp41g/j4cA==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-desktop.min.css rel=stylesheet media="screen and (min-width: 80rem)" onload='this.media="screen and (min-width: 80rem)"' integrity="sha512-P3oHnbewtCGj9wz+wRrIbC0VTcr4TmvqXX1DBOQEmYOJY1rrr5A4FZevrsL2BL5Z3hNw2wZ1jUmNEwBIS3v8ow==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-widescreen.min.css rel=stylesheet media="screen and (min-width: 120rem)" onload='this.media="screen and (min-width: 120rem)"' integrity="sha512-4/XaSIkGtWjXwVvs0EVnzgIcqqn+JdskwCkHF/jQXGCyW39BACYtS5U5K3EHFTAP6sYcvmRErcGVS3jnVPg2Ig==" crossorigin=anonymous>
+<meta name=generator content="Hugo 0.91.2">
+</head>
+<body style=--body-grid-tablet:var(--layout-left-and-top);--body-grid-desktop:var(--layout-left-and-top);--body-grid-widescreen:var(--layout-left-and-top)>
+<main>
+<section id=introduction>
+<h1>Init Job</h1>
+<p>
+Monteur has an Init Job to keep its setup in your repository seamlessly guided
+and simple. The aim is to make development easier and happier from the get go!
+<br><br>
+Init API is only available starting from Monteur version
+<code>v0.0.2</code>.
+</p>
+</section>
+<section id=initialization>
+<h2>Initialize Your Repository</h2>
+<p>
+To initialize your repository, please:
+<ol>
+<li><p>
+Go to your repository's root directory.
+</p></li>
+<li><p>
+Issue the following command:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-bash data-lang=bash>monteur init</code></pre></td></tr></table>
+</div>
+</div>
+</p></li>
+</ol>
+Monteur shall scan for its existence properly and if it is
+absent, Monteur will do the rest of the config files creation
+automatically.
+</p>
+</section>
+<section id=app-metadata>
+<h2>Naming Your Project Metadata</h2>
+<p>
+Once done, the next thing to do is to fill up your project/app
+metadata. These information are crucial for documents
+generations, packaging metadata usage, and even release your
+product or publish your documents. <b>You usually need to set
+them up once</b>.
+<br><br>
+These configuration files were intentionally designed to be
+<code>i18n</code> compatible. For simplicity sake, this
+specification shall explain in <code>en</code> for English.
+There are a bunch of configurations to deal with so sit tight
+and let's go over each of them one-by-one.
+</p>
+<section id=app-metadata-toml>
+<h3>App <code>metadata.toml</code></h3>
+<p>
+This file is located in
+<code>.configs/monteur/app/config/en/metadata.toml</code>.
+<br><br>
+These are the main metadata used across various
+composer, writer, builder, packager, and publisher via
+Monteur's CI Jobs. The goal is to ensure all these
+outputs only source from 1 unified input (here) in order
+to maintain metadata consistency for your project/app.
+<br><br>
+Here are the list of information you need to update
+matching your project's metadata:
+</p>
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>[Software]
+Name = <span style=color:#ba2121>&#39;&lt;directory Name in title case&gt;&#39;</span>
+Command = <span style=color:#ba2121>&#39;&lt;directory name in filepath format&gt;&#39;</span>
+ID = <span style=color:#ba2121>&#39;&lt;directory name in filepath format&gt;&#39;</span>
+Version = <span style=color:#ba2121>&#39;v0.0.1&#39;</span> <span style=color:#408080;font-style:italic># version number</span>
+Category = <span style=color:#ba2121>&#39;devel&#39;</span> <span style=color:#408080;font-style:italic># software category</span>
+Suite = <span style=color:#ba2121>&#39;&#39;</span>         <span style=color:#408080;font-style:italic># software suite (e.g. MSFT Office for MSFT Word)</span>
+Abstract = <span style=color:#ba2121>&#39;software XYZ tool in one single app.&#39;</span>
+Description = <span style=color:#ba2121>&#34;&#34;&#34;
+</span><span style=color:#ba2121>Describe your software as much as you want. Please make sure you end it with
+</span><span style=color:#ba2121>its unique selling pitch.
+</span><span style=color:#ba2121>&#34;&#34;&#34;</span>
+Website = <span style=color:#ba2121>&#39;https://example.com/&#39;</span>
+
+[Software.Contact]
+Name = <span style=color:#ba2121>&#39;ACME Entity&#39;</span>
+Email = [ <span style=color:#ba2121>&#39;hello@example.com&#39;</span> ]
+
+
+
+
+[Software.Maintainers.ACME]
+Name = <span style=color:#ba2121>&#39;ACME Entity&#39;</span>
+Email = [ <span style=color:#ba2121>&#39;tech@example.com&#39;</span> ]
+[Software.Maintainers.ACME.JointTime]
+Year = <span style=color:#ba2121>&#39;2021&#39;</span>
+
+
+
+
+[Software.Contributors.ACME]
+Name = <span style=color:#ba2121>&#39;ACME Entity&#39;</span>
+Email = [ <span style=color:#ba2121>&#39;tech@example.com&#39;</span> ]
+[Software.Contributors.ACME.JointTime]
+Year = <span style=color:#ba2121>&#39;2021&#39;</span>
+
+
+
+
+[Software.Sponsors.ACME]
+Name = <span style=color:#ba2121>&#39;ACME Entity&#39;</span>
+Email = [ <span style=color:#ba2121>&#39;tech@example.com&#39;</span> ]
+[Software.Sponsors.ACME.JointTime]
+Year = <span style=color:#ba2121>&#39;2021&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><ul>
+<li><p>
+<code>Software.Name</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - used as the
+documented product name.
+</p></li>
+<li><p>
+Monteur automatically takes the
+directory name as project/app name.
+Please alter them accordingly.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.Command</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - used as the program
+name for invoking its command usage.
+</p></li>
+<li><p>
+Whenever possible, try to keep it to 1
+short sensible word only dash
+(<code>-</code>), alphanumeric
+characters, avoid space
+(<code> </code>), and avoid other
+symbols.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.ID</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - used as the stock
+keeping unit (SKU) identifier.
+</p></li>
+<li><p>
+Monteur automatically takes the
+directory name as the project/app ID.
+Please alter them accordingly.
+</p></li>
+<li><p>
+Whenever possible, try to keep it below
+<code>64</code> characters long using
+only dash (<code>-</code>), alphanumeric
+characters, avoid space
+(<code> </code>), and avoid other
+symbols.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.Version</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - indicate the current
+version of development.
+</p></li>
+<li><p>
+Whenever possible, try to keep it as
+compliant to <a href=https://semver.org/>Semantic
+Versioning</a> as possible.
+</p></li>
+<li><p>
+This is the central control of the
+version number where it will be used
+for generating all necessary version
+files across the repository.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.Category</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - indicate the
+name of the catalog the project/app is
+belonged to.
+</p></li>
+<li><p>
+Useful for packaging jobs like
+<code>.deb</code>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.Suite</code>
+<ol>
+<li><p>
+<b>OPTIONAL</b> - indicate the
+name of the software suite the
+project/app is belonged to.
+</p></li>
+<li><p>
+For incompatible project/app, just leave
+the field blank (<code>''</code>).
+</p></li>
+<li><p>
+Example: <code>Microsoft Word</code> in
+<code>Microsoft Office</code> (Suite).
+</p></li>
+<li><p>
+Useful for packaging jobs like
+<code>.deb</code>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.Abstract</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - a short, no article
+("a", "an", "the") description with max
+70 characters. Make it a pitch of your
+project/app.
+</p></li>
+<li><p>
+Useful for packaging jobs like
+<code>.deb</code>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.Description</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - a longer description
+joining after the abstract starting with
+a new paragraph.
+</p></li>
+<li><p>
+Useful for packaging jobs like
+<code>.deb</code>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.Website</code>
+<ol>
+<li><p>
+<b>OPTIONAL</b> - the homepage of the
+project/app.
+</p></li>
+<li><p>
+For incompatible project/app, just leave
+the field blank (<code>''</code>).
+</p></li>
+<li><p>
+Useful for packaging jobs like
+<code>.deb</code>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.Contact.Name</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - the contact entity's
+name (e.g. a person or company name) for
+project/app general inquiry purposes.
+</p></li>
+<li><p>
+Useful for packaging jobs like
+<code>.deb</code>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.Contact.Email</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - the contact entity's
+email addresses for project/app general
+inquiry purposes.
+</p></li>
+<li><p>
+The first email address <b>shall be
+given priority</b> during a single
+email address selection.
+</p></li>
+<li><p>
+Useful for packaging jobs like
+<code>.deb</code>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.Maintainers.[ID]</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - a maintainer's
+identity. Details of the entity's fields
+are described in
+<code>Software.[TYPE].[ID]</code>
+section later.
+</p></li>
+<li><p>
+This list is for the project/app
+maintainers, usually those who has power
+for maintaining the upkeep.
+</p></li>
+<li><p>
+The <code>[ID]</code> can be anything
+and was meant for grouping the entity's
+information properly. To add more
+maintainers, simply duplicate the
+fields and provide another unique
+<code>[ID]</code> for it. In any cases,
+the <code>[ID]</code> <b>MUST be the
+same</b> if the same entity is also
+contributing other role like sponsors.
+</p></li>
+<li><p>
+Use for assembling and rendering the
+project's/app's copyrights and citation
+list.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.Contributors.[ID]</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - a contributor's
+identity. Details of the entity's fields
+are described in
+<code>Software.[TYPE].[ID]</code>
+section later.
+</p></li>
+<li><p>
+This list is for the project/app
+contributors, usually those who
+contribute once or twice in a blue moon
+into the project/app.
+</p></li>
+<li><p>
+The <code>[ID]</code> can be anything
+and was meant for grouping the entity's
+information properly. To add more
+contributors, simply duplicate the
+fields and provide another unique
+<code>[ID]</code> for it. In any cases,
+the <code>[ID]</code> <b>MUST be the
+same</b> if the same entity is also
+contributing in another role like
+sponsors.
+</p></li>
+<li><p>
+Use for assembling and rendering the
+project's/app's copyrights and citation
+list.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.Sponsors.[ID]</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - a financial
+sponsor's identity. Details of the
+entity's fields are described in
+<code>Software.[TYPE].[ID]</code>
+section later.
+</p></li>
+<li><p>
+This list is for the project/app
+financial contributors, who
+contribute once/twice in a blue moon OR
+periodically into the project/app.
+</p></li>
+<li><p>
+The <code>[ID]</code> can be anything
+and was meant for grouping the entity's
+information properly. To add more
+sponsors, simply duplicate the fields
+and provide another <code>[ID]</code>
+for it. In any cases, the
+<code>[ID]</code> <b>MUST be the
+same</b> if the same entity is also
+contributing in another role like
+maintainers.
+</p></li>
+<li><p>
+Use for assembling and rendering the
+project's/app's copyrights and citation
+list.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.[TYPE].[ID].Name</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - name of a legal
+entity.
+</p></li>
+<li><p>
+The <code>[TYPE]</code> refers to the
+<code>Maintainers</code>,
+<code>Contributors</code>,
+and <code>Sponsors</code> above.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.[TYPE].[ID].Email</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - list of emails of
+a legal entity.
+</p></li>
+<li><p>
+The <code>[TYPE]</code> refers to the
+<code>Maintainers</code>,
+<code>Contributors</code>,
+and <code>Sponsors</code> above.
+</p></li>
+<li><p>
+The first email is given the highest
+priority in a single email address
+selection.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Software.[TYPE].[ID].JointTime.Year</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - the year where an
+legal entity participated by giving into
+the project/app.
+</p></li>
+<li><p>
+The <code>[TYPE]</code> refers to the
+<code>Maintainers</code>,
+<code>Contributors</code>,
+and <code>Sponsors</code> above.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+</ul></p>
+</section>
+<section id=app-metadata-toml>
+<h3>App <code>help.toml</code></h3>
+<p>
+This file is located in
+<code>.configs/monteur/app/config/en/help.toml</code>.
+<br><br>
+By default, Montuer created a default help guide data
+stored inside <code>help.toml</code> which contains all
+the known help file rendering templates. Some software
+distributors (e.g. <code>.deb</code>) requires the
+obselete help file made available in their packages. If
+you are not using it, please skip step.
+<br><br>
+Here are the list of information you need to update
+matching your project's metadata:
+</p>
+<div class=highlight><pre tabindex=0><code class=language-bash data-lang=bash><span style=color:#666>[</span>Help<span style=color:#666>]</span>
+<span style=color:#19177c>Command</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;$ {{ .App.Command }} help&#39;</span>
+<span style=color:#19177c>Description</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;{{ .App.Abstract }}&#39;</span>
+<span style=color:#19177c>Resources</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#39;Visit {{ .App.Website }} for detailed documentations.&#39;</span>
+
+<span style=color:#666>[</span>Help.Manpage<span style=color:#666>]</span>
+<span style=color:#19177c>Lv1</span> <span style=color:#666>=</span> <span style=color:#ba2121>&#34;&#34;&#34;
+</span><span style=color:#ba2121>.\\&#34;</span> <span style=color:#666>{{</span> .App.Name <span style=color:#666>}}</span> - Lv1 Manpage
+.<span style=color:#b62;font-weight:700>\\</span><span style=color:#ba2121>&#34; Contact {{ index .App.Contact.Email 0 }} for errors or typos.
+</span><span style=color:#ba2121>.TH man 1 &#34;</span><span style=color:#666>{{</span>- .App.Time.Day <span style=color:#666>}}</span> <span style=color:#666>{{</span> .App.Time.Month <span style=color:#666>}}</span> <span style=color:#666>{{</span> .App.Time.Year -<span style=color:#666>}}</span><span style=color:#ba2121>&#34; &#34;</span><span style=color:#666>{{</span>- .App.Version -<span style=color:#666>}}</span><span style=color:#ba2121>&#34; &#34;</span><span style=color:#666>{{</span>- .App.ID <span style=color:#666>}}</span> man page<span style=color:#ba2121>&#34;
+</span><span style=color:#ba2121>
+</span><span style=color:#ba2121>.SH NAME
+</span><span style=color:#ba2121>{{ .App.Name }} - {{ .App.Abstract }}
+</span><span style=color:#ba2121>
+</span><span style=color:#ba2121>.SH SYNOPSIS
+</span><span style=color:#ba2121>{{ .App.Help.Command }}
+</span><span style=color:#ba2121>
+</span><span style=color:#ba2121>.SH DESCRIPTION
+</span><span style=color:#ba2121>{{ .App.Description -}}
+</span><span style=color:#ba2121>
+</span><span style=color:#ba2121>.SH OPTIONS
+</span><span style=color:#ba2121>{{ .App.Help.Description }}
+</span><span style=color:#ba2121>
+</span><span style=color:#ba2121>.SH SEE ALSO
+</span><span style=color:#ba2121>{{ .App.Help.Resources }}
+</span><span style=color:#ba2121>
+</span><span style=color:#ba2121>#.SH AUTHORS
+</span><span style=color:#ba2121>#{{ range </span><span style=color:#19177c>$index</span><span style=color:#ba2121>, </span><span style=color:#19177c>$owner</span><span style=color:#ba2121> := .App.Maintainers -}}
+</span><span style=color:#ba2121>#       {{- </span><span style=color:#19177c>$owner</span><span style=color:#ba2121>.Name }} ({{- index </span><span style=color:#19177c>$owner</span><span style=color:#ba2121>.Email 0 -}})
+</span><span style=color:#ba2121>#{{ end -}}
+</span><span style=color:#ba2121>&#34;&#34;&#34;</span></code></pre></div>
+<p><ul>
+<li><p>
+<code>Help.Command</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - the one-line
+command to call out its help
+display.
+</p></li>
+<li><p>
+Use to guide users to call for
+help from the project/app (e.g.
+<code>program --help</code> or
+<code>program help</code>).
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Help.Description</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - the
+description of the project/app.
+</p></li>
+<li><p>
+By default, it is mapped to your
+<code>Software.Abstract</code>
+from the
+<code>metadata.toml</code>
+above.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Help.Resources</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - the
+instruction to obtain more
+details or for the project/app.
+</p></li>
+<li><p>
+By default, it is mapped to
+visit
+<code>Software.Website</code>
+from the
+<code>metadata.toml</code>
+above.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Help.Manpage.[LEVEL]</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - the
+instruction to generate all
+corresponding
+<code>[LEVEL]</code> man pages
+for the project/app.
+</p></li>
+<li><p>
+By default, Monteur generates
+level 1 (<code>.1</code>) man
+page that briefly describes the
+project/app and the help command
+(<code>Help.Command</code>
+above) to obtain actual help.
+</p></li>
+<li><p>
+The <code>[LEVEL]</code> can be
+anything but generally advised
+to be numeric number starting
+from <code>1</code> and usually
+ends at <code>8</code>. Please
+consult your operating system's
+specifications about each
+levels.
+</p></li>
+<li><p>
+The <code>[LEVEL]</code>s <b>are
+usually being used as the file
+extension depending on the CI
+Job recipe</b>.
+Please consult the CI Job recipe
+for its modifications'
+compatibility.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+</ul></p>
+</section>
+<section id=app-license-toml>
+<h3>App <code>[LICENSE].toml</code></h3>
+<p>
+This file is located in
+<code>.configs/monteur/app/copyrights/[LICENSE].toml</code>.
+The <code>[LICENSE]</code> is a placeholder filename
+which can be anything useful for own referencing usage.
+<br></br>
+Montuer is designed to manage and generate
+multi-licenses project/app work environment. Hence you
+can include multiple licenses whenever applicable like
+dual-licensing or multiple licenses (e.g. media license
++ software license).
+<br><br>
+These license data files are the template and input data
+for rendering the publishable license file during a
+build or CI Job. It uses other metadata like the
+copyright holders to fill in the gap while still
+permitting project/app developer to overwrite them.
+<br><br>
+By default, Monteur generates
+<a href=https://opensource.org/licenses/Apache-2.0>
+Apache 2.0 Open Source License
+</a>
+for maximum permissive and commercial friendly usage.
+This default file is meant for example referencing
+usage. Please remove it when it is incompatible to the
+project/app after creating your own license data file.
+<br><br>
+Here are the list of information you need for creating
+a <code>[LICENSE].toml</code> data file:
+</p>
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>[Copyright]
+Name = <span style=color:#ba2121>&#39;License Name&#39;</span> <span style=color:#408080;font-style:italic># license full name</span>
+ID = <span style=color:#ba2121>&#39;license-name&#39;</span>   <span style=color:#408080;font-style:italic># identifiable license ID</span>
+Comment = <span style=color:#ba2121>&#39;&#39;</span>
+Materials = [ <span style=color:#ba2121>&#39;*&#39;</span> ]
+Holders = [
+        <span style=color:#408080;font-style:italic># A string with year, then name, then email with diamond braces. Ex.:</span>
+        <span style=color:#408080;font-style:italic>#</span>
+        <span style=color:#408080;font-style:italic>#   &#39;2021 John S. Smith &lt;john.s.smith@email.com&gt;&#39;,</span>
+        <span style=color:#408080;font-style:italic>#</span>
+        <span style=color:#408080;font-style:italic># If the list is empty, all maintainers, contributors, and sponsors</span>
+        <span style=color:#408080;font-style:italic># shall be attached to it.</span>
+]
+Notice = <span style=color:#ba2121>&#34;&#34;&#34;
+</span><span style=color:#ba2121>License notice usually prepend in front of source codes.
+</span><span style=color:#ba2121>&#34;&#34;&#34;</span>
+Text = <span style=color:#ba2121>&#34;&#34;&#34;
+</span><span style=color:#ba2121>Full license text body.
+</span><span style=color:#ba2121>&#34;&#34;&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><ul>
+<li><p>
+<code>Copyright.Name</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - name of the
+license for human comprehension.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Copyright.ID</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - ID of the
+license for tracking and
+identifcation use.
+</p></li>
+<li><p>
+For open source licenses, please
+consult
+<a href=https://spdx.org/licenses/>
+SPDX Licenses List</a>
+for maximum compatibility
+identifier.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Copyright.Comment</code>
+<ol>
+<li><p>
+<b>OPTIONAL</b> - comment for
+the license to appear in the
+rendering.
+</p></li>
+<li><p>
+Please leave it empty (
+<code>""</code>) if it is no
+comment.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Copyright.Materials</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - list out
+all the files or the naming
+patterns of the materials where
+the license is applicable.
+</p></li>
+<li><p>
+General symbols is allowed like
+<code>*</code> stands for any
+or all pattern of. Example:
+<code>*.jpg</code> refers to
+all files with <code>.jpg</code>
+file extension, regardless of
+its location in the repository,
+is subjected this this license.
+</p></li>
+<li><p>
+To apply the license to ALL
+files, simple just retain the
+<code>'*'</code> which stands
+for all files regardless name
+or extensions.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Copyright.Holders</code>
+<ol>
+<li><p>
+<b>OPTIONAL</b> - list out
+all the copyright holders of
+this license, overriding the
+default rendering completely.
+</p></li>
+<li><p>
+The format <b>MUST</b> be:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>Format <span>:</span> <span style=color:#ba2121>&#39;[YEAR] [FULL NAME] &lt;[EMAIL]&gt;&#39;</span>,
+Example<span>:</span> <span style=color:#ba2121>&#39;2021 John S. Smith &lt;john.s.smith@email.com&gt;&#39;</span>,</code></pre></td></tr></table>
+</div>
+</div>
+<b>NOTE</b>: The tailing comma
+(<code>,</code>) is removed for
+the last entry.
+</p></li>
+<li><p>
+If left empty, all
+maintainers, contributors, and
+sponsors from
+<code>metadata.toml</code> above
+shall be assembled and formatted
+automatically to fill in the
+gap.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Copyright.Notice</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - a short
+copyright notice usually
+preprended in front of a
+source codes, emit into
+command-line request, or an IP
+document.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Copyright.Text</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - full license
+body in plaintext without the
+copyright holders prepend to it.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+</ul></p>
+</section>
+<section id=app-debian-toml>
+<h3>App <code>debian.toml</code></h3>
+<p>
+This file is located in
+<code>.configs/monteur/app/config/en/debian.toml</code>.
+<br><br>
+These are <code>.deb</code> package specific information
+meant for Debian-based Linux operating system. The
+fields and data here are meant for offical
+<code>dehelper</code> packager to systematically work
+out a signed <code>.deb</code> package file. Depending
+on which packaging software you're using (e.g.
+<code>debuild</code>), certain information are
+<b>COMPULSORY</b>. Monteur itself is using this packager
+complying to the Debian Policy itself to ensure maximum
+compatiblity with the ecosystem.
+<br><br>
+If you're not deploying a <code>.deb</code> package
+distribution, please skip this configuration file.
+<br><br>
+Here are the list of information you need to update
+matching your project's metadata:
+</p>
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">45
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">46
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">47
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">48
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">49
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">50
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">51
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">52
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">53
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">54
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">55
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">56
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">57
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">58
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">59
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">60
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">61
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">62
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">63
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">64
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">65
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">66
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>[DEB]
+Compat = <span style=color:#666>11</span>
+Rules = <span style=color:#ba2121>&#34;&#34;&#34;
+</span><span style=color:#ba2121>#!/usr/bin/make -f
+</span><span style=color:#ba2121>
+</span><span style=color:#ba2121># Uncomment this to turn on verbose mode.
+</span><span style=color:#ba2121>#export DH_VERBOSE=1
+</span><span style=color:#ba2121>
+</span><span style=color:#ba2121>%:
+</span><span style=color:#ba2121>	dh $@
+</span><span style=color:#ba2121>
+</span><span style=color:#ba2121>override_dh_auto_build:
+</span><span style=color:#ba2121>	echo &#34;</span>nothing to override<span style=color:#ba2121>&#34;
+</span><span style=color:#ba2121>override_dh_slibdeps:
+</span><span style=color:#ba2121>	echo &#34;</span>nothing to depend on<span style=color:#ba2121>&#34;
+</span><span style=color:#ba2121>&#34;&#34;&#34;</span>
+
+[DEB.Control]
+Essential = <span style=color:green;font-weight:700>false</span>
+PackageType = <span style=color:#ba2121>&#39;deb&#39;</span>
+Priority = <span style=color:#ba2121>&#39;optional&#39;</span>
+RulesRequiresRoot = <span style=color:#ba2121>&#39;binary-targets&#39;</span>
+Standards = <span style=color:#ba2121>&#39;4.6.0&#39;</span>
+Section = <span style=color:#ba2121>&#39;devel&#39;</span>
+
+[DEB.Relationships]
+<span style=color:#ba2121>&#39;Build-Depends&#39;</span> = [
+	<span style=color:#ba2121>&#39;debhelper (&gt;= 11)&#39;</span>,
+]
+<span style=color:#ba2121>&#39;Depends&#39;</span> = [
+]
+
+<span style=color:#408080;font-style:italic># More Info:</span>
+<span style=color:#408080;font-style:italic>#  https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields</span>
+[DEB.VCS]
+Type = <span style=color:#ba2121>&#39;Vcs-Git&#39;</span>
+URL = <span style=color:#ba2121>&#39;https://example.com/git&#39;</span>
+Branch = <span style=color:#ba2121>&#39;main&#39;</span>
+<span style=color:#408080;font-style:italic>#Path = &#39;.&#39;</span>
+
+[DEB.Testsuite]
+Paths = [
+	<span style=color:#408080;font-style:italic># &#39;relative/path/to/debTestScript&#39;,</span>
+]
+
+[DEB.Copyright]
+Format = <span style=color:#ba2121>&#39;https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/&#39;</span>
+Disclaimer = <span style=color:#ba2121>&#39;&#39;</span>
+Comment = <span style=color:#ba2121>&#39;&#39;</span>
+
+[DEB.Changelog]
+Urgency = <span style=color:#ba2121>&#39;low&#39;</span>
+
+[DEB.Source]
+Format = <span style=color:#ba2121>&#39;3.0 (native)&#39;</span>
+LocalOptions = <span style=color:#ba2121>&#34;&#34;&#34;
+</span><span style=color:#ba2121>&#34;&#34;&#34;</span>
+Options = <span style=color:#ba2121>&#34;&#34;&#34;
+</span><span style=color:#ba2121>&#34;&#34;&#34;</span>
+LintianOverrides = <span style=color:#ba2121>&#34;&#34;&#34;
+</span><span style=color:#ba2121># supply the license file in case OS did not supply one
+</span><span style=color:#ba2121>
+</span><span style=color:#ba2121># we are go package so it is okay not to specify Depends:
+</span><span style=color:#ba2121>&#34;&#34;&#34;</span>
+
+[DEB.Install]</code></pre></td></tr></table>
+</div>
+</div>
+<p><ul>
+<li><p>
+<code>DEB.Compat</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - generates
+the <code>DEBIAN/compat</code>
+file.
+</p></li>
+<li><p>
+The values must be compliant to
+<a href=https://www.debian.org/doc/manuals/maint-guide/dother.en.html#compat>
+debhelper Compatibility Level
+</a>.
+</p></li>
+<li><p>
+Only used if you are using
+<b>debhelper</b> to build the
+<code>.deb</code> package.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Rules</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - generates
+the <code>DEBIAN/rules</code>
+file.
+</p></li>
+<li><p>
+The values must be compliant to
+<a href=https://www.debian.org/doc/debian-policy/ch-source.html#s-debianrules>
+Debian Rules Policy
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Control</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - generates
+the <code>DEBIAN/control</code>
+file.
+</p></li>
+<li><p>
+The generated file is compliant
+to
+<a href=https://www.debian.org/doc/debian-policy/ch-controlfields.html>
+Control Fields Policy
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Control.Essential</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - set the
+<code>.deb</code> not to be
+uninstalled if marked as
+essential packages.
+</p></li>
+<li><p>
+Accepts only <code>true</code>
+or <code>false</code> as
+complying to
+<a href=https://www.debian.org/doc/debian-policy/ch-controlfields.html#essential>
+Essential Policy
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Control.PackageType</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - set the
+<code>.deb</code> not to be
+uninstalled.
+</p></li>
+<li><p>
+Accepts only <code>deb</code>
+or <code>udeb</code> complying
+to <a href=https://www.debian.org/doc/debian-policy/ch-controlfields.html#package-type>
+Package Type Policy
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Control.Priority</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - set the
+<code>.deb</code> package's
+installation priority nature.
+</p></li>
+<li><p>
+Only accepts value from
+<a href=https://www.debian.org/doc/debian-policy/ch-archive.html#s-priorities>
+Package Installation Priority
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Control.RulesRequiresRoot</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - set the
+<code>.deb</code> package to be
+handled by the level of root
+permissions.
+</p></li>
+<li><p>
+Accepts only values from
+<a href=https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-rules-requires-root>
+Rules Requires Root Policy
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Control.Standards</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - set the
+package validator standards.
+</p></li>
+<li><p>
+Accepts only the semantic
+versioning ID as value
+from <a href=https://www.debian.org/doc/debian-policy/upgrading-checklist.html>
+Debian Policy Checklist</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Control.Section</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - set the
+package catagory.
+</p></li>
+<li><p>
+Accepts only the standards ID
+from <a href=https://www.debian.org/doc/debian-policy/ch-archive.html#s-subsections>
+Debian Archive Subsection</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Relationships.[TYPE]</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - generates
+all the project/app relationship
+with other packages inside
+the <code>DEBIAN/control</code>
+file.
+</p></li>
+<li><p>
+The <code>[TYPE]</code>
+<b>MUST</b> be the exact name of
+the relationship type stated in
+<a href=https://www.debian.org/doc/debian-policy/ch-relationships.html>
+Debian Package Relationship
+</a> like
+<code>Build-Depends</code>,
+<code>Build-Depends-Indep</code>,
+<code>Build-Depends-Arch</code>,
+and etc.
+</p></li>
+<li><p>
+The value <b>MUST</b> be a list
+of corresponding
+<code>.deb</code> packages.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.VCS</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - generates
+the VCS field inside <code>
+DEBIAN/control</code> file.
+</p></li>
+<li><p>
+More info:
+<a href=https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields>
+Debian Archive Subsection
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.VCS.Type</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - specify the
+version control type used to
+manage the repository.
+</p></li>
+<li><p>
+Accepts only the value from:
+<a href=https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields>
+Debian Control VCS Fields
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.VCS.URL</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - specify the
+URL source to obtain a copy of
+the project/app code repository.
+</p></li>
+<li><p>
+Accepts only the value from:
+<a href=https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields>
+Debian Control VCS Fields
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.VCS.Branch</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - specify the
+version control branch
+responsible for this packaging
+from the repository.
+</p></li>
+<li><p>
+Accepts only the value from:
+<a href=https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields>
+Debian Control VCS Fields
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.VCS.Path</code>
+<ol>
+<li><p>
+<b>OPTIONAL</b> - specify the
+directory pathing of the
+version control repository.
+</p></li>
+<li><p>
+Accepts only the value from:
+<a href=https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-vcs-fields>
+Debian Control VCS Fields
+</a>.
+</p></li>
+<li><p>
+Leave the field absent or
+commented if unused.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.VCS.Testsuite.Paths</code>
+<ol>
+<li><p>
+<b>OPTIONAL</b> - list out
+the test suite files for testing
+the <code>.deb</code> package.
+</p></li>
+<li><p>
+Leave the list empty if unused.
+</p></li>
+<li><p>
+Accepts only the value from:
+<a href=https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-testsuite>
+Debian Control Testsuite Fields
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Copyright</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - generates
+the
+<code>DEBIAN/copyright</code>
+file.
+</p></li>
+<li><p>
+The actual copyright entries
+are generated internally using
+app <code>copyright.toml</code>
+data above. These are additional
+data requirements specific to
+<code>.deb</code> packaging.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Copyright.Format</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - states the
+copyright format version.
+</p></li>
+<li><p>
+Accepts only the format version
+in full URL from:
+<a href=https://www.debian.org/doc/packaging-manuals/copyright-format/>
+Debian Copyright Format
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Copyright.Disclaimer</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - states your
+copyright disclaimers.
+</p></li>
+<li><p>
+Accepts only the value complying
+to the selected standards format
+from:
+<a href=https://www.debian.org/doc/packaging-manuals/copyright-format/>
+Debian Copyright Format
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Copyright.Comment</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - states your
+copyright comments.
+</p></li>
+<li><p>
+Accepts only the value complying
+to the selected standards format
+from:
+<a href=https://www.debian.org/doc/packaging-manuals/copyright-format/>
+Debian Copyright Format
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Changelog</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - generate
+the necessary data for
+<code>DEBIAN/changelog</code>
+file.
+</p></li>
+<li><p>
+The actual changelog entries
+are generated via <a href=https://monteur.zoralab.com/en/ci-jobs/prepare/changelog-deb/>
+Prepare CI Job
+</a> recipe. These fields act
+as supplimentary where the data
+is not suitable to be placed in
+the recipe file itself.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Changelog.Urgency</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - states the
+current changelog entry's
+urgency.
+</p></li>
+<li><p>
+Only accepts values from <a href=https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-urgency>
+Changelog Urgency
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Source</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - generates
+all files in
+<code>DEBIAN/source</code>
+directory.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Source.Format</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - defines the
+<code>.deb</code> package
+format by generating
+<code>DEBIAN/source/format</code>
+file.
+</p></li>
+<li><p>
+Only accepts values from <a href=https://www.debian.org/doc/manuals/maint-guide/dother.en.html#sourcef>
+Source Format
+</a>.
+</p></li>
+<li><p>
+When in doubt, use
+<code>3.0 (native)</code>
+instead.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Source.LocalOptions</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - generates
+<code>DEBIAN/source/local-options</code>
+file.
+</p></li>
+<li><p>
+Only accepts values from <a href=https://www.debian.org/doc/manuals/maint-guide/dother.en.html#sourcel>
+Source Local Options
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Source.Options</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - generates
+<code>DEBIAN/source/local-options</code>
+file.
+</p></li>
+<li><p>
+Only accepts values from <a href=https://www.debian.org/doc/manuals/maint-guide/dother.en.html#sourceopt>
+Source Options
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Source.LintianOverrides</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - generates
+<code>DEBIAN/source/lintian-overrides</code>
+file.
+</p></li>
+<li><p>
+Only accepts values from <a href=https://www.debian.org/doc/manuals/maint-guide/dother.en.html#lintian>
+Source Lintian Overrides
+</a>.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>DEB.Install</code>
+<ol>
+<li><p>
+<b>COMPULSORY</b> - generates
+<code>DEBIAN/install</code>
+file.
+</p></li>
+<li><p>
+The values are a set of
+<code>key = value</code> data,
+where the:
+<ul>
+<li><p>
+<b>Key</b> -
+designate the
+installation
+path where it
+should be
+relative without
+the starting
+root (
+<code>/</code>)
+path.
+</p></li>
+<li><p>
+<b>Value</b> -
+designate the
+pathing to the
+installation
+target.
+</p></li>
+</ul>
+</p></li>
+<li><p>
+Example:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>[DEB.Install]
+<span style=color:#ba2121>&#39;usr/bin&#39;</span> = <span style=color:#ba2121>&#39;monteur&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+will install a packaged
+<code>monteur</code> executable
+file into <code>usr/bin</code>
+directory of an operating
+system.
+</p></li>
+<li><p>
+Available since Monteur version
+<code>v0.0.2</code>.
+</p></li>
+</ol>
+</p></li>
+</ul></p>
+</section>
+</section>
+<section id=assemble-ci-jobs>
+<h2>Assemble Monteur's CI Jobs</h2>
+<p>
+Now that the repository with Monteur ready, it's time to
+assemble the CI Jobs compatible to your project/app. Montuer
+is designed to make different jobs portable yet maintainable
+across its ecosystem so don't you worry.
+<br><br>
+For starter, please head over to the <a href=https://monteur.zoralab.com/en/ci-jobs/ class=button>
+CI Jobs' Galleries
+</a> and shop for existing continuously improved recipes. That
+will save you tons of times and get to work.
+<br><br>
+Alternatively, you can develop your on CI Job recipe. Each
+recipe has its own configurations so please go through them
+accordingly.
+</p>
+</section>
+<section id=epilogue>
+<h2>Epilogue</h2>
+<p>
+That's all for initializing Monteur into your project/app repository.
+If you have any question, please feel free to raise your
+question at our <a href=https://github.com/ZORALab/Monteur/issues>Issues
+Section</a>.
+</p>
+</section>
+<footer>
+<p><span>© All Rights Reserved</span><span>— Monteur Team, ZORALab Team</span></p>
+</footer>
+</main><nav class=nav-sidebar>
+<input id=nav-sidebar-5f39835 class=nav-sidebar-trigger type=checkbox>
+<label class=nav-sidebar-trigger for=nav-sidebar-5f39835><span class="nav-sidebar-icon nav-sidebar-menu">☰</span><span class="nav-sidebar-icon nav-sidebar-close">𝖷</span></label>
+<label class=nav-sidebar-shade for=nav-sidebar-5f39835>
+</label>
+<ul class=nav-sidebar-list>
+<li class=nav-sidebar-title>
+<img alt src=https://monteur.zoralab.com/img/logo/zoralab-monteur-1200x1200.svg class=nav-sidebar-logo width=200 height=200>
+<p>Monteur</p></li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/><span class=pre>💠</span>Home</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/><span class=pre>📥</span>Downloads</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/getting-started/><span class=pre>🛫</span>Getting Started</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/licenses/><span class=pre>⚖️</span>Licenses</a>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-220e3fa type=checkbox checked>
+<label for=nav-sidebar-submenu-220e3fa><span class=nav-sidebar-submenu-icon>➣</span><span>CI Jobs</span></label>
+<ul id=nav-sidebar-submenu-list-220e3fa>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/clean/><pre>🧹</pre>Clean</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/test/><pre>⚗️</pre>Test</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/><pre>🧶</pre>Prepare</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/build/><pre>🧰</pre>Build</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/><pre>📦</pre>Package</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/><pre>🌾</pre>Release</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/compose/><pre>📝</pre>Compose</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/><pre>📖</pre>Publish</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-a5bc3c7 type=checkbox checked>
+<label for=nav-sidebar-submenu-a5bc3c7><span class=nav-sidebar-submenu-icon>➣</span><span>Native - Monteur</span></label>
+<ul id=nav-sidebar-submenu-list-a5bc3c7>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/clean/deep-cleaning/><pre>🧹</pre>Clean (Deep Cleaning)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/changelog-deb/><pre>🧶</pre>Prepare (DEB Changelog)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/version-file-scripting/><pre>🧶</pre>Prepare (Version File Scripting)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/targz/><pre>📦</pre>Package (TarGz)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/zip/><pre>📦</pre>Package (Zip)</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-f36af07 type=checkbox checked>
+<label for=nav-sidebar-submenu-f36af07><span class=nav-sidebar-submenu-icon>➣</span><span>Platform - GitLab</span></label>
+<ul id=nav-sidebar-submenu-list-f36af07>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/getting-started/gitlab/><pre>🛫</pre>Getting Started - GitLab CI</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/><pre>📖</pre>Publish (GitLab Pages)</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-5b11fbd type=checkbox checked>
+<label for=nav-sidebar-submenu-5b11fbd><span class=nav-sidebar-submenu-icon>➣</span><span>Software - DEBuild</span></label>
+<ul id=nav-sidebar-submenu-list-5b11fbd>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/debuild/><pre>📦</pre>Package</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-f03c66a type=checkbox checked>
+<label for=nav-sidebar-submenu-f03c66a><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Go</span></label>
+<ul id=nav-sidebar-submenu-list-f03c66a>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/go/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/test/go/><pre>⚗️</pre>Test</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/build/go/><pre>🧰</pre>Build</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-d1ab4bc type=checkbox checked>
+<label for=nav-sidebar-submenu-d1ab4bc><span class=nav-sidebar-submenu-icon>➣</span><span>Software - GolangCI-Lint</span></label>
+<ul id=nav-sidebar-submenu-list-d1ab4bc>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/golangci-lint/><pre>🧩</pre>Setup</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-c0ac3bd type=checkbox checked>
+<label for=nav-sidebar-submenu-c0ac3bd><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Hugo</span></label>
+<ul id=nav-sidebar-submenu-list-c0ac3bd>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/hugo/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/compose/hugo/><pre>📝</pre>Compose</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-2998e89 type=checkbox checked>
+<label for=nav-sidebar-submenu-2998e89><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Reprepro</span></label>
+<ul id=nav-sidebar-submenu-list-2998e89>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/reprepro/><pre>🌾</pre>Release</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-ef58375 type=checkbox checked>
+<label for=nav-sidebar-submenu-ef58375><span class=nav-sidebar-submenu-icon>➣</span><span>Versions</span></label>
+<ul id=nav-sidebar-submenu-list-ef58375>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-1/><pre>🏅</pre>v0.0.1</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-2/><pre>🏅</pre>v0.0.2</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-3/><pre>🏅</pre>v0.0.3</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-47c6ce2 type=checkbox checked>
+<label for=nav-sidebar-submenu-47c6ce2><span class=nav-sidebar-submenu-icon>➣</span><span>Z) Monteur Internals</span></label>
+<ul id=nav-sidebar-submenu-list-47c6ce2>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/changelog-meta/><pre>📚</pre>Changelog Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/><pre>📑</pre>CI Job Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/code-of-conduct/><pre>🧬</pre>Code of Conduct</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/commands/><pre>🧑‍✈️</pre>Commands Execution Unit</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/dependencies-checking/><pre>🧮</pre>Dependencies Checking</a>
+</li>
+<li class="active nav-sidebar-link">
+<a href=https://monteur.zoralab.com/en/internals/init-job/><pre>🛫</pre>Init Job</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/secrets/><pre>🙊</pre>Managing Secrets</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/package-meta/><pre>📋</pre>Package Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/platform-identification/><pre>🧿</pre>Platform Identification</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/setup-meta/><pre>🧩</pre>Setup Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/><pre>🪢</pre>Variables Processing</a>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</body>
+</html>

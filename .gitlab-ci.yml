@@ -1,0 +1,59 @@
+image:
+  name: debian:latest
+  entrypoint: [ "" ]
+
+variables:
+  MONTEUR_CONFIG: ".monteurFS/config/main"
+
+stages:
+  - setup
+  - test
+  - build
+  - docs
+
+cache:
+  - key: "MonteurFS"
+    paths:
+      - ".monteurFS/"
+
+before_script:
+  - apt-get update -y
+  - apt-get upgrade -y
+  - |
+    apt-get --no-install-recommends install \
+      curl \
+      gnupg2 \
+      ca-certificates \
+      -y
+  - |
+    curl https://www.zoralab.com/pubkey.gpg \
+      | gpg --yes --dearmor --output /usr/share/keyrings/zoralab-keyring.gpg
+  - |
+    echo 'deb [signed-by=/usr/share/keyrings/zoralab-keyring.gpg] https://monteur.zoralab.com/releases/deb next experimental' \
+        >  /etc/apt/sources.list.d/zoralab-monteur.list
+  - apt-get update -y
+  - apt-get install monteur -y
+
+
+
+
+pages:
+  stage: docs
+  tags:
+    - linux
+  environment:
+    name: production
+  only:
+    refs:
+      - gh-pages
+  cache: []
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 day
+  before_script:
+    - mkdir -p public
+    - shopt -s extglob
+    - mv !(public|.*) public
+  script:
+    - printf "[ DONE ] Nothing to implement.\n"

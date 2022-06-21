@@ -1,0 +1,945 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,minimum-scale=1,initial-scale=1">
+<meta name=description content="Monteur provides Release CI Job to release your packages into their respective distribution stores.">
+<meta name=keywords content="Release,CI job,Release CI Job,ZORALab's Monteur,configurations,documentation">
+<meta name=author content="Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho">
+<link rel=canonical href=https://monteur.zoralab.com/en/ci-jobs/release/><link rel=apple-touch-icon sizes=57x57 href=https://monteur.zoralab.com/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=https://monteur.zoralab.com/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=https://monteur.zoralab.com/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=https://monteur.zoralab.com/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=https://monteur.zoralab.com/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=https://monteur.zoralab.com/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=https://monteur.zoralab.com/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=https://monteur.zoralab.com/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=https://monteur.zoralab.com/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=https://monteur.zoralab.com/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=https://monteur.zoralab.com/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=https://monteur.zoralab.com/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=https://monteur.zoralab.com/favicon-16x16.png>
+<link rel=manifest href=https://monteur.zoralab.com/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:site content="ZORALab_Team">
+<meta name=twitter:creator content="Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho">
+<meta property="og:site_name" content="Monteur">
+<meta property="og:title" content="Release | Monteur">
+<meta property="og:locale" content="en">
+<meta property="og:description" content="Monteur provides Release CI Job to release your packages into their respective distribution stores.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://monteur.zoralab.com/en/ci-jobs/release/">
+<meta property="og:image" content="https://monteur.zoralab.com/en/ci-jobs/release/default-1200x628.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="628">
+<meta property="og:image:alt" content="ZORALab's Monteur Release CI Job">
+<meta property="og:image" content="https://monteur.zoralab.com/en/ci-jobs/release/default-1200x1200.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="1200">
+<meta property="og:image:alt" content="ZORALab's Monteur Release CI Job">
+<meta property="og:image" content="https://monteur.zoralab.com/en/ci-jobs/release/default-480x480.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="480">
+<meta property="og:image:height" content="480">
+<meta property="og:image:alt" content="ZORALab's Monteur Release CI Job">
+<script type=application/ld+json>{"@context":"https://schema.org/","@type":"WebPage","author":"Monteur Team, ZORALab Team, 'Holloway' Chew Kean Ho","dateCreated":"2021-12-22T13:16:23+08:00","dateModified":"2022-06-18T07:13:58+08:00","datePublished":"2021-12-22T13:16:23+08:00","description":"Monteur provides Release CI Job to release your packages into their respective distribution stores.","image":"https://monteur.zoralab.com/en/ci-jobs/release/default-1200x628.png","inLanguage":"en","keywords":"Release, CI job, Release CI Job, ZORALab's Monteur, configurations, documentation","name":"Release","schemaVersion":"https://schema.org/version/8.0/","thumbnailUrl":"https://monteur.zoralab.com/en/ci-jobs/release/default-1200x628.png","url":"https://monteur.zoralab.com/en/ci-jobs/release/"}</script>
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-101500797-1','auto'),ga('send','pageview')</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<title>Release | Monteur</title>
+<link href=https://monteur.zoralab.com/css/bissetii-critical.min.css rel=stylesheet media=all onload='this.media="all"' integrity="sha512-dTjOFO8HW8osnU0PTWxK38WkhQSa5M3FvYTHYEanB6jUvX9E1X6iAle0IJLP16syY26haWC7zV5ba2Fs9tn5xg==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-print.min.css rel=stylesheet media=print onload='this.media="print"' integrity="sha512-XPrMPPyw9AxUVPlcja8Q4eSMRblA7CitTvBLc6kvF0aqd8VATHwgBbYeit6J9E7nzctz9I0Rs/v71nCpDXCqMA==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-tablet.min.css rel=stylesheet media="screen and (min-width: 40rem)" onload='this.media="screen and (min-width: 40rem)"' integrity="sha512-5wCMBKmbZn1Mpn9dY6rfasNcrfE+z6xNma5H6pnAAXFeJuIpUK3fG5nmPWIPeXSwIis+1MqR+fIEMp41g/j4cA==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-desktop.min.css rel=stylesheet media="screen and (min-width: 80rem)" onload='this.media="screen and (min-width: 80rem)"' integrity="sha512-P3oHnbewtCGj9wz+wRrIbC0VTcr4TmvqXX1DBOQEmYOJY1rrr5A4FZevrsL2BL5Z3hNw2wZ1jUmNEwBIS3v8ow==" crossorigin=anonymous>
+<link href=https://monteur.zoralab.com/css/bissetii-widescreen.min.css rel=stylesheet media="screen and (min-width: 120rem)" onload='this.media="screen and (min-width: 120rem)"' integrity="sha512-4/XaSIkGtWjXwVvs0EVnzgIcqqn+JdskwCkHF/jQXGCyW39BACYtS5U5K3EHFTAP6sYcvmRErcGVS3jnVPg2Ig==" crossorigin=anonymous>
+<meta name=generator content="Hugo 0.91.2">
+</head>
+<body style=--body-grid-tablet:var(--layout-left-and-top);--body-grid-desktop:var(--layout-left-and-top);--body-grid-widescreen:var(--layout-left-and-top)>
+<main>
+<section id=introduction>
+<h1>Release</h1>
+<p>
+Monteur provides Release CI Job to release your packages into their respective
+distribution stores.
+<br><br>
+The objective of the job is simple: <b>to release newly made
+packages into their respective distribution stores</b>.
+<br><br>
+All users has to do is to issue this command:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-bash data-lang=bash>montuer release</code></pre></td></tr></table>
+</div>
+</div>
+</p>
+</section>
+<section id=job-level-configurations>
+<h2>Job Level Configurations</h2>
+<p>
+Montuer does facilitate a job-wide configurations file for configuring
+Release CI Job over all settings and supplying job-wide variables.
+<br><br>
+The configurations, by default, are stored in the data file located in:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-bash data-lang=bash>.configs/monteur/release/config.toml</code></pre></td></tr></table>
+</div>
+</div>
+<br>
+The file <b>MUST be strictly named <code>config</code> alongside with
+the following supported data format's file extension</b>. Currently,
+Monteur offers the following supported formats, arranged in priority by
+sequences:
+<ul>
+<li><p>
+<code>.toml (TOML)</code> -
+<a href=https://github.com/toml-lang/toml>
+https://github.com/toml-lang/toml</a>
+</p></li>
+</ul>
+The file structure of the recipe configuration file is detailed
+from top to bottom in the following sub-sections, in sequences.
+</p>
+<section id=job-level-variables-section>
+<h3>Job Level Variables Section</h3>
+<p>
+The Monteur's
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/>Variables
+Processing</a> features. All variables defined in this job-wide
+configuration file <b>only visible to ALL Release CI Job
+recipes</b>. It is highly recommended to place all project-based
+variables data into this list for recipes consistency purposes.
+<br><br>
+An example of the job-level variables section consists
+of the following fields:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>[Variables]
+Version = <span style=color:#ba2121>&#39;1.17.3&#39;</span>
+BaseURL = <span style=color:#ba2121>&#39;https://golang.org/dl/&#39;</span>
+
+[FMTVariables]
+Command = <span style=color:#ba2121>&#39;go{{- .Version -}}&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li><p>
+<code>[Variables]</code> - plain variables list
+complying to
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/#plain-variables-definition>
+Montuer Plain Variables Definition</a>.
+</p></li>
+<li><p>
+<code>[FMTVariables]</code> - formattable
+variables list complying to
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/#formattable-variables-definition>
+Montuer Formattable Variables
+Definition</a>.
+</p></li>
+</ul>
+</p>
+</section>
+</section>
+<section id=recipe-configuration-file>
+<h2>Recipe Configuration File</h2>
+<p>
+All Release CI Job's recipe configuration files are stored in:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-bash data-lang=bash>.configs/monteur/release/jobs/</code></pre></td></tr></table>
+</div>
+</div>
+<br>
+These files <b>can have any filename BUT MUST STRICTLY HAVE any of the
+the following supported file extensions based on its data format of your
+choice</b>:
+<ul>
+<li><p>
+<code>.toml (TOML)</code> -
+<a href=https://github.com/toml-lang/toml>
+https://github.com/toml-lang/toml</a>
+</p></li>
+</ul>
+The file structure of the recipe configuration file is detailed from top
+to bottom in the following sub-sections, in sequences, and in the
+recommended <code>TOML</code> format.
+</p>
+<section id=recipe-metadata-section>
+<h3>Recipe's Metadata Section</h3>
+<p>
+The recipe's metadata section consists of the following
+fields:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>[Metadata]
+Name = <span style=color:#ba2121>&#39;Reprepro&#39;</span>
+Description = <span style=color:#ba2121>&#34;&#34;&#34;
+</span><span style=color:#ba2121>Monteur&#39;s .deb packagers released to hosting repository via Reprepro.
+</span><span style=color:#ba2121>&#34;&#34;&#34;</span>
+Type = <span style=color:#ba2121>&#39;manual&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li><p>
+<code>Name</code> - used for recipe
+identification, reporting, and
+referencing usage. Monteur recommends
+<b>keeping it short, concise and without
+any weird symbols (e.g. space will be
+replaced by short dash
+(<code>-</code>))</b>.
+</p></li>
+<li><p>
+<code>Description</code> - mainly for
+logging and reporting purposes.
+<b>Describe the details of the
+recipe.</b>
+</p></li>
+<li><p>
+<code>Type</code> - select the built-in
+packager type for its corresponding
+release algorithm. For available
+built-in packager types, please refer
+to
+<a href=https://monteur.zoralab.com/en/internals/package-meta/#built-in-packagers>Packaging
+Meta Specification</a>.
+</p></li>
+</ul>
+</p>
+</section>
+<section id=recipe-variables-section>
+<h3>Recipe's Variables Section</h3>
+<p>
+The Monteur's
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/>
+Variables Processing Specification</a>
+features. All variables defined in this recipe's configuration
+file are <b>visible ONLY to this recipe</b>. It is highly
+recommended to abstract as much variables away from your
+command algorithm as possible so that your user only has to
+customize these tables and not messing with your algorithm.
+<br><br>
+The variables section consists of the following fields:
+</p><div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>...
+
+[Variables]
+PackageType = <span style=color:#ba2121>&#39;deb-manual&#39;</span>
+GPGID = <span style=color:#ba2121>&#39;hello@zoralab.com&#39;</span>
+GPGExistence = <span style=color:#ba2121>&#39;&#39;</span>
+Distribution = <span style=color:#ba2121>&#39;&#39;</span> <span style=color:#408080;font-style:italic># to be filled later</span>
+
+[FMTVariables]
+DataPath = <span style=color:#ba2121>&#39;{{- .DataDir -}}/debian/reprepro&#39;</span>
+
+...
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><p>
+<code>[Variables]</code> - plain variables list
+complying to
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/#plain-variables-definition>
+Montuer Plain Variables Definition</a>.
+</p></li>
+<li><p>
+<code>[FMTVariables]</code> - formattable variables list
+complying to
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/#formattable-variables-definition>
+Montuer Formattable Variables Definition</a>.
+</p></li>
+</ul>
+</section>
+<section id=recipe-dependencies-section>
+<h3>Recipe's Dependencies Checking Section</h3>
+<p>
+The Monteur's
+<a href=https://monteur.zoralab.com/en/internals/dependencies-checking/>Dependencies Checking</a>
+features. All 3rd-party dependencies are listed and checked here
+against the running operating system for ensuring consistent
+performances and executions of this recipe.
+<br><br>
+The data structure is compliant to
+<a href=https://monteur.zoralab.com/en/internals/dependencies-checking/#data-structure>Dependencies Checking
+Specification</a>. Here is a sample for this recipe:
+</p>
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>...
+
+[[Dependencies]]
+Name = <span style=color:#ba2121>&#39;Reprepro&#39;</span>
+Condition = <span style=color:#ba2121>&#39;all-all&#39;</span>
+Type = <span style=color:#ba2121>&#39;command&#39;</span>
+Command = <span style=color:#ba2121>&#39;reprepro&#39;</span>
+
+[[Dependencies]]
+Name = <span style=color:#ba2121>&#39;GPG Tool For Signing&#39;</span>
+Condition = <span style=color:#ba2121>&#39;all-all&#39;</span>
+Type = <span style=color:#ba2121>&#39;command&#39;</span>
+Command = <span style=color:#ba2121>&#39;gpg&#39;</span>
+
+...
+</code></pre></td></tr></table>
+</div>
+</div>
+</section>
+<section id=recipe-release-meta-section>
+<h3>Recipe's Release Meta Section</h3>
+<aside class="note error"><svg class="icon" width="25" height="25" viewBox="0 0 13.229 13.229" xmlns="http://www.w3.org/2000/svg"><g transform="translate(1.1061 -.94431)" fill="#b20000"><path transform="matrix(.26458 0 0 .26458 -1.1061 .94431)" d="m24.832.0A25 25 0 000 25a25 25 0 0025 25 25 25 0 0025-25A25 25 0 0025 0a25 25 0 00-.16797.0zm.16797 3a22 22 0 0122 22 22 22 0 01-22 22 22 22 0 01-22-22 22 22 0 0122-22z" stroke-linecap="round" stroke-width="8"/><g transform="scale(1.0808 .9252)" stroke-width=".29421" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal" aria-label="Χ"><path d="m1.8153 3.8804h1.2469l2.1319 3.1892 2.1434-3.1892h1.2469L5.8262 8.0005l2.9421 4.4591H7.5214L5.108 8.8107l-2.4307 3.6489H1.4246l3.0628-4.5798z" fill="#b20000" stroke-width=".29421" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal"/></g></g></svg>
+<p class=title>HEADS UP!</p>
+<div class=content>
+<p>
+This section is <b>PLANNED FOR REMOVAL BUT YET TO IMPLEMENT</b> for
+reusing existing package meta internal function rather than moonlighting
+its own meta executions. <b>IT SHALL BE REPLACED AFTER MONTEUR
+VERSION<code>v0.0.3</code></b>.
+</p>
+</div>
+</aside>
+<p>
+<code>[Releases]</code> are the list of packaged file
+data to be released by executing the <code>[CMD]</code>
+table onto each of the item. All these packages shall be
+iterated with the <code>[CMD]</code> table supplied with
+the given variables above.
+<br><br>
+Depending on <code>Metadata.Type</code>, <b>either
+<code>archive</code> OR <code>manual</code></b>, Monteur
+will execute a preparation executions before executing
+the <code>[CMD]</code> for a package. This reduces the
+need to build large <code>[CMD]</code> commands list and
+promotes consistency.
+<br><br>
+An example is as follows:
+</p>
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>[Releases]
+Target = <span style=color:#ba2121>&#39;{{- .ReleaseDir -}}/archives&#39;</span>
+Checksum = <span style=color:#ba2121>&#39;sha512&#39;</span>
+
+[Releases.Data]
+Path = <span style=color:#ba2121>&#39;{{- .RootDir -}}/docs/.data/releases/archives&#39;</span>
+Format = <span style=color:#ba2121>&#39;toml&#39;</span>
+
+[Releases.Packages.darwin-amd64]
+OS = [ <span style=color:#ba2121>&#34;darwin&#34;</span> ]
+Arch = [ <span style=color:#ba2121>&#34;amd64&#34;</span> ]
+Source = <span style=color:#ba2121>&#39;{{- .PackageDir -}}/targz/{{- .PkgName -}}-{{- .PkgVersion -}}-{{- .PkgOS -}}-{{- .PkgArch -}}.tar.gz&#39;</span>
+
+...</code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li><p>
+<code>[Releases]</code>
+<ol>
+<li><p>
+the table tag for the all the
+packages ready for release.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Target</code>
+<ol>
+<li><p>
+The directory path for housing
+the released data. This is used
+by local repository releases
+such as <code>reprepro</code>.
+</p></li>
+<li><p>
+This value shall be applied to
+all
+<code>Releases.Packages</code>
+without their
+<code>Target</code> value set.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Checksum</code>
+<ol>
+<li><p>
+Selecting checksum hasher.
+</p></li>
+<li><p>
+Supported hashers are:
+<code>sha256</code> (default),
+<code>sha512</code>,
+or
+<code>sha512->sha256</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>[Releases.Data]</code>
+<ol>
+<li><p>
+Allows some releaser to spin
+its required data structure.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Releases.Data.Format</code>
+<ol>
+<li><p>
+The data file format for
+<code>archive</code> release
+type.
+</p></li>
+<li><p>
+Supported formats are:
+<code>toml</code>,
+<code>txt</code>,
+and
+<code>csv</code>.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>Releases.Data.Path</code>
+<ol>
+<li><p>
+The directory path for housing
+the release data file.
+</p></li>
+<li><p>
+The filename will be a converted
+to filepath friendly app version
+(<code>App.Version</code>)
+value like <code>v0.0.2</code>
+into <code>v0-0-2.txt</code>
+when set to be <code>txt</code>
+format.
+</p></li>
+</ol>
+</p></li>
+<li><p>
+<code>[Releases.Packages]</code>
+<ol>
+<li><p>
+List of packages complying to
+<a href=https://monteur.zoralab.com/en/internals/package-meta/>
+Package Meta Processing
+Specification.
+</a>
+</p></li>
+<li><p>
+<b>Minimum MUST have</b>
+1 <code>OS</code>,
+1 <code>Arch</code>,
+<code>Source</code>,
+and <code>Target</code>.
+</p></li>
+</ol>
+</p></li>
+</ul>
+</section>
+<section id=recipe-package-meta-section>
+<h3>Recipe's Package Meta Section</h3>
+<aside class="note error"><svg class="icon" width="25" height="25" viewBox="0 0 13.229 13.229" xmlns="http://www.w3.org/2000/svg"><g transform="translate(1.1061 -.94431)" fill="#b20000"><path transform="matrix(.26458 0 0 .26458 -1.1061 .94431)" d="m24.832.0A25 25 0 000 25a25 25 0 0025 25 25 25 0 0025-25A25 25 0 0025 0a25 25 0 00-.16797.0zm.16797 3a22 22 0 0122 22 22 22 0 01-22 22 22 22 0 01-22-22 22 22 0 0122-22z" stroke-linecap="round" stroke-width="8"/><g transform="scale(1.0808 .9252)" stroke-width=".29421" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal" aria-label="Χ"><path d="m1.8153 3.8804h1.2469l2.1319 3.1892 2.1434-3.1892h1.2469L5.8262 8.0005l2.9421 4.4591H7.5214L5.108 8.8107l-2.4307 3.6489H1.4246l3.0628-4.5798z" fill="#b20000" stroke-width=".29421" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal"/></g></g></svg>
+<p class=title>HEADS UP!</p>
+<div class=content>
+<p>
+This section is <b>PLANNED BUT YET TO IMPLEMENT</b> to replace that
+moonlight <code>Release</code> data structure for function reusability.
+</p>
+</div>
+</aside>
+<p>
+The Monteur's <a href=https://monteur.zoralab.com/en/internals/package-meta/>Package Meta Processing</a>
+features. All the recipe's releases and meta commands
+shall be executed horizontally across these packages
+repeatedly.
+<br><br>
+The data structure is complying to the
+<a href=https://monteur.zoralab.com/en/internals/package-meta/#data-structure>Package Meta Processing
+Specification</a>.
+Release CI Job requires you to at least define the
+following fields:
+<ul>
+<li><p>
+<code>OS</code> - define <b>MINIMUM</b>
+one operating system the package is for.
+</p></li>
+<li><p>
+<code>ARCH</code> - define
+<b>MINIMUM</b> one CPU Architecture the
+package is for.
+</p></li>
+<li><p>
+<code>SOURCE</code> - the full filepath
+of the package file.
+</p></li>
+<li><p>
+<code>TARGET</code> - the directory/URL
+path for releasing the package.
+</p></li>
+</ul>
+An example would be:
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>...
+
+[Packages.linux-amd64]
+OS = [ <span style=color:#ba2121>&#34;linux&#34;</span> ]
+Arch = [ <span style=color:#ba2121>&#34;amd64&#34;</span> ]
+Source = <span style=color:#ba2121>&#39;{{- .PackageDir -}}/{{- .PackageType -}}/{{- .PkgName -}}_{{- .PkgVersionDigitLed -}}_{{- .PkgArch -}}.deb&#39;</span>
+Target = <span style=color:#ba2121>&#39;{{- .ReleaseDir -}}/deb&#39;</span>
+
+[Packages.linux-arm64]
+OS = [ <span style=color:#ba2121>&#34;linux&#34;</span> ]
+Arch = [ <span style=color:#ba2121>&#34;arm64&#34;</span> ]
+Source = <span style=color:#ba2121>&#39;{{- .PackageDir -}}/{{- .PackageType -}}/{{- .PkgName -}}_{{- .PkgVersionDigitLed -}}_{{- .PkgArch -}}.deb&#39;</span>
+Target = <span style=color:#ba2121>&#39;{{- .ReleaseDir -}}/deb&#39;</span>
+
+[Packages.linux-armhf]
+OS = [ <span style=color:#ba2121>&#34;linux&#34;</span> ]
+Arch = [ <span style=color:#ba2121>&#34;armhf&#34;</span> ]
+Source = <span style=color:#ba2121>&#39;{{- .PackageDir -}}/{{- .PackageType -}}/{{- .PkgName -}}_{{- .PkgVersionDigitLed -}}_{{- .PkgArch -}}.deb&#39;</span>
+Target = <span style=color:#ba2121>&#39;{{- .ReleaseDir -}}/deb&#39;</span>
+
+...</code></pre></td></tr></table>
+</div>
+</div>
+</p>
+</section>
+<section id=recipe-commands-section>
+<h3>Recipe's Commands Section</h3>
+<p>
+The list of executing commands complying to compliant to
+<a href=https://monteur.zoralab.com/en/internals/commands/>Commands Execution Unit (CEU)
+Specification</a>. The commands are executed as instructed in
+the key recipe sections, usually either execute as per se after
+all meta processing OR being used to execute horizontally.
+<br><br>
+The data structure is entirely based on the
+<a href=https://monteur.zoralab.com/en/internals/commands/>Commands Execution Unit (CEU)
+Specification</a>.
+An example of this recipe's commands section would be:
+</p>
+<div class=highlight><div>
+<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
+<pre tabindex=0><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
+</span></code></pre></td>
+<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
+<pre tabindex=0><code class=language-toml data-lang=toml>...
+
+[[CMD]]
+Name = <span style=color:#ba2121>&#34;Get GPG Secret Key for Verifications&#34;</span>
+Type = <span style=color:#ba2121>&#39;command&#39;</span>
+Condition = [ <span style=color:#ba2121>&#39;all-all&#39;</span> ]
+Source = <span style=color:#ba2121>&#39;gpg --list-secret-keys &#34;{{- .GPGID }}&#34;&#39;</span>
+Save = <span style=color:#ba2121>&#39;GPGExistence&#39;</span>
+
+[[CMD]]
+Name = <span style=color:#ba2121>&#34;Verify GPG Secret Key Must Exists For Signing&#34;</span>
+Type = <span style=color:#ba2121>&#39;is-not-empty&#39;</span>
+Condition = [ <span style=color:#ba2121>&#39;all-all&#39;</span> ]
+Source = <span style=color:#ba2121>&#39;{{- .GPGExistence -}}&#39;</span>
+
+[[CMD]]
+Name = <span style=color:#ba2121>&#34;Create Necessary Conf Data Directory&#34;</span>
+Type = <span style=color:#ba2121>&#39;create-path&#39;</span>
+Condition = [ <span style=color:#ba2121>&#39;all-all&#39;</span> ]
+Source = <span style=color:#ba2121>&#39;{{- .DataPath -}}/conf&#39;</span>
+
+[[CMD]]
+Name = <span style=color:#ba2121>&#39;Get Current Branch&#39;</span>
+Type = <span style=color:#ba2121>&#39;command&#39;</span>
+Condition = [ <span style=color:#ba2121>&#39;all-all&#39;</span> ]
+Source = <span style=color:#ba2121>&#39;git branch --show-current&#39;</span>
+Save = <span style=color:#ba2121>&#39;Distribution&#39;</span>
+
+[[CMD]]
+Name = <span style=color:#ba2121>&#34;Verify Distribution is Not Empty&#34;</span>
+Type = <span style=color:#ba2121>&#39;is-not-empty&#39;</span>
+Condition = [ <span style=color:#ba2121>&#39;all-all&#39;</span> ]
+Source = <span style=color:#ba2121>&#39;{{- .Distribution -}}&#39;</span>
+
+[[CMD]]
+Name = <span style=color:#ba2121>&#34;Release Using Reprepro&#34;</span>
+Type = <span style=color:#ba2121>&#39;command&#39;</span>
+Condition = [ <span style=color:#ba2121>&#39;all-all&#39;</span> ]
+Source = <span style=color:#ba2121>&#34;&#34;&#34;reprepro --basedir {{ .DataPath }} \
+</span><span style=color:#ba2121>--outdir {{ .Target }} \
+</span><span style=color:#ba2121>includedeb main \
+</span><span style=color:#ba2121>{{ .Source }}
+</span><span style=color:#ba2121>&#34;&#34;&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>
+Currently, this is the last section of the recipe configuration
+file.
+</p>
+</section>
+</section>
+<section id=known-recipes>
+<h2>Known Recipes</h2>
+<p>
+Instead of working on all the recipes from scratch, Monteur
+does maintain a number of existing and continuously improved
+recipes to kick-start your compatible deployment. Here are the
+available recipes:
+</p>
+</section>
+<nav class=nav-catalog><div class=row>
+<div class=column>
+<article class="Card vertical" id=nav-catalog-reprepro-release-recipe style=--card-width:300px;--card-height:750px>
+<div class=thumbnail>
+<img alt="ZORALab's Monteur - Release with Reprepro" src=https://monteur.zoralab.com/en/ci-jobs/release/default-480x480.png width=300px height=300px>
+</div>
+<div class=content><h3 id=reprepro-release-recipe>Reprepro Release Recipe</h3>
+<p>Mon, 20 Jun 2022 16:58:29 +0800</p>
+<p>Montuer has a continuously developed release recipe dedicated for reprepro, a decentralized deb package distributions.</p>
+</div>
+<div class=cta><ul class=default><li><a class="button clean" href=https://monteur.zoralab.com/en/ci-jobs/release/reprepro/>Explore</a></li></ul></div>
+</article>
+</div>
+</div></nav>
+<footer>
+<p><span>© All Rights Reserved</span><span>— Monteur Team, ZORALab Team</span></p>
+</footer>
+</main><nav class=nav-sidebar>
+<input id=nav-sidebar-5f39835 class=nav-sidebar-trigger type=checkbox>
+<label class=nav-sidebar-trigger for=nav-sidebar-5f39835><span class="nav-sidebar-icon nav-sidebar-menu">☰</span><span class="nav-sidebar-icon nav-sidebar-close">𝖷</span></label>
+<label class=nav-sidebar-shade for=nav-sidebar-5f39835>
+</label>
+<ul class=nav-sidebar-list>
+<li class=nav-sidebar-title>
+<img alt src=https://monteur.zoralab.com/img/logo/zoralab-monteur-1200x1200.svg class=nav-sidebar-logo width=200 height=200>
+<p>Monteur</p></li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/><span class=pre>💠</span>Home</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/><span class=pre>📥</span>Downloads</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/getting-started/><span class=pre>🛫</span>Getting Started</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/licenses/><span class=pre>⚖️</span>Licenses</a>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-220e3fa type=checkbox checked>
+<label for=nav-sidebar-submenu-220e3fa><span class=nav-sidebar-submenu-icon>➣</span><span>CI Jobs</span></label>
+<ul id=nav-sidebar-submenu-list-220e3fa>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/clean/><pre>🧹</pre>Clean</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/test/><pre>⚗️</pre>Test</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/><pre>🧶</pre>Prepare</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/build/><pre>🧰</pre>Build</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/><pre>📦</pre>Package</a>
+</li>
+<li class="active nav-sidebar-link">
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/><pre>🌾</pre>Release</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/compose/><pre>📝</pre>Compose</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/><pre>📖</pre>Publish</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-a5bc3c7 type=checkbox checked>
+<label for=nav-sidebar-submenu-a5bc3c7><span class=nav-sidebar-submenu-icon>➣</span><span>Native - Monteur</span></label>
+<ul id=nav-sidebar-submenu-list-a5bc3c7>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/clean/deep-cleaning/><pre>🧹</pre>Clean (Deep Cleaning)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/changelog-deb/><pre>🧶</pre>Prepare (DEB Changelog)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/prepare/version-file-scripting/><pre>🧶</pre>Prepare (Version File Scripting)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/targz/><pre>📦</pre>Package (TarGz)</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/zip/><pre>📦</pre>Package (Zip)</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-f36af07 type=checkbox checked>
+<label for=nav-sidebar-submenu-f36af07><span class=nav-sidebar-submenu-icon>➣</span><span>Platform - GitLab</span></label>
+<ul id=nav-sidebar-submenu-list-f36af07>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/getting-started/gitlab/><pre>🛫</pre>Getting Started - GitLab CI</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/publish/gitlab/><pre>📖</pre>Publish (GitLab Pages)</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-5b11fbd type=checkbox checked>
+<label for=nav-sidebar-submenu-5b11fbd><span class=nav-sidebar-submenu-icon>➣</span><span>Software - DEBuild</span></label>
+<ul id=nav-sidebar-submenu-list-5b11fbd>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/package/debuild/><pre>📦</pre>Package</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-f03c66a type=checkbox checked>
+<label for=nav-sidebar-submenu-f03c66a><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Go</span></label>
+<ul id=nav-sidebar-submenu-list-f03c66a>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/go/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/test/go/><pre>⚗️</pre>Test</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/build/go/><pre>🧰</pre>Build</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-d1ab4bc type=checkbox checked>
+<label for=nav-sidebar-submenu-d1ab4bc><span class=nav-sidebar-submenu-icon>➣</span><span>Software - GolangCI-Lint</span></label>
+<ul id=nav-sidebar-submenu-list-d1ab4bc>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/golangci-lint/><pre>🧩</pre>Setup</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-c0ac3bd type=checkbox checked>
+<label for=nav-sidebar-submenu-c0ac3bd><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Hugo</span></label>
+<ul id=nav-sidebar-submenu-list-c0ac3bd>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/setup/hugo/><pre>🧩</pre>Setup</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/compose/hugo/><pre>📝</pre>Compose</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-2998e89 type=checkbox checked>
+<label for=nav-sidebar-submenu-2998e89><span class=nav-sidebar-submenu-icon>➣</span><span>Software - Reprepro</span></label>
+<ul id=nav-sidebar-submenu-list-2998e89>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/release/reprepro/><pre>🌾</pre>Release</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-ef58375 type=checkbox checked>
+<label for=nav-sidebar-submenu-ef58375><span class=nav-sidebar-submenu-icon>➣</span><span>Versions</span></label>
+<ul id=nav-sidebar-submenu-list-ef58375>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-1/><pre>🏅</pre>v0.0.1</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-2/><pre>🏅</pre>v0.0.2</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/versions/v0-0-3/><pre>🏅</pre>v0.0.3</a>
+</li>
+</ul>
+</li>
+<li class=nav-sidebar-submenu>
+<input id=nav-sidebar-submenu-47c6ce2 type=checkbox checked>
+<label for=nav-sidebar-submenu-47c6ce2><span class=nav-sidebar-submenu-icon>➣</span><span>Z) Monteur Internals</span></label>
+<ul id=nav-sidebar-submenu-list-47c6ce2>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/changelog-meta/><pre>📚</pre>Changelog Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/ci-jobs/><pre>📑</pre>CI Job Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/code-of-conduct/><pre>🧬</pre>Code of Conduct</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/commands/><pre>🧑‍✈️</pre>Commands Execution Unit</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/dependencies-checking/><pre>🧮</pre>Dependencies Checking</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/init-job/><pre>🛫</pre>Init Job</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/secrets/><pre>🙊</pre>Managing Secrets</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/package-meta/><pre>📋</pre>Package Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/platform-identification/><pre>🧿</pre>Platform Identification</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/setup-meta/><pre>🧩</pre>Setup Meta Processing</a>
+</li>
+<li class=nav-sidebar-link>
+<a href=https://monteur.zoralab.com/en/internals/variables-processing/><pre>🪢</pre>Variables Processing</a>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</body>
+</html>

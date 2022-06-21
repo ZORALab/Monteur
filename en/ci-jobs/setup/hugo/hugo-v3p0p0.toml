@@ -1,0 +1,150 @@
+[Metadata]
+Name = 'Hugo'
+Description = """
+Setup Hugo static website generator for web publications.
+"""
+Type = 'https-download'
+
+
+
+
+[Variables]
+Version = '0.91.2'
+BaseURL = 'https://github.com/gohugoio/hugo/releases/download'
+
+[FMTVariables]
+
+
+
+
+# Supported OS and CPU Architectures program sources. The Key for supported
+# OS and CPU complies to the format:
+#	[Sources.{GOOS}-{GOARCH}]
+# Only list out supported packages will do.
+[Sources.all-all]
+Format = 'tar.gz'
+URL = '{{- .BaseURL -}}/v{{- .Version -}}/{{- .Archive -}}'
+Method = 'GET'
+[Sources.all-all.Checksum]
+Type = 'sha256'
+Format = 'hex'
+[Sources.all-all.headers]
+
+[Sources.dragonfly-amd64]
+Archive = 'hugo_{{- .Version -}}_DragonFlyBSD-64bit.{{- .Format -}}'
+[Sources.dragonfly-amd64.Checksum]
+Value = 'e62467c78a69824776d12e02f5237727fe2ed162d50f964373af406a83742be9'
+
+[Sources.freebsd-amd64]
+Archive = 'hugo_{{- .Version -}}_FreeBSD-64bit.{{- .Format -}}'
+[Sources.freebsd-amd64.Checksum]
+Value = '04499e654e4bc41f23155f8aee901b14c16211764a71c9a3903ec6c1edf0e465'
+
+[Sources.linux-386]
+Archive = 'hugo_{{- .Version -}}_Linux-32bit.{{- .Format -}}'
+[Sources.linux-386.Checksum]
+Value = '1771f0fb9e9791f2295c75c56a8619b505100312774c520b203f2d7a46d70acc'
+
+[Sources.linux-amd64]
+Archive = 'hugo_{{- .Version -}}_Linux-64bit.{{- .Format -}}'
+[Sources.linux-amd64.Checksum]
+Value = '3c768eef5b472c23f036defd07c67caf4ff8bf7a101e32bfad276b177eba0262'
+
+[Sources.linux-arm]
+Archive = 'hugo_{{- .Version -}}_Linux-ARM.{{- .Format -}}'
+[Sources.linux-arm.Checksum]
+Value = 'fd67670bb1ee9f018da7878ef605d89b9a8ef8d227253ee2043b02524d289fae'
+
+[Sources.linux-arm64]
+Archive = 'hugo_{{- .Version -}}_Linux-ARM64.{{- .Format -}}'
+[Sources.linux-arm64.Checksum]
+Value = '648e981b3a0422f5ad3b87eadc381905d9ddd26ce34c22aaed4194c0af61a632'
+
+[Sources.darwin-amd64]
+Archive = 'hugo_{{- .Version -}}_macOS-64bit.{{- .Format -}}'
+[Sources.darwin-amd64.Checksum]
+Value = '24a6c8e518affce09a65f3ae0540498d3b0dfcacd2c7c408c60d7bb12bf19efb'
+
+[Sources.darwin-arm64]
+Archive = 'hugo_{{- .Version -}}_macOS-ARM64.{{- .Format -}}'
+[Sources.darwin-arm64.Checksum]
+Value = '40c6f561c59aedb6420ac650f7acdc1e637f18e59b7bb03067eb9fe2f3fff64f'
+
+[Sources.netbsd-amd64]
+Archive = 'hugo_{{- .Version -}}_NetBSD-64bit.{{- .Format -}}'
+[Sources.netbsd-amd64.Checksum]
+Value = 'c34ac286aab2aaa4b6ad025a20f6134c955db4594f985f77ab110229b87c8c07'
+
+[Sources.openbsd-amd64]
+Archive = 'hugo_{{- .Version -}}_OpenBSD-64bit.{{- .Format -}}'
+[Sources.openbsd-amd64.Checksum]
+Value = 'c6a141749249122625e295f7fd3ce511ef56bbaeeb57a581696cbcf37ca196f5'
+
+[Sources.windows-386]
+Format = 'zip'
+Archive = 'hugo_{{- .Version -}}_Windows-32bit.{{- .Format -}}'
+[Sources.windows-386.Checksum]
+Value = '56cb033283648fb085faa74e85d57b9c6858f091c0d8a5ed6cba904673f1b358'
+
+[Sources.windows-amd64]
+Format = 'zip'
+Archive = 'hugo_{{- .Version -}}_Windows-64bit.{{- .Format -}}'
+[Sources.windows-amd64.Checksum]
+Value = '83942ad89e7eb9d2ed050a7e6b80c334bd12fac1d4e4511a474d66d0b4e016f2'
+
+[Sources.windows-arm]
+Format = 'zip'
+Archive = 'hugo_{{- .Version -}}_Windows-ARM.{{- .Format -}}'
+[Sources.windows-arm.Checksum]
+Value = '059a83436e864fd1cf56516f6f126cc875d3a67e47e46f93e35c840307b5bdc5'
+
+[Sources.windows-armv7]
+Format = 'zip'
+Archive = 'hugo_{{- .Version -}}_Windows-ARM.{{- .Format -}}'
+[Sources.windows-armv7.Checksum]
+Value = '059a83436e864fd1cf56516f6f126cc875d3a67e47e46f93e35c840307b5bdc5'
+
+[Sources.windows-arm64]
+Format = 'zip'
+Archive = 'hugo_{{- .Version -}}_Windows-ARM64.{{- .Format -}}'
+[Sources.windows-arm64.Checksum]
+Value = '01ca4ae6b34cebf5eaa0aca1cc524727d54c287592b5229796fc35a0279d64a3'
+
+
+
+
+[[CMD]]
+Name = 'Delete Target for Installation'
+Type = 'delete-recursive-quiet'
+Condition = ['all-all']
+Source = '{{- .BinDir -}}/hugo'
+
+[[CMD]]
+Name = 'Install Go Hugo'
+Type = 'move'
+Condition = [ 'all-all' ]
+Source = '{{- .WorkingDir -}}/hugo'
+Target = '{{- .BinDir -}}/hugo'
+
+
+
+
+# Config file for localized filesystem initialization.
+[Config]
+linux = """
+#!/bin/bash
+
+_name="hugo"
+
+case $1 in
+--stop)
+	;;
+*)
+	if [ ! -z "$(type -p "$_name")" ]; then
+		1>&2 printf "[ DONE  ] '$_name' is available.\\n"
+	else
+		1>&2 printf "[ ERROR ] '$_name' is missing.\\n"
+	fi
+	;;
+esac
+"""
