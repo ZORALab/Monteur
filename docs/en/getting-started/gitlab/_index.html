@@ -1,0 +1,236 @@
++++
+date = "2022-01-07T09:40:58+08:00"
+title = "Getting Started with GitLab CI"
+description = """
+Monteur strives to be integration friendly interfacing with GitLab CI while
+maintaining vendor locked-in protection. Here are the guide to integrate them.
+"""
+keywords = [
+	"getting started",
+	"gitlab",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/getting-started/gitlab/default-1200x628.png"
+type = "image/png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur - Getting Started with GitLab CI"
+
+[thumbnails.1]
+url = "/en/getting-started/gitlab/default-1200x1200.png"
+type = "image/png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur - Getting Started with GitLab CI"
+
+[thumbnails.2]
+url = "/en/getting-started/gitlab/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur - Getting Started with GitLab CI"
+
+
+[menu.main]
+parent = "Platform - GitLab"
+name = "Getting Started - GitLab CI"
+pre = "🛫"
+weight = 5
+identifier = "getting-started-gitlab"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+<section id="introduction">
+	<h1>{{% param "title" %}}</h1>
+	<p>
+{{% param "description" %}}
+	</p>
+</section>
+
+
+
+
+<section id="gitlab-ci-integration">
+	<h2>GitLab CI Integration</h2>
+	<p>
+		Monteur is integrated with GitLab CI via its famous
+		<code>.gitlab-ci.yml</code> config file. The difference is that
+		GitLab CI is used for triggering the necessary Monteur's actions
+		to operate your project autonomously. In summary, you should
+		treat GitLab CI as a virtual autonomous robot working for you.
+		<br/><br/>
+		A full Debian-based operating system template is shown as
+		follows:
+	</p>
+{{% highlight yaml "linenos=table,hl_lines=,linenostart=1" %}}
+image:
+  name: debian:latest
+  entrypoint: [ "" ]
+
+variables:
+  MONTEUR_CONFIG: ".monteurFS/config/main"
+
+stages:
+  - setup
+  - test
+  - build
+  - docs
+
+cache:
+  - key: "MonteurFS"
+    paths:
+      - ".monteurFS/"
+
+before_script:
+  - apt-get update -y
+  - apt-get upgrade -y
+  - |
+    apt-get --no-install-recommends install \
+      curl \
+      gnupg2 \
+      ca-certificates \
+      -y
+  - |
+    curl https://www.zoralab.com/pubkey.gpg \
+      | gpg --yes --dearmor --output /usr/share/keyrings/zoralab-keyring.gpg
+  - |
+    echo 'deb [signed-by=/usr/share/keyrings/zoralab-keyring.gpg] https://monteur.zoralab.com/releases/deb next experimental' \
+        >  /etc/apt/sources.list.d/zoralab-monteur.list
+  - apt-get update -y
+  - apt-get install monteur -y
+
+
+test:
+  stage: test
+  tags:
+    - linux
+  environment:
+    name: production
+  except:
+    refs:
+      - gh-pages
+  interruptible: true
+  coverage: '/TOTAL\s*TEST\s*COVERAGE:\s*(\d+.?\d*%?)/'
+  script:
+    - source "$MONTEUR_CONFIG"
+    - monteur test
+
+
+build:
+  stage: build
+  tags:
+    - linux
+  environment:
+    name: production
+  except:
+    refs:
+      - gh-pages
+  environment:
+    name: production
+  script:
+    - source "$MONTEUR_CONFIG"
+    - monteur prepare
+    - monteur build
+
+
+compose:
+  stage: docs
+  tags:
+    - linux
+  environment:
+    name: production
+  except:
+    refs:
+      - gh-pages
+  script:
+    - source "$MONTEUR_CONFIG"
+    - monteur compose
+
+
+pages:
+  stage: docs
+  tags:
+    - linux
+  environment:
+    name: production
+  only:
+    refs:
+      - gh-pages
+  cache: []
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 day
+  before_script:
+    - mkdir -p public
+    - shopt -s extglob
+    - mv !(public|.*) public
+  script:
+    - printf "[ DONE ] Nothing to implement.\n"
+{{% /highlight %}}
+	<p>
+		This design allows you to operate Monteur in a way independent
+		of operating system and without requiring Monteur to build all
+		Docker opreating system's specific images. Since CI is specific
+		to your project/app, please use the above only as reference.
+		<br/><br/>
+		<b>We DO NOT recommend you to run Package and Relase CI Job on
+		GitLab CI</b> mainly because of the secret GPG key involvement
+		for package integrity checking. Since there is an obligation to
+		protect those key files, you can operate those CI Jobs on a
+		trusted compute system privately and solely on your side.
+	</p>
+
+
+	<section id="gitlab-runner">
+		<h3>GitLab Runner</h3>
+		<p>
+			In the past, Monteur team tried to setup Rasberry Pi
+			3B as the cross operating system's GitLab Runner and
+			faced numerous unknown errors to the point that
+			<b>we don't recommend you repeating our mistake. If
+			possible, please use compute system closer to your
+			development system</b>.
+			<br/><br/>
+			We tested both Docker and Shell Executors. Both works
+			well especially with the latter.
+		</p>
+	</section>
+</section>
+
+
+
+
+{{% epilogue %}}
+That's all for integrating Monteur with GitLab.
+{{% /epilogue %}}
