@@ -1,0 +1,59 @@
+[Metadata]
+Name = "Go"
+Version = "v1.1.0"
+URL = "/ci-jobs/setup/go/go-v1p1p0.toml"
+Language = "en"
+
+
+
+
+[[MinRequirements]]
+Content = "Montuer version: <b><code>v0.0.1</code></b>."
+
+[[MinRequirements]]
+Content = """
+Supported platform: <b>STRICTLY depends on <code>Monteur</code>
+availability</b>.
+"""
+
+
+
+
+[[Installations]]
+Content = """
+Download and place the recipe file into your
+<code>.configs/monteur/setup/programs/</code> directory as
+<code>go.toml</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.Version</code> matching the new version
+number.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.BaseURL</code> if the core development team
+changes it again.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Sources.XXX.Checksum.Value</code> with each matching
+checksum values for matching new release.
+"""
+
+
+
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Updated to Go Version <code>1.17.5</code>"
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Fixed <code>freebsd</code> <code>amd64</code> typo where the URL uses
+<code>i386</code>.
+"""

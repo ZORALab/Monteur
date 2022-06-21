@@ -1,0 +1,118 @@
++++
+date = "2021-12-23T17:05:21+08:00"
+title = "Go Setup Recipe"
+description = """
+Montuer has a continuously developed setup recipe dedicated for Go Programming
+Language development environment.
+"""
+keywords = [
+	"Go",
+	"Setup CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/setup/go/default-1200x628.png"
+type = "image/png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur - Setup Go"
+
+[thumbnails.1]
+url = "/en/ci-jobs/setup/go/default-1200x1200.png"
+type = "image/png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur - Setup Go"
+
+[thumbnails.2]
+url = "/en/ci-jobs/setup/go/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur - Setup Go"
+
+
+[menu.main]
+parent = "Software - Go"
+name = "Setup"
+pre = "🧩"
+weight = 10
+identifier = "ci-jobs-setup-go"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+{{% ciJob/recipeProductIntro "en" "setup" %}}
+	The objective is simple: <b>to setup a localized Go Programming Language
+	development environment in a consistent and reproducible manner</b>.
+{{% /ciJob/recipeProductIntro %}}
+
+
+
+
+{{% ciJob/recipeResources "en" "setup" %}}
+<ul>
+	<li><p>
+		Go Programming Language -
+		<b>
+			<a href="https://go.dev/">https://go.dev/</a>
+		</b>
+	</p></li>
+	<li><p>
+		Monteur Setup Data Structure -
+		<b>
+		<a href="{{< link "/ci-jobs/setup/" "this" "url-only" />}}">
+			{{< link "/ci-jobs/setup/" "this" "url-only" />}}</a>
+		</b>
+	</p></li>
+</ul>
+{{% /ciJob/recipeResources %}}
+
+
+
+
+{{% ciJob/recipeFile "en" "setup" "Go" %}}
+
+{{% ciJob/recipeVersion ".release-v3p0p0.toml" /%}}
+{{% ciJob/recipeVersion ".release-v2p1p0.toml" /%}}
+{{% ciJob/recipeVersion ".release-v2p0p0.toml" /%}}
+{{% ciJob/recipeVersion ".release-v1p1p0.toml" /%}}
+{{% ciJob/recipeVersion ".release-v1p0p0.toml" /%}}
+
+{{% /ciJob/recipeFile %}}
+
+
+
+
+{{% epilogue %}}
+That's all for Monteur's Package CI Job handling <code>Go</code> environment
+setup tasks.
+{{% /epilogue %}}
