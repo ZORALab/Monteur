@@ -1,0 +1,44 @@
+[Metadata]
+Name = "Version File Scripting"
+Version = "v1.0.0"
+URL = "/ci-jobs/prepare/version-file-scripting/version-file-v1p0p0.toml"
+Language = "en"
+
+
+
+
+[[MinRequirements]]
+Content = "Montuer version: <b><code>v0.0.2</code> and above</b>."
+
+[[MinRequirements]]
+Content = """
+Supported platform: <b>STRICTLY depends on <code>Monteur</code> and
+<code>Git</code> availability</b>.
+"""
+
+
+
+
+[[Installations]]
+Content = """
+Download and place the recipe file into your
+<code>.configs/monteur/prepare/jobs</code> directory as
+<code>version-file.toml</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.CodeFilepath</code> pointing to the
+destination filepath.
+"""
+
+
+
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Created the base TOML configuration recipe."
+
+[[Changelog]]
+BackwardCompatible = true
+Content = "Tested with GitLab CI."

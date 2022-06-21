@@ -1,0 +1,110 @@
++++
+date = "2022-01-05T08:07:22+08:00"
+title = "Version File Scripting Prepare Recipe"
+description = """
+Montuer has a continuously developed prepare recipe dedicated for scripting
+repository version into version file.
+"""
+keywords = [
+	"Version File Scripting",
+	"Prepare CI Job",
+	"ZORALab's Monteur",
+	"configurations",
+	"documentation",
+]
+draft = false
+type = ""
+# redirectURL=""
+layout = "single"
+
+
+[robots]
+[robots.googleBot]
+name = "googleBot"
+content = ""
+
+
+[modules]
+extensions = [
+	# Example: "sidebar",
+]
+
+
+[creators.holloway]
+"@type" = "Person"
+"name" = "'Holloway' Chew Kean Ho"
+
+
+[thumbnails.0]
+url = "/en/ci-jobs/prepare/version-file-scripting/default-1200x628.png"
+type = "image/png"
+width = "1200"
+height = "628"
+alternateText = "ZORALab's Monteur - Prepare with Version File Scripting"
+
+[thumbnails.1]
+url = "/en/ci-jobs/prepare/default-1200x1200.png"
+type = "image/png"
+width = "1200"
+height = "1200"
+alternateText = "ZORALab's Monteur - Prepare with Version File Scripting"
+
+[thumbnails.2]
+url = "/en/ci-jobs/prepare/default-480x480.png"
+type = "image/png"
+width = "480"
+height = "480"
+alternateText = "ZORALab's Monteur - Prepare with Version File Scripting"
+
+
+[menu.main]
+parent = "Native - Monteur"
+name = "Prepare (Version File Scripting)"
+pre = "🧶"
+weight = 65
+identifier = "ci-jobs-monteur-prepare-version-file-scripting"
+
+
+[schema]
+selectType = "WebPage"
++++
+
+
+{{% ciJob/recipeProductIntro "en" "prepare" %}}
+	The objective is simple: <b>to prepare the version file (e.g.
+	<code>VERSION</code> or <code>version.go</code>) in a consistent and
+	reproducible manner</b>.
+{{% /ciJob/recipeProductIntro %}}
+
+
+
+
+{{% ciJob/recipeResources "en" "prepare" %}}
+<ul>
+	<li><p>
+		Monteur Prepare Data Structure -
+		<b>
+		<a href="{{< link "/ci-jobs/prepare/" "this" "url-only" />}}">
+			{{< link "/ci-jobs/prepare/" "this" "url-only" />}}</a>
+		</b>
+	</p></li>
+</ul>
+{{% /ciJob/recipeResources %}}
+
+
+
+
+{{% ciJob/recipeFile "en" "prepare" "Version File Scripting" %}}
+
+{{% ciJob/recipeVersion ".release-v2p0p0.toml" /%}}
+{{% ciJob/recipeVersion ".release-v1p0p0.toml" /%}}
+
+{{% /ciJob/recipeFile %}}
+
+
+
+
+{{% epilogue %}}
+That's all for Monteur's Prepare CI Job handling <code>Version File
+Scripting</code> update tasks.
+{{% /epilogue %}}

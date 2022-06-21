@@ -1,0 +1,91 @@
+[Metadata]
+Name = "Version File Scripting"
+Version = "v2.0.0"
+URL = "/ci-jobs/prepare/version-file-scripting/version-file-v2p0p0.toml"
+Language = "en"
+
+
+
+
+[[MinRequirements]]
+Content = "Montuer version: <b><code>v0.0.2</code> and above</b>."
+
+[[MinRequirements]]
+Content = """
+Supported platform: <b>STRICTLY depends on <code>Monteur</code> and
+<code>Git</code> availability</b>.
+"""
+
+
+
+
+[[Installations]]
+Content = """
+Download and place the recipe file into your
+<code>.configs/monteur/prepare/jobs</code> directory as
+<code>version-file-[SOFTWARE].toml</code> pattern like
+<code>version-file.toml</code> or <code>version-file-go.toml</code>.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>Variables.Prefix</code> to add any prefix content
+used in <code>FMTVariables.Content</code> construction later. Otherwise, please
+leave it blank.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>FMTVariables.Filepath</code> to specify the path
+to the destination file.
+"""
+
+[[Installations]]
+Content = """
+Update the recipe's <code>FMTVariables.Content</code> to construct the exact
+content of the version file. Default has all the ciritical variables listed
+in.
+"""
+
+
+
+
+[[Changelog]]
+BackwardCompatible = false
+Content = """
+Corrected <code>FMTVariables.CodeFilepath</code> to
+<code>FMTVariables.Filepath</code> for destination file and set default value to
+<code>{{- .RootDir -}}/VERSION</code>.
+"""
+
+[[Changelog]]
+BackwardCompatible = false
+Content = """
+Abstracted <code>FMTVariables.Content</code> for file content constructions
+matching other file format requirements like license heading and etc.
+"""
+
+[[Changelog]]
+BackwardCompatible = false
+Content = """
+Merged the now deleted Version Go File Scripting recipe.
+"""
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Renamed the default <code>Metadata.Name</code> to generic name.
+"""
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Updated the default <code>Metadata.Description</code> to a generic content.
+"""
+
+[[Changelog]]
+BackwardCompatible = true
+Content = """
+Corrected all CEU with names and new variables to ensure algorithm is clean
+and flexible.
+"""
