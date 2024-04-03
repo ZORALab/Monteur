@@ -5,6 +5,17 @@ A localized CI software robot to manage your CI needs at repository level
 locally, and yet integrable with latest CI service providers. Basically:
 **Do more; Less Noises**.
 
+> [!IMPORTANT]
+>
+> Due to ZORALab's cease of operations, this repository is no longer maintained
+> and is superseded by
+> [Holloway's AutomataCI](https://github.com/ChewKeanHo/AutomataCI)
+> project.
+>
+> Hence, please use the new technology. The repository is now archived.
+>
+> Thank you for patronizing.
+
 Visit its [Official Website](https://monteur.zoralab.com) for its official
 documentations.
 
